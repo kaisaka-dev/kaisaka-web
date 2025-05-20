@@ -41,7 +41,6 @@ npm run package
 
 To create a production version of your showcase app:
 
-
 ```bash
 npm run build
 ```

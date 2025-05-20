@@ -11,6 +11,10 @@ To execute story book execute the following command to boot it up, then you can 
 npm run storybook
 ```
 
+Here is what it looks like:
+
+![Storybook](media/storybook-usage.gif)
+
 For back-end developers, simply use vitest.
 
 ```bash
