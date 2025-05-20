@@ -10,11 +10,11 @@ When documenting,
 
 Refer to Github's style of markdown as a basis to how you write[^2].
 
-> [!IMPORTANT] Documentation Example
+> [!IMPORTANT] 
 > This is an example strcuture to how documentation should be done.
-> '''txt
-> src/
-> ├── lib/
+>```txt
+>src/
+>├── lib/
 > │   ├── components/
 > │   │   ├── Button.svelte
 > │   │   ├── Button.test.ts       <-- Test file beside component
@@ -33,11 +33,11 @@ Refer to Github's style of markdown as a basis to how you write[^2].
 > ├── index.md                    <-- Entry point (e.g. for VitePress or mdsvex)
 > ├── components.md
 > └── api.md
->'''
+>```
 
 ## Table of Contents
 
-![Testing](./testing.md)
+ 1. [Testing](./testing.md)
 
 ---
 [^1]: [Storybook](https://storybook.js.org/docs/get-started/frameworks/sveltekit)
