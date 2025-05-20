@@ -3,6 +3,8 @@ import '@testing-library/jest-dom/vitest';
 import { render, screen } from '@testing-library/svelte';
 import Page from './+page.svelte';
 
+// Hypothetical, if QA needs to test a page, you can use this as an example.
+
 describe('/+page.svelte', () => {
 	test('should render h1', () => {
 		render(Page);
