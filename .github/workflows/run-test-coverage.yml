@@ -23,7 +23,7 @@ jobs:
       - run: npm install
       - run: npx playwright install
       - run: npx playwright install-deps
-      - run: npm test -- --coverage
+      - run: npm test
       - name: Vitest Coverage Report
         uses: davelosert/vitest-coverage-report-action@v2.8.3
 
