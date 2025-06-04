@@ -12,6 +12,10 @@ const dirname =
 export default defineConfig({
 	plugins: [tailwindcss(), sveltekit()],
 	test: {
+		coverage: {
+      reporter: ['text', 'lcov', 'json-summary', 'json'],
+      reportsDirectory: './coverage',
+    },
 		workspace: [
 			{
 				extends: './vite.config.ts',
