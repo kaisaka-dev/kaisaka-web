@@ -37,7 +37,7 @@ Refer to Github's style of markdown as a basis to how you write[^2].
 
 ## Repository Rules
 
- 1. `main` is reserved for any complete SPRINT code, refrain from pushing unless absolutely necessary or if `dev` is complete finishing.
+ 1. `main` is reserved for any complete SPRINT code, refrain from pushing unless absolutely necessary, changing docs, or if `dev` is complete finishing.
  2. `dev` is reserved for any ongoing SPRINT code, create a new branch to develop a new feature. 
  3. `production` is reserved for any released hosted code on vercel or any platform we're hosting. Ideally, it should rebase come directly from `main`.
 
