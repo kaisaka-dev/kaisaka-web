@@ -14,6 +14,7 @@ export default defineConfig({
 	test: {
 		globals: true,
     environment: 'node',
+		exclude: ['**/*.stories.*', 'node_modules', 'dist', '.storybook'],
 		coverage: {
 			provider: 'v8',
       reporter: ['text', 'lcov', 'json-summary', 'json'],
