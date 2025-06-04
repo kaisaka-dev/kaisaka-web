@@ -5,7 +5,8 @@ on:
     branches:
       - main
       - dev
-      - prod
+      - production
+    
       
 jobs:
 
