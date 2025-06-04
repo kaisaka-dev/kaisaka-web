@@ -12,7 +12,9 @@
 		"format": "prettier --write .",
 		"lint": "prettier --check . && eslint .",
 		"test:unit": "vitest",
-		"test": "npm run test:unit -- --run",
+		"test": "npx vitest run --coverage",
+		"lint": "eslint . && prettier --check .",
+		"format": "prettier --write .",
 		"storybook": "storybook dev -p 6006",
 		"build-storybook": "storybook build"
 	},

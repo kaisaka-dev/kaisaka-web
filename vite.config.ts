@@ -12,6 +12,14 @@ const dirname =
 export default defineConfig({
 	plugins: [tailwindcss(), sveltekit()],
 	test: {
+		globals: true,
+    environment: 'node',
+		exclude: ['**/*.stories.*', 'node_modules', 'dist', '.storybook'],
+		coverage: {
+			provider: 'v8',
+      reporter: ['text', 'lcov', 'json-summary', 'json'],
+      reportsDirectory: './coverage',
+    },
 		workspace: [
 			{
 				extends: './vite.config.ts',
