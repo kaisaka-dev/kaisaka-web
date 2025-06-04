@@ -12,7 +12,10 @@ const dirname =
 export default defineConfig({
 	plugins: [tailwindcss(), sveltekit()],
 	test: {
+		globals: true,
+    environment: 'node',
 		coverage: {
+			provider: 'v8',
       reporter: ['text', 'lcov', 'json-summary', 'json'],
       reportsDirectory: './coverage',
     },
