@@ -1,0 +1,43 @@
+name: ESLint Warning on PR Code
+
+on:
+  pull_request:
+    branches:
+      - main
+      - dev
+      - prod
+      
+jobs:
+
+  eslint:
+    name: Run ESLint
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Install Bun
+        uses: oven-sh/setup-bun@v1
+        with:
+          bun-version: latest
+
+      - name: Install dependencies
+        run: bun install
+      
+      - name: Install unix formatter for ESLint
+        run: bun add -D eslint-formatter-unix
+
+      - name: Install reviewdog manually
+        run: |
+          curl -sfL https://raw.githubusercontent.com/reviewdog/reviewdog/master/install.sh | sh -s -- -b ./bin
+        shell: bash
+
+      - name: Run ESLint and report with reviewdog
+        run: |
+          npx eslint . --ext .ts,.js,.tsx,.jsx -f unix \
+            | ./bin/reviewdog -f=eslint -reporter=github-pr-review -level=warning
+        env:
+          REVIEWDOG_GITHUB_API_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+  
