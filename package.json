@@ -13,8 +13,6 @@
 		"lint": "prettier --check . && eslint .",
 		"test:unit": "vitest",
 		"test": "npx vitest run --coverage",
-		"lint": "eslint . && prettier --check .",
-		"format": "prettier --write .",
 		"storybook": "storybook dev -p 6006",
 		"build-storybook": "storybook build"
 	},
@@ -83,5 +81,9 @@
 	},
 	"keywords": [
 		"svelte"
-	]
+	],
+	"dependencies": {
+		"@supabase/supabase-js": "^2.50.0",
+		"supabase": "^2.24.3"
+	}
 }
