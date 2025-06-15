@@ -35,9 +35,6 @@ export type filterFunction<
  */
 export default function TableManager<T extends tableNames>(table: string){
   type Row = tableRow<T>;
-
-  type Query = tableQuery<T>;
-
   class TableManager<T> {
     private table = table;
   
@@ -46,11 +43,11 @@ export default function TableManager<T extends tableNames>(table: string){
       return supabase.from(this.table).select('*');
     }
 
-    protected insertQuery(object: Partial<Query> | Partial<Query>[]){
+    protected insertQuery(object: Partial<Row> | Partial<Row>[]){
       return supabase.from(this.table).insert(object);
     }
 
-    protected updateQuery(object: Partial<Query>){
+    protected updateQuery(object: Partial<Row>){
       return supabase.from(this.table).update(object);
     }
 
@@ -73,25 +70,23 @@ export default function TableManager<T extends tableNames>(table: string){
       return data as Row[];
     }
 
- 
-
-    protected async insertOne(object: Partial<T>): Promise<string | null> {
-      const { data, error } = await this.insertQuery(object)
+    protected async insertOne(object: Partial<Row>): Promise<Row | null> {
+      const { data, error } = await this.insertQuery(object).select().single()
 
       if (error || !data) return null;
 
-      return data;
+      return data as Row;
     }
 
-    protected async insertMany(objects: Partial<T>[]): Promise<string | null> {
-      const { error, data } = await this.insertQuery(objects);
+    protected async insertMany(objects: Partial<Row>[]): Promise<Row[] | null> {
+      const { error, data } = await this.insertQuery(objects).select();
 
       if (error || !data) return null;
 
-      return data;
+      return data as Row[];
     }
 
-    protected async updateOne(match: Partial<T>, updates: Partial<T>) {
+    protected async updateOne(match: Partial<Row>, updates: Partial<Row>) {
       const { error } = await this.updateQuery(updates).match(match).limit(1);
 
       return !error
