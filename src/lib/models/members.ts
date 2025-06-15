@@ -7,10 +7,10 @@ export class MembersModel extends TableManager<Member>('caregivers') {
   public static instance: MembersModel = new MembersModel();
 
   public async get_caregiver(id: number): Promise<Member | null>{
-    return this.find_one({id: id})
+    return this.findOne({id: id})
   }
 
   public async get_caregivers(): Promise<Member[]>{
-    return this.find_many()
+    return this.findMany()
   }
 }

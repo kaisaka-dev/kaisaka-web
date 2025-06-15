@@ -1,71 +1,103 @@
-
-
-// https://svatasimara.medium.com/domain-driven-design-part-5-repository-d5ad32b2e06f
-
 import { PostgrestFilterBuilder } from "@supabase/postgrest-js";
 import { supabase } from "./client.js";
+import type { Database } from "./supabase-types.js";
 
-export type filterBuilder = PostgrestFilterBuilder<any, any, any> 
+// All the names in the database
+export type tableNames = keyof Database['public']['Tables'] 
 
-export type filterFunction = (query: filterBuilder) => filterBuilder
+
+// A generic row from Table T being object-like
+export type tableRow<T extends tableNames> 
+= Database['public']['Tables'][T]['Row'] & Record<string, unknown>
+
+export type tableInsert<T extends tableNames>
+= Database['public']['Tables'][T]['Insert']
+
+export type tableUpdate<T extends tableNames>
+= Database['public']['Tables'][T]['Update']
+
+// Database query type for Table T
+export type tableQuery<T extends tableNames> = PostgrestFilterBuilder<
+  Database['public'], 
+  tableRow<T>, 
+  tableRow<T>
+> 
+
+// A function that modifies said tableQuery
+export type filterFunction<
+  T extends tableNames
+> = (query: tableQuery<T>) => tableQuery<T>
 
 /**
  * 
  * @param table table name to be managed
  * @returns A Table Manager class
  */
-export default function TableManager<T>(table: string){
+export default function TableManager<T extends tableNames>(table: string){
+  type Row = tableRow<T>;
+
+  type Query = tableQuery<T>;
+
   class TableManager<T> {
     private table = table;
+  
     
-    protected get_query(): filterBuilder {
+    protected getQuery() {
       return supabase.from(this.table).select('*');
     }
 
-    protected insert_query(object: any): filterBuilder {
+    protected insertQuery(object: Partial<Query> | Partial<Query>[]){
       return supabase.from(this.table).insert(object);
     }
 
-    protected update_query(object: any): filterBuilder {
+    protected updateQuery(object: Partial<Query>){
       return supabase.from(this.table).update(object);
     }
 
-    protected async find_many(match: Partial<T> = {}): Promise<T[]|null>{
-      const {data, error} = await this.get_query()
-        .match(match);
-
-      if (error) return null;
-
-      return data as T[];
-    }
-
-    protected async find_one(match: Partial<T>): Promise<T | null> {
-      const {data, error} = await this.get_query()
+    protected async findOne(match: Partial<Row>): Promise<Row | null> {
+      const {data, error} = await this.getQuery()
         .match(match)
         .single();
 
       if (error) return null;
 
-      return data as T;
+      return data as Row;
     }
 
-    protected build(filterFn: filterFunction): filterBuilder {
-      return filterFn ? filterFn(this.get_query()): this.get_query();
-    }
-
-    protected async find_one_with_filter(filter: filterFunction): Promise<T|null>{
-      let query = this.get_query();
-      
-      query = filter(query);
-
-      const { data, error } = await query.single();
+    protected async findMany(match: Partial<Row> = {}): Promise<Row[]|null>{
+      const {data, error} = await this.getQuery()
+        .match(match);
 
       if (error) return null;
 
-      return data as T;
+      return data as Row[];
     }
 
-    protected async delete_one(match: Partial<T>): Promise<T | null> {
+ 
+
+    protected async insertOne(object: Partial<T>): Promise<string | null> {
+      const { data, error } = await this.insertQuery(object)
+
+      if (error || !data) return null;
+
+      return data;
+    }
+
+    protected async insertMany(objects: Partial<T>[]): Promise<string | null> {
+      const { error, data } = await this.insertQuery(objects);
+
+      if (error || !data) return null;
+
+      return data;
+    }
+
+    protected async updateOne(match: Partial<T>, updates: Partial<T>) {
+      const { error } = await this.updateQuery(updates).match(match).limit(1);
+
+      return !error
+    }
+
+    protected async deleteOne(match: Partial<Row>): Promise<T | null> {
       const { data, error } = await supabase
         .from(this.table)
         .delete()
@@ -74,27 +106,6 @@ export default function TableManager<T>(table: string){
         .single();
       if (error) return null;
       return data as T;
-    }
-
-    // Insert many
-    protected async insert_many(objects: Partial<T>[]): Promise<boolean> {
-      const { error } = await this.insert_query(objects);
-
-      return !error;
-    }
-
-    // Insert one
-    protected async insert_one(object: Partial<T>): Promise<string | null> {
-      const { data, error } = await this.insert_query(object)
-
-      if (error || !data) return null;
-      return (data as any).id;
-    }
-
-    protected async update_one(match: Partial<T>, updates: Partial<T>) {
-      const { error } = await this.update_query(updates).match(match).limit(1);
-
-      return !error
     }
 
     protected async count(){

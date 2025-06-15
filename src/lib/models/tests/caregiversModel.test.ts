@@ -1,6 +1,6 @@
-import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { CaregiversModel } from '$lib/models/caregiversModel.ts';
 import { supabase } from '$lib/types/client.ts';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 vi.mock('$lib/types/client', () => {
   return {
@@ -36,7 +36,7 @@ describe('CaregiversModel', () => {
       select: () => ({ match: mockMatch })
     });
 
-    const result = await CaregiversModel.instance.get_caregiver(1);
+    const result = await CaregiversModel.instance.getAll(1);
 
     expect(supabase.from).toHaveBeenCalledWith('caregivers');
     expect(mockMatch).toHaveBeenCalledWith({ id: 1 });
@@ -59,7 +59,7 @@ describe('CaregiversModel', () => {
       select: () => ({ match: mockMatch })
     });
 
-    const result = await CaregiversModel.instance.get_caregiver(999);
+    const result = await CaregiversModel.instance.getAll(999);
     expect(result).toBeNull();
   });
 
@@ -69,7 +69,7 @@ describe('CaregiversModel', () => {
       select: () => ({ match: mockMatch })
     });
 
-    await expect(CaregiversModel.instance.get_caregiver('invalid-id' as any)).rejects.toThrow();
+    await expect(CaregiversModel.instance.getAll('invalid-id' as any)).rejects.toThrow();
   });
 
   // get_all_caregivers 
