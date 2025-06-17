@@ -1,12 +1,12 @@
 <div
    class="hero min-h-screen"
    style = "background-image: url(/img/bgimage.png);">
-  <div class = "mx-55 absolute inset-x-0 bottom-10 grid grid-cols-1 grid-rows-2 gap-5">
-        <button class = "btn text-red font-[JSans] text-[20px] bg-[#C5C5C5]  p-4 px-50 rounded-md shadow-xl">
+  <div class = "!mx-55 absolute inset-x-0 bottom-10 grid grid-cols-1 grid-rows-2 gap-5">
+        <button class = "btn !text-black font-[JSans] !text-[var(--medium-text)] !bg-[#C5C5C5]  !p-8 !px-50 !rounded-md">
             Register a Child
         </button>
 
-        <button class = "btn font-[JSans] text-[20px] bg-[#C5C5C5]  p-4 px-50 rounded-xl shadow-xl">
+      <button class = "btn !text-black font-[JSans] !text-[var(--medium-text)] !bg-[#C5C5C5]  !p-8 !px-50 !rounded-md">
            Staff Login
         </button>
    </div>
