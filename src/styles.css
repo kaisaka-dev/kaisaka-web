@@ -1,3 +1,42 @@
+@import 'tailwindcss';
+@plugin '@tailwindcss/forms';
+@plugin '@tailwindcss/typography';
+@plugin "daisyui";
+
+@font-face {
+    font-family: JSans;
+    src: url(PlusJakartaSans-VariableFont_wght.ttf);
+    font-weight: bold;
+}
+
+   #navbar {
+         background-color : #513737;
+         display:flex;
+         padding: 5px;
+         gap: 30px;
+   }
+
+   #navbar > p {
+    color: #F7B0CD;
+    font-size: 20px;
+    padding-top: 25px;
+   }
+
+   #navbar > #logo {
+    height: 70px;
+    padding-top:10px;
+   }
+
+   #navbar > #profile {
+    height: 70px;
+    padding-top:20px;
+    padding-left:50px;
+   }
+
+   #navbar > #reports {
+    padding-right: 60%;
+   }
+
 :root {
     --pink: rgb(247, 176, 205);
     --background: rgb(59, 46, 40);
@@ -10,10 +49,14 @@
 * {
     margin: 0;
     padding: 0;
-    font-family: 'Montserrat', sans-serif;
+    font-family: 'JSans';
     background-color: var(--background);
     color: lightgray;
     font-size: var(--medium-text);
+}
+
+div {
+    background-color: transparent;
 }
 
 button {
