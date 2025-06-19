@@ -23,6 +23,14 @@ export class DisabilityStatusModel extends TableManager<"disability_status">('di
     return this.findOne({ id: id })
   }
 
+  async findByChildId(child_id: string){
+    return this.findMany({ child_id: child_id })
+  }
+
+  async findByDisabilityId(disability_id: number){
+    return this.findMany({ disability_id: disability_id })
+  }
+
   async updateDisabilityNature(id: number, nature: string){
     const now = new Date().toISOString()
     const reference: Partial<DisabilityStatusRow> = { id: id }
