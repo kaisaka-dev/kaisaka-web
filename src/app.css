@@ -123,6 +123,9 @@ input,select,textarea {
     background-color: lightgray;
     color: var(--background);
 }
+
+
+
 .input-container {
     margin:  0 0 0.3rem 2rem;
     padding: 0;
