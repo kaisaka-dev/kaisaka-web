@@ -36,7 +36,11 @@
         top: 50%;
         left: 50%;
         transform: translate(-50%, -50%);
+		background-color: var(--background);
+		padding:30px;
 	}
+
+
 	dialog::backdrop {
 		background: rgba(0, 0, 0, 0.3);
 	}
