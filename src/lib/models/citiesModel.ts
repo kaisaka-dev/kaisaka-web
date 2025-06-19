@@ -3,6 +3,9 @@ import TableManager, { type tableRow } from '../types/manager.js';
 
 type CitiesRow = tableRow<"cities">
 
+/**
+ * 
+ */
 export class CitiesModel extends TableManager<"cities">('cities') {
   public static instance: CitiesModel = new CitiesModel();
 
@@ -16,6 +19,7 @@ export class CitiesModel extends TableManager<"cities">('cities') {
   async getAll(){
     return this.findMany()
   }
+
   async findById(id: number){
     return this.findOne({ id:id })
   }
