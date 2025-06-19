@@ -6,7 +6,8 @@ type DisabilitiesRow = tableRow<"disabilities">
 export class DisabilitiesModel extends TableManager<"disabilities">('disabilities') {
   public static instance: DisabilitiesModel = new DisabilitiesModel();
 
-  async insertDisability(name: string){
+
+  async insertDisability(name: string | null){
     const disability : Partial<DisabilitiesRow> = { name: name }
     const data = await this.insertOne(disability)
     

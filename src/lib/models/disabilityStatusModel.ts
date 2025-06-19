@@ -5,7 +5,7 @@ type DisabilityStatusRow = tableRow<"disability_status">
 export class DisabilityStatusModel extends TableManager<"disability_status">('disability_status') {
   public static instance: DisabilityStatusModel = new DisabilityStatusModel();
   
-  async insertDisabilityStatus(child_id: string, disability_id: number, disability_nature: string){
+  async insertDisabilityStatus(child_id: string, disability_id: number | null, disability_nature: string | null){
     const now = new Date().toISOString() //to set "date created" to today's date
     const disability_status : Partial<DisabilityStatusRow> = { 
       child_id: child_id, 
