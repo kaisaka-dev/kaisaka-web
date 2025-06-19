@@ -28,8 +28,9 @@ export class EmploymentStatusModel extends TableManager<"employment_status">('em
     
     const reference: Partial<EmploymentStatusRow> = { id: id }
     const updates: Partial<EmploymentStatusRow> = { able_to_work : able_to_work, employment_type: finalEmploymentType}
-
     const data = await this.updateOne(reference, updates)
+
+    return data
   }
 
   async deleteById(id: number){
