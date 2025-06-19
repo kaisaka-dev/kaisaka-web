@@ -42,15 +42,20 @@
     --background: rgb(59, 46, 40);
     --green: rgb(164,197,54);
 
+    --small-text: 1rem;
     --medium-text: 1.25rem;
     --large-text: 1.75rem;
 }
 
-* {
+body {
     margin: 0;
     padding: 0;
-    font-family: 'JSans';
     background-color: var(--background);
+}
+
+* {
+    font-family: 'JSans';
+    background-color: transparent;
     color: lightgray;
     font-size: var(--medium-text);
 }
@@ -100,11 +105,45 @@ section h1 {
     font-size: var(--large-text);
     font-weight: bold;
     color: var(--background);
+    margin-bottom: 25px;
 }
 
 section h2 {
-    padding: 12px 35px;
+    padding: 0.75rem 2rem;
     color: var(--green);
     font-size: var(--large-text);
     font-weight: bold;
+}
+
+input,select,textarea {
+    font-size: 1rem;
+    font-weight: lighter;
+    padding: 0 0.5rem;
+    height: 1.75rem;
+    background-color: lightgray;
+    color: var(--background);
+}
+.input-container {
+    margin:  0 0 0.3rem 2rem;
+    padding: 0;
+    line-height: 1rem;
+    display: flex;
+    flex-wrap: wrap;
+}
+
+::-webkit-calendar-picker-indicator {
+    filter: invert(1);
+}
+
+
+label{
+    display: inline-block;
+    margin: 0.5rem 0;
+    width: 15rem;
+}
+
+.input-wrapper {
+    display: flex;
+    flex-direction: column;
+    width: 400px;
 }
