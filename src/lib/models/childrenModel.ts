@@ -7,10 +7,21 @@ export class ChildrenModel extends TableManager<"children">('children') {
   public static instance: ChildrenModel = new ChildrenModel();
 
   async insertChild (has_barangay_cert: boolean, has_birth_cert: boolean, has_medical_cert: boolean, 
-                     has_philhealth: boolean, is_active: boolean, member_id: string, philhealth_id: string | null, 
+                     is_active: boolean, member_id: string, philhealth_id: string | null, 
                      pwd_id: string | null, remarks: string | null ){
-      const child: Partial<ChildrenRow> = { has_barangay_cert, has_birth_cert, has_medical_cert, 
-                                            has_philhealth, is_active, member_id, philhealth_id, pwd_id, remarks}
+      
+      const has_philhealth = philhealth_id ? true : false
+
+      const child: Partial<ChildrenRow> = {
+        has_barangay_cert: has_barangay_cert, 
+        has_birth_cert: has_birth_cert, 
+        has_medical_cert: has_medical_cert, 
+        has_philhealth: has_philhealth,
+        is_active: is_active, 
+        member_id: member_id, 
+        philhealth_id: philhealth_id, 
+        pwd_id: pwd_id, 
+        remarks: remarks}
       const data = await this.insertOne(child);
       return data
   }
@@ -19,7 +30,7 @@ export class ChildrenModel extends TableManager<"children">('children') {
     return this.findOne({ id: id })
   }
 
-  async getAllChildren(){
+  async getAll(){
     return this.findMany()
   }
   
