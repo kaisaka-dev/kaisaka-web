@@ -67,7 +67,7 @@ export class educationStatusModel extends TableManager<"education_status">('educ
     updates: Partial<Pick<EducationStatusRow, 
       'education_type' | 'year_start' | 'year_end' | 'grade_level'
     >>
-  ) {
+  ): Promise<Boolean> {
     const references: Partial<EducationStatusRow> = { id };
     const fullUpdates: Partial<EducationStatusRow> = {
       ...updates,
@@ -82,7 +82,7 @@ export class educationStatusModel extends TableManager<"education_status">('educ
    * @param grade_level New grade level
    * @returns boolean success indicator
    */
-  async updateGradeLevel(id: number, grade_level: number) {
+  async updateGradeLevel(id: number, grade_level: number): Promise<Boolean> {
     const references: Partial<EducationStatusRow> = { id };
     const updates: Partial<EducationStatusRow> = { 
       grade_level,
@@ -97,7 +97,7 @@ export class educationStatusModel extends TableManager<"education_status">('educ
    * @param child_id New child UUID
    * @returns boolean success indicator
    */
-  async updateChildReference(id: number, child_id: string) {
+  async updateChildReference(id: number, child_id: string): Promise<Boolean> {
     const references: Partial<EducationStatusRow> = { id };
     const updates: Partial<EducationStatusRow> = { 
       child_id,
