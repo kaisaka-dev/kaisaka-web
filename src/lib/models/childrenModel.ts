@@ -94,6 +94,6 @@ export class ChildrenModel extends TableManager<"children">('children') {
   }
 
   async deleteById(id: string){
-    return this.deleteOne({ id: id })
+    return this.deleteOne({ id: id }) !== null;
   }
 }

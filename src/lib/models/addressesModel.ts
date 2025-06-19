@@ -53,6 +53,6 @@ export class AddressesModel extends TableManager<"addresses">('addresses') {
   }
 
   async deleteById(id: string){
-    return this.deleteOne({ id: id })
+    return this.deleteOne({ id: id }) !== null;
   }
 }

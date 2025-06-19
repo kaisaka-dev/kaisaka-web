@@ -41,6 +41,10 @@ export class DisabilityStatusModel extends TableManager<"disability_status">('di
   }
 
   async deleteById(id: number){
-    return this.deleteOne({ id: id })
+    return this.deleteOne({ id: id }) !== null;
+  }
+
+  async deleteByChildId(child_id: string){
+    return this.deleteOne({ child_id: child_id }) !== null;
   }
 }
