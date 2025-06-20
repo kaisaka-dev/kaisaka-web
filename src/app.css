@@ -1,3 +1,9 @@
+<<<<<<< Updated upstream
+@import 'tailwindcss';
+@plugin '@tailwindcss/forms';
+@plugin '@tailwindcss/typography';
+@plugin "daisyui";
+=======
 @import 'tailwindcss';
 @plugin '@tailwindcss/forms';
 @plugin '@tailwindcss/typography';
@@ -8,35 +14,6 @@
     src: url(PlusJakartaSans-VariableFont_wght.ttf);
     font-weight: bold;
 }
-
-   #navbar {
-         background-color : #513737;
-         display:flex;
-         padding: 5px;
-         gap: 30px;
-   }
-
-   #navbar > p {
-    color: #F7B0CD;
-    font-size: 20px;
-    padding-top: 25px;
-   }
-
-   #navbar > #logo {
-    height: 70px;
-    padding-top:10px;
-   }
-
-   #navbar > #profile {
-    height: 70px;
-    padding-top:20px;
-    padding-left:50px;
-   }
-
-   #navbar > #reports {
-    padding-right: 60%;
-   }
-
 :root {
     --pink: rgb(247, 176, 205);
     --background: rgb(59, 46, 40);
@@ -54,7 +31,6 @@ body {
 }
 
 * {
-    font-family: 'JSans';
     background-color: transparent;
     color: lightgray;
     font-size: var(--medium-text);
@@ -117,15 +93,12 @@ section h2 {
 
 input,select,textarea {
     font-size: 1rem;
-    font-weight: lighter;
+    font-weight: normal;
     padding: 0 0.5rem;
     height: 1.75rem;
     background-color: lightgray;
     color: var(--background);
 }
-
-
-
 .input-container {
     margin:  0 0 0.3rem 2rem;
     padding: 0;
@@ -150,3 +123,4 @@ label{
     flex-direction: column;
     width: 400px;
 }
+>>>>>>> Stashed changes
