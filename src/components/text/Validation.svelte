@@ -1,11 +1,12 @@
 <script>
 	export let msg = "Error: field is required";
+	export let style = "";
 	/**
 	 * InputText, Inputdate, InputTextarea all have this defined inside them! call using `msg` label
 	 */
 </script>
 
-<span class="error-message" >{msg}</span>
+<span class="error-message" style="{style};">{msg}</span>
 
 <style>
     .error-message {
