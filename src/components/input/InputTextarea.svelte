@@ -1,5 +1,5 @@
 <script>
-	import Validation from '$components/text/Validation.svelte';
+	import Validation from '../text/Validation.svelte';
 
 	export let label = "Textarea";
 	export let id = "text";
