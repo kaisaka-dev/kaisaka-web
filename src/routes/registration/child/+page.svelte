@@ -1,11 +1,12 @@
 <script lang="ts">
-    import Header from '../../Header.svelte'
-    import InputDate from '$components/input/InputDate.svelte'
-    import InputText from '$components/input/InputText.svelte';
-    import Select from '$components/input/Select.svelte';
-    import Textarea from '$components/input/InputTextarea.svelte';
-    import Checkbox from '$components/input/Checkbox.svelte';
-    import Validation from '$components/text/Validation.svelte';
+    import InputDate from '../../../components/input/InputDate.svelte'
+    import InputText from '../../../components/input/InputText.svelte';
+    import Select from '../../../components/input/Select.svelte';
+    import Textarea from '../../../components/input/InputTextarea.svelte';
+    import Checkbox from '../../../components/input/Checkbox.svelte';
+    import Validation from '../../../components/text/Validation.svelte';
+    import Header from '../../../components/Header.svelte';
+
 
     let firstName = "";
     let lastName = "";
