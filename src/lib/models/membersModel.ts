@@ -53,7 +53,7 @@ export class membersModel extends TableManager<"members">('members') {
     updates: Partial<Pick<MembersRow, 
       'first_name' | 'middle_name' | 'last_name' | 'birthday' | 'sex'
     >>
-  ): Promise<Boolean> {
+  ): Promise<boolean> {
     const references: Partial<MembersRow> = { id };
     const data = await this.updateOne(references, updates);
     return data;
@@ -65,7 +65,7 @@ export class membersModel extends TableManager<"members">('members') {
    * @param address_id new address ID (UUID)
    * @returns updated member record or null
    */
-  async updateAddress(id: string, address_id: string): Promise<Boolean> {
+  async updateAddress(id: string, address_id: string): Promise<boolean> {
     const references: Partial<MembersRow> = { id };
     const updates: Partial<MembersRow> = { address_id };
     const data = await this.updateOne(references, updates);
@@ -78,7 +78,7 @@ export class membersModel extends TableManager<"members">('members') {
    * @param admission_date new admission date
    * @returns updated member record or null
    */
-  async updateAdmissionDate(id: string, admission_date: string): Promise<Boolean> {
+  async updateAdmissionDate(id: string, admission_date: string): Promise<boolean> {
     const references: Partial<MembersRow> = { id };
     const updates: Partial<MembersRow> = { admission_date };
     const data = await this.updateOne(references, updates);

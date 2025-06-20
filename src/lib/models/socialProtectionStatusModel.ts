@@ -40,7 +40,7 @@ export class socialProtectionStatusModel extends TableManager<"social_protection
    * @param year_accessed New year accessed
    * @returns boolean success indicator
    */
-  async updateYearAccessed(id: number, year_accessed: number): Promise<Boolean> {
+  async updateYearAccessed(id: number, year_accessed: number): Promise<boolean> {
     const references: Partial<SocialProtectionStatusRow> = { id };
     const updates: Partial<SocialProtectionStatusRow> = { 
       year_accessed,
@@ -55,7 +55,7 @@ export class socialProtectionStatusModel extends TableManager<"social_protection
    * @param child_id New child UUID
    * @returns boolean success indicator
    */
-  async updateChildReference(id: number, child_id: string): Promise<Boolean> {
+  async updateChildReference(id: number, child_id: string): Promise<boolean> {
     const references: Partial<SocialProtectionStatusRow> = { id };
     const updates: Partial<SocialProtectionStatusRow> = { 
       child_id,
@@ -73,7 +73,7 @@ export class socialProtectionStatusModel extends TableManager<"social_protection
   async updateStatus(
     id: number, 
     updates: Partial<Pick<SocialProtectionStatusRow, 'year_accessed' | 'child_id'>>
-  ): Promise<Boolean> {
+  ): Promise<boolean> {
     const references: Partial<SocialProtectionStatusRow> = { id };
     const fullUpdates: Partial<SocialProtectionStatusRow> = {
       ...updates,

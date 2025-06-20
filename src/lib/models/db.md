@@ -1,42 +1,53 @@
 # Database
 
-This is where our database managers would be.
+This is where our database managers would be. There are three tasks that we can easily separate else we make it very redundant for us.
 
-3 tasks that we can easily separate else we make it very redundant for us
+This of a better dev experience, so we use this pattern.
 
-- better dev experience, so we use this pattern
+**Database repository**: Database Logic.
 
-## Database repository
+Interacts with the supabase backend, and handles all of the db-specific implementation.
 
-- will interact with the supabase backend, all logic is handled by this repository (this file)
+**Concrete repositories**: Business Logic.
 
-## Concrete repositories
+Actual implementation of this (DB repository) abstract notion of a repository. CRUD operations can be customized here (for example, Deletion can be omitted)
 
-- actual implementation of this (DB repository) abstract notion of a repository
+**Controller interface**: API Logic.
+Any communications with the client will be handled here
 
-## API logic / controller interface
-
-- any communications with the client will be handled here
-- ex: client needs to know certain barangays in the neighborhood
-- ex: if they have invalid data, it'll send it in a message / 400 bad request type thing
+> Client needs to know certain barangays in the neighborhood
+> If they have invalid data, it'll send it in a message / 400 bad request type thing
 
 ## Example: Barangay pipeline
 
-- deals with everything barangay information
-- database logic / table manager: anything with supabase, it'll handle it
-  - delicate, refrain from touching unless necessary
-- business logic / barangay model: a class that can communicate with the table manager
-  - barangay model is handled by the barangay api, it will handle all the requests related to the barangay object logic
-  - if you want to find a certain name / city / etc.
-- controller logic / barangay api: the code will just validate anything from the client
+This deals with every information under *barangay*.
 
-note to developers: roan already made it work, so if you want you can just replicate the existing barangay stuff (the thought pattern, so dont need to think too much)
+- *Database logic / table manager*: The file that connects to supabase and handles it.
+  - Delicate, refrain from touching unless necessary
+- *Business logic / barangay model*: A class that can communicate with the table manager
+  - Barangay model is handled by the barangay api, it will handle all the requests related to the barangay object logic.
+  - If you want to find a certain name / city / etc.
+- *Controller logic / barangay API*: Code that validate any requests from the client.
 
-- business logic: it creates crud operations (every single model should handle every single crud operation right here)
-- if you're developing: prioritize the model first, then do API after
+## Context Notes
 
-note to QA: based on the model, you can create unit tests / future unit tests ahead of time
+This for the T3AY2024-2025 Team Members.
 
-note to designers: for the api, if you need to retrieve any sort of information, ex: login page, if you want to search children, go to children api and search for whatever necessary headers / body you need to pass.
+### Developers
 
-note to @ImaginaryLogs: session api soon
+@ImaginaryLogs already made it work, so if you want you can just replicate the existing barangay code (the thought pattern, so dont need to think too much).
+
+- Business logic: it creates crud operations (every single model should handle every single crud operation right here)
+- If you're developing: prioritize the model first, then do API after
+
+### Quality Assurance
+
+Based on the model, you can create unit tests / future unit tests ahead of time.
+
+### Designers
+
+For the api, if you need to retrieve any sort of information, ex: login page, if you want to search children, go to children api and search for whatever necessary headers / body you need to pass.
+
+### P.S
+
+@ImaginaryLogs: Session API soon

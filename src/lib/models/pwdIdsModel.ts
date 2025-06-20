@@ -43,7 +43,7 @@ export class pwdIdsModel extends TableManager<"pwd_ids">('pwd_ids'){
       return data;
   }
 
-  async updateId(id: string, pwd_id: string): Promise<Boolean>{
+  async updateId(id: string, pwd_id: string): Promise<boolean>{
     const references: Partial<PwdIdsRow> = { id }
     const updates: Partial<PwdIdsRow> = { pwd_id }
     const data = await this.updateOne(references, updates)
@@ -51,7 +51,7 @@ export class pwdIdsModel extends TableManager<"pwd_ids">('pwd_ids'){
     return data;
   }
 
-  async updateExpiryDate(id: string, expiry_date: string): Promise<Boolean>{
+  async updateExpiryDate(id: string, expiry_date: string): Promise<boolean>{
     const references: Partial<PwdIdsRow> = { id }
     const updates: Partial<PwdIdsRow> = { expiry_date }
     const data = await this.updateOne(references, updates)

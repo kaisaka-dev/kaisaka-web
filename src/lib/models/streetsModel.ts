@@ -3,6 +3,13 @@ import TableManager, { type tableRow } from '../types/manager.js';
 
 type StreetsRow = tableRow<"streets">
 
+/**
+ * A model concerning about CRUD operations on Street Data. 
+ * 
+ * Made for the Streets API. 
+ * 
+ * Refer to `src/lib/models/db.md` about what is exactly is a model.
+ */
 export class StreetsModel extends TableManager<"streets">('streets') {
   public static instance: StreetsModel = new StreetsModel();
 
