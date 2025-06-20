@@ -1,5 +1,5 @@
 <script lang="ts">
-	import Validation from '$components/text/Validation.svelte';
+	import Validation from '../text/Validation.svelte';
 	export let label = "";
 	export let id = "";
 	export let options: string[] = []; // Array of dropdown options
