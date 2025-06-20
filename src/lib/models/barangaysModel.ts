@@ -4,9 +4,11 @@ import TableManager, { type tableRow } from '../types/manager.js';
 type BarangayRow = tableRow<"barangays">
 
 /**
- * A model concerning about barangay API. 
+ * A model concerning about CRUD operations on *barangay*. 
  * 
- * Refer to `src/lib/models/db.md` about what is exactly is a model.
+ * Made for the `barangays` API. 
+ * 
+ * **Reference**: Database Model `src/lib/models/db.md`
  */
 export class BarangayModel extends TableManager<"barangays">('barangays') {
   public static instance: BarangayModel = new BarangayModel();

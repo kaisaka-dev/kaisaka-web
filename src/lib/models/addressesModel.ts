@@ -1,6 +1,12 @@
 import TableManager, { type tableRow } from '../types/manager.js';
 
-
+/**
+ * A model concerning about CRUD operations on *addresses*. 
+ * 
+ * Made for the `addresses` API. 
+ * 
+ * **Reference**: Database Model `src/lib/models/db.md`
+ */
 type AddressesRow = tableRow<"addresses">
 
 export class AddressesModel extends TableManager<"addresses">('addresses') {

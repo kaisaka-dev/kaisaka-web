@@ -3,6 +3,13 @@ import TableManager, { type tableRow } from '../types/manager.js';
 
 type ChildrenRow = tableRow<"children">
 
+/**
+ * A model concerning about CRUD operations on *children information*. 
+ * 
+ * Made for the `children` API. 
+ * 
+ * **Reference**: Database Model `src/lib/models/db.md`
+ */
 export class ChildrenModel extends TableManager<"children">('children') {
   public static instance: ChildrenModel = new ChildrenModel();
 

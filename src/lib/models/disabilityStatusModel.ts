@@ -2,6 +2,13 @@ import TableManager, { type tableRow } from '../types/manager.js';
 
 type DisabilityStatusRow = tableRow<"disability_status">
 
+/**
+ * A model concerning about CRUD operations on the different disabilities statuses. 
+ * 
+ * Made for the `disability_status` API. 
+ * 
+ * **Reference**: Database Model `src/lib/models/db.md`
+ */
 export class DisabilityStatusModel extends TableManager<"disability_status">('disability_status') {
   public static instance: DisabilityStatusModel = new DisabilityStatusModel();
   

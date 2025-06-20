@@ -9,6 +9,13 @@ type EducationType =
   | "Inclusive/Gen. Ed." 
   | null;
 
+/**
+ * A model concerning about CRUD operations on the educational status of children. 
+ * 
+ * Made for the `education_status` API. 
+ * 
+ * **Reference**: Database Model `src/lib/models/db.md`
+ */
 export class educationStatusModel extends TableManager<"education_status">('education_status') {
   public static instance: educationStatusModel = new educationStatusModel();
   
@@ -67,7 +74,7 @@ export class educationStatusModel extends TableManager<"education_status">('educ
     updates: Partial<Pick<EducationStatusRow, 
       'education_type' | 'year_start' | 'year_end' | 'grade_level'
     >>
-  ): Promise<Boolean> {
+  ): Promise<boolean> {
     const references: Partial<EducationStatusRow> = { id };
     const fullUpdates: Partial<EducationStatusRow> = {
       ...updates,
@@ -82,7 +89,7 @@ export class educationStatusModel extends TableManager<"education_status">('educ
    * @param grade_level New grade level
    * @returns boolean success indicator
    */
-  async updateGradeLevel(id: number, grade_level: number): Promise<Boolean> {
+  async updateGradeLevel(id: number, grade_level: number): Promise<boolean> {
     const references: Partial<EducationStatusRow> = { id };
     const updates: Partial<EducationStatusRow> = { 
       grade_level,
@@ -97,7 +104,7 @@ export class educationStatusModel extends TableManager<"education_status">('educ
    * @param child_id New child UUID
    * @returns boolean success indicator
    */
-  async updateChildReference(id: number, child_id: string): Promise<Boolean> {
+  async updateChildReference(id: number, child_id: string): Promise<boolean> {
     const references: Partial<EducationStatusRow> = { id };
     const updates: Partial<EducationStatusRow> = { 
       child_id,

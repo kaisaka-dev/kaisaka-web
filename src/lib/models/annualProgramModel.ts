@@ -2,6 +2,13 @@ import TableManager, { type tableRow } from '../types/manager.js';
 
 type AnnualProgramRow = tableRow<"annual_program">
 
+/**
+ * A model concerning about CRUD operations on *annual programs kaisaka has for children*. 
+ * 
+ * Made for the `annual_program` API. 
+ * 
+ * **Reference**: Database Model `src/lib/models/db.md`
+ */
 export class annualProgramModel extends TableManager<"annual_program">('annual_program') {
   public static instance: annualProgramModel = new annualProgramModel();
   
@@ -55,7 +62,7 @@ export class annualProgramModel extends TableManager<"annual_program">('annual_p
       'start_year' | 'start_month' | 'start_date' |
       'end_year' | 'end_month' | 'end_date'
     >>
-  ): Promise<Boolean> {
+  ): Promise<boolean> {
     const references: Partial<AnnualProgramRow> = { id };
     return this.updateOne(references, updates);
   }
@@ -71,7 +78,7 @@ export class annualProgramModel extends TableManager<"annual_program">('annual_p
     updates: Partial<Pick<AnnualProgramRow,
       'target_new_cwds' | 'general_reflection' | 'lessons_learned'
     >>
-  ): Promise<Boolean> {
+  ): Promise<boolean> {
     const references: Partial<AnnualProgramRow> = { id };
     return this.updateOne(references, updates);
   }
@@ -85,7 +92,7 @@ export class annualProgramModel extends TableManager<"annual_program">('annual_p
   async updateFullProgram(
     id: number,
     updates: Partial<Omit<AnnualProgramRow, 'id' | 'date_created'>>
-  ): Promise<Boolean> {
+  ): Promise<boolean> {
     const references: Partial<AnnualProgramRow> = { id };
     return this.updateOne(references, updates);
   }

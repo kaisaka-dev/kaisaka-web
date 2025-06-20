@@ -3,6 +3,13 @@ import TableManager, { type tableRow } from '../types/manager.js';
 
 type ServiceCategoriesRow = tableRow<"service_categories">
 
+/**
+ * A model concerning about CRUD operations on service categories available for intervention. 
+ * 
+ * Made for the `intervention` API. 
+ * 
+ * **Reference**: Database Model `src/lib/models/db.md`
+ */
 export class ServiceCategoriesModel extends TableManager<"service_categories">('service_categories') {
   public static instance: ServiceCategoriesModel = new ServiceCategoriesModel();
   

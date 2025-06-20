@@ -2,6 +2,13 @@ import TableManager, { type tableRow } from '../types/manager.js';
 
 type SocialProtectionStatusRow = tableRow<"social_protection_status">
 
+/**
+ * A model concerning about CRUD operations on the social protection status of children data. 
+ * 
+ * Made for the `social_protection_status` API. 
+ * 
+ * **Reference**: Database Model `src/lib/models/db.md`
+ */
 export class socialProtectionStatusModel extends TableManager<"social_protection_status">('social_protection_status') {
   public static instance: socialProtectionStatusModel = new socialProtectionStatusModel();
   

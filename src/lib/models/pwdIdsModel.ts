@@ -4,9 +4,11 @@ import TableManager, { type tableRow } from '../types/manager.js';
 type PwdIdsRow = tableRow<"pwd_ids">
 
 /**
- * A model concerning about pwd_ids API. 
+ * A model concerning about CRUD operations on Person with Disabilities Identification cards. 
  * 
- * Refer to `src/lib/models/db.md` about what is exactly is a model.
+ * Made for the `pwd_ids` API. 
+ * 
+ * **Reference**: Database Model `src/lib/models/db.md`
  */
 export class pwdIdsModel extends TableManager<"pwd_ids">('pwd_ids'){
   public static instance: pwdIdsModel = new pwdIdsModel();

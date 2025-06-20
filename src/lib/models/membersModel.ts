@@ -2,6 +2,13 @@ import TableManager, { type tableRow } from '../types/manager.js';
 
 type MembersRow = tableRow<"members">
 
+/**
+ * A model concerning about CRUD operations on members within kaisaka. 
+ * 
+ * Made for the `members` API. 
+ * 
+ * **Reference**: Database Model `src/lib/models/db.md`
+ */
 export class membersModel extends TableManager<"members">('members') {
   public static instance: membersModel = new membersModel();
   

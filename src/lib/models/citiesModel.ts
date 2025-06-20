@@ -4,7 +4,11 @@ import TableManager, { type tableRow } from '../types/manager.js';
 type CitiesRow = tableRow<"cities">
 
 /**
+ * A model concerning about CRUD operations on *city information*. 
  * 
+ * Made for the `cities` API. 
+ * 
+ * **Reference**: Database Model `src/lib/models/db.md`
  */
 export class CitiesModel extends TableManager<"cities">('cities') {
   public static instance: CitiesModel = new CitiesModel();

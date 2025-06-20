@@ -2,6 +2,13 @@ import TableManager, { type tableRow } from '../types/manager.js';
 
 type RelationshipCCRow = tableRow<"relationship_cc">
 
+/**
+ * A model concerning about CRUD operations on the relationships between children and caregivers. 
+ * 
+ * Made for the `relationship_cc` API. 
+ * 
+ * **Reference**: Database Model `src/lib/models/db.md`
+ */
 export class relationshipCCModel extends TableManager<"relationship_cc">('relationship_cc') {
   public static instance: relationshipCCModel = new relationshipCCModel();
   

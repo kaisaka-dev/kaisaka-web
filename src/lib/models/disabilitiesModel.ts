@@ -3,6 +3,13 @@ import TableManager, { type tableRow } from '../types/manager.js';
 
 type DisabilitiesRow = tableRow<"disabilities">
 
+/**
+ * A model concerning about CRUD operations on people who are disabled. 
+ * 
+ * Made for the `disabilities` API. 
+ * 
+ * **Reference**: Database Model `src/lib/models/db.md`
+ */
 export class DisabilitiesModel extends TableManager<"disabilities">('disabilities') {
   public static instance: DisabilitiesModel = new DisabilitiesModel();
 

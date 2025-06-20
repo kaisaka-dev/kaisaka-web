@@ -4,6 +4,13 @@ import type { Database } from '../types/supabase-types.ts';
 type employment_type_enum = Database['public']['Enums']['employment_type_enum'];
 type EmploymentStatusRow = tableRow<"employment_status">
 
+/**
+ * A model concerning about CRUD operations on current employmed members. 
+ * 
+ * Made for the `employment` API. 
+ * 
+ * **Reference**: Database Model `src/lib/models/db.md`
+ */
 export class EmploymentStatusModel extends TableManager<"employment_status">('employment_status') {
   public static instance: EmploymentStatusModel = new EmploymentStatusModel();
   async insertEmploymentStatus(able_to_work: boolean, employment_type: employment_type_enum | null, member_id: string){
