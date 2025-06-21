@@ -12,8 +12,8 @@ type AddressesRow = tableRow<"addresses">
 export class AddressesModel extends TableManager<"addresses">('addresses') {
   public static instance: AddressesModel = new AddressesModel();
 
-  async insertAddress(address: string, barangay_id: number, id: string, street_id: number){
-    const new_address : Partial<AddressesRow> = { address, barangay_id, id, street_id }
+  async insertAddress(address: string, barangay_id: number, street_id: number){
+    const new_address : Partial<AddressesRow> = { address, barangay_id, street_id }
     const data  = await this.insertOne(new_address)
 
     return data
