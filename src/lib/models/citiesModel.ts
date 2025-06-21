@@ -13,25 +13,52 @@ type CitiesRow = tableRow<"cities">
 export class CitiesModel extends TableManager<"cities">('cities') {
   public static instance: CitiesModel = new CitiesModel();
 
-  async insertCity(city_name: string){
+  /**
+   * Inserts city data
+   * @param city_name name of the city
+   * @returns the created city data
+   */
+  async insertCity(city_name: string): Promise<CitiesRow | null>{
     const city : Partial<CitiesRow> = { city_name: city_name }
     const data  = await this.insertOne(city)
 
     return data
   }
 
-  async getAll(filter: Partial<CitiesRow> = {}){
+  /**
+   * Gets all cities with given (or no) filters
+   * @param filter filter to be applied to the query (optional)
+   * @returns an array of all cities corresponding to the filters or null
+   */
+  async getAll(filter?: Partial<CitiesRow>): Promise<CitiesRow[] | null>{
     return this.findMany(filter)
   }
 
-  async findById(id: number){
+  /**
+   * Finds city record with given id
+   * @param id the unique id of city in the DB
+   * @returns the city corresponding to the id
+   */
+  async findById(id: number): Promise<CitiesRow | null>{
     return this.findOne({ id:id })
   }
-  async findByName(name: string){
+
+  /**
+   * Finds city records with given name
+   * @param name the name of the city 
+   * @returns an array of all cities with the same name or null
+   */
+  async findByName(name: string): Promise<CitiesRow[] | null>{
     return this.findMany({ city_name: name })
   }
 
-  async updateName(id: number, name: string){
+  /**
+   * Updates city name
+   * @param id the unique id of city in the DB 
+   * @param name the updated name of the city to be applied
+   * @returns boolean if update is successful or not
+   */
+  async updateName(id: number, name: string): Promise<boolean>{
     const reference: Partial<CitiesRow> = { id: id }
     const updates: Partial<CitiesRow> = { city_name: name}
     const data = await this.updateOne(reference, updates)
