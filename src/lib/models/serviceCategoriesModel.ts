@@ -20,8 +20,8 @@ export class ServiceCategoriesModel extends TableManager<"service_categories">('
     return data
   }
 
-  async getAll(){
-    return this.findMany()
+  async getAll(filter: Partial<ServiceCategoriesRow> = {}){
+    return this.findMany(filter)
   }
 
   async findById(id: number){

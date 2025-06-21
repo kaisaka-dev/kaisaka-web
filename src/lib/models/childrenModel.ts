@@ -37,8 +37,8 @@ export class ChildrenModel extends TableManager<"children">('children') {
     return this.findOne({ id: id })
   }
 
-  async getAll(){
-    return this.findMany()
+  async getAll(filter: Partial<ChildrenRow> = {}) {
+    return this.findMany(filter);
   }
   
   async updateBarangayCert(id: string, has_barangay_cert: boolean){

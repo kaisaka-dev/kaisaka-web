@@ -20,8 +20,8 @@ export class CitiesModel extends TableManager<"cities">('cities') {
     return data
   }
 
-  async getAll(){
-    return this.findMany()
+  async getAll(filter: Partial<CitiesRow> = {}){
+    return this.findMany(filter)
   }
 
   async findById(id: number){

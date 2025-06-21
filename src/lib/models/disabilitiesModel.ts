@@ -29,8 +29,8 @@ export class DisabilitiesModel extends TableManager<"disabilities">('disabilitie
     return this.findMany({ name: name })
   }
 
-  async getAll(){
-    return this.findMany()
+  async getAll(filter: Partial<DisabilitiesRow> = {}){
+    return this.findMany(filter)
   }
 
   async updateName(id: number, name: string){
