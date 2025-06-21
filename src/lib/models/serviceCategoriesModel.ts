@@ -27,10 +27,10 @@ export class ServiceCategoriesModel extends TableManager<"service_categories">('
 
   /**
    * Gets all services given a filter.
-   * @param filter filter to be applied to the query
+   * @param filter filter to be applied to the query (optional)
    * @returns an array of all service categories corresponding to the filters or null
    */
-  async getAll(filter: Partial<ServiceCategoriesRow> = {}): Promise<ServiceCategoriesRow[] | null>{
+  async getAll(filter?: Partial<ServiceCategoriesRow>): Promise<ServiceCategoriesRow[] | null>{
     return this.findMany(filter)
   }
 

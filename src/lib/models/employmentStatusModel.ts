@@ -13,7 +13,15 @@ type EmploymentStatusRow = tableRow<"employment_status">
  */
 export class EmploymentStatusModel extends TableManager<"employment_status">('employment_status') {
   public static instance: EmploymentStatusModel = new EmploymentStatusModel();
-  async insertEmploymentStatus(able_to_work: boolean, employment_type: employment_type_enum | null, member_id: string){
+  
+  /**
+   * Creates an employment status record of an existing member
+   * @param able_to_work indicates whether or not member is able to work
+   * @param employment_type the employment type of the member
+   * @param member_id unique id of the member in the DB
+   * @returns created employment status record
+   */
+  async insertEmploymentStatus(able_to_work: boolean, employment_type: employment_type_enum | null, member_id: string): Promise<EmploymentStatusRow | null>{
     const finalEmploymentType = able_to_work ? employment_type : null; //prevents having employment type if able_to_work is false
     
     const employment_status : Partial<EmploymentStatusRow> = { able_to_work: able_to_work, employment_type: finalEmploymentType, member_id: member_id }
@@ -22,15 +30,32 @@ export class EmploymentStatusModel extends TableManager<"employment_status">('em
     return data
   }
 
-  async findById(id: number){
+  /**
+   * Finds employment status record given its id
+   * @param id unique id of the employment status record in the DB
+   * @returns employment status record corresponding the id
+   */
+  async findById(id: number): Promise<EmploymentStatusRow | null>{
     return this.findOne({ id: id })
   }
 
-  async findByMemberId(member_id: string){
+  /**
+   * Finds employment status record given the member's id
+   * @param member_id unique id of the member in the DB
+   * @returns employment status record of the given member
+   */
+  async findByMemberId(member_id: string): Promise<EmploymentStatusRow | null>{
     return this.findOne({ member_id: member_id })
   }
 
-  async updateEmploymentStatus(id: number, able_to_work: boolean, employment_type: employment_type_enum | null){
+  /**
+   * Updates employment status record given an id
+   * @param id unique id of the employment status record in the DB
+   * @param able_to_work the update able_to_work value to apply 
+   * @param employment_type the update employment type to apply
+   * @returns boolean if updated successfully
+   */
+  async updateEmploymentStatus(id: number, able_to_work: boolean, employment_type: employment_type_enum | null): Promise<boolean>{
     const finalEmploymentType = able_to_work ? employment_type : null; //prevents having employment type if able_to_work is false
     
     const reference: Partial<EmploymentStatusRow> = { id: id }
@@ -40,11 +65,21 @@ export class EmploymentStatusModel extends TableManager<"employment_status">('em
     return data
   }
 
-  async deleteById(id: number){
+  /**
+   * Deletes employment status record given an id
+   * @param id unique id of the employment status record in the DB
+   * @returns boolean if deleted successfully
+   */
+  async deleteById(id: number): Promise<boolean>{
     return this.deleteOne({ id: id }) !== null;
   }
 
-  async deleteByMemberId(member_id: string){
+  /**
+   * Deletes employment status record given the member's id 
+   * @param member_id unique id of the member in the DB
+   * @returns boolean if deleted successfully
+   */
+  async deleteByMemberId(member_id: string): Promise<boolean>{
     return this.deleteOne({ member_id: member_id }) !== null;
   }
 }
