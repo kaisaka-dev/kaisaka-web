@@ -15,7 +15,12 @@ type InterventionRow = tableRow<"intervention">
 export class InterventionHistoryModel extends TableManager<"intervention_history">('intervention_history') {
     public static instance: InterventionHistoryModel = new InterventionHistoryModel();
 
-    async recordIntervention(intervention: InterventionRow){
+    /**
+     * Records an intervention in the history
+     * @param intervention the intervention instance to be recorded
+     * @returns the newly recorded intervention
+     */
+    async recordIntervention(intervention: InterventionRow): Promise<InterventionHistoryRow | null>{
         const now = new Date().toISOString();
         const new_intervention : Partial<InterventionHistoryRow> = { 
             child_id: intervention.child_id,
@@ -32,19 +37,39 @@ export class InterventionHistoryModel extends TableManager<"intervention_history
         return data
     }
 
-    async findById(id: string){
+    /**
+     * Find intervention history data given an id number
+     * @param id the unique id of the intervention history record in the DB
+     * @returns the intervention history record corresponding the id
+     */
+    async findById(id: string): Promise<InterventionHistoryRow | null>{
         return this.findOne({ id: id });
     }
 
-    async findByChild(child_id: string){
+    /**
+     * Finds intervention history records of a specific child
+     * @param child_id the unique id of the child
+     * @returns array of intervention history records with same child id or null
+     */
+    async findByChild(child_id: string): Promise<InterventionHistoryRow[] | null>{
         return this.findMany({ child_id: child_id });
     }
 
-    async findByStatus(status: status_enum){
+    /**
+     * 
+     * @param status 
+     * @returns 
+     */
+    async findByStatus(status: status_enum): Promise<InterventionHistoryRow[] | null>{
         return this.findMany({ status: status });
     }
 
-    async updateRecord(id: string, intervention: InterventionRow){
+    /**
+     * Find intervention history records with a specific status
+     * @param status the status of the interventions to find
+     * @returns an array of intervention history records with given status or null
+     */
+    async updateRecord(id: string, intervention: InterventionRow): Promise<boolean>{
         const reference: Partial<InterventionRow> = { id: id }
         const updates: Partial<InterventionRow> = { 
             child_id: intervention.child_id,
@@ -60,7 +85,12 @@ export class InterventionHistoryModel extends TableManager<"intervention_history
         return data
     }
 
-    async deleteById(id: string){
+    /**
+     * Deletes an intervention in the history with given ID
+     * @param id the unique id of the intervention history record in the DB
+     * @returns boolean if the update was successful
+     */
+    async deleteById(id: string): Promise<boolean>{
         return this.deleteOne({ id: id }) !== null;
     }
 }
