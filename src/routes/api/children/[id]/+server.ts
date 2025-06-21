@@ -1,8 +1,7 @@
 import { ChildrenModel } from "$lib/models/childrenModel.js";
 import { error, json, type RequestHandler } from "@sveltejs/kit";
 
-export const POST: RequestHandler = async ({ params }) => {
-    
+export const GET: RequestHandler = async ({ params }) => {
     const id = params.id;
 
     if(!id){
