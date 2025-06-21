@@ -13,8 +13,10 @@ type FamiliesRow = tableRow<"families">
 export class FamiliesModel extends TableManager<"families">('families') {
   public static instance: FamiliesModel = new FamiliesModel();
     async createFamily(){
-        const now = new Date().toISOString()
-        const data = await this.insertOne({ date_created: now })
+        const now = new Date().toISOString();
+        const data = await this.insertOne({ date_created: now });
+
+        return data
     }
 
     async findById(id: string){
