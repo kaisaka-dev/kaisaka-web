@@ -6,7 +6,7 @@ type FamiliesRow = tableRow<"families">
 /**
  * A model concerning about CRUD operations on *families information*. 
  * 
- * Made for the `cities` API. 
+ * Made for the `families` API. 
  * 
  * **Reference**: Database Model `src/lib/models/db.md`
  */
