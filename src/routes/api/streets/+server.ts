@@ -10,7 +10,7 @@ export const POST: RequestHandler = async({request}) => {
     throw error(400, 'Missing required fields.')
   }
 
-  if (!body.string) {
+  if (!body.street) {
     throw error(400, 'Missing required fields.')
   }
 
