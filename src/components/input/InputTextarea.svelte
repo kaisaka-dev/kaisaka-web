@@ -7,6 +7,7 @@
 	export let required = false;
 	export let msg = "";
 	export let value = "";
+	export let disabled = false;
 
 </script>
 
@@ -14,9 +15,16 @@
 	<label for={id}>{label} {required ? " *" : ""}</label>
 
 	<div class="input-wrapper">
-		<textarea id={id} class="input no-resize" rows={rows} style="height:auto; margin-top: 0.25rem" bind:value={value}> </textarea>
+		<textarea id={id} class="input no-resize" rows={rows} style="height:auto; margin-top: 0.25rem" bind:value={value} {disabled}> </textarea>
 		{#if msg}
 			<Validation msg={msg} />
 		{/if}
 	</div>
 </div>
+
+<style>
+    textarea:disabled {
+        background-color:gray;
+        color: lightgray;
+    }
+</style>
