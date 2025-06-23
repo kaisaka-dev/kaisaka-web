@@ -98,29 +98,29 @@ describe('AddressesModel', () => {
     });
 
 
-    //findByAddressesId
-    it('findByAddressesId should return addresses by barangay id', async () =>
+    //findByBarangayId
+    it('findByBarangayId should return addresses by barangay id', async () =>
     {
         const mockMatch = vi.fn().mockResolvedValue({ data: [sampleAddress], error: null });
         (supabase.from as any).mockReturnValue({ select: () => ({ match: mockMatch }) });
 
-        const result = await AddressesModel.instance.findByAddressesId(1);
+        const result = await AddressesModel.instance.findByBarangayId(1);
         expect(result).toEqual([sampleAddress]);
     });
 
-    it('findByAddressesId should return empty array when no addresses are found', async () => {
+    it('findByBarangayId should return empty array when no addresses are found', async () => {
         const mockMatch = vi.fn().mockResolvedValue({ data: [], error: null });
         (supabase.from as any).mockReturnValue({ select: () => ({ match: mockMatch }) });
 
-        const result = await AddressesModel.instance.findByAddressesId(999);
+        const result = await AddressesModel.instance.findByBarangayId(999);
         expect(result).toEqual([]);
     });
 
-    it('findByAddressesId should return null on query error', async () => {
+    it('findByBarangayId should return null on query error', async () => {
         const mockMatch = vi.fn().mockResolvedValue({ data: null, error: { message: 'DB error' } });
         (supabase.from as any).mockReturnValue({ select: () => ({ match: mockMatch }) });
 
-        const result = await AddressesModel.instance.findByAddressesId(1);
+        const result = await AddressesModel.instance.findByBarangayId(1);
         expect(result).toBeNull();
     });
 
@@ -158,7 +158,7 @@ describe('AddressesModel', () => {
         const mockUpdate = vi.fn().mockResolvedValue(true);
         (AddressesModel.instance as any).updateOne = mockUpdate;
 
-        const result = await AddressesModel.instance.updateAddress(1, 'Updated');
+        const result = await AddressesModel.instance.updateAddress('uuid-some-unique-id', 'Updated');
         expect(supabase.from).toHaveBeenCalledWith('addresses');
         expect(result).toBe(true);
     });
@@ -167,7 +167,7 @@ describe('AddressesModel', () => {
         const mockUpdate = vi.fn().mockResolvedValue(false);
         (AddressesModel.instance as any).updateOne = mockUpdate;
 
-        const result = await AddressesModel.instance.updateAddress(1, 'Updated');
+        const result = await AddressesModel.instance.updateAddress('uuid-some-unique-id', 'Updated');
         expect(supabase.from).toHaveBeenCalledWith('addresses');
         expect(result).toBe(false);
     });

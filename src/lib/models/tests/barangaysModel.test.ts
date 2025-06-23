@@ -20,7 +20,7 @@ describe('BarangayModel', () => {
     const sampleBarangay = {
         id: 1,
         name: 'Test',
-        num: '1234567890'
+        num: '1234567890',
         city_id: 10
     };
 
