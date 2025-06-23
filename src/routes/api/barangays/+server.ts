@@ -15,7 +15,7 @@ export const POST: RequestHandler = async({request}) => {
     throw error(400, 'Missing required fields.')
   }
 
-  const inserted = await BarangayModel.instance.insertBarangay(body.id, body.name, body.city, body.num)
+  const inserted = await BarangayModel.instance.insertBarangay(body.name, body.city, body.num)
 
   if (!inserted){
     throw error(500, 'Failed to insert')

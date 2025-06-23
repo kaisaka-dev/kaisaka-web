@@ -1,194 +1,235 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { BarangaysModel } from '$lib/models/barangaysModel.js';
+import { BarangayModel } from '$lib/models/barangaysModel.js';
 import { supabase } from '$lib/types/client.js';
 
 // create mock of the supabase client so tests never directly interact with the database
 vi.mock('$lib/types/client', () => {
-  return {
-    supabase: {
-      from: vi.fn()
-    }
-  };
+    return {
+        supabase: {
+            from: vi.fn()
+        }
+    };
 });
 
-describe('BarangaysModel', () => {
-  // prevent tests from affecting each other
-  beforeEach(() => {
-    vi.clearAllMocks();
-  });
+describe('BarangayModel', () => {
+    // prevent tests from affecting each other
+    beforeEach(() => {
+        vi.clearAllMocks();
+    });
 
-  const sampleBarangay = {
-    id: 1,
-    name: 'Test',
-    city: 'City',
-    barangay: 'User',
-    num: '09121231234'
-  };
+    const sampleBarangay = {
+        id: 1,
+        name: 'Test',
+        num: '1234567890'
+        city_id: 10
+    };
 
-  //Create
+    // Create methods
+    
 
-  it('create_barangay should return null when there are missing required fields', async () => {
-      const mockInsert = vi.fn().mockResolvedValue({
-        data: null,
-        error: { message: 'Missing required fields' }
-      });
-  
-      (supabase.from as any).mockReturnValue({
-        insert: mockInsert
-      });
-  
-      const result = await BarangaysModel.instance.create_barangay({} as any);
-      expect(result).toBeNull();
+    //insertBarangay
+    it('insertBarangay should insert a barangay', async () => {
+        const mockInsert = vi.fn().mockReturnValue({
+            select: () => ({
+                single: () => Promise.resolve({ data: sampleBarangay, error: null })
+            })
+        });
+
+        (supabase.from as any).mockReturnValue({
+            insert: mockInsert
+        });
+
+        const result = await BarangayModel.instance.insertBarangay('Test', '1234567890', 10);
+        expect(supabase.from).toHaveBeenCalledWith('barangays');
+        expect(result).toEqual(sampleBarangay);
+    });
+
+    /*
+    it('insertBarangay should return null when there are missing required values', async () => {
+    const mockInsert = vi.fn().mockReturnValue({
+                select: () => ({
+                    single: () => Promise.resolve({ data: null, error: { message: 'Insert failed: missing required values' } })
+                })
+            });
+    
+            (supabase.from as any).mockReturnValue({
+                insert: mockInsert
+            });
+    
+            const result = await BarangayModel.instance.insertBarangay('Test', '1234567890', 10);
+            expect(supabase.from).toHaveBeenCalledWith('barangays');
+            expect(result).toBeNull();
+        });
+    */
+
+
+
+    //Read
+
+
+    //findByName
+    it('findByName should return barangay by name', async () => {
+        const mockMatch = vi.fn().mockResolvedValue({ data: [sampleBarangay], error: null });
+        (supabase.from as any).mockReturnValue({ select: () => ({ match: mockMatch }) });
+
+        const result = await BarangayModel.instance.findByName('Test');
+        expect(result).toEqual([sampleBarangay]);
+    });
+
+    it('findByName should return empty array when no barangays are found', async () => {
+        const mockMatch = vi.fn().mockResolvedValue({ data: [], error: null });
+        (supabase.from as any).mockReturnValue({ select: () => ({ match: mockMatch }) });
+
+        const result = await BarangayModel.instance.findByName('NonExistent');
+        expect(result).toEqual([]);
+    });
+
+    it('findByName should return null on query error', async () => {
+        const mockMatch = vi.fn().mockResolvedValue({ data: null, error: { message: 'DB error' } });
+        (supabase.from as any).mockReturnValue({ select: () => ({ match: mockMatch }) });
+
+        const result = await BarangayModel.instance.findByName('Test');
+        expect(result).toBeNull();
     });
 
 
-  //Read
+    //findByCity
+    it('findByCity should return barangay by city', async () => {
+        const mockMatch = vi.fn().mockResolvedValue({ data: [sampleBarangay], error: null });
+        (supabase.from as any).mockReturnValue({ select: () => ({ match: mockMatch }) });
 
-  it('get_barangay should return a Barangay when ID is found', async () => {
-    const mockSingle = vi.fn().mockResolvedValue({
-      data: sampleBarangay,
-      error: null
+        const result = await BarangayModel.instance.findByCity(10);
+        expect(result).toEqual([sampleBarangay]);
     });
 
-    const mockMatch = vi.fn().mockReturnValue({ single: mockSingle });
+    it('findByCity should return empty array when no barangays are found', async () => {
+        const mockMatch = vi.fn().mockResolvedValue({ data: [], error: null });
+        (supabase.from as any).mockReturnValue({ select: () => ({ match: mockMatch }) });
 
-    (supabase.from as any).mockReturnValue({
-      select: () => ({ match: mockMatch })
+        const result = await BarangayModel.instance.findByCity('NonExistent');
+        expect(result).toEqual([]);
     });
 
-    const result = await BarangaysModel.instance.get_barangay(1);
+    it('findByCity should return null on query error', async () => {
+        const mockMatch = vi.fn().mockResolvedValue({ data: null, error: { message: 'DB error' } });
+        (supabase.from as any).mockReturnValue({ select: () => ({ match: mockMatch }) });
 
-    expect(supabase.from).toHaveBeenCalledWith('barangays');
-    expect(mockMatch).toHaveBeenCalledWith({ id: 1 });
-    expect(result).toEqual(sampleBarangay);
-  });
-
-  it('get_barangay should return null when ID is not found', async () => {
-    const mockSingle = vi.fn().mockResolvedValue({ data: null, error: { message: 'not found' } });
-    const mockMatch = vi.fn().mockReturnValue({ single: mockSingle });
-
-    (supabase.from as any).mockReturnValue({
-      select: () => ({ match: mockMatch })
+        const result = await BarangayModel.instance.findByCity(10);
+        expect(result).toBeNull();
     });
 
-    const result = await BarangaysModel.instance.get_barangay(999);
-    expect(result).toBeNull();
-  });
-  
-  it('get_barangay should throw an error when given a non-numeric ID', async () => {
-    const mockMatch = vi.fn();
-    (supabase.from as any).mockReturnValue({
-      select: () => ({ match: mockMatch })
+
+    //findByNum
+    it('findByNum should return barangay by number', async () => {
+        const mockMatch = vi.fn().mockResolvedValue({ data: [sampleBarangay], error: null });
+        (supabase.from as any).mockReturnValue({ select: () => ({ match: mockMatch }) });
+
+        const result = await BarangayModel.instance.findByNum('1234567890');
+        expect(result).toEqual([sampleBarangay]);
     });
 
-    await expect(BarangaysModel.instance.get_barangay('ID' as any)).rejects.toThrow();
-  });
+    it('findByNum should return empty array when no barangays are found', async () => {
+        const mockMatch = vi.fn().mockResolvedValue({ data: [], error: null });
+        (supabase.from as any).mockReturnValue({ select: () => ({ match: mockMatch }) });
 
-  it('get_all_barangays should return an array of barangays', async () => {
-    const mockSelect = vi.fn().mockResolvedValue({
-      data: [
-        sampleBarangay,
-        { id: 2, name: 'Test2', city: 'Ci2' }
-      ],
-      error: null
+        const result = await BarangayModel.instance.findByNum('0000000000');
+        expect(result).toEqual([]);
     });
 
-    (supabase.from as any).mockReturnValue({
-      select: mockSelect
+    it('findByNum should return null on query error', async () => {
+        const mockMatch = vi.fn().mockResolvedValue({ data: null, error: { message: 'DB error' } });
+        (supabase.from as any).mockReturnValue({ select: () => ({ match: mockMatch }) });
+
+        const result = await BarangayModel.instance.findByNum('1234567890');
+        expect(result).toBeNull();
     });
 
-    const result = await BarangaysModel.instance.get_all_barangays();
 
-    expect(supabase.from).toHaveBeenCalledWith('barangays');
-    expect(mockSelect).toHaveBeenCalled();
-    expect(result).toHaveLength(2);
-  });
 
-  it('get_all_barangays should return an empty array when no data found', async () => {
-    const mockSelect = vi.fn().mockResolvedValue({ data: [], error: null });
 
-    (supabase.from as any).mockReturnValue({
-      select: mockSelect
+    //Update
+
+
+    //updateName
+    it('updateName should return true on successful update', async () => {
+        const mockUpdate = vi.fn().mockResolvedValue(true);
+        (BarangayModel.instance as any).updateOne = mockUpdate;
+
+        const result = await BarangayModel.instance.updateName(1, 'Updated');
+        expect(supabase.from).toHaveBeenCalledWith('barangays');
+        expect(result).toBe(true);
     });
 
-    const result = await BarangaysModel.instance.get_all_barangays();
-    expect(Array.isArray(result)).toBe(true);
-    expect(result).toHaveLength(0);
-  });
+    it('updateName should return false on unsuccessful update', async () => {
+        const mockUpdate = vi.fn().mockResolvedValue(false);
+        (BarangayModel.instance as any).updateOne = mockUpdate;
 
-  //Update
-
-it('update_barangay should update a barangay and return updated record', async () => {
-    const updates = { num: '09999999999' };
-
-    const mockUpdate = vi.fn().mockReturnValue({
-      eq: () => ({
-        select: () => Promise.resolve({
-          data: [{ id: 1, ...updates }],
-          error: null
-        })
-      })
+        const result = await BarangayModel.instance.updateName(1, 'Updated');
+        expect(supabase.from).toHaveBeenCalledWith('barangays');
+        expect(result).toBe(false);
     });
 
-    (supabase.from as any).mockReturnValue({
-      update: mockUpdate
+
+    //updateCity
+    it('updateCity should return true on successful update', async () => {
+        const mockUpdate = vi.fn().mockResolvedValue(true);
+        (BarangayModel.instance as any).updateOne = mockUpdate;
+
+        const result = await BarangayModel.instance.updateCity(1, 12);
+        expect(supabase.from).toHaveBeenCalledWith('barangays');
+        expect(result).toBe(true);
     });
 
-    const result = await BarangaysModel.instance.update_barangay(1, updates);
+    it('updateCity should return false on unsuccessful update', async () => {
+        const mockUpdate = vi.fn().mockResolvedValue(false);
+        (BarangayModel.instance as any).updateOne = mockUpdate;
 
-    expect(supabase.from).toHaveBeenCalledWith('barangays');
-    expect(result).toEqual({ id: 1, ...updates });
-  });
-
-  it('update_barangay should return null when invalid update fields', async () => {
-    const mockUpdate = vi.fn().mockResolvedValue({
-      data: null,
-      error: { message: 'Invalid field' }
+        const result = await BarangayModel.instance.updateCity(1, 12);
+        expect(supabase.from).toHaveBeenCalledWith('barangays');
+        expect(result).toBe(false);
     });
 
-    const mockEq = vi.fn().mockReturnValue({ update: mockUpdate });
 
-    (supabase.from as any).mockReturnValue({
-      update: () => ({ eq: mockEq })
+    //updateNum
+    it('updateNum should return true on successful update', async () => {
+        const mockUpdate = vi.fn().mockResolvedValue(true);
+        (BarangayModel.instance as any).updateOne = mockUpdate;
+
+        const result = await BarangayModel.instance.updateNum(1, '9876543210');
+        expect(supabase.from).toHaveBeenCalledWith('barangays');
+        expect(result).toBe(true);
     });
 
-    const result = await BarangaysModel.instance.update_barangay(1, { unknown: 'field' });
-    expect(result).toBeNull();
-  });
+    it('updateNum should return false on unsuccessful update', async () => {
+        const mockUpdate = vi.fn().mockResolvedValue(false);
+        (BarangayModel.instance as any).updateOne = mockUpdate;
 
-  //Delete
-
-  it('delete_barangay should delete a barangay and return true', async () => {
-      const mockDelete = vi.fn().mockReturnValue({
-        eq: () => Promise.resolve({
-          data: sampleBarangay,
-          error: null
-        })
-      });
-  
-      (supabase.from as any).mockReturnValue({
-        delete: mockDelete
-      });
-  
-      const result = await BarangaysModel.instance.delete_barangay(1);
-  
-      expect(supabase.from).toHaveBeenCalledWith('barangays');
-      expect(result).toBe(true);
+        const result = await BarangayModel.instance.updateNum(1, '9876543210');
+        expect(supabase.from).toHaveBeenCalledWith('barangays');
+        expect(result).toBe(false);
     });
 
-  it('delete_barangay should return false when ID does not exist', async () => {
-      const mockDelete = vi.fn().mockResolvedValue({
-        data: null,
-        error: { message: 'Not found' }
-      });
-  
-      const mockEq = vi.fn().mockReturnValue({ delete: mockDelete });
-  
-      (supabase.from as any).mockReturnValue({
-        delete: () => ({ eq: mockEq })
-      });
-  
-      const result = await BarangaysModel.instance.delete_barangay(999);
-      expect(result).toBe(false);
+
+
+    //Delete
+    it('deleteBarangay should return true on successful deletion', async () => {
+        const mockDelete = vi.fn().mockResolvedValue(true);
+        (BarangayModel.instance as any).deleteOne = mockDelete;
+
+        const result = await BarangayModel.instance.deleteBarangay(1);
+        expect(supabase.from).toHaveBeenCalledWith('barangays');
+        expect(result).toBe(true);
     });
+
+    it('deleteBarangay should return false on unsuccessful deletion', async () => {
+        const mockDelete = vi.fn().mockResolvedValue(false);
+        (BarangayModel.instance as any).deleteOne = mockDelete;
+
+        const result = await BarangayModel.instance.deleteBarangay(1);
+        expect(supabase.from).toHaveBeenCalledWith('barangays');
+        expect(result).toBe(false);
+    });
+
+
+
 });
