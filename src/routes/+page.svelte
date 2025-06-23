@@ -64,7 +64,7 @@
       <tbody>
          <tr>
             <td>
-               <p class = "!text-[var(--green)] !text-[35px] !mb-11 "> USERNAME:</p>
+               <p class = "!text-[var(--green)] !text-[35px] !mb-11 !font-bold "> USERNAME:</p>
             </td>
             <td>
                <input class = "input !mx-20 !-mt-11 !w-150 !h-10" placeholder = "Type username..."/>
@@ -72,7 +72,7 @@
          </tr>
          <tr>
             <td>
-               <p class = "!text-[var(--green)] !text-[35px]"> PASSWORD:</p>
+               <p class = "!text-[var(--green)] !text-[35px] !font-bold"> PASSWORD:</p>
             </td>
             <td>
                <input type = "password" class = "input !mx-20 !w-150 !h-10" placeholder = "Type password..."/>
