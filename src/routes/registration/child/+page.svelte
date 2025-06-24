@@ -65,7 +65,7 @@
 
 
 </script>
-<Header />
+<Header category="members" page="children" />
 
 <section>
     <h1>Child Registration</h1>
