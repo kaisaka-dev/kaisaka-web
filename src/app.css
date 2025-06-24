@@ -5,7 +5,7 @@
 
 @font-face {
     font-family: JSans;
-    src: url(PlusJakartaSans-VariableFont_wght.ttf);
+    src: url("/PlusJakartaSans-VariableFont_wght.ttf") format("truetype");
     font-weight: bold;
 }
 :root {
@@ -25,6 +25,7 @@ body {
 }
 
 * {
+    font-family: "JSans", sans-serif;
     background-color: transparent;
     color: lightgray;
     font-size: var(--medium-text);
