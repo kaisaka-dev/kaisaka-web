@@ -11,6 +11,7 @@
     let firstName = "";
     let lastName = "";
     let birthday = "";
+    let sex = "";
     let address = "";
     let barangay = "";
     let school = "";
@@ -39,6 +40,7 @@
         firstName: "",
         lastName: "",
         birthday: "",
+        sex: "",
         address: "",
         barangay: "",
         school: "",
@@ -51,6 +53,7 @@
         errors.firstName = firstName.trim() === "" ? "Error: field is required" : "";
         errors.lastName = lastName.trim() === "" ? "Error: field is required" : "";
         errors.birthday = birthday.trim() === "" ? "Error: field is required" : "";
+        errors.sex = sex.trim() === "" ? "Error: field is required" : "";
         errors.address = address.trim() === "" ? "Error: field is required" : "";
         errors.barangay = barangay.trim() === "" ? "Error: field is required" : "";
         errors.school = school.trim() === "" ? "Error: field is required" : "";
@@ -73,6 +76,7 @@
     <InputText label="Last name" id="last-name" bind:value={lastName} required msg={errors.lastName}/>
     <InputDate label="Birthday" id="bday" bind:value={birthday} required msg={errors.birthday}/>
     <InputText label="Age" id="age" value={age} disabled />
+    <Select label="Sex" id="sex" options={["Male", "Female"]} required msg={errors.sex}/>
     <InputText label="Address" id="address" bind:value={address} required msg={errors.address}/>
 
     <Select label="Barangay" id="barangay" options={["Barangay 1", "Barangay 2", "Barangay 3"]} required msg={errors.barangay}/>
