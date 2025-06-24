@@ -2,11 +2,11 @@
 <script>
     let logoimg = '/img/logo.png';
     let profileimg = '/img/Profile Icon.png';
-    export let curr_category = "members";
-    export let curr_page = "children";
+    export let category = "members";
+    export let page = "children";
 </script>
 
-<div id = "navbar" style="font-weight:bold">
+<div id = "navbar" style="font-weight:bold; position: sticky">
     <img src = {logoimg} alt = "logo" id = "logo">
     <a href="/" id="home"> Home</a>
 
@@ -37,11 +37,11 @@
     </div>
 
     <div class="dropdown dropdown-left dropdown-hover" id="profile">
-        <div class="navlink" role="button" tabindex="-1"><img src = {profileimg} alt = "profile" /></div>
+        <div class="navlink" role="button" tabindex="-1"><img src = {profileimg} alt = "profile" style="height:50px;" /></div>
 
         <ul tabindex="-1" class="dropdown-content menu rounded-box z-1 w-52 p-2 shadow-sm !bg-[#513737]">
             <li><a>My Profile</a></li>
-            <li><a>Log Out</a></li>
+            <li><a href="/">Log Out</a></li>
         </ul>
     </div>
 
@@ -49,19 +49,19 @@
 </div>
 
 <div id="subnav">
-    {#if curr_category === "members"}
+    {#if category === "members"}
         <ul>
-            <li><a>Children</a></li>
-            <li><a>Caregivers</a></li>
-            <li><a>Families</a></li>
-            <li><a>Pending</a></li>
+            <li class={page === "children" ? "active" : ""}><a>Children</a></li>
+            <li class={page === "caregivers" ? "active" : ""}><a>Caregivers</a></li>
+            <li class={page === "families" ? "active" : ""}><a>Families</a></li>
+            <li class={page === "pending" ? "active" : ""}><a>Pending</a></li>
         </ul>
     {/if}
 
-    {#if curr_category === "events"}
+    {#if category === "events"}
         <ul>
-            <li><a>Target Events</a></li>
-            <li><a>Conducted Events</a></li>
+            <li class={page === "targeted" ? "active" : ""}><a>Targeted</a></li>
+            <li class={page === "conducted" ? "active" : ""}><a>Conducted</a></li>
         </ul>
     {/if}
 </div>
@@ -70,6 +70,7 @@
 
     #navbar {
         position: relative;
+        top: 0;
         background-color : #513737;
         display:flex;
         padding: 10px;
@@ -109,10 +110,15 @@
         z-index: 1;
     }
 
+    li.active {         /* shading for active page */
+        background-color: rgb(123, 88, 102);
+    }
 
     #subnav li:hover {
-        background-color: rgb(123, 88, 102);
         transition: 0.3s;
+        background-color: rgb(123, 88, 102);
+        color: var(--pink) !important;
+
     }
 
     #subnav ul {
@@ -128,6 +134,7 @@
         margin: 0;
         padding: 0 2rem;
         height: 100%;
+        color: var(--background);
     }
 
     #subnav a {
@@ -135,10 +142,10 @@
         align-items: center;
         height: 100%;
         padding: 0 10px;
-        color: var(--background);
         font-weight: bold;
         font-size: var(--small-text);
         text-decoration: none;
+        color: inherit;
     }
 
 
