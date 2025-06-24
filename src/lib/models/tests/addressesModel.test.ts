@@ -1,7 +1,6 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { AddressesModel } from '$lib/models/addressesModel.js';
 import { supabase } from '$lib/types/client.js';
-import type { error } from 'console';
 
 // create mock of the supabase client so tests never directly interact with the database
 vi.mock('$lib/types/client', () => {
@@ -43,6 +42,21 @@ describe('AddressesModel', () => {
         expect(result).toEqual(sampleAddress);
     });
 
+    it('insertAddress should return null on insert error', async () => {
+        const mockInsert = vi.fn().mockReturnValue({
+            select: () => ({
+                single: () => Promise.resolve({ data: null, error: { message: 'Insert error' } })
+            })
+        });
+        (supabase.from as any).mockReturnValue({
+            insert: mockInsert
+        });
+
+        const result = await AddressesModel.instance.insertAddress('25 Hop Avenue', 1, 2);
+        expect(supabase.from).toHaveBeenCalledWith('addresses');
+        expect(result).toBeNull();
+    });
+
 
 
     // Update methods
@@ -53,15 +67,15 @@ describe('AddressesModel', () => {
         (supabase.from as any).mockReturnValue({ select: () => ({ match: mockMatch }) });
 
         const result = await AddressesModel.instance.findById('uuid-some-unique-id');
-        expect(result).toEqual([sampleAddress]);
+        expect(result).toEqual(sampleAddress);
     });
 
-    it('findById should return empty array when no addresses are found', async () => {
-        const mockMatch = vi.fn().mockResolvedValue({ data: [], error: null });
+    it('findById should return null when no addresses are found', async () => {
+        const mockMatch = vi.fn().mockResolvedValue({ data: [], error: { message: 'No such ID'} });
         (supabase.from as any).mockReturnValue({ select: () => ({ match: mockMatch }) });
 
         const result = await AddressesModel.instance.findById('NonExistent');
-        expect(result).toEqual([]);
+        expect(result).toBeNull();
     });
 
     it('findById should return null on query error', async () => {
@@ -217,8 +231,8 @@ describe('AddressesModel', () => {
 
     // Delete methods
 
-    // deleteAddress
-    it('deleteAddress should return true on successful deletion', async () => {
+    // deleteById
+    it('deleteById should return true on successful deletion', async () => {
         const mockDelete = vi.fn().mockResolvedValue(true);
         (AddressesModel.instance as any).deleteOne = mockDelete;
 
@@ -227,7 +241,7 @@ describe('AddressesModel', () => {
         expect(result).toBe(true);
     });
 
-    it('deleteAddress should return false on unsuccessful deletion', async () => {
+    it('deleteById should return false on unsuccessful deletion', async () => {
         const mockDelete = vi.fn().mockResolvedValue(false);
         (AddressesModel.instance as any).deleteOne = mockDelete;
 
