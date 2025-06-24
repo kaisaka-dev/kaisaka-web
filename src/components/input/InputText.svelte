@@ -26,6 +26,7 @@
 <style>
 	input:disabled {
 			background-color:gray;
-			color: lightgray;
+			font-weight: bold;
+			color: white;
 	}
 </style>
