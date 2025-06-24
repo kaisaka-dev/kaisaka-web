@@ -51,6 +51,11 @@
                 <div> <Input disabled value = "Last Name"/> </div>
             </div>
 
+            <div class = "flex flex-row">
+                <div class = "ml-4 mt-3 w-40"> Education </div>
+                <div> <Input disabled value = "Education"/> </div>
+            </div>
+
             <div class = "flex flex-row mt-10">
                 <div class = "ml-4 mt-3 w-40"> Birthday</div>
                 <div> <Input disabled value = "Birthday"/> </div>
