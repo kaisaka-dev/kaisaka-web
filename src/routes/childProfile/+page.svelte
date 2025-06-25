@@ -1,15 +1,16 @@
 <script>
     import Header from '../../components/Header.svelte'
-    import PageLabel from '../../components/text/pageHeader.svelte'
     import Input from '../../components/input/InputText.svelte'
     import TextArea from '../../components/input/InputTextarea.svelte'
     import Check from '../../components/input/Checkbox.svelte'
 </script>
 <Header/>
 
-<div class = "sticky top-0 z-1000">
-    <PageLabel purpose = {"{Child Name}'s Profile"}/>
-</div>
+<section  class = "sticky top-0 z-1000">
+    <h1>
+        [CHILD NAME]'s Profile
+    </h1>
+</section>
 
 <div class = "flex flex-row ml-10 m-4 sticky top-20 z-1000">
     <div class = "flex flex-col !font-[JSans]">
