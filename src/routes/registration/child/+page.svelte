@@ -118,5 +118,7 @@ you may contact them here xxxxx -->
 
 
 <section style="text-align: center;">
-    <button on:click={validateForm}>Next</button>
+    <button onclick={validateForm}>Validate </button>
+    <button onclick={() => location.href = '/registration/family-info'}>Next</button>
+
 </section>
