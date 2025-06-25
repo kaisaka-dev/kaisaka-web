@@ -2,6 +2,7 @@ import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { CaregiversModel } from '$lib/models/caregiversModel.js';
 import { supabase } from '$lib/types/client.js';
 
+// create mock of the supabase client so tests never directly interact with the database
 vi.mock('$lib/types/client', () => ({
   supabase: {
     from: vi.fn()
@@ -9,6 +10,7 @@ vi.mock('$lib/types/client', () => ({
 }));
 
 describe('caregiversModel', () => {
+  // prevent tests from affecting each other
   beforeEach(() => {
     vi.clearAllMocks();
   });
