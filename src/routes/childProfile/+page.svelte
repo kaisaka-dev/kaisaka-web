@@ -3,12 +3,15 @@
     import Input from '../../components/input/InputText.svelte'
     import TextArea from '../../components/input/InputTextarea.svelte'
     import Check from '../../components/input/Checkbox.svelte'
+
+    export let data
+    const { user } = data
 </script>
 <Header/>
 
 <section  class = "sticky top-0 z-1000">
     <h1>
-        [CHILD NAME]'s Profile
+       {user.firstName} {user.birthday}'s Profile
     </h1>
 </section>
 
