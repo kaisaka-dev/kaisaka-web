@@ -40,7 +40,7 @@ describe('BarangayModel', () => {
         });
 
         const result = await BarangayModel.instance.insertBarangay('Test', 10, '1234567890');
-        expect(supabase.from).toHaveBeenCalledWith('Test', 10, '1234567890');
+        expect(supabase.from).toHaveBeenCalledWith('barangays');
         expect(result).toEqual(sampleBarangay);
     });
 
@@ -57,7 +57,7 @@ describe('BarangayModel', () => {
             });
     
             const result = await BarangayModel.instance.insertBarangay('Test', 10, '1234567890');
-            expect(supabase.from).toHaveBeenCalledWith('Test', 10, '1234567890');
+            expect(supabase.from).toHaveBeenCalledWith('barangays');
             expect(result).toBeNull();
     });
 
@@ -155,7 +155,7 @@ describe('BarangayModel', () => {
         (BarangayModel.instance as any).updateOne = mockUpdate;
 
         const result = await BarangayModel.instance.updateName(1, 'Updated');
-        expect(supabase.from).toHaveBeenCalledWith(1, 'Updated');
+        expect(supabase.from).toHaveBeenCalledWith('barangays');
         expect(result).toBe(true);
     });
 
@@ -163,8 +163,8 @@ describe('BarangayModel', () => {
         const mockUpdate = vi.fn().mockResolvedValue(false);
         (BarangayModel.instance as any).updateOne = mockUpdate;
 
-        const result = await BarangayModel.instance.updateName(2, 'Updated');
-        expect(supabase.from).toHaveBeenCalledWith(2, 'Updated');
+        const result = await BarangayModel.instance.updateName(1, 'Updated');
+        expect(supabase.from).toHaveBeenCalledWith('barangays');
         expect(result).toBe(false);
     });
 
@@ -175,7 +175,7 @@ describe('BarangayModel', () => {
         (BarangayModel.instance as any).updateOne = mockUpdate;
 
         const result = await BarangayModel.instance.updateCityId(1, 12);
-        expect(supabase.from).toHaveBeenCalledWith(1, 10);
+        expect(supabase.from).toHaveBeenCalledWith('barangays');
         expect(result).toBe(true);
     });
 
@@ -184,7 +184,7 @@ describe('BarangayModel', () => {
         (BarangayModel.instance as any).updateOne = mockUpdate;
 
         const result = await BarangayModel.instance.updateCityId(1, 12);
-        expect(supabase.from).toHaveBeenCalledWith(1, 12);
+        expect(supabase.from).toHaveBeenCalledWith('barangays');
         expect(result).toBe(false);
     });
 
@@ -195,7 +195,7 @@ describe('BarangayModel', () => {
         (BarangayModel.instance as any).updateOne = mockUpdate;
 
         const result = await BarangayModel.instance.updateNum(1, '9876543210');
-        expect(supabase.from).toHaveBeenCalledWith(1, '9876543210');
+        expect(supabase.from).toHaveBeenCalledWith('barangays');
         expect(result).toBe(true);
     });
 
@@ -204,21 +204,19 @@ describe('BarangayModel', () => {
         (BarangayModel.instance as any).updateOne = mockUpdate;
 
         const result = await BarangayModel.instance.updateNum(1, '9876543210');
-        expect(supabase.from).toHaveBeenCalledWith(2, '9876543210');
+        expect(supabase.from).toHaveBeenCalledWith('barangays');
         expect(result).toBe(false);
     });
 
 
 
     //Delete
-
-
     it('deleteBarangay should return true on successful deletion', async () => {
         const mockDelete = vi.fn().mockResolvedValue(true);
         (BarangayModel.instance as any).deleteOne = mockDelete;
 
         const result = await BarangayModel.instance.deleteBarangay(1);
-        expect(supabase.from).toHaveBeenCalledWith(1);
+        expect(supabase.from).toHaveBeenCalledWith('barangays');
         expect(result).toBe(true);
     });
 
@@ -226,8 +224,8 @@ describe('BarangayModel', () => {
         const mockDelete = vi.fn().mockResolvedValue(false);
         (BarangayModel.instance as any).deleteOne = mockDelete;
 
-        const result = await BarangayModel.instance.deleteBarangay(0);
-        expect(supabase.from).toHaveBeenCalledWith(0);
+        const result = await BarangayModel.instance.deleteBarangay(1);
+        expect(supabase.from).toHaveBeenCalledWith('barangays');
         expect(result).toBe(false);
     });
 

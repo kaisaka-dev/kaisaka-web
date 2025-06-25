@@ -37,7 +37,7 @@ describe('StreetsModel', () => {
         });
 
         const result = await StreetsModel.instance.insertStreet(null, 'Hop Avenue');
-        expect(supabase.from).toHaveBeenCalledWith(null, 'Hop Avenue');
+        expect(supabase.from).toHaveBeenCalledWith('streets');
         expect(result).toEqual(sampleStreet);
     });
 
@@ -53,7 +53,7 @@ describe('StreetsModel', () => {
         });
 
         const result = await StreetsModel.instance.insertStreet(null, '');
-        expect(supabase.from).toHaveBeenCalledWith(null, null);
+        expect(supabase.from).toHaveBeenCalledWith('streets');
         expect(result).toBeNull();
     });
 
@@ -150,7 +150,7 @@ describe('StreetsModel', () => {
         (StreetsModel.instance as any).updateOne = mockUpdate;
 
         const result = await StreetsModel.instance.updateStreet(1024, 'Updated');
-        expect(supabase.from).toHaveBeenCalledWith(1024, 'Updated');
+        expect(supabase.from).toHaveBeenCalledWith('streets');
         expect(result).toBe(true);
     });
 
@@ -158,8 +158,8 @@ describe('StreetsModel', () => {
         const mockUpdate = vi.fn().mockResolvedValue(false);
         (StreetsModel.instance as any).updateOne = mockUpdate;
 
-        const result = await StreetsModel.instance.updateStreet(0, 'Updated');
-        expect(supabase.from).toHaveBeenCalledWith(0, 'Updated');
+        const result = await StreetsModel.instance.updateStreet(1024, 'Updated');
+        expect(supabase.from).toHaveBeenCalledWith('streets');
         expect(result).toBe(false);
     });
 
@@ -169,8 +169,8 @@ describe('StreetsModel', () => {
         const mockUpdate = vi.fn().mockResolvedValue(true);
         (StreetsModel.instance as any).updateOne = mockUpdate;
 
-        const result = await StreetsModel.instance.updateBarangay(1024, 2);
-        expect(supabase.from).toHaveBeenCalledWith(1024, 2);
+        const result = await StreetsModel.instance.updateBarangay(1024, 2048);
+        expect(supabase.from).toHaveBeenCalledWith('streets');
         expect(result).toBe(true);
     });
 
@@ -178,8 +178,8 @@ describe('StreetsModel', () => {
         const mockUpdate = vi.fn().mockResolvedValue(false);
         (StreetsModel.instance as any).updateOne = mockUpdate;
 
-        const result = await StreetsModel.instance.updateBarangay(0, 2);
-        expect(supabase.from).toHaveBeenCalledWith(0, 2);
+        const result = await StreetsModel.instance.updateBarangay(1024, 2048);
+        expect(supabase.from).toHaveBeenCalledWith('streets');
         expect(result).toBe(false);
     });
 
@@ -194,7 +194,7 @@ describe('StreetsModel', () => {
         (StreetsModel.instance as any).deleteOne = mockDelete;
 
         const result = await StreetsModel.instance.deleteStreet(1024);
-        expect(supabase.from).toHaveBeenCalledWith(1024);
+        expect(supabase.from).toHaveBeenCalledWith('streets');
         expect(result).toBe(true);
     });
 
@@ -202,8 +202,8 @@ describe('StreetsModel', () => {
         const mockDelete = vi.fn().mockResolvedValue(false);
         (StreetsModel.instance as any).deleteOne = mockDelete;
 
-        const result = await StreetsModel.instance.deleteStreet(0);
-        expect(supabase.from).toHaveBeenCalledWith(0);
+        const result = await StreetsModel.instance.deleteStreet(1024);
+        expect(supabase.from).toHaveBeenCalledWith('streets');
         expect(result).toBe(false);
     });
 });
