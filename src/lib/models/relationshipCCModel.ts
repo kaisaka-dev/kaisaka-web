@@ -79,6 +79,7 @@ export class relationshipCCModel extends TableManager<"relationship_cc">('relati
    */
   async deleteRelationship(caregiver: string) {
     const references: Partial<RelationshipCCRow> = { caregiver };
-    return this.deleteOne(references) !== null;
+    const result = await this.deleteOne(references);
+    return result !== null;
   }
 }

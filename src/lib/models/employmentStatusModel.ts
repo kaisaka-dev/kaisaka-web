@@ -71,7 +71,8 @@ export class EmploymentStatusModel extends TableManager<"employment_status">('em
    * @returns boolean if deleted successfully
    */
   async deleteById(id: number): Promise<boolean>{
-    return this.deleteOne({ id: id }) !== null;
+    const result = await this.deleteOne({ id: id });
+    return result !== null;
   }
 
   /**
@@ -80,6 +81,7 @@ export class EmploymentStatusModel extends TableManager<"employment_status">('em
    * @returns boolean if deleted successfully
    */
   async deleteByMemberId(member_id: string): Promise<boolean>{
-    return this.deleteOne({ member_id: member_id }) !== null;
+    const result = await this.deleteOne({ member_id: member_id });
+    return result !== null;
   }
 }

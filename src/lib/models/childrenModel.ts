@@ -185,7 +185,8 @@ export class ChildrenModel extends TableManager<"children">('children') {
    * @returns boolean if delete is successful.
    */
   async deleteById(id: string): Promise<boolean>{
-    return this.deleteOne({ id: id }) !== null;
+    const result = await this.deleteOne({ id: id });
+    return result !== null;
   }
 
   /**
@@ -194,6 +195,7 @@ export class ChildrenModel extends TableManager<"children">('children') {
    * @returns boolean if delete is successful.
    */
   async deleteByMemberId(member_id: string): Promise<boolean>{
-    return this.deleteOne({ id: member_id }) !== null;
+    const result = await this.deleteOne({ id: member_id });
+    return result !== null;
   }
 }

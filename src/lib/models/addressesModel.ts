@@ -111,6 +111,7 @@ export class AddressesModel extends TableManager<"addresses">('addresses') {
    * @returns boolean if delete is successful or not
    */
   async deleteById(id: string): Promise<boolean>{
-    return this.deleteOne({ id: id }) !== null;
+    const result = await this.deleteOne({ id: id });
+    return result !== null;
   }
 }

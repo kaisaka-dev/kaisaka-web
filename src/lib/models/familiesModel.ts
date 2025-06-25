@@ -47,6 +47,7 @@ export class FamiliesModel extends TableManager<"families">('families') {
      * @returns boolean if family is successfully deleted or not
      */
     async deleteById(id: string){
-        return this.deleteOne({ id: id }) !== null;
+    const result = await this.deleteOne({ id });
+    return result !== null;
     }
 }

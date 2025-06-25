@@ -226,7 +226,8 @@ export class MembershipPaymentModel extends TableManager<"membership_payment">('
    * @returns boolean if delete is successful
    */
   async deleteByFamilyAndProgram(annual_program_id: number, family_id: string): Promise<boolean> {
-    return this.deleteOne({ annual_program_id, family_id }) !== null;
+    const result = await this.deleteOne({ annual_program_id, family_id });
+    return result !== null;
   }
 
   /**
@@ -235,7 +236,8 @@ export class MembershipPaymentModel extends TableManager<"membership_payment">('
    * @returns boolean if delete is successful
    */
   async deleteByFamilyId(family_id: string): Promise<boolean> {
-    return this.deleteOne({ family_id }) !== null;
+    const result = await this.deleteOne({ family_id });
+    return result !== null;
   }
 
   /**
@@ -244,6 +246,7 @@ export class MembershipPaymentModel extends TableManager<"membership_payment">('
    * @returns boolean if delete is successful
    */
   async deleteByAnnualProgramId(annual_program_id: number): Promise<boolean> {
-    return this.deleteOne({ annual_program_id }) !== null;
+    const result = await this.deleteOne({ annual_program_id });
+    return result !== null;
   }
 }

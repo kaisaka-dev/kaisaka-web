@@ -179,7 +179,8 @@ export class MembershipAnnualRenewalModel extends TableManager<"membership_annua
    * @returns boolean if delete is successful
    */
   async deleteById(id: number): Promise<boolean> {
-    return this.deleteOne({ id }) !== null;
+    const result = await this.deleteOne({ id });
+    return result !== null;
   }
 
   /**
@@ -188,7 +189,8 @@ export class MembershipAnnualRenewalModel extends TableManager<"membership_annua
    * @returns boolean if delete is successful
    */
   async deleteByFamilyId(family_id: string): Promise<boolean> {
-    return this.deleteOne({ family_id }) !== null;
+    const result = await this.deleteOne({ family_id });
+    return result !== null;
   }
 
   /**
@@ -197,6 +199,7 @@ export class MembershipAnnualRenewalModel extends TableManager<"membership_annua
    * @returns boolean if delete is successful
    */
   async deleteByAnnualProgramId(annual_program_id: number): Promise<boolean> {
-    return this.deleteOne({ annual_program_id }) !== null;
+    const result = await this.deleteOne({ annual_program_id });
+    return result !== null;
   }
 }

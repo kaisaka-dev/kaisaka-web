@@ -81,7 +81,8 @@ export class DisabilityStatusModel extends TableManager<"disability_status">('di
    * @returns boolean if delete is successful or not
    */
   async deleteById(id: number): Promise<boolean>{
-    return this.deleteOne({ id: id }) !== null;
+    const result = await this.deleteOne({ id: id });
+    return result !== null;
   }
 
   /**
@@ -90,6 +91,7 @@ export class DisabilityStatusModel extends TableManager<"disability_status">('di
    * @returns boolean if delete is successful or not
    */
   async deleteByChildId(child_id: string): Promise<boolean>{
-    return this.deleteOne({ child_id: child_id }) !== null;
+    const result = await this.deleteOne({ child_id: child_id });
+    return result !== null;
   }
 }

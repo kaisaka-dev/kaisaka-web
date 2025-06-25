@@ -91,6 +91,7 @@ export class InterventionHistoryModel extends TableManager<"intervention_history
      * @returns boolean if the update was successful
      */
     async deleteById(id: string): Promise<boolean>{
-        return this.deleteOne({ id: id }) !== null;
+    const result = await this.deleteOne({ id });
+    return result !== null;
     }
 }

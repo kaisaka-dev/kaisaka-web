@@ -144,7 +144,8 @@ export class FamilyMembersModel extends TableManager<"family_members">('family_m
    */
   async removeFamilyMember(family_id: string, member_id: string): Promise<boolean> {
     const reference: Partial<FamilyMembersRow> = { family_id, member_id };
-    return this.deleteOne(reference) !== null;
+    const result = await this.deleteOne(reference);
+    return result !== null;
   }
 
   /**
@@ -154,7 +155,8 @@ export class FamilyMembersModel extends TableManager<"family_members">('family_m
    */
   async removeAllFamilyMembers(family_id: string): Promise<boolean> {
     const reference: Partial<FamilyMembersRow> = { family_id };
-    return this.deleteOne(reference) !== null;
+    const result = await this.deleteOne(reference);
+    return result !== null;
   }
 
   /**
@@ -164,6 +166,7 @@ export class FamilyMembersModel extends TableManager<"family_members">('family_m
    */
   async removeMemberFromAllFamilies(member_id: string): Promise<boolean> {
     const reference: Partial<FamilyMembersRow> = { member_id };
-    return this.deleteOne(reference) !== null;
+    const result = await this.deleteOne(reference);
+    return result !== null;
   }
 }
