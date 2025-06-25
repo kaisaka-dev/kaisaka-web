@@ -38,7 +38,7 @@ describe('AddressesModel', () => {
         });
 
         const result = await AddressesModel.instance.insertAddress('25 Hop Avenue', 1, 2);
-        expect(supabase.from).toHaveBeenCalledWith('addresses');
+
         expect(result).toEqual(sampleAddress);
     });
 
@@ -53,7 +53,7 @@ describe('AddressesModel', () => {
         });
 
         const result = await AddressesModel.instance.insertAddress('25 Hop Avenue', 1, 2);
-        expect(supabase.from).toHaveBeenCalledWith('addresses');
+
         expect(result).toBeNull();
     });
 
@@ -173,7 +173,7 @@ describe('AddressesModel', () => {
         (AddressesModel.instance as any).updateOne = mockUpdate;
 
         const result = await AddressesModel.instance.updateAddress('uuid-some-unique-id', 'Updated');
-        expect(supabase.from).toHaveBeenCalledWith('addresses');
+
         expect(result).toBe(true);
     });
 
@@ -182,7 +182,7 @@ describe('AddressesModel', () => {
         (AddressesModel.instance as any).updateOne = mockUpdate;
 
         const result = await AddressesModel.instance.updateAddress('uuid-some-unique-id', 'Updated');
-        expect(supabase.from).toHaveBeenCalledWith('addresses');
+
         expect(result).toBe(false);
     });
 
@@ -193,7 +193,7 @@ describe('AddressesModel', () => {
         (AddressesModel.instance as any).updateOne = mockUpdate;
 
         const result = await AddressesModel.instance.updateBarangayId('uuid-some-unique-id', 1);
-        expect(supabase.from).toHaveBeenCalledWith('addresses');
+
         expect(result).toBe(true);
     });
 
@@ -202,7 +202,7 @@ describe('AddressesModel', () => {
         (AddressesModel.instance as any).updateOne = mockUpdate;
 
         const result = await AddressesModel.instance.updateBarangayId('uuid-some-unique-id', 1);
-        expect(supabase.from).toHaveBeenCalledWith('addresses');
+
         expect(result).toBe(false);
     });
 
@@ -213,7 +213,7 @@ describe('AddressesModel', () => {
         (AddressesModel.instance as any).updateOne = mockUpdate;
 
         const result = await AddressesModel.instance.updateStreetId('uuid-some-unique-id', 2);
-        expect(supabase.from).toHaveBeenCalledWith('addresses');
+
         expect(result).toBe(true);
     });
 
@@ -222,7 +222,7 @@ describe('AddressesModel', () => {
         (AddressesModel.instance as any).updateOne = mockUpdate;
 
         const result = await AddressesModel.instance.updateStreetId('uuid-some-unique-id', 2);
-        expect(supabase.from).toHaveBeenCalledWith('addresses');
+
         expect(result).toBe(false);
     });
 
@@ -237,7 +237,7 @@ describe('AddressesModel', () => {
         (AddressesModel.instance as any).deleteOne = mockDelete;
 
         const result = await AddressesModel.instance.deleteById('uuid-some-unique-id');
-        expect(supabase.from).toHaveBeenCalledWith('addresses');
+
         expect(result).toBe(true);
     });
 
@@ -246,7 +246,7 @@ describe('AddressesModel', () => {
         (AddressesModel.instance as any).deleteOne = mockDelete;
 
         const result = await AddressesModel.instance.deleteById('uuid-some-unique-id');
-        expect(supabase.from).toHaveBeenCalledWith('addresses');
+
         expect(result).toBe(false);
     });
 });

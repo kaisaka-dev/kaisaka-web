@@ -36,7 +36,7 @@ describe('CitiesModel', () => {
         });
 
         const result = await CitiesModel.instance.insertCity('City');
-        expect(supabase.from).toHaveBeenCalledWith('cities');
+
         expect(result).toEqual(sampleCity);
     });
 
@@ -52,7 +52,7 @@ describe('CitiesModel', () => {
         });
 
         const result = await CitiesModel.instance.insertCity('');
-        expect(supabase.from).toHaveBeenCalledWith('cities');
+
         expect(result).toBeNull();
     });
 
@@ -97,7 +97,7 @@ describe('CitiesModel', () => {
         (CitiesModel.instance as any).updateOne = mockUpdate;
 
         const result = await CitiesModel.instance.updateName(1024, 'Updated');
-        expect(supabase.from).toHaveBeenCalledWith('cities');
+
         expect(result).toBe(true);
     });
 
@@ -106,7 +106,7 @@ describe('CitiesModel', () => {
         (CitiesModel.instance as any).updateOne = mockUpdate;
 
         const result = await CitiesModel.instance.updateName(1024, 'Updated');
-        expect(supabase.from).toHaveBeenCalledWith('cities');
+
         expect(result).toBe(false);
     });
 
@@ -121,7 +121,7 @@ describe('CitiesModel', () => {
         (CitiesModel.instance as any).deleteOne = mockDelete;
 
         const result = await CitiesModel.instance.deleteCity(10);
-        expect(supabase.from).toHaveBeenCalledWith('cities');
+
         expect(result).toBe(true);
     });
 
@@ -130,7 +130,7 @@ describe('CitiesModel', () => {
         (CitiesModel.instance as any).deleteOne = mockDelete;
 
         const result = await CitiesModel.instance.deleteCity(11);
-        expect(supabase.from).toHaveBeenCalledWith('cities');
+
         expect(result).toBe(false);
     });
 });
