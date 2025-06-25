@@ -1,224 +1,403 @@
-import { CaregiversModel } from '$lib/models/caregiversModel.ts';
-import { supabase } from '$lib/types/client.ts';
-import { beforeEach, describe, expect, it, vi } from 'vitest';
+import { describe, it, expect, vi, beforeEach } from 'vitest';
+import { CaregiversModel } from '$lib/models/caregiversModel.js';
+import { supabase } from '$lib/types/client.js';
 
-vi.mock('$lib/types/client', () => {
-  return {
-    supabase: {
-      from: vi.fn()
-    }
-  };
-});
+// create mock of the supabase client so tests never directly interact with the database
+vi.mock('$lib/types/client', () => ({
+  supabase: {
+    from: vi.fn()
+  }
+}));
 
-describe('CaregiversModel', () => {
+describe('caregiversModel', () => {
+  // prevent tests from affecting each other
   beforeEach(() => {
     vi.clearAllMocks();
   });
 
-  // get_caregiver
-  it('get_caregiver should return a caregiver object when found', async () => {
-    const mockSingle = vi.fn().mockResolvedValue({
-      data: {
-        id: 1,
-        member_id: 1,
-        contact_number: '09123456789',
-        facebook_link: 'fb.com/test',
-        email: 'test@example.com',
-        occupation: 'Test',
-        Remarks: 'Test'
-      },
-      error: null
-    });
+  const sampleCaregiver = {
+    id: 'uuid-caregiver-id',
+    member_id: 'uuid-member-id',
+    contact_number: '09123456789',
+    facebook_link: 'https://facebook.com/test',
+    email: 'test@gmail.com',
+    occupation: 'Housewife',
+    remarks: 'I am remarking on this caregiver'
+  };
 
-    const mockMatch = vi.fn().mockReturnValue({ single: mockSingle });
-
+  // insertCaregiver
+  it('insertCaregiver should return created caregiver on success', async () => {
     (supabase.from as any).mockReturnValue({
-      select: () => ({ match: mockMatch })
-    });
-
-    const result = await CaregiversModel.instance.getAll(1);
-
-    expect(supabase.from).toHaveBeenCalledWith('caregivers');
-    expect(mockMatch).toHaveBeenCalledWith({ id: 1 });
-    expect(result).toEqual({
-      id: 1,
-      member_id: 1,
-      contact_number: '09123456789',
-      facebook_link: 'fb.com/test',
-      email: 'test@example.com',
-      occupation: 'Test',
-      Remarks: 'Test'
-    });
-  });
-
-  it('get_caregiver should return null when not found', async () => {
-    const mockSingle = vi.fn().mockResolvedValue({ data: null, error: { message: 'not found' } });
-    const mockMatch = vi.fn().mockReturnValue({ single: mockSingle });
-
-    (supabase.from as any).mockReturnValue({
-      select: () => ({ match: mockMatch })
-    });
-
-    const result = await CaregiversModel.instance.getAll(999);
-    expect(result).toBeNull();
-  });
-
-  it('get_caregiver should throw an error when given a non-numeric ID', async () => {
-    const mockMatch = vi.fn();
-    (supabase.from as any).mockReturnValue({
-      select: () => ({ match: mockMatch })
-    });
-
-    await expect(CaregiversModel.instance.getAll('invalid-id' as any)).rejects.toThrow();
-  });
-
-  // get_all_caregivers 
-  it('get_all_caregivers should return a list of caregivers', async () => {
-    const mockSelect = vi.fn().mockResolvedValue({
-      data: [
-        { id: 1, member_id: 1 },
-        { id: 2, member_id: 2 }
-      ],
-      error: null
-    });
-
-    (supabase.from as any).mockReturnValue({
-      select: mockSelect
-    });
-
-    const result = await CaregiversModel.instance.get_all_caregivers();
-
-    expect(supabase.from).toHaveBeenCalledWith('caregivers');
-    expect(mockSelect).toHaveBeenCalled();
-    expect(result).toHaveLength(2);
-  });
-
-  it('get_all_caregivers should return an empty array when no data found', async () => {
-    const mockSelect = vi.fn().mockResolvedValue({ data: [], error: null });
-
-    (supabase.from as any).mockReturnValue({
-      select: mockSelect
-    });
-
-    const result = await CaregiversModel.instance.get_all_caregivers();
-    expect(Array.isArray(result)).toBe(true);
-    expect(result).toHaveLength(0);
-  });
-
-  // create_caregiver
-  it('create_caregiver should insert caregiver and return the created record', async () => {
-    const newCaregiver = {
-      member_id: 3,
-      contact_number: '09998887777',
-      facebook_link: 'fb.com/new',
-      email: 'new@example.com',
-      occupation: 'Nurse',
-      Remarks: 'New'
-    };
-
-    const mockInsert = vi.fn().mockReturnValue({
-      select: () => Promise.resolve({
-        data: [{ id: 10, ...newCaregiver }],
-        error: null
-      })
-    });
-
-    (supabase.from as any).mockReturnValue({
-      insert: mockInsert
-    });
-
-    const result = await CaregiversModel.instance.create_caregiver(newCaregiver);
-
-    expect(supabase.from).toHaveBeenCalledWith('caregivers');
-    expect(mockInsert).toHaveBeenCalledWith(newCaregiver);
-    expect(result).toEqual({ id: 10, ...newCaregiver });
-  });
-
-  it('create_caregiver should handle missing fields', async () => {
-    const mockInsert = vi.fn().mockResolvedValue({
-      data: null,
-      error: { message: 'Missing required fields' }
-    });
-
-    (supabase.from as any).mockReturnValue({
-      insert: mockInsert
-    });
-
-    const result = await CaregiversModel.instance.create_caregiver({} as any);
-    expect(result).toBeNull();
-  });
-
-  // update_caregiver
-  it('update_caregiver should update a caregiver and return updated record', async () => {
-    const updates = { contact_number: '09999999999' };
-
-    const mockUpdate = vi.fn().mockReturnValue({
-      eq: () => ({
-        select: () => Promise.resolve({
-          data: [{ id: 1, ...updates }],
-          error: null
+      insert: vi.fn().mockReturnValue({
+        select: () => ({
+          single: vi.fn().mockResolvedValue({ data: sampleCaregiver, error: null })
         })
       })
     });
 
-    (supabase.from as any).mockReturnValue({
-      update: mockUpdate
-    });
+    const result = await CaregiversModel.instance.insertCaregiver(
+      sampleCaregiver.member_id,
+      sampleCaregiver.contact_number,
+      sampleCaregiver.facebook_link,
+      sampleCaregiver.email,
+      sampleCaregiver.occupation,
+      sampleCaregiver.remarks
+    );
 
-    const result = await CaregiversModel.instance.update_caregiver(1, updates);
-
-    expect(supabase.from).toHaveBeenCalledWith('caregivers');
-    expect(result).toEqual({ id: 1, ...updates });
+    expect(result).toEqual(sampleCaregiver);
   });
 
-  it('update_caregiver should handle invalid update fields', async () => {
-    const mockUpdate = vi.fn().mockResolvedValue({
-      data: null,
-      error: { message: 'Invalid field' }
-    });
-
-    const mockEq = vi.fn().mockReturnValue({ update: mockUpdate });
-
+  it('insertCaregiver should return null on failure', async () => {
     (supabase.from as any).mockReturnValue({
-      update: () => ({ eq: mockEq })
-    });
-
-    const result = await CaregiversModel.instance.update_caregiver(1, { unknown: 'field' });
-    expect(result).toBeNull();
-  });
-
-  // delete_caregiver
-  it('delete_caregiver should delete a caregiver and return true', async () => {
-    const mockDelete = vi.fn().mockReturnValue({
-      eq: () => Promise.resolve({
-        data: [{ id: 1 }],
-        error: null
+      insert: vi.fn().mockReturnValue({
+        select: () => ({
+          single: vi.fn().mockResolvedValue({ data: null, error: { message: 'Insert failed' } })
+        })
       })
     });
 
-    (supabase.from as any).mockReturnValue({
-      delete: mockDelete
-    });
+    const result = await CaregiversModel.instance.insertCaregiver(sampleCaregiver.member_id);
+    expect(result).toBeNull();
+  });
 
-    const result = await CaregiversModel.instance.delete_caregiver(1);
+  // findById
+  it('findById should return caregiver if found', async () => {
+    const mockFind = vi.fn().mockResolvedValue(sampleCaregiver);
+    (CaregiversModel.instance as any).findOne = mockFind;
 
-    expect(supabase.from).toHaveBeenCalledWith('caregivers');
+    const result = await CaregiversModel.instance.findById(sampleCaregiver.id);
+    expect(mockFind).toHaveBeenCalledWith({ id: sampleCaregiver.id });
+    expect(result).toEqual(sampleCaregiver);
+  });
+
+  it('findById should return null if not found', async () => {
+    const mockFind = vi.fn().mockResolvedValue(null);
+    (CaregiversModel.instance as any).findOne = mockFind;
+
+    const result = await CaregiversModel.instance.findById('non-existent-id');
+    expect(result).toBeNull();
+  });
+
+  // findByMemberId
+  it('findByMemberId should return caregivers if found', async () => {
+    const mockFind = vi.fn().mockResolvedValue(sampleCaregiver);
+    (CaregiversModel.instance as any).findOne = mockFind;
+
+    const result = await CaregiversModel.instance.findByMemberId(sampleCaregiver.member_id);
+    expect(mockFind).toHaveBeenCalledWith({ member_id: sampleCaregiver.member_id });
+    expect(result).toEqual(sampleCaregiver);
+  });
+
+  it('findByMemberId should return null if not found', async () => {
+    const mockFind = vi.fn().mockResolvedValue(null);
+    (CaregiversModel.instance as any).findOne = mockFind;
+
+    const result = await CaregiversModel.instance.findByMemberId('non-existent-member-id');
+    expect(result).toBeNull();
+  });
+
+  // findByContactNumber
+  it('findByContactNumber should return caregivers if found', async () => {
+    const mockFind = vi.fn().mockResolvedValue(sampleCaregiver);
+    (CaregiversModel.instance as any).findMany = mockFind;
+
+    const result = await CaregiversModel.instance.findByContactNumber(sampleCaregiver.contact_number);
+    expect(mockFind).toHaveBeenCalledWith({ contact_number: sampleCaregiver.contact_number });
+    expect(result).toEqual(sampleCaregiver);
+  });
+
+  it('findByContactNumber should return null if not found', async () => {
+    const mockFind = vi.fn().mockResolvedValue(null);
+    (CaregiversModel.instance as any).findMany = mockFind;
+
+    const result = await CaregiversModel.instance.findByContactNumber('non-existent-contact-number');
+    expect(result).toBeNull();
+  });
+
+  // findByEmail
+  it('findByEmail should return caregivers if found', async () => {
+    const mockFind = vi.fn().mockResolvedValue(sampleCaregiver);
+    (CaregiversModel.instance as any).findMany = mockFind;
+
+    const result = await CaregiversModel.instance.findByEmail(sampleCaregiver.email);
+    expect(mockFind).toHaveBeenCalledWith({ email: sampleCaregiver.email });
+    expect(result).toEqual(sampleCaregiver);
+  });
+
+  it('findByEmail should return null if not found', async () => {
+    const mockFind = vi.fn().mockResolvedValue(null);
+    (CaregiversModel.instance as any).findMany = mockFind;
+
+    const result = await CaregiversModel.instance.findByEmail('non-existent-email');
+    expect(result).toBeNull();
+  });
+
+  // findByOccupation
+  it('findByOccupation should return caregivers if found', async () => {
+    const mockFind = vi.fn().mockResolvedValue([sampleCaregiver]);
+    (CaregiversModel.instance as any).findMany = mockFind;
+
+    const result = await CaregiversModel.instance.findByOccupation(sampleCaregiver.occupation);
+    expect(mockFind).toHaveBeenCalledWith({ occupation: sampleCaregiver.occupation });
+    expect(result).toEqual([sampleCaregiver]);
+  });
+
+  it('findByOccupation should return empty array if not found', async () => {
+    const mockFind = vi.fn().mockResolvedValue([]);
+    (CaregiversModel.instance as any).findMany = mockFind;
+
+    const result = await CaregiversModel.instance.findByOccupation('non-existent-occupation');
+    expect(result).toEqual([]);
+  });
+
+  // findByFacebookLink
+  it('findByFacebookLink should return caregivers if found', async () => {
+    const mockFind = vi.fn().mockResolvedValue(sampleCaregiver);
+    (CaregiversModel.instance as any).findMany = mockFind;
+
+    const result = await CaregiversModel.instance.findByFacebookLink(sampleCaregiver.facebook_link);
+    expect(mockFind).toHaveBeenCalledWith({ facebook_link: sampleCaregiver.facebook_link });
+    expect(result).toEqual(sampleCaregiver);
+  });
+
+  it('findByFacebookLink should return null if not found', async () => {
+    const mockFind = vi.fn().mockResolvedValue(null);
+    (CaregiversModel.instance as any).findMany = mockFind;
+
+    const result = await CaregiversModel.instance.findByFacebookLink('non-existent-facebook-link');
+    expect(result).toBeNull();
+  });
+
+  // getAll
+  it('getAll should return caregiver records', async () => {
+    const sampleCaregivers = [
+      {
+        id: 'uuid-1',
+        member_id: 'member-1',
+        contact_number: '09123456789',
+        facebook_link: 'https://facebook.com/caregiver1',
+        email: 'caregiver1@gmail.com',
+        occupation: 'Housewife',
+        remarks: 'Remark 1'
+      },
+      {
+        id: 'uuid-2',
+        member_id: 'member-2',
+        contact_number: '09179876543',
+        facebook_link: 'https://facebook.com/caregiver2',
+        email: 'caregiver2@gmail.com',
+        occupation: 'Teacher',
+        remarks: 'Remark 2'
+      }
+    ];
+
+    const mockFindMany = vi.fn().mockResolvedValue(sampleCaregivers);
+    (CaregiversModel.instance as any).findMany = mockFindMany;
+
+    const result = await CaregiversModel.instance.getAll();
+    expect(mockFindMany).toHaveBeenCalledWith(undefined);
+    expect(result).toEqual(sampleCaregivers);
+  });
+
+  it('getAll should return empty array when no caregivers found', async () => {
+    const mockFindMany = vi.fn().mockResolvedValue([]);
+    (CaregiversModel.instance as any).findMany = mockFindMany;
+
+    const result = await CaregiversModel.instance.getAll();
+    expect(mockFindMany).toHaveBeenCalledWith(undefined);
+    expect(result).toEqual([]);
+  });
+
+  // updateContactNumber
+  it('updateContactNumber should return true on success', async () => {
+    const mockUpdate = vi.fn().mockResolvedValue(true);
+    (CaregiversModel.instance as any).updateOne = mockUpdate;
+
+    const result = await CaregiversModel.instance.updateContactNumber(sampleCaregiver.id, '09998887777');
+    expect(mockUpdate).toHaveBeenCalledWith(
+      { id: sampleCaregiver.id },
+      { contact_number: '09998887777' }
+    );
     expect(result).toBe(true);
   });
 
-  it('delete_caregiver should return false when ID does not exist', async () => {
-    const mockDelete = vi.fn().mockResolvedValue({
-      data: null,
-      error: { message: 'Not found' }
+  it('updateContactNumber should return false on failure', async () => {
+    const mockUpdate = vi.fn().mockResolvedValue(false);
+    (CaregiversModel.instance as any).updateOne = mockUpdate;
+
+    const result = await CaregiversModel.instance.updateContactNumber(sampleCaregiver.id, '09998887777');
+    expect(result).toBe(false);
+  });
+
+  // updateOccupation
+  it('updateOccupation should return true on success', async () => {
+    const mockUpdate = vi.fn().mockResolvedValue(true);
+    (CaregiversModel.instance as any).updateOne = mockUpdate;
+
+    const result = await CaregiversModel.instance.updateOccupation(sampleCaregiver.id, 'new-occupation');
+    expect(mockUpdate).toHaveBeenCalledWith(
+      { id: sampleCaregiver.id },
+      { occupation: 'new-occupation' }
+    );
+    expect(result).toBe(true);
+  });
+
+  it('updateOccupation should return false on failure', async () => {
+    const mockUpdate = vi.fn().mockResolvedValue(false);
+    (CaregiversModel.instance as any).updateOne = mockUpdate;
+
+    const result = await CaregiversModel.instance.updateOccupation(sampleCaregiver.id, 'new-occupation');
+    expect(result).toBe(false);
+  });
+
+  // updateEmail
+  it('updateEmail should return true on success', async () => {
+    const mockUpdate = vi.fn().mockResolvedValue(true);
+    (CaregiversModel.instance as any).updateOne = mockUpdate;
+
+    const result = await CaregiversModel.instance.updateEmail(sampleCaregiver.id, 'new-email');
+    expect(mockUpdate).toHaveBeenCalledWith(
+      { id: sampleCaregiver.id },
+      { email: 'new-email' }
+    );
+    expect(result).toBe(true);
+  });
+
+  it('updateEmail should return false on failure', async () => {
+    const mockUpdate = vi.fn().mockResolvedValue(false);
+    (CaregiversModel.instance as any).updateOne = mockUpdate;
+
+    const result = await CaregiversModel.instance.updateEmail(sampleCaregiver.id, 'new-email');
+    expect(result).toBe(false);
+  });
+
+  // updateFacebookLink
+  it('updateFacebookLink should return true on success', async () => {
+    const mockUpdate = vi.fn().mockResolvedValue(true);
+    (CaregiversModel.instance as any).updateOne = mockUpdate;
+
+    const result = await CaregiversModel.instance.updateFacebookLink(sampleCaregiver.id, 'new-facebook-link');
+    expect(mockUpdate).toHaveBeenCalledWith(
+      { id: sampleCaregiver.id },
+      { facebook_link: 'new-facebook-link' }
+    );
+    expect(result).toBe(true);
+  });
+
+  it('updateFacebookLink should return false on failure', async () => {
+    const mockUpdate = vi.fn().mockResolvedValue(false);
+    (CaregiversModel.instance as any).updateOne = mockUpdate;
+
+    const result = await CaregiversModel.instance.updateFacebookLink(sampleCaregiver.id, 'new-facebook-link');
+    expect(result).toBe(false);
+  });
+
+  // updateContactInfo
+  it('updateContactInfo should return true on success', async () => {
+    const mockUpdate = vi.fn().mockResolvedValue(true);
+    (CaregiversModel.instance as any).updateOne = mockUpdate;
+
+    const result = await CaregiversModel.instance.updateContactInfo(sampleCaregiver.id, {
+      contact_number: '09999999999',
+      facebook_link: 'https://facebook.com/updated',
+      email: 'updated@example.com'
     });
 
-    const mockEq = vi.fn().mockReturnValue({ delete: mockDelete });
+    expect(mockUpdate).toHaveBeenCalledWith(
+      { id: sampleCaregiver.id },
+      {
+        contact_number: '09999999999',
+        facebook_link: 'https://facebook.com/updated',
+        email: 'updated@example.com'
+      }
+    );
 
-    (supabase.from as any).mockReturnValue({
-      delete: () => ({ eq: mockEq })
+    expect(result).toBe(true);
+  });
+
+  it('updateContactInfo should return false on failure', async () => {
+    const mockUpdate = vi.fn().mockResolvedValue(false);
+    (CaregiversModel.instance as any).updateOne = mockUpdate;
+
+    const result = await CaregiversModel.instance.updateContactInfo(sampleCaregiver.id, {
+      contact_number: '09999999999',
+      facebook_link: 'https://facebook.com/updated',
+      email: 'updated@example.com'
     });
 
-    const result = await CaregiversModel.instance.delete_caregiver(999);
+    expect(mockUpdate).toHaveBeenCalledWith(
+      { id: sampleCaregiver.id },
+      {
+        contact_number: '09999999999',
+        facebook_link: 'https://facebook.com/updated',
+        email: 'updated@example.com'
+      }
+    );
+
+    expect(result).toBe(false);
+  });
+
+  // updateCaregiver
+  it('updateCaregiver should return true on success', async () => {
+    const mockUpdate = vi.fn().mockResolvedValue(true);
+    (CaregiversModel.instance as any).updateOne = mockUpdate;
+
+    const result = await CaregiversModel.instance.updateCaregiver(sampleCaregiver.id, {
+      contact_number: '09999999999',
+      facebook_link: 'https://facebook.com/updated',
+      email: 'updated@example.com',
+      occupation: 'Nurse',
+      remarks: 'Updated remarks again'
+    });
+    expect(result).toBe(true);
+  });
+
+  it('updateCaregiver should return false on failure', async () => {
+    const mockUpdate = vi.fn().mockResolvedValue(false);
+    (CaregiversModel.instance as any).updateOne = mockUpdate;
+
+    const result = await CaregiversModel.instance.updateCaregiver(sampleCaregiver.id, {
+      contact_number: '09999999999',
+      facebook_link: 'https://facebook.com/updated',
+      email: 'updated@example.com',
+      occupation: 'Nurse',
+      remarks: 'Updated remarks again'
+    });
+    expect(result).toBe(false);
+  });
+
+  // deleteById
+  it('deleteById should return true when caregiver is deleted', async () => {
+    const mockDelete = vi.fn().mockResolvedValue(sampleCaregiver);
+    (CaregiversModel.instance as any).deleteOne = mockDelete;
+
+    const result = await CaregiversModel.instance.deleteById(sampleCaregiver.id);
+    expect(mockDelete).toHaveBeenCalledWith({ id: sampleCaregiver.id });
+    expect(result).toBe(true);
+  });
+
+  it('deleteById should return false when no caregiver found', async () => {
+    const mockDelete = vi.fn().mockResolvedValue(null);
+    (CaregiversModel.instance as any).deleteOne = mockDelete;
+
+    const result = await CaregiversModel.instance.deleteById(sampleCaregiver.id);
+    expect(result).toBe(false);
+  });
+
+  // deleteByMemberId
+  it('deleteByMemberId should return true when deletion succeeds', async () => {
+    const mockDelete = vi.fn().mockResolvedValue(sampleCaregiver);
+    (CaregiversModel.instance as any).deleteOne = mockDelete;
+
+    const result = await CaregiversModel.instance.deleteByMemberId(sampleCaregiver.member_id);
+    expect(result).toBe(true);
+  });
+
+  it('deleteByMemberId should return false when no record found', async () => {
+    const mockDelete = vi.fn().mockResolvedValue(null);
+    (CaregiversModel.instance as any).deleteOne = mockDelete;
+
+    const result = await CaregiversModel.instance.deleteByMemberId(sampleCaregiver.member_id);
     expect(result).toBe(false);
   });
 });
