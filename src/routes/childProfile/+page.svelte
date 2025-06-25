@@ -11,10 +11,11 @@
 
 <section  class = "sticky top-0 z-1000">
     <h1>
-       {user.firstName} {user.birthday}'s Profile
+       {user.firstName} {user.lastName}'s Profile 
     </h1>
-</section>
 
+    
+</section>
 <div class = "flex flex-row ml-10 m-4 sticky top-20 z-1000">
     <div class = "flex flex-col !font-[JSans]">
         <div class = "hover:!text-[var(--green)]">
@@ -31,6 +32,9 @@
         </div>
         <div>
             <a class = "hover:!text-[var(--green)]" href = "#Intervention Info">Interventions </a>
+        </div>
+        <div>
+            <a href = "childProfile/editChildProfile" class = "hover:!text-[var(--green)]">Edit Profile </a>
         </div>
     </div> 
     <div class = "!bg-[var(--green)] w-[4px] l-[100px] rounded-full ml-5"></div>
