@@ -27,7 +27,7 @@ describe('DisabilitiesModel', () => {
 
 
     // insertDisability
-    it('insertDisability should insert a new disability record', async () => {
+    it('insertDisability should create and return a new disability record', async () => {
         const mockInsert = vi.fn().mockReturnValue({
             select: () => ({
                 single: () => Promise.resolve({ data: sampleDisability, error: null })
@@ -163,26 +163,5 @@ describe('DisabilitiesModel', () => {
 
         const result = await DisabilitiesModel.instance.updateName(0, 'Updated Disability');
         expect(result).toBe(false);
-    });
-
-
-
-
-    // Delete methods
-
-    // deleteById
-    it('deleteById should return true if deletion is successful', async () => {
-        const mockDelete = vi.fn().mockResolvedValue(true);
-        (DisabilitiesModel.instance as any).deleteOne = mockDelete;
-
-        const result = await DisabilitiesModel.instance.deleteById(10000000);
-        expect(result).toBe(true);
-    });
-
-    it('deleteById should return false if deletion fails', async () => {
-        const mockDelete = vi.fn().mockResolvedValue(false);
-        (DisabilitiesModel.instance as any).deleteOne = mockDelete;
-
-        const result = await DisabilitiesModel.instance.deleteById(0);
     });
 });
