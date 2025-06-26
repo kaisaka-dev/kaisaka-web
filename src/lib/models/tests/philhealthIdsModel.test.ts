@@ -81,7 +81,15 @@ describe('philhealthIdsModel', () => {
         expect(result).toEqual([samplePhilhealthId]);
     });
 
-    it('findByExpDate should return null when no records are found', async () => {
+    it('findByExpDate should return empty array when none are found', async () => {
+        const mockFindMany = vi.fn().mockResolvedValue([]);
+        (philhealthIdsModel.instance as any).findMany = mockFindMany;
+
+        const result = await philhealthIdsModel.instance.findByExpDate('2035-03-01T00:00:00Z');
+        expect(result).toEqual([]);
+    });
+
+    it('findByExpDate should return null on error', async () => {
         const mockFindMany = vi.fn().mockResolvedValue(null);
         (philhealthIdsModel.instance as any).findMany = mockFindMany;
 

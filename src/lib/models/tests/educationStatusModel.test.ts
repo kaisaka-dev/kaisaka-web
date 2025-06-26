@@ -73,7 +73,15 @@ describe('educationStatusModel', () => {
         expect(result).toEqual([sampleEducationStatus]);
     });
 
-    it('findByChildId should return null when no records found', async () => {
+    it('findByChildId should return empty array when none are found', async () => {
+        const mockFindMany = vi.fn().mockResolvedValue([]);
+        (educationStatusModel.instance as any).findMany = mockFindMany;
+
+        const result = await educationStatusModel.instance.findByChildId('uuid-child-id');
+        expect(result).toEqual([]);
+    });
+
+    it('findByChildId should return null on error', async () => {
         const mockFindMany = vi.fn().mockResolvedValue(null);
         (educationStatusModel.instance as any).findMany = mockFindMany;
 
@@ -89,8 +97,16 @@ describe('educationStatusModel', () => {
         const result = await educationStatusModel.instance.findByEducationType('Home Program');
         expect(result).toEqual([sampleEducationStatus]);
     });
+    
+    it('findByChildId should return empty array when none are found', async () => {
+        const mockFindMany = vi.fn().mockResolvedValue([]);
+        (educationStatusModel.instance as any).findMany = mockFindMany;
 
-    it('findByEducationType should return null when no records found', async () => {
+        const result = await educationStatusModel.instance.findByEducationType('Home Program');
+        expect(result).toEqual([]);
+    });
+
+    it('findByEducationType should return null on error', async () => {
         const mockFindMany = vi.fn().mockResolvedValue(null);
         (educationStatusModel.instance as any).findMany = mockFindMany;
 
@@ -107,7 +123,15 @@ describe('educationStatusModel', () => {
         expect(result).toEqual([sampleEducationStatus]);
     });
 
-    it('findByYearRange should return null when no records found', async () => {
+    it('findByYearRange should return empty array when none are found', async () => {
+        const mockFindMany = vi.fn().mockResolvedValue({ data: [], error: null });
+        (educationStatusModel.instance as any).findMany = mockFindMany;
+
+        const result = await educationStatusModel.instance.findByYearRange(6, 12);
+        expect(result).toEqual([]);
+    });
+
+    it('findByYearRange should return null on error', async () => {
         const mockFindMany = vi.fn().mockResolvedValue({ data: [], error: null });
         (educationStatusModel.instance as any).findMany = mockFindMany;
 
