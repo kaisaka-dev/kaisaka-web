@@ -210,7 +210,8 @@ export class CaregiversModel extends TableManager<"caregivers">('caregivers') {
    * @returns boolean if delete is successful
    */
   async deleteById(id: string): Promise<boolean> {
-    return this.deleteOne({ id }) !== null;
+    const result = await this.deleteOne({id});
+    return result !== null;
   }
 
   /**

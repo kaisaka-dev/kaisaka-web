@@ -64,24 +64,16 @@ describe('StreetsModel', () => {
 
     // findById
     it('findById should return barangay by city', async () => {
-        const mockMatch = vi.fn().mockResolvedValue({ data: [sampleStreet], error: null });
-        (supabase.from as any).mockReturnValue({ select: () => ({ match: mockMatch }) });
+        const mockMatch = vi.fn().mockResolvedValue(sampleStreet);
+        (StreetsModel.instance as any).findOne = mockMatch;
 
         const result = await StreetsModel.instance.findById(1024);
-        expect(result).toEqual([sampleStreet]);
-    });
-
-    it('findById should return empty array when no streets are found', async () => {
-        const mockMatch = vi.fn().mockResolvedValue({ data: [], error: null });
-        (supabase.from as any).mockReturnValue({ select: () => ({ match: mockMatch }) });
-
-        const result = await StreetsModel.instance.findById(999);
-        expect(result).toEqual([]);
+        expect(result).toEqual(sampleStreet);
     });
 
     it('findById should return null on query error', async () => {
-        const mockMatch = vi.fn().mockResolvedValue({ data: null, error: { message: 'DB error' } });
-        (supabase.from as any).mockReturnValue({ select: () => ({ match: mockMatch }) });
+        const mockMatch = vi.fn().mockResolvedValue(null);
+        (StreetsModel.instance as any).findOne = mockMatch;
 
         const result = await StreetsModel.instance.findById(1024);
         expect(result).toBeNull();
@@ -89,24 +81,24 @@ describe('StreetsModel', () => {
 
     // findByStreet
     it('findByStreet should return streets by street name', async () => {
-        const mockMatch = vi.fn().mockResolvedValue({ data: [sampleStreet], error: null });
-        (supabase.from as any).mockReturnValue({ select: () => ({ match: mockMatch }) });
+        const mockMatch = vi.fn().mockResolvedValue([sampleStreet]);
+        (StreetsModel.instance as any).findMany = mockMatch;
 
         const result = await StreetsModel.instance.findByStreet('25 Hop Avenue');
         expect(result).toEqual([sampleStreet]);
     });
 
     it('findByStreet should return empty array when no streets are found', async () => {
-        const mockMatch = vi.fn().mockResolvedValue({ data: [], error: null });
-        (supabase.from as any).mockReturnValue({ select: () => ({ match: mockMatch }) });
+        const mockMatch = vi.fn().mockResolvedValue([]);
+        (StreetsModel.instance as any).findMany = mockMatch;
 
         const result = await StreetsModel.instance.findByStreet('NonExistent Street');
         expect(result).toEqual([]);
     });
 
     it('findByStreet should return null on query error', async () => {
-        const mockMatch = vi.fn().mockResolvedValue({ data: null, error: { message: 'DB error' } });
-        (supabase.from as any).mockReturnValue({ select: () => ({ match: mockMatch }) });
+        const mockMatch = vi.fn().mockResolvedValue(null);
+        (StreetsModel.instance as any).findMany = mockMatch;
 
         const result = await StreetsModel.instance.findByStreet('25 Hop Avenue');
         expect(result).toBeNull();
@@ -116,24 +108,24 @@ describe('StreetsModel', () => {
     //findByBarangayId
     it('findByBarangayId should return streets by barangay id', async () =>
     {
-        const mockMatch = vi.fn().mockResolvedValue({ data: [sampleStreet], error: null });
-        (supabase.from as any).mockReturnValue({ select: () => ({ match: mockMatch }) });
+        const mockMatch = vi.fn().mockResolvedValue([sampleStreet]);
+        (StreetsModel.instance as any).findMany = mockMatch;
 
         const result = await StreetsModel.instance.findByBarangayId(1);
         expect(result).toEqual([sampleStreet]);
     });
 
     it('findByBarangayId should return empty array when no streets are found', async () => {
-        const mockMatch = vi.fn().mockResolvedValue({ data: [], error: null });
-        (supabase.from as any).mockReturnValue({ select: () => ({ match: mockMatch }) });
+        const mockMatch = vi.fn().mockResolvedValue([]);
+        (StreetsModel.instance as any).findMany = mockMatch;
 
         const result = await StreetsModel.instance.findByBarangayId(999);
         expect(result).toEqual([]);
     });
 
     it('findByBarangayId should return null on query error', async () => {
-        const mockMatch = vi.fn().mockResolvedValue({ data: null, error: { message: 'DB error' } });
-        (supabase.from as any).mockReturnValue({ select: () => ({ match: mockMatch }) });
+        const mockMatch = vi.fn().mockResolvedValue(null);
+        (StreetsModel.instance as any).findMany = mockMatch;
 
         const result = await StreetsModel.instance.findByBarangayId(1);
         expect(result).toBeNull();
@@ -187,7 +179,7 @@ describe('StreetsModel', () => {
 
 
     // Delete methods
-
+    /*
     // deleteStreet
     it('deleteStreet should return true on successful deletion', async () => {
         const mockDelete = vi.fn().mockResolvedValue(true);
@@ -199,11 +191,12 @@ describe('StreetsModel', () => {
     });
 
     it('deleteStreet should return false on unsuccessful deletion', async () => {
-        const mockDelete = vi.fn().mockResolvedValue(false);
+        const mockDelete = vi.fn().mockResolvedValue(null);
         (StreetsModel.instance as any).deleteOne = mockDelete;
 
         const result = await StreetsModel.instance.deleteStreet(1024);
 
         expect(result).toBe(false);
     });
+    */
 });

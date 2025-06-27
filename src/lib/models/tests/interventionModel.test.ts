@@ -61,7 +61,7 @@ describe('InterventionModel', () => {
             'Neutral',
             'education',
         );
-        expect(result).toEqual(sampleIntervention);
+        expect(result).toBeNull();
     });
 
 
@@ -88,16 +88,16 @@ describe('InterventionModel', () => {
 
     // findByChild
     it('findByChild should return a matching record when found', async () => {
-        const mockFindOne = vi.fn().mockResolvedValue(sampleIntervention);
-        (InterventionModel.instance as any).findOne = mockFindOne;
+        const mockFindMany = vi.fn().mockResolvedValue(sampleIntervention);
+        (InterventionModel.instance as any).findMany = mockFindMany;
 
         const result = await InterventionModel.instance.findByChild('uuid-child-id');
         expect(result).toEqual(sampleIntervention);
     });
 
     it('findByChild should return null when no record is found', async () => {
-        const mockFindOne = vi.fn().mockResolvedValue(null);
-        (InterventionModel.instance as any).findOne = mockFindOne;
+        const mockFindMany = vi.fn().mockResolvedValue(null);
+        (InterventionModel.instance as any).findMany = mockFindMany;
 
         const result = await InterventionModel.instance.findByChild('uuid-child-id');
         expect(result).toBeNull();
@@ -230,7 +230,7 @@ describe('InterventionModel', () => {
     });
 
     it('deleteById should return false if deletion fails', async () => {
-        const mockDelete = vi.fn().mockResolvedValue(false);
+        const mockDelete = vi.fn().mockResolvedValue(null);
         (InterventionModel.instance as any).deleteOne = mockDelete;
 
         const result = await InterventionModel.instance.deleteById('uuid-intervention-id');

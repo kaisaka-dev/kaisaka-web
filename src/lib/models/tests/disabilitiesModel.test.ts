@@ -60,18 +60,18 @@ describe('DisabilitiesModel', () => {
 
     // findById
     it('findById should return a disability by id', async () => {
-        const mockMatch = vi.fn().mockResolvedValue({data: [sampleDisability], error: null});
+        const mockMatch = vi.fn().mockResolvedValue(sampleDisability);
 
-        (supabase.from as any).mockReturnValue({ select: mockMatch });
+        (DisabilitiesModel.instance as any).findOne = mockMatch;
 
         const result = await DisabilitiesModel.instance.findById(10000000);
         expect(result).toEqual(sampleDisability);
     });
 
     it('findById should return null if no disabilities are found', async () => {
-        const mockMatch = vi.fn().mockResolvedValue({data: [], error: null});
+        const mockMatch = vi.fn().mockResolvedValue(null);
 
-        (supabase.from as any).mockReturnValue({ select: mockMatch });
+        (DisabilitiesModel.instance as any).findOne = mockMatch;
 
         const result = await DisabilitiesModel.instance.findById(0);
         expect(result).toBeNull();
@@ -80,27 +80,27 @@ describe('DisabilitiesModel', () => {
 
     // findByName
     it('findByName should return disabilities by name', async () => {
-        const mockMatch = vi.fn().mockResolvedValue({data: [sampleDisability], error: null});
+        const mockMatch = vi.fn().mockResolvedValue([sampleDisability]);
 
-        (supabase.from as any).mockReturnValue({ select: mockMatch });
+        (DisabilitiesModel.instance as any).findMany = mockMatch;
 
         const result = await DisabilitiesModel.instance.findByName('Sample Disability');
         expect(result).toEqual([sampleDisability]);
     });
 
     it('findByName should return empty array if no disabilities found', async () => {
-        const mockMatch = vi.fn().mockResolvedValue({data: [], error: null});
+        const mockMatch = vi.fn().mockResolvedValue([]);
 
-        (supabase.from as any).mockReturnValue({ select: mockMatch });
+        (DisabilitiesModel.instance as any).findMany = mockMatch;
 
         const result = await DisabilitiesModel.instance.findByName('Nonexistent Disability');
         expect(result).toEqual([]);
     });
 
     it('findByName should return null on error', async () => {
-        const mockMatch = vi.fn().mockResolvedValue({data: null, error: new Error('DB error')});
+        const mockMatch = vi.fn().mockResolvedValue(null);
 
-        (supabase.from as any).mockReturnValue({ select: mockMatch });
+        (DisabilitiesModel.instance as any).findMany = mockMatch;
 
         const result = await DisabilitiesModel.instance.findByName('Sample Disability');
         expect(result).toBeNull();
@@ -108,36 +108,36 @@ describe('DisabilitiesModel', () => {
 
     // getAll
     it('getAll should return all disabilities with no filters', async () => {
-        const mockMatch = vi.fn().mockResolvedValue({data: [sampleDisability], error: null});
+        const mockMatch = vi.fn().mockResolvedValue([sampleDisability]);
 
-        (supabase.from as any).mockReturnValue({ select: mockMatch });
+        (DisabilitiesModel.instance as any).findMany = mockMatch;
 
         const result = await DisabilitiesModel.instance.getAll();
         expect(result).toEqual([sampleDisability]);
     });
 
     it('getAll should return all disabilities matching the filter', async () => {
-        const mockMatch = vi.fn().mockResolvedValue({data: [sampleDisability], error: null});
+        const mockMatch = vi.fn().mockResolvedValue([sampleDisability]);
 
-        (supabase.from as any).mockReturnValue({ select: mockMatch });
+        (DisabilitiesModel.instance as any).findMany = mockMatch;
 
         const result = await DisabilitiesModel.instance.getAll({ name: 'Sample Disability' });
         expect(result).toEqual([sampleDisability]);
     });
 
     it('getAll should return empty array if no disabilities match the filter', async () => {
-        const mockMatch = vi.fn().mockResolvedValue({data: [], error: null});
+        const mockMatch = vi.fn().mockResolvedValue([]);
 
-        (supabase.from as any).mockReturnValue({ select: mockMatch });
+        (DisabilitiesModel.instance as any).findMany = mockMatch;
 
         const result = await DisabilitiesModel.instance.getAll({ name: 'Nonexistent Disability' });
         expect(result).toEqual([]);
     });
 
     it('getAll should return null on error', async () => {
-        const mockMatch = vi.fn().mockResolvedValue({data: null, error: new Error('DB error')});
+        const mockMatch = vi.fn().mockResolvedValue(null);
 
-        (supabase.from as any).mockReturnValue({ select: mockMatch });
+        (DisabilitiesModel.instance as any).findMany = mockMatch;
 
         const result = await DisabilitiesModel.instance.getAll();
         expect(result).toBeNull();

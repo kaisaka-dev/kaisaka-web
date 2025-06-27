@@ -147,7 +147,7 @@ describe('DisabilityStatusModel', () => {
     });
 
     it('deleteById should return false if deletion fails', async () => {
-        const mockDelete = vi.fn().mockResolvedValue(false);
+        const mockDelete = vi.fn().mockResolvedValue(null);
         (DisabilityStatusModel.instance as any).deleteOne = mockDelete;
 
         const result = await DisabilityStatusModel.instance.deleteById(11000000);
@@ -164,7 +164,7 @@ describe('DisabilityStatusModel', () => {
     });
 
     it('deleteByChildId should return false if deletion fails', async () => {
-        const mockDelete = vi.fn().mockResolvedValue(false);
+        const mockDelete = vi.fn().mockResolvedValue(null);
         (DisabilityStatusModel.instance as any).deleteOne = mockDelete;
 
         const result = await DisabilityStatusModel.instance.deleteByChildId('uuid-child-id');

@@ -56,16 +56,16 @@ describe('philhealthIdsModel', () => {
 
     // findByPhilhealthId
     it('findByPhilhealthId should return a matching record when found', async () => {
-        const mockFindOne = vi.fn().mockResolvedValue(samplePhilhealthId);
-        (philhealthIdsModel.instance as any).findOne = mockFindOne;
+        const mockFindMany = vi.fn().mockResolvedValue(samplePhilhealthId);
+        (philhealthIdsModel.instance as any).findMany = mockFindMany;
 
         const result = await philhealthIdsModel.instance.findByPhilhealthId(12345678);
         expect(result).toEqual(samplePhilhealthId);
     });
 
     it('findByPhilhealthId should return null when no record is found', async () => {
-        const mockFindOne = vi.fn().mockResolvedValue(null);
-        (philhealthIdsModel.instance as any).findOne = mockFindOne;
+        const mockFindMany = vi.fn().mockResolvedValue(null);
+        (philhealthIdsModel.instance as any).findMany = mockFindMany;
 
         const result = await philhealthIdsModel.instance.findByPhilhealthId(12345678);
         expect(result).toBeNull();

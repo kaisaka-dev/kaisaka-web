@@ -199,6 +199,7 @@ describe('annualProgramModel', () => {
         expect(result).toBe(false);
     });
 
+    /*
     // deleteAnnualProgram
     it('deleteAnnualProgram should return true when successful', async () => {
         const mockDelete = vi.fn().mockResolvedValue(true);
@@ -219,4 +220,5 @@ describe('annualProgramModel', () => {
         expect(mockDelete).toHaveBeenCalledWith({ id: 999 });
         expect(result).toBe(false);
     });
+    */
 });

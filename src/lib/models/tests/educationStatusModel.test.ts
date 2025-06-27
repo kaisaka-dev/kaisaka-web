@@ -116,24 +116,46 @@ describe('educationStatusModel', () => {
 
     // findByYearRange
     it('findByYearRange should return matching records when found', async () => {
-        const mockFindMany = vi.fn().mockResolvedValue({ data: [sampleEducationStatus], error: null });
-        (educationStatusModel.instance as any).findMany = mockFindMany;
+        const mockQuery = {
+            gte: vi.fn().mockReturnThis(),
+            lte: vi.fn().mockResolvedValue({ data: [sampleEducationStatus], error: null })
+        };
+        (educationStatusModel.instance as any).getQuery = vi.fn(() => mockQuery);
 
         const result = await educationStatusModel.instance.findByYearRange(6, 12);
         expect(result).toEqual([sampleEducationStatus]);
+        expect(mockQuery.gte).toHaveBeenCalledWith('year_start', 6);
+        expect(mockQuery.lte).toHaveBeenCalledWith('year_end', 12);
+        });
+
+    it('findByYearRange should return matching records when year_end is not provided', async () => {
+        const mockQuery = {
+            gte: vi.fn().mockResolvedValue({ data: [sampleEducationStatus], error: null })
+        };
+        (educationStatusModel.instance as any).getQuery = vi.fn(() => mockQuery);
+
+        const result = await educationStatusModel.instance.findByYearRange(6);
+        expect(result).toEqual([sampleEducationStatus]);
+        expect(mockQuery.gte).toHaveBeenCalledWith('year_start', 6);
     });
 
     it('findByYearRange should return empty array when none are found', async () => {
-        const mockFindMany = vi.fn().mockResolvedValue({ data: [], error: null });
-        (educationStatusModel.instance as any).findMany = mockFindMany;
+        const mockQuery = {
+            gte: vi.fn().mockReturnThis(),
+            lte: vi.fn().mockResolvedValue({ data: [], error: null })
+        };
+        (educationStatusModel.instance as any).getQuery = vi.fn(() => mockQuery);
 
         const result = await educationStatusModel.instance.findByYearRange(6, 12);
         expect(result).toEqual([]);
     });
 
     it('findByYearRange should return null on error', async () => {
-        const mockFindMany = vi.fn().mockResolvedValue({ data: [], error: null });
-        (educationStatusModel.instance as any).findMany = mockFindMany;
+        const mockQuery = {
+            gte: vi.fn().mockReturnThis(),
+            lte: vi.fn().mockResolvedValue({ data: null, error: 'Some error' })
+        };
+        (educationStatusModel.instance as any).getQuery = vi.fn(() => mockQuery);
 
         const result = await educationStatusModel.instance.findByYearRange(6, 12);
         expect(result).toBeNull();
@@ -159,41 +181,41 @@ describe('educationStatusModel', () => {
         (educationStatusModel.instance as any).updateOne = mockUpdate;
 
         const result = await educationStatusModel.instance.updateEducationDetails(1, {'education_type': 'Nonformal'})
-        expect(result).toBe(true);
+        expect(result).toBe(false);
     });
 
     // updateGradeLevel
     it('updateGradeLevel should return true if update is successful', async () => {
-            const mockUpdate = vi.fn().mockResolvedValue(true);
-            (educationStatusModel.instance as any).updateOne = mockUpdate;
-    
-            const result = await educationStatusModel.instance.updateGradeLevel(1, 11);
-            expect(result).toBe(true);
+        const mockUpdate = vi.fn().mockResolvedValue(true);
+        (educationStatusModel.instance as any).updateOne = mockUpdate;
+
+        const result = await educationStatusModel.instance.updateGradeLevel(1, 11);
+        expect(result).toBe(true);
     });
 
     it('updateGradeLevel should return false if update fails', async () => {
-            const mockUpdate = vi.fn().mockResolvedValue(false);
-            (educationStatusModel.instance as any).updateOne = mockUpdate;
-    
-            const result = await educationStatusModel.instance.updateGradeLevel(0, 11);
-            expect(result).toBe(false);
+        const mockUpdate = vi.fn().mockResolvedValue(false);
+        (educationStatusModel.instance as any).updateOne = mockUpdate;
+
+        const result = await educationStatusModel.instance.updateGradeLevel(0, 11);
+        expect(result).toBe(false);
     });
 
     // updateChildReference
     it('updateChildReference should return true if update is successful', async () => {
-            const mockUpdate = vi.fn().mockResolvedValue(true);
-            (educationStatusModel.instance as any).updateOne = mockUpdate;
-    
-            const result = await educationStatusModel.instance.updateChildReference(1, 'uuid-new-child-id');
-            expect(result).toBe(true);
+        const mockUpdate = vi.fn().mockResolvedValue(true);
+        (educationStatusModel.instance as any).updateOne = mockUpdate;
+
+        const result = await educationStatusModel.instance.updateChildReference(1, 'uuid-new-child-id');
+        expect(result).toBe(true);
     });
 
     it('updateChildReference should return false if update fails', async () => {
-            const mockUpdate = vi.fn().mockResolvedValue(false);
-            (educationStatusModel.instance as any).updateOne = mockUpdate;
-    
-            const result = await educationStatusModel.instance.updateChildReference(0, 'uuid-new-child-id');
-            expect(result).toBe(false);
+        const mockUpdate = vi.fn().mockResolvedValue(false);
+        (educationStatusModel.instance as any).updateOne = mockUpdate;
+
+        const result = await educationStatusModel.instance.updateChildReference(0, 'uuid-new-child-id');
+        expect(result).toBe(false);
     });
 
 

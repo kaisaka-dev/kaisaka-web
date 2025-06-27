@@ -221,7 +221,7 @@ describe('BarangayModel', () => {
     });
 
     it('deleteBarangay should return false on unsuccessful deletion', async () => {
-        const mockDelete = vi.fn().mockResolvedValue(false);
+        const mockDelete = vi.fn().mockResolvedValue(null);
         (BarangayModel.instance as any).deleteOne = mockDelete;
 
         const result = await BarangayModel.instance.deleteBarangay(1);

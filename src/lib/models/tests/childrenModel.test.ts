@@ -71,16 +71,16 @@ describe('ChildrenModel', () => {
 
     // findById
     it('findById should return child by ID', async () => {
-        const mockMatch = vi.fn().mockResolvedValue({ data: [sampleChild], error: null });
-        (supabase.from as any).mockReturnValue({ select: () => ({ match: mockMatch }) });
+        const mockMatch = vi.fn().mockResolvedValue(sampleChild);
+        (ChildrenModel.instance as any).findOne = mockMatch;
 
         const result = await ChildrenModel.instance.findById('uuid-child-id');
         expect(result).toEqual(sampleChild);
     });
 
     it('findById should return null if no children are found', async () => {
-        const mockMatch = vi.fn().mockResolvedValue({ data: [], error: null });
-        (supabase.from as any).mockReturnValue({ select: () => ({ match: mockMatch }) });
+        const mockMatch = vi.fn().mockResolvedValue(null);
+        (ChildrenModel.instance as any).findOne = mockMatch;
 
         const result = await ChildrenModel.instance.findById('non-existent-id');
         expect(result).toBeNull();
@@ -89,16 +89,16 @@ describe('ChildrenModel', () => {
 
     // findByMemberId
     it('findByMemberId should return child by member ID', async () => {
-        const mockMatch = vi.fn().mockResolvedValue({ data: [sampleChild], error: null });
-        (supabase.from as any).mockReturnValue({ select: () => ({ match: mockMatch }) });
+        const mockMatch = vi.fn().mockResolvedValue(sampleChild);
+        (ChildrenModel.instance as any).findOne = mockMatch;
 
         const result = await ChildrenModel.instance.findByMemberId('uuid-member-id');
         expect(result).toEqual(sampleChild);
     });
 
     it('findByMemberId should return null if child does not exist', async () => {
-        const mockMatch = vi.fn().mockResolvedValue({ data: [], error: null });
-        (supabase.from as any).mockReturnValue({ select: () => ({ match: mockMatch }) });
+        const mockMatch = vi.fn().mockResolvedValue(null);
+        (ChildrenModel.instance as any).findOne = mockMatch;
 
         const result = await ChildrenModel.instance.findByMemberId('non-existent-member-id');
         expect(result).toBeNull();
@@ -106,24 +106,24 @@ describe('ChildrenModel', () => {
 
     // findActiveChildren
     it('findActiveChildren should return all active children', async () => {
-        const mockMatch = vi.fn().mockResolvedValue({ data: [sampleChild], error: null });
-        (supabase.from as any).mockReturnValue({ select: () => ({ match: mockMatch }) });
+        const mockMatch = vi.fn().mockResolvedValue([sampleChild]);
+        (ChildrenModel.instance as any).findMany = mockMatch;
 
         const result = await ChildrenModel.instance.findActiveChildren();
         expect(result).toEqual([sampleChild]);
     });
 
     it('findActiveChildren should return empty array if no active children', async () => {
-        const mockMatch = vi.fn().mockResolvedValue({ data: [], error: null });
-        (supabase.from as any).mockReturnValue({ select: () => ({ match: mockMatch }) });
+        const mockMatch = vi.fn().mockResolvedValue([]);
+        (ChildrenModel.instance as any).findMany = mockMatch;
 
         const result = await ChildrenModel.instance.findActiveChildren();
         expect(result).toEqual([]);
     });
 
     it('findActiveChildren should return null if query fails', async () => {
-        const mockMatch = vi.fn().mockResolvedValue({ data: null, error: { message: 'DB error' } });
-        (supabase.from as any).mockReturnValue({ select: () => ({ match: mockMatch }) });
+        const mockMatch = vi.fn().mockResolvedValue(null);
+        (ChildrenModel.instance as any).findMany = mockMatch;
 
         const result = await ChildrenModel.instance.findActiveChildren();
         expect(result).toBeNull();
@@ -131,32 +131,32 @@ describe('ChildrenModel', () => {
 
     // getAll
     it('getAll should return all children with no filters', async () => {
-        const mockMatch = vi.fn().mockResolvedValue({ data: [sampleChild], error: null });
-        (supabase.from as any).mockReturnValue({ select: () => ({ match: mockMatch }) });
+        const mockMatch = vi.fn().mockResolvedValue([sampleChild]);
+        (ChildrenModel.instance as any).findMany = mockMatch;
 
         const result = await ChildrenModel.instance.getAll();
         expect(result).toEqual([sampleChild]);
     });
 
     it('getAll should return all children matching the filter', async () => {
-        const mockMatch = vi.fn().mockResolvedValue({ data: [sampleChild], error: null });
-        (supabase.from as any).mockReturnValue({ select: () => ({ match: mockMatch }) });
+        const mockMatch = vi.fn().mockResolvedValue([sampleChild]);
+        (ChildrenModel.instance as any).findMany = mockMatch;
 
         const result = await ChildrenModel.instance.getAll({ remarks: 'Sample remarks' });
         expect(result).toEqual([sampleChild]);
     });
 
     it('getAll should return empty array if no children match the filter', async () => {
-        const mockMatch = vi.fn().mockResolvedValue({ data: [], error: null });
-        (supabase.from as any).mockReturnValue({ select: () => ({ match: mockMatch }) });
+        const mockMatch = vi.fn().mockResolvedValue([]);
+        (ChildrenModel.instance as any).findMany = mockMatch;
 
         const result = await ChildrenModel.instance.getAll({ remarks: 'Nonexistent remarks' });
         expect(result).toEqual([]);
     });
 
     it('getAll should return null if query fails', async () => {
-        const mockMatch = vi.fn().mockResolvedValue({ data: null, error: { message: 'DB error' } });
-        (supabase.from as any).mockReturnValue({ select: () => ({ match: mockMatch }) });
+        const mockMatch = vi.fn().mockResolvedValue(null);
+        (ChildrenModel.instance as any).findMany = mockMatch;
 
         const result = await ChildrenModel.instance.getAll();
         expect(result).toBeNull();
@@ -336,7 +336,7 @@ describe('ChildrenModel', () => {
     });
 
     it('deleteById should return false when no such child exists', async () => {
-        const mockDelete = vi.fn().mockResolvedValue(false);
+        const mockDelete = vi.fn().mockResolvedValue(null);
         (ChildrenModel.instance as any).deleteOne = mockDelete;
 
         const result = await ChildrenModel.instance.deleteById('nonexistent-id');
@@ -353,17 +353,17 @@ describe('ChildrenModel', () => {
 
         const result = await ChildrenModel.instance.deleteByMemberId('uuid-member-id');
 
-        expect(mockDelete).toHaveBeenCalledWith({ member_id: 'uuid-member-id' });
+        expect(mockDelete).toHaveBeenCalledWith({ id: 'uuid-member-id' });
         expect(result).toBe(true);
     });
 
     it('deleteByMemberId should return false when no such child exists', async () => {
-        const mockDelete = vi.fn().mockResolvedValue(false);
+        const mockDelete = vi.fn().mockResolvedValue(null);
         (ChildrenModel.instance as any).deleteOne = mockDelete;
 
         const result = await ChildrenModel.instance.deleteByMemberId('nonexistent-member-id');
 
-        expect(mockDelete).toHaveBeenCalledWith({ member_id: 'nonexistent-member-id' });
+        expect(mockDelete).toHaveBeenCalledWith({ id: 'nonexistent-member-id' });
         expect(result).toBe(false);
     });
 

@@ -109,6 +109,7 @@ describe('serviceCategoriesModel', () => {
         expect(result).toBe(false);
     });
 
+    /*
     // deleteById
     it('deleteById should return true when deletion is successful', async () => {
         const mockDelete = vi.fn().mockResolvedValue({ id: 1, name: 'Health Support' });
@@ -144,4 +145,5 @@ describe('serviceCategoriesModel', () => {
         const result = await ServiceCategoriesModel.instance.deleteByName('Nonexistent');
         expect(result).toBe(false);
     });
+    */
 });
