@@ -3,8 +3,27 @@
 	import Checkbox from '../../../components/input/Checkbox.svelte';
 	import Header from '../../../components/Header.svelte';
 	import GuardianForm from './GuardianForm.svelte';
+	type NewGuardian = {
+		firstName: string;
+		lastName: string;
+		sex: string;
+		contactNo: string;
+		fbLink: string;
+		email: string;
+		address: string;
+		brgy: string;
+		occupation: string;
+		relationship: string;
+	};
 
-	let guardians = $state([
+	type LinkedGuardian = {
+		guardian_id: number;
+		relationship: string;
+	};
+
+	type Guardian = NewGuardian | LinkedGuardian;
+
+	let guardians = $state<Guardian[]>([
 		{
 			firstName: '',
 			lastName: '',
@@ -56,6 +75,23 @@
 				address: ''
 			}
 		];
+	}
+
+	function linkOldGuardian() {
+		guardians = [
+			...guardians,
+			{
+				guardian_id: -100,
+				relationship: ''
+			}
+		]
+
+		guardianErrors = [
+			...guardianErrors,
+			{
+				guardian_id: ''
+			}
+		]
 	}
 </script>
 
