@@ -1,14 +1,16 @@
-<script>
+<script lang="js">
     import Header from '../../../components/Header.svelte'
     import Input from '../../../components/input/InputText.svelte'
     import TextArea from '../../../components/input/InputTextarea.svelte'
     import Check from '../../../components/input/Checkbox.svelte'
-    import Date from '../../../components/input/InputDate.svelte'
-
+    import DateInput from '../../../components/input/InputDate.svelte'
+    import Select from '../../../components/input/Select.svelte'
     export let data
     const { user } = data
-    console.log(user.birthday)
+
+    let bindedDate = (new Date()).toJSON().slice(0, 10)
 </script>
+
 <Header/>
 
 <form method = "POST">
@@ -17,7 +19,7 @@
        {user.firstName} {user.lastName}'s Profile 
     </h1>
 </section>
-<div class = "flex flex-row ml-10 m-4 sticky top-20 -z-1000">
+<div class = "flex flex-row ml-10 m-4 sticky top-20 w-50">
     <div class = "flex flex-col !font-[JSans]">
         <div class = "hover:!text-[var(--green)]">
             <a class = "hover:!text-[var(--green)]" href = "#Personal Info">Information </a>
@@ -47,7 +49,7 @@
         Information
     </h1>
 </div>
-<div class = "border-[var(--border)] border-4 ml-55 mr-10 !font-bold" >
+<div class = "border-[var(--border)] border-4 ml-55 mr-10 !font-bold z-2000" >
     <div class = "!flex !flex-row !justify-start mt-2">
         <div class = "flex flex-col">
             <div class = "flex flex-row">
@@ -67,7 +69,7 @@
 
             <div class = "flex flex-row">
                 <div class = "ml-4 mt-3 w-40"> Birthday</div>
-                <div> <Date value = {user.birthday} label = ""/> </div>
+                <div> <DateInput value = {user.birthday} label = ""/> </div>
             </div>
 
             <div class = "flex flex-row">
@@ -77,7 +79,7 @@
 
             <div class = "flex flex-row">
                 <div class = "ml-4 mt-3 w-40"> Sex</div>
-                <div> <Input value = "Sex"/> </div>
+                <div> <Input type = "Drop" value = "Sex"/> </div>
             </div>
 
             <div class = "flex flex-row">
@@ -102,17 +104,17 @@
 
             <div class = "flex flex-row mt-10">
                 <div class = "ml-4 mt-3 w-70"> Date of Admission</div>
-                <div> <Date value = "Date"/> </div>
+                <div> <DateInput value = "Date"/> </div>
             </div>
 
             <div class = "flex flex-row">
                 <div class = "ml-4 mt-3 w-70"> Date of Termination</div>
-                <div> <Date value = "Date"/> </div>
+                <div> <DateInput value = "Date"/> </div>
             </div>
         </div>
         
         
-        <div class = "flex flex-col -ml-10"> 
+        <div class = "flex flex-col ml-3"> 
             <div class = "-ml-8"> <TextArea label = "Remarks" rows = 10/> </div>
         </div>
     </div>
@@ -139,19 +141,29 @@
 <div class = "flex flex-row mt-10">
     <div class = "flex flex-col border-[var(--border)] border-4 ml-55 mr-10 p-6 w-125">
         <div class = "flex flex-row">
-            <div class = "!bg-[var(--pink)] p-2 w-45 rounded-full text-center !font-bold !text-[var(--background)] mr-20" > Caregiver </div>
-            <div class = "!font-[JSans] mt-2"> Paolo Rivera</div>
+            <select id = "familyrole" class = "!mt-2 w-45 rounded-full text-[var(--background)] mr-20" > 
+                <option selected value = "caregiver"> Caregiver </option>
+                <option value = "child"> Child</option>
+            </select>
+            <div class = "!font-[JSans] mt-2"> <input class = "text" value = "Paolo Rivera"/> </div>
         </div>
 
-        <div class = "flex flex-row mt-10">
-            <div class = "!bg-[var(--green)] p-2 w-45 rounded-full text-center !font-bold !text-[var(--background)] mr-20" > Child </div>
-            <div class = "!font-[JSans] mt-2 "> Child Name</div>
+        <div class = "flex flex-row">
+            <select id = "familyrole1" class = "!mt-2 w-45 rounded-full text-[var(--background)] mr-20" > 
+                <option selected value = "caregiver"> Caregiver </option>
+                <option value = "child"> Child</option>
+            </select>
+            <div class = "!font-[JSans] mt-2"> <input class = "text" value = "Paolo Rivera"/> </div>
         </div>
 
-        <div class = "flex flex-row mt-10">
-            <div class = "!bg-[var(--green)] p-2 w-45 rounded-full text-center !font-bold !text-[var(--background)] mr-20" > Child </div>
-            <div class = "!font-[JSans] mt-2"> Child Name2</div>
+        <div class = "flex flex-row">
+            <select id = "familyrole2" class = "!mt-2 w-45 rounded-full text-[var(--background)] mr-20" > 
+                <option selected value = "caregiver"> Caregiver </option>
+                <option value = "child"> Child</option>
+            </select>
+            <div class = "!font-[JSans] mt-2"> <input class = "text" value = "Paolo Rivera"/> </div>
         </div>
+
     </div>
 
     <div class = "border-[var(--border)] border-4 p-6 flex flex-col" id ="Membership Info">
@@ -162,7 +174,8 @@
 
          <div class = "flex flex-row mt-5">
             <div class = 'mr-25 font-bold'> 2024 </div>
-            <div class = "!text-red-500 "> Payment Pending</div>
+            <div class = "mr-10 w-60"> PAYMENT: {bindedDate || "PENDING"}</div>
+            <input type = "Date" value = {bindedDate} on:input = {e => bindedDate = e.target.value}/>
         </div>
     </div>
 </div>
@@ -265,72 +278,113 @@
         Interventions
 </h1>
 
-<div class = "flex flex-col border-[var(--border)] border-4 ml-55 mr-10 p-6 w-238" id ="Intervention Info">
+<div class = "flex flex-col border-[var(--border)] border-4 ml-55 mr-10 p-6 w-305" id ="Intervention Info">
     <div class = "flex flex-col">
         <div class = "!bg-[var(--green)] p-3 flex flex-row">
            <div class = "!text-[var(--background)] !font-bold ml-65">Intervention Name </div>
-           <div class = "!text-[var(--background)] !font-bold ml-35">Status History </div>
+           <div class = "!text-[var(--background)] !font-bold ml-55">Status History </div>
         </div>
 
-        <div class = "border-[var(--border)] border-4 flex flex-col p-3 ">
-            <div class = "flex flex-row">
-                <div>
-                     <div class = "!bg-[var(--green)] mt-4 p-2 w-45 rounded-full text-center !font-bold !text-[var(--background)]" > SOCIAL </div>
+                    <div class = "flex flex-row mt-5">
+                <div class = "-mr-15">
+                    <select id = "interventiontype1" class = "!mt-4 w-45 rounded-full text-[var(--background)] mr-20" > 
+                    <option selected value = "social"> SOCIAL </option>
+                    <option value = "livelihood"> LIVELIHOOD</option>
+                    <option selected value = "education"> EDUCATION </option>
+                    <option value = "livelihood"> LIVELIHOOD</option>
+                    <option value = "livelihood"> HEALTH</option>
+                    </select>
                 </div>
-
-                <div class = "ml-16 mt-5 w-105">
-                   INTERVENTION NAME
+                <div class = "mb-10 ">
+                   <Input value = "INTERVENTION NAME" />
                 </div>
-
                 <div class =  "collapse">
                     <input type="checkbox" />
                     <div class = "collapse-title ml-21 flex flex-row">
-                        <div class = "!bg-[var(--pink)] p-2 w-45 rounded-full text-center !font-bold !text-[var(--background)]" > REGRESSED </div> 
-                        <div class = "ml-10 mt-2"> 6/25/25</div>
+                        <div class = "z-1000 -mt-4">
+                            <select id = "status" class = "!mt-4 w-45 rounded-full text-[var(--background)] mr-20" > 
+                            <option selected value = "improved"> IMPROVED </option>
+                            <option value = "regressed"> REGRESSED</option>
+                            </select>
+                        </div> 
+                        <input type = "Date" class = "z-1000 mt-0.5"/>
                     </div>
                     <div class = "collapse-content flex flex-col">
                         <div class= "flex flex-row">
-                            <div class = "!bg-[var(--green)] p-2 w-45 ml-21 rounded-full text-center !font-bold !text-[var(--background)]" > IMPROVED </div> 
-                            <div class = "ml-10 mt-2"> 6/25/25</div>
+                            <div class = "mr-21"/>
+                            <div class = "z-1000 ">
+                            <select id = "status" class = "!mt-4 w-45 rounded-full text-[var(--background)] mr-20" > 
+                            <option selected value = "improved"> IMPROVED </option>
+                            <option value = "regressed"> REGRESSED</option>
+                            </select>
+                            </div> 
+                            <input type = "Date" class = "mt-3 z-1000"/>
                         </div>
-                        <div class= "flex flex-row mt-5">
-                            <div class = "!bg-[var(--green)] p-2 w-45 ml-21 rounded-full text-center !font-bold !text-[var(--background)]" > IMPROVED </div> 
-                            <div class = "ml-10 mt-2"> 6/25/25</div>
+                        <div class= "flex flex-row">
+                            <div class = "mr-21"/>
+                            <div class = "z-1000 ">
+                            <select id = "status" class = "!mt-4 w-45 rounded-full text-[var(--background)] mr-20" > 
+                            <option selected value = "improved"> IMPROVED </option>
+                            <option value = "regressed"> REGRESSED</option>
+                            </select>
+                            </div> 
+                            <input type = "Date" class = "mt-3 z-1000"/>
                         </div>
                     </div>
                 </div>
             </div>
 
             <div class = "flex flex-row mt-5">
-                <div>
-                     <div class = "!bg-[var(--green)] mt-4 p-2 w-45 rounded-full text-center !font-bold !text-[var(--background)]" > SOCIAL </div>
+                <div class = "-mr-15">
+                    <select id = "interventiontype1" class = "!mt-4 w-45 rounded-full text-[var(--background)] mr-20" > 
+                    <option selected value = "social"> SOCIAL </option>
+                    <option value = "livelihood"> LIVELIHOOD</option>
+                    <option selected value = "education"> EDUCATION </option>
+                    <option value = "livelihood"> LIVELIHOOD</option>
+                    <option value = "livelihood"> HEALTH</option>
+                    </select>
                 </div>
-
-                <div class = "ml-16 mt-5 w-105">
-                   INTERVENTION NAME
+                <div class = "mb-10 ">
+                   <Input value = "INTERVENTION NAME" />
                 </div>
-
                 <div class =  "collapse">
                     <input type="checkbox" />
                     <div class = "collapse-title ml-21 flex flex-row">
-                        <div class = "!bg-[var(--pink)] p-2 w-45 rounded-full text-center !font-bold !text-[var(--background)]" > REGRESSED </div> 
-                        <div class = "ml-10 mt-2"> 6/25/25</div>
+                        <div class = "z-1000 -mt-4">
+                            <select id = "status" class = "!mt-4 w-45 rounded-full text-[var(--background)] mr-20" > 
+                            <option selected value = "improved"> IMPROVED </option>
+                            <option value = "regressed"> REGRESSED</option>
+                            </select>
+                        </div> 
+                        <input type = "Date" class = "z-1000 mt-0.5"/>
                     </div>
                     <div class = "collapse-content flex flex-col">
                         <div class= "flex flex-row">
-                            <div class = "!bg-[var(--green)] p-2 w-45 ml-21 rounded-full text-center !font-bold !text-[var(--background)]" > IMPROVED </div> 
-                            <div class = "ml-10 mt-2"> 6/25/25</div>
+                            <div class = "mr-21"/>
+                            <div class = "z-1000 ">
+                            <select id = "status" class = "!mt-4 w-45 rounded-full text-[var(--background)] mr-20" > 
+                            <option selected value = "improved"> IMPROVED </option>
+                            <option value = "regressed"> REGRESSED</option>
+                            </select>
+                            </div> 
+                            <input type = "Date" class = "mt-3 z-1000"/>
                         </div>
-                        <div class= "flex flex-row mt-5">
-                            <div class = "!bg-[var(--green)] p-2 w-45 ml-21 rounded-full text-center !font-bold !text-[var(--background)]" > IMPROVED </div> 
-                            <div class = "ml-10 mt-2"> 6/25/25</div>
+                        <div class= "flex flex-row">
+                            <div class = "mr-21"/>
+                            <div class = "z-1000 ">
+                            <select id = "status" class = "!mt-4 w-45 rounded-full text-[var(--background)] mr-20" > 
+                            <option selected value = "improved"> IMPROVED </option>
+                            <option value = "regressed"> REGRESSED</option>
+                            </select>
+                            </div> 
+                            <input type = "Date" class = "mt-3 z-1000"/>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
     </div>
-</div>
+
 
 <!--END OF INTERVENTIONS-->
 
