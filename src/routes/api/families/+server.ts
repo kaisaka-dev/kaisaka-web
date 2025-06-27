@@ -10,3 +10,9 @@ export const POST: RequestHandler = async ({ request }) => {
 
   return json({ message: 'Family created successfully', data: inserted });
 }
+
+export const PUT: RequestHandler = async({request}) => {
+  // Note: Families table only contains id and date_created fields
+  // No updatable fields are available in the families model
+  throw error(400, 'No updatable fields available for families. Families only contain id and date_created.')
+}
