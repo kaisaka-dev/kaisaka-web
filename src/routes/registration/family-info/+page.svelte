@@ -1,30 +1,57 @@
 <script lang="ts">
 
-	import Checkbox from '../../../components/input/Checkbox.svelte';
 	import Header from '../../../components/Header.svelte';
 	import GuardianForm from './GuardianForm.svelte';
+
+
+	/**
+	 * object type used to store information about a new guardian.
+	 */
 	type NewGuardian = {
 		firstName: string;
 		lastName: string;
 		sex: string;
 		contactNo: string;
-		fbLink: string;
-		email: string;
+		fbLink?: string;
+		email?: string;
 		address: string;
 		brgy: string;
 		occupation: string;
 		relationship: string;
 	};
 
+	/**
+	 * object type used to store information about a linked guardian
+	 */
 	type LinkedGuardian = {
-		guardian_id: number;
-		relationship: string;
+		// info about the search
+		firstName: string;
+		lastName: string;
+		contactNo: string;
+
+		// info of a list of family members which are linked to the searched family member
+		infoLinked: InfoLinked[];
+
 	};
 
-	type Guardian = NewGuardian | LinkedGuardian;
+	/**
+	 * object type used to store information about the searched guardian
+	 */
+	type InfoLinked = {
+		guardian_id: number;
+		firstName: string;
+		lastName: string;
+		contactNo: string;
+		relationship: string;
+	}
+
+	type Guardian =
+		| (NewGuardian & { type: 'new' })
+		| (LinkedGuardian & { type: 'linked' });
 
 	let guardians = $state<Guardian[]>([
 		{
+			type: 'new', // explicit discriminator
 			firstName: '',
 			lastName: '',
 			sex: '',
@@ -36,7 +63,7 @@
 			occupation: '',
 			relationship: ''
 		}
-	]);
+	]); // initialize variable so that the page will have at least one guardian
 
 	let guardianErrors = $state(guardians.map(() => ({
 		firstName: '',
@@ -51,6 +78,7 @@
 		guardians = [
 			...guardians,
 			{
+				type: 'new',
 				firstName: '',
 				lastName: '',
 				sex: '',
@@ -77,21 +105,30 @@
 		];
 	}
 
-	function linkOldGuardian() {
-		guardians = [
-			...guardians,
-			{
-				guardian_id: -100,
-				relationship: ''
-			}
-		]
+	// function linkOldGuardian() {
+	// 	guardians = [
+	// 		...guardians,
+	// 		{
+	// 			guardian_id: -100,
+	// 			relationship: ''
+	// 		}
+	// 	]
+	//
+	// 	guardianErrors = [
+	// 		...guardianErrors,
+	// 		{
+	// 			guardian_id: ''
+	// 		}
+	// 	]
+	// }
 
-		guardianErrors = [
-			...guardianErrors,
-			{
-				guardian_id: ''
-			}
-		]
+	/**
+	 * deletes item from the array (reflected on the ui too)
+	 * @param index
+	 */
+	function deleteGuardian(index: number) {
+		guardians = guardians.filter((_, i) => i !== index);
+		guardianErrors = guardianErrors.filter((_, i) => i !== index);
 	}
 </script>
 
@@ -105,6 +142,7 @@
 			bind:formData={guardians[index]}
 			errors={guardianErrors[index]}
 			{index}
+			deleteGuardian={deleteGuardian}
 		/>
 	{/each}
 
