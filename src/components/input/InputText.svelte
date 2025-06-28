@@ -9,8 +9,10 @@
 	export let disabled = false;
 </script>
 
-<div class="input-container">
-	<label for={id}>{label} {required ? " *" : ""}</label>
+<div class="input-container" class:no-margin={label === ''}>
+	{#if label !== ""}
+		<label for={id}>{label} {required ? " *" : ""}</label>
+	{/if}
 
 	<div class="input-wrapper">
 		<input type="text" {id} class="input" bind:value {disabled}/>
@@ -27,4 +29,7 @@
 			background-color:gray;
 			color: lightgray;
 	}
+  .no-margin {
+      margin: 0 !important;
+  }
 </style>
