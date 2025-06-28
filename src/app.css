@@ -123,17 +123,18 @@ label{
 /* tables */
 td {
     border: 3px solid var(--border);
-    padding: 0.5rem;
+    padding: 0.8rem;
 }
 tr:hover {
     background-color: var(--border);
 }
 table {
     border-collapse: collapse;
+    text-align: left;
 }
 th {
     color: var(--background);
     background-color: var(--green);
     border: 3px solid var(--green);
-    padding: 0.2rem;
+    padding: 0.5rem;
 }
