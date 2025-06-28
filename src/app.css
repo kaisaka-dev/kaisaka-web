@@ -114,8 +114,26 @@ label{
     width: 15rem;
 }
 
-.input-wrapper {
+.input-wrapper { /* for vertically aligning input text and the error message */
     display: flex;
     flex-direction: column;
     width: 400px;
+}
+
+/* tables */
+td {
+    border: 3px solid var(--border);
+    padding: 0.5rem;
+}
+tr:hover {
+    background-color: var(--border);
+}
+table {
+    border-collapse: collapse;
+}
+th {
+    color: var(--background);
+    background-color: var(--green);
+    border: 3px solid var(--green);
+    padding: 0.2rem;
 }
