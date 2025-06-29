@@ -1,8 +1,8 @@
-import { DisabilitiesModel } from "$lib/models/disabilitiesModel.js"
+import { CaregiverGroupsModel } from "$lib/models/caregiverGroupsModel.js";
 import { error, json, type RequestHandler } from "@sveltejs/kit";
 
 export const POST: RequestHandler = async({request}) => {
-
+  
   let body: any = {}
   try {
     body = await request.json();
@@ -10,11 +10,16 @@ export const POST: RequestHandler = async({request}) => {
     throw error(400, 'Missing required fields.')
   }
 
-  if (!body.name) {
-    throw error(400, 'Missing required fields.')
+  if (!body.caregiver_id || !body.community_group_id) {
+    throw error(400, 'Missing required fields: caregiver_id, community_group_id.')
   }
 
-  const inserted = await DisabilitiesModel.instance.insertDisability(body.name)
+  const inserted = await CaregiverGroupsModel.instance.insertCaregiverGroup(
+    body.caregiver_id,
+    body.community_group_id,
+    body.date_joined,
+    body.date_left
+  )
 
   if (!inserted){
     throw error(500, 'Failed to insert')
@@ -38,10 +43,18 @@ export const PUT: RequestHandler = async({request}) => {
 
   let hasUpdates = false
 
-  if (body.name !== undefined) {
-    const updated = await DisabilitiesModel.instance.updateName(body.id, body.name)
+  if (body.date_joined !== undefined) {
+    const updated = await CaregiverGroupsModel.instance.updateDateJoined(body.id, body.date_joined)
     if (!updated) {
-      throw error(500, 'Failed to update name')
+      throw error(500, 'Failed to update date_joined')
+    }
+    hasUpdates = true
+  }
+
+  if (body.date_left !== undefined) {
+    const updated = await CaregiverGroupsModel.instance.updateDateLeft(body.id, body.date_left)
+    if (!updated) {
+      throw error(500, 'Failed to update date_left')
     }
     hasUpdates = true
   }

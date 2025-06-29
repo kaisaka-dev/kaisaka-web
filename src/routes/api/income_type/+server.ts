@@ -1,4 +1,4 @@
-import { ServiceCategoriesModel } from "$lib/models/serviceCategoriesModel.js";
+import { IncomeTypeModel } from "$lib/models/incomeTypeModel.js";
 import { error, json, type RequestHandler } from "@sveltejs/kit";
 
 export const POST: RequestHandler = async({request}) => {
@@ -11,17 +11,16 @@ export const POST: RequestHandler = async({request}) => {
   }
 
   if (!body.name) {
-    throw error(400, 'Missing required fields.')
+    throw error(400, 'Missing required field: name.')
   }
 
-  const inserted = await ServiceCategoriesModel.instance.insertServiceCategory(body.name)
+  const inserted = await IncomeTypeModel.instance.insertIncomeType(body.name)
 
   if (!inserted){
     throw error(500, 'Failed to insert')
   }
 
   return json({ message: 'Inserted', data: inserted})
-  
 }
 
 export const PUT: RequestHandler = async({request}) => {
@@ -40,7 +39,7 @@ export const PUT: RequestHandler = async({request}) => {
   let hasUpdates = false
 
   if (body.name !== undefined) {
-    const updated = await ServiceCategoriesModel.instance.updateName(body.id, body.name)
+    const updated = await IncomeTypeModel.instance.updateName(body.id, body.name)
     if (!updated) {
       throw error(500, 'Failed to update name')
     }

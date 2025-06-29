@@ -1,8 +1,8 @@
-import { DisabilityStatusModel } from "$lib/models/disabilityStatusModel.js"
+import { CommunityGroupTypeModel } from "$lib/models/communityGroupTypeModel.js";
 import { error, json, type RequestHandler } from "@sveltejs/kit";
 
 export const POST: RequestHandler = async({request}) => {
-
+  
   let body: any = {}
   try {
     body = await request.json();
@@ -10,11 +10,11 @@ export const POST: RequestHandler = async({request}) => {
     throw error(400, 'Missing required fields.')
   }
 
-  if (!body.child_id || !body.disability_id) {
-    throw error(400, 'Missing required fields.')
+  if (!body.name) {
+    throw error(400, 'Missing required field: name.')
   }
 
-  const inserted = await DisabilityStatusModel.instance.insertDisabilityStatus(body.child_id, body.disability_id, body.disability_nature)
+  const inserted = await CommunityGroupTypeModel.instance.insertCommunityGroupType(body.name)
 
   if (!inserted){
     throw error(500, 'Failed to insert')
@@ -38,10 +38,10 @@ export const PUT: RequestHandler = async({request}) => {
 
   let hasUpdates = false
 
-  if (body.disability_nature !== undefined) {
-    const updated = await DisabilityStatusModel.instance.updateDisabilityNature(body.id, body.disability_nature)
+  if (body.name !== undefined) {
+    const updated = await CommunityGroupTypeModel.instance.updateName(body.id, body.name)
     if (!updated) {
-      throw error(500, 'Failed to update disability_nature')
+      throw error(500, 'Failed to update name')
     }
     hasUpdates = true
   }
