@@ -3,7 +3,6 @@ import type { Database } from '../types/supabase-types.ts';
 
 type status_enum = Database['public']['Enums']['improvement_status_enum'];
 type InterventionHistoryRow = tableRow<"intervention_history">
-type InterventionRow = tableRow<"intervention">
 
 /**
  * A model concerning about CRUD operations on *intervention history information*. 
@@ -16,29 +15,36 @@ export class InterventionHistoryModel extends TableManager<"intervention_history
     public static instance: InterventionHistoryModel = new InterventionHistoryModel();
 
     /**
-     * Records an intervention in the history
-     * @param intervention the intervention instance to be recorded
-     * @returns the newly recorded intervention
+     * Records an intervention history entry
+     * @param intervention_id the intervention id to record history for
+     * @param improvement the improvement description
+     * @param status the improvement status
+     * @param remarks optional remarks
+     * @param date_checked optional date checked (defaults to now)
+     * @returns the newly recorded intervention history
      */
-    async recordIntervention(intervention: InterventionRow): Promise<InterventionHistoryRow | null>{
+    async recordInterventionHistory(
+        intervention_id: string, 
+        improvement: string,
+        status: status_enum,
+        remarks?: string | null,
+        date_checked?: string
+    ): Promise<InterventionHistoryRow | null>{
         const now = new Date().toISOString();
-        const new_intervention : Partial<InterventionHistoryRow> = { 
-            child_id: intervention.child_id,
-            created_at: now,
-            intervention_id: intervention.id,
-            intervention_created_at: intervention.date_created,
-            intervention_modified_at: intervention.last_updated,
-            intervention_text: intervention.intervention, //also not sure what this is
-            remarks: intervention.remarks, //? not sure if this is different or same as intervention remarks. 
-            status: intervention.status
+        const history_entry : Partial<InterventionHistoryRow> = { 
+            intervention_id: intervention_id,
+            improvement: improvement,
+            status: status,
+            remarks: remarks || null,
+            date_checked: date_checked || now
         }
-        const data = await this.insertOne(new_intervention)
+        const data = await this.insertOne(history_entry)
 
         return data
     }
 
     /**
-     * Find intervention history data given an id number
+     * Find intervention history data given an id
      * @param id the unique id of the intervention history record in the DB
      * @returns the intervention history record corresponding the id
      */
@@ -47,12 +53,12 @@ export class InterventionHistoryModel extends TableManager<"intervention_history
     }
 
     /**
-     * Finds intervention history records of a specific child
-     * @param child_id the unique id of the child
-     * @returns array of intervention history records with same child id or null
+     * Finds intervention history records for a specific intervention
+     * @param intervention_id the unique id of the intervention
+     * @returns array of intervention history records or null
      */
-    async findByChild(child_id: string): Promise<InterventionHistoryRow[] | null>{
-        return this.findMany({ child_id: child_id });
+    async findByInterventionId(intervention_id: string): Promise<InterventionHistoryRow[] | null>{
+        return this.findMany({ intervention_id: intervention_id });
     }
 
     /**
@@ -65,30 +71,25 @@ export class InterventionHistoryModel extends TableManager<"intervention_history
     }
 
     /**
-     * Find intervention history records with a specific status
-     * @param status the status of the interventions to find
-     * @returns an array of intervention history records with given status or null
+     * Updates an intervention history record
+     * @param id the unique id of the history record
+     * @param updates the fields to update
+     * @returns boolean if update was successful
      */
-    async updateRecord(id: string, intervention: InterventionRow): Promise<boolean>{
-        const reference: Partial<InterventionRow> = { id: id }
-        const updates: Partial<InterventionRow> = { 
-            child_id: intervention.child_id,
-            intervention_id: intervention.id,
-            intervention_created_at: intervention.date_created,
-            intervention_modified_at: intervention.last_updated,
-            intervention_text: intervention.intervention, //also not sure what this is
-            remarks: intervention.remarks, //? not sure if this is different or same as intervention remarks. 
-            status: intervention.status
-         }
+    async updateHistoryRecord(
+        id: string, 
+        updates: Partial<Pick<InterventionHistoryRow, 'improvement' | 'status' | 'remarks' | 'date_checked'>>
+    ): Promise<boolean>{
+        const reference: Partial<InterventionHistoryRow> = { id: id }
         const data = await this.updateOne(reference, updates)
 
         return data
     }
 
     /**
-     * Deletes an intervention in the history with given ID
+     * Deletes an intervention history record
      * @param id the unique id of the intervention history record in the DB
-     * @returns boolean if the update was successful
+     * @returns boolean if the delete was successful
      */
     async deleteById(id: string): Promise<boolean>{
         const result = await this.deleteOne({ id });

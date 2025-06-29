@@ -1,6 +1,5 @@
 import TableManager, { type tableRow } from '../types/manager.js';
 
-
 type ChildrenRow = tableRow<"children">
 
 /**
@@ -22,12 +21,23 @@ export class ChildrenModel extends TableManager<"children">('children') {
    * @param member_id member id of child
    * @param philhealth_id philhealth id of child
    * @param pwd_id pwd id of child
+   * @param disability_id disability category id (optional)
+   * @param disability_nature description of disability nature (optional)
    * @param remarks additional remarks of child
    * @returns created child record
    */
-  async insertChild (has_barangay_cert: boolean, has_birth_cert: boolean, has_medical_cert: boolean, 
-                     is_active: boolean, member_id: string, philhealth_id: string | null, 
-                     pwd_id: string | null, remarks: string | null ): Promise<ChildrenRow | null>{
+  async insertChild (
+    has_barangay_cert: boolean, 
+    has_birth_cert: boolean, 
+    has_medical_cert: boolean, 
+    is_active: boolean, 
+    member_id: string, 
+    philhealth_id: string | null, 
+    pwd_id: string | null, 
+    disability_id: number | null,
+    disability_nature: string | null,
+    remarks: string | null 
+  ): Promise<ChildrenRow | null>{
       
       const has_philhealth = philhealth_id ? true : false
 
@@ -40,7 +50,10 @@ export class ChildrenModel extends TableManager<"children">('children') {
         member_id: member_id, 
         philhealth_id: philhealth_id, 
         pwd_id: pwd_id, 
-        remarks: remarks}
+        disability_id: disability_id,
+        disability_nature: disability_nature,
+        remarks: remarks
+      }
       const data = await this.insertOne(child);
       return data
   }
@@ -64,6 +77,15 @@ export class ChildrenModel extends TableManager<"children">('children') {
   }
 
   /**
+   * Finds all children with a specific disability
+   * @param disability_id unique id of the disability category
+   * @returns array of children with the specified disability
+   */
+  async findByDisabilityId(disability_id: number): Promise<ChildrenRow[] | null>{
+    return this.findMany({ disability_id: disability_id })
+  }
+
+  /**
    * Finds all children that are currently active in the organization.
    * @returns child data with is_active set as "true"
    */
@@ -79,6 +101,7 @@ export class ChildrenModel extends TableManager<"children">('children') {
   async getAll(filter?: Partial<ChildrenRow>): Promise<ChildrenRow[] | null> {
     return this.findMany(filter);
   }
+
   /**
    * Updates the child's barangay certificate status
    * @param id unique id of the child in the DB
@@ -92,6 +115,7 @@ export class ChildrenModel extends TableManager<"children">('children') {
 
     return data
   }
+
   /**
    * Updates the child's birth certificate status
    * @param id unique id of the child in the DB
@@ -166,6 +190,24 @@ export class ChildrenModel extends TableManager<"children">('children') {
   }
 
   /**
+   * Updates the child's disability information
+   * @param id unique id of the child in the DB
+   * @param disability_id unique id of disability category
+   * @param disability_nature description of disability nature
+   * @returns boolean if update is successful.
+   */
+  async updateDisabilityInfo(id: string, disability_id: number | null, disability_nature: string | null): Promise<boolean>{
+    const reference: Partial<ChildrenRow> = { id: id }
+    const updates: Partial<ChildrenRow> = { 
+      disability_id: disability_id,
+      disability_nature: disability_nature
+    }
+    const data = await this.updateOne(reference, updates)
+
+    return data
+  }
+
+  /**
    * Updates child's remarks
    * @param id unique id of the child in the DB
    * @param remarks updated remarks to be applied
@@ -195,7 +237,7 @@ export class ChildrenModel extends TableManager<"children">('children') {
    * @returns boolean if delete is successful.
    */
   async deleteByMemberId(member_id: string): Promise<boolean>{
-    const result = await this.deleteOne({ id: member_id });
+    const result = await this.deleteOne({ member_id: member_id });
     return result !== null;
   }
 }

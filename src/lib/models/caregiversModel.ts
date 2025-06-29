@@ -15,6 +15,7 @@ export class CaregiversModel extends TableManager<"caregivers">('caregivers') {
   /**
    * Creates a new caregiver record
    * @param member_id the unique id of the member who is the caregiver
+   * @param income_id the unique id of the income type
    * @param contact_number contact number of the caregiver (optional)
    * @param facebook_link Facebook profile link (optional)
    * @param email email address of the caregiver (optional)
@@ -24,6 +25,7 @@ export class CaregiversModel extends TableManager<"caregivers">('caregivers') {
    */
   async insertCaregiver(
     member_id: string,
+    income_id: number,
     contact_number?: string | null,
     facebook_link?: string | null,
     email?: string | null,
@@ -32,6 +34,7 @@ export class CaregiversModel extends TableManager<"caregivers">('caregivers') {
   ): Promise<CaregiverRow | null> {
     const caregiver: Partial<CaregiverRow> = {
       member_id,
+      income_id,
       contact_number: contact_number || null,
       facebook_link: facebook_link || null,
       email: email || null,
@@ -94,6 +97,15 @@ export class CaregiversModel extends TableManager<"caregivers">('caregivers') {
    */
   async findByFacebookLink(facebook_link: string): Promise<CaregiverRow[] | null> {
     return this.findMany({ facebook_link });
+  }
+
+  /**
+   * Finds caregivers by income type id
+   * @param income_id the unique id of the income type
+   * @returns array of caregiver records or null
+   */
+  async findByIncomeId(income_id: number): Promise<CaregiverRow[] | null> {
+    return this.findMany({ income_id });
   }
 
   /**
@@ -171,6 +183,19 @@ export class CaregiversModel extends TableManager<"caregivers">('caregivers') {
   }
 
   /**
+   * Updates the income type for a caregiver
+   * @param id the unique id of the caregiver
+   * @param income_id the new income type id
+   * @returns boolean if update is successful
+   */
+  async updateIncomeId(id: string, income_id: number): Promise<boolean> {
+    const reference: Partial<CaregiverRow> = { id };
+    const updates: Partial<CaregiverRow> = { income_id };
+    
+    return this.updateOne(reference, updates);
+  }
+
+  /**
    * Updates contact information for a caregiver
    * @param id the unique id of the caregiver
    * @param updates the contact fields to update
@@ -196,7 +221,7 @@ export class CaregiversModel extends TableManager<"caregivers">('caregivers') {
   async updateCaregiver(
     id: string,
     updates: Partial<Pick<CaregiverRow, 
-      'contact_number' | 'facebook_link' | 'email' | 'occupation' | 'remarks'
+      'contact_number' | 'facebook_link' | 'email' | 'occupation' | 'remarks' | 'income_id'
     >>
   ): Promise<boolean> {
     const reference: Partial<CaregiverRow> = { id };

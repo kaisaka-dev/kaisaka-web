@@ -31,14 +31,38 @@ export class socialProtectionStatusModel extends TableManager<"social_protection
   }
 
   /**
+   * Finds status records by participation in community club
+   * @param participates_community_club Boolean value
+   * @returns array of status records or null
+   */
+  async findByParticipatesCommunityClub(participates_community_club: boolean) {
+    return this.findMany({ participates_community_club });
+  }
+
+  /**
+   * Finds status records by participation in family life
+   * @param participates_family_life Boolean value
+   * @returns array of status records or null
+   */
+  async findByParticipatesFamilyLife(participates_family_life: boolean) {
+    return this.findMany({ participates_family_life });
+  }
+
+  /**
    * Inserts a new social protection status record
-   * @param statusData Partial status data (id is auto-generated)
+   * @param statusData Full status data including participation fields
    * @returns created status record or null
    */
   async insertStatus(
     statusData: Omit<SocialProtectionStatusRow, 'id' | 'date_created' | 'last_updated'>
   ) {
-    return this.insertOne(statusData);
+    const now = new Date().toISOString();
+    const fullData: Partial<SocialProtectionStatusRow> = {
+      ...statusData,
+      date_created: now,
+      last_updated: now
+    };
+    return this.insertOne(fullData);
   }
 
   /**
@@ -51,6 +75,36 @@ export class socialProtectionStatusModel extends TableManager<"social_protection
     const references: Partial<SocialProtectionStatusRow> = { id };
     const updates: Partial<SocialProtectionStatusRow> = { 
       year_accessed,
+      last_updated: new Date().toISOString() 
+    };
+    return this.updateOne(references, updates);
+  }
+
+  /**
+   * Updates participation in community club
+   * @param id Record ID (bigint)
+   * @param participates_community_club New participation status
+   * @returns boolean success indicator
+   */
+  async updateParticipatesCommunityClub(id: number, participates_community_club: boolean): Promise<boolean> {
+    const references: Partial<SocialProtectionStatusRow> = { id };
+    const updates: Partial<SocialProtectionStatusRow> = { 
+      participates_community_club,
+      last_updated: new Date().toISOString() 
+    };
+    return this.updateOne(references, updates);
+  }
+
+  /**
+   * Updates participation in family life
+   * @param id Record ID (bigint)
+   * @param participates_family_life New participation status
+   * @returns boolean success indicator
+   */
+  async updateParticipatesFamilyLife(id: number, participates_family_life: boolean): Promise<boolean> {
+    const references: Partial<SocialProtectionStatusRow> = { id };
+    const updates: Partial<SocialProtectionStatusRow> = { 
+      participates_family_life,
       last_updated: new Date().toISOString() 
     };
     return this.updateOne(references, updates);
@@ -79,7 +133,9 @@ export class socialProtectionStatusModel extends TableManager<"social_protection
    */
   async updateStatus(
     id: number, 
-    updates: Partial<Pick<SocialProtectionStatusRow, 'year_accessed' | 'child_id'>>
+    updates: Partial<Pick<SocialProtectionStatusRow, 
+      'year_accessed' | 'child_id' | 'participates_community_club' | 'participates_family_life'
+    >>
   ): Promise<boolean> {
     const references: Partial<SocialProtectionStatusRow> = { id };
     const fullUpdates: Partial<SocialProtectionStatusRow> = {

@@ -1,25 +1,24 @@
 import TableManager, { type tableRow } from '../types/manager.js';
 
-
-type ServiceCategoriesRow = tableRow<"service_categories">
+type ServiceCategoryRow = tableRow<"service_category">
 
 /**
  * A model concerning about CRUD operations on service categories available for intervention. 
  * 
- * Made for the `intervention` API. 
+ * Made for the `service_category` API. 
  * 
  * **Reference**: Database Model `src/lib/models/db.md`
  */
-export class ServiceCategoriesModel extends TableManager<"service_categories">('service_categories') {
-  public static instance: ServiceCategoriesModel = new ServiceCategoriesModel();
+export class ServiceCategoryModel extends TableManager<"service_category">('service_category') {
+  public static instance: ServiceCategoryModel = new ServiceCategoryModel();
   
   /**
    * Insert service category data in the DB
    * @param name name of service category
    * @returns the created service category
    */
-  async insertServiceCategory(name: string): Promise<ServiceCategoriesRow | null>{
-    const service_category : Partial<ServiceCategoriesRow> = { name: name }
+  async insertServiceCategory(name: string): Promise<ServiceCategoryRow | null>{
+    const service_category : Partial<ServiceCategoryRow> = { name: name }
     const data  = await this.insertOne(service_category)
 
     return data
@@ -30,7 +29,7 @@ export class ServiceCategoriesModel extends TableManager<"service_categories">('
    * @param filter filter to be applied to the query (optional)
    * @returns an array of all service categories corresponding to the filters or null
    */
-  async getAll(filter?: Partial<ServiceCategoriesRow>): Promise<ServiceCategoriesRow[] | null>{
+  async getAll(filter?: Partial<ServiceCategoryRow>): Promise<ServiceCategoryRow[] | null>{
     return this.findMany(filter)
   }
 
@@ -39,7 +38,7 @@ export class ServiceCategoriesModel extends TableManager<"service_categories">('
    * @param id the unique id of the service category in the DB
    * @returns the service category corresponding the id
    */
-  async findById(id: number): Promise<ServiceCategoriesRow | null>{
+  async findById(id: number): Promise<ServiceCategoryRow | null>{
     return this.findOne({ id:id })
   }
 
@@ -48,7 +47,7 @@ export class ServiceCategoriesModel extends TableManager<"service_categories">('
    * @param name the name of the service category
    * @returns an array of service categories with the same name or null
    */
-  async findByName(name: string): Promise<ServiceCategoriesRow[] | null>{
+  async findByName(name: string): Promise<ServiceCategoryRow[] | null>{
     return this.findMany({ name: name })
   }
 
@@ -59,8 +58,8 @@ export class ServiceCategoriesModel extends TableManager<"service_categories">('
    * @returns the result of updating the existing service category record
    */
   async updateName(id: number, name: string): Promise<boolean>{
-    const reference: Partial<ServiceCategoriesRow> = { id: id }
-    const updates: Partial<ServiceCategoriesRow> = { name: name}
+    const reference: Partial<ServiceCategoryRow> = { id: id }
+    const updates: Partial<ServiceCategoryRow> = { name: name}
     const data = await this.updateOne(reference, updates)
 
     return data
