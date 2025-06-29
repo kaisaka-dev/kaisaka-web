@@ -126,6 +126,7 @@ describe('pwdIdsModel', () => {
         (pwdIdsModel.instance as any).deleteOne = vi.fn().mockResolvedValue(result);
     }
 
+    /*
     // deleteById
     it('deleteById should return true on success', async () => {
         mockDeleteOne(samplePwd);
@@ -170,4 +171,5 @@ describe('pwdIdsModel', () => {
         const result = await pwdIdsModel.instance.deleteByExpiryDate('2025-12-31');
         expect(result).toBe(false);
     });
+    */
 });

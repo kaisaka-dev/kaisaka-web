@@ -21,3 +21,32 @@ export const POST: RequestHandler = async ({ request }) => {
 
   return json({ message: 'Intervention history recorded successfully', data: inserted });
 }
+
+export const PUT: RequestHandler = async({request}) => {
+  
+  let body: any = {}
+  try {
+    body = await request.json();
+  } catch {
+    throw error(400, 'Invalid JSON body.')
+  }
+
+  if (!body.id || !body.intervention) {
+    throw error(400, 'Missing required fields: id, intervention object.')
+  }
+
+  let hasUpdates = false
+
+  // The intervention history model has an updateRecord method that takes an intervention object
+  const updated = await InterventionHistoryModel.instance.updateRecord(body.id, body.intervention)
+  if (!updated) {
+    throw error(500, 'Failed to update intervention history record')
+  }
+  hasUpdates = true
+
+  if (!hasUpdates) {
+    throw error(400, 'No valid fields to update.')
+  }
+
+  return json({ message: 'Updated successfully' })
+}

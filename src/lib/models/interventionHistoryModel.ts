@@ -56,9 +56,9 @@ export class InterventionHistoryModel extends TableManager<"intervention_history
     }
 
     /**
-     * 
-     * @param status 
-     * @returns 
+     * Find intervention history records with a specific status
+     * @param status the status of the interventions to find
+     * @returns an array of intervention history records with given status or null
      */
     async findByStatus(status: status_enum): Promise<InterventionHistoryRow[] | null>{
         return this.findMany({ status: status });
@@ -91,7 +91,7 @@ export class InterventionHistoryModel extends TableManager<"intervention_history
      * @returns boolean if the update was successful
      */
     async deleteById(id: string): Promise<boolean>{
-    const result = await this.deleteOne({ id });
-    return result !== null;
+        const result = await this.deleteOne({ id });
+        return result !== null;
     }
 }

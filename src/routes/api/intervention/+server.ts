@@ -36,3 +36,55 @@ export const POST: RequestHandler = async ({ request }) => {
 
   return json({ message: 'Intervention created successfully', data: inserted });
 }
+
+export const PUT: RequestHandler = async({request}) => {
+  
+  let body: any = {}
+  try {
+    body = await request.json();
+  } catch {
+    throw error(400, 'Invalid JSON body.')
+  }
+
+  if (!body.id) {
+    throw error(400, 'Missing required field: id.')
+  }
+
+  let hasUpdates = false
+
+  if (body.remarks !== undefined) {
+    const updated = await InterventionModel.instance.updateRemarks(body.id, body.remarks)
+    if (!updated) {
+      throw error(500, 'Failed to update remarks')
+    }
+    hasUpdates = true
+  }
+
+  if (body.status !== undefined) {
+    if (!['Improved', 'Neutral', 'Regressed'].includes(body.status)) {
+      throw error(400, 'Invalid status. Must be: Improved, Neutral, or Regressed')
+    }
+    const updated = await InterventionModel.instance.updateStatus(body.id, body.status)
+    if (!updated) {
+      throw error(500, 'Failed to update status')
+    }
+    hasUpdates = true
+  }
+
+  if (body.type !== undefined) {
+    if (!['education', 'social'].includes(body.type)) {
+      throw error(400, 'Invalid type. Must be: education or social')
+    }
+    const updated = await InterventionModel.instance.updateInterventionType(body.id, body.type)
+    if (!updated) {
+      throw error(500, 'Failed to update type')
+    }
+    hasUpdates = true
+  }
+
+  if (!hasUpdates) {
+    throw error(400, 'No valid fields to update.')
+  }
+
+  return json({ message: 'Updated successfully' })
+}
