@@ -130,6 +130,13 @@
 		guardians = guardians.filter((_, i) => i !== index);
 		guardianErrors = guardianErrors.filter((_, i) => i !== index);
 	}
+
+	/**
+	 * checks if a linked guardian exists
+	 * returns the index if a family is linked
+	 * returns -1 if not
+	 */
+		const linkedIndex = $derived(guardians.findIndex(g => g.type === 'linked'));
 </script>
 
 <Header category="members" page="children" />
@@ -142,6 +149,7 @@
 			bind:formData={guardians[index]}
 			errors={guardianErrors[index]}
 			{index}
+			{linkedIndex}
 			deleteGuardian={deleteGuardian}
 		/>
 	{/each}
