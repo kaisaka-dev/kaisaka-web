@@ -8,10 +8,11 @@
 	export let errors;
 	export let index: number;
 	export let deleteGuardian: (index: number) => void;
-	export let updateGuardianType: (index: number, type: 'new' | 'linked') => void;
+	export let linkedIndex: number;
 
 	let guardiantype = formData.type;
 	let showtable = false;
+	let disabled = false;
 
 	let linkedGuardians = [
 		{
@@ -34,6 +35,13 @@
 			lastName: 'Chua',
 			contactNo: '0912 123 1234',
 			relationship: ''
+		},
+		{
+			guardianId: '',
+			firstName: 'Gian',
+			lastName: 'Chua',
+			contactNo: '0912 123 1234',
+			relationship: ''
 		}
 	]
 
@@ -45,22 +53,26 @@
 	}
 
 	/**
-	 * watching for radio button changes
+	 * watching for radio button changes, update the parent array's data type into the updated guardian type
 	 */
-	$: if (guardiantype !== formData.type) {
-		updateGuardianType(index, guardiantype);
-	}
+	$: formData.type = guardiantype;
+
+	/**
+	 * one member can only join one family, this will disable all the buttons so that they will be unable
+	 * to join another family
+	 */
+	$: disabled = (linkedIndex !== -1 && linkedIndex !== index);
 
 
 </script>
 
-<div class="collapse collapse-arrow" style="box-shadow: 0 4px 0 rgb(68,55,50); border-radius:0px">
+<div class="collapse collapse-arrow" style="box-shadow: 0 4px 0 var(--border); border-radius:0px">
 	<input type="checkbox" checked/>
 	<h2 class="collapse-title font-semibold">Guardian {index + 1}</h2>
 	<div class="collapse-content text-sm">
 		<div style="display: flex; flex-direction: row; margin-bottom: 1.5rem" >
 			<Radio label="First time" id={`firsttime-${index}`} value="new" name={`guardian-type-${index}`} bind:group={guardiantype} />
-			<Radio label="Existing family" id={`existing-${index}`} value="linked" name={`guardian-type-${index}`} bind:group={guardiantype} />
+			<Radio label="Existing family" id={`existing-${index}`} value="linked" name={`guardian-type-${index}`} bind:group={guardiantype} {disabled} />
 		</div>
 
 
