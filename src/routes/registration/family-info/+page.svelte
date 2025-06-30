@@ -8,6 +8,7 @@
 	 * object type used to store information about a new guardian.
 	 */
 	type NewGuardian = {
+		type: 'new';
 		firstName: string;
 		lastName: string;
 		sex: string;
@@ -25,6 +26,7 @@
 	 */
 	type LinkedGuardian = {
 		// info about the search
+		type: 'linked';
 		firstName: string;
 		lastName: string;
 		contactNo: string;
@@ -46,8 +48,19 @@
 	}
 
 	type Guardian =
-		| (NewGuardian & { type: 'new' })
-		| (LinkedGuardian & { type: 'linked' });
+		| NewGuardian
+		| LinkedGuardian;
+
+	type GuardianError =
+		| {			// for new guardians
+		firstName: string;
+		lastName: string;
+		sex: string;
+		contactNo: string;
+		address: string;
+		brgy: string;
+	}				// for existing guardians
+		| { msg: string };
 
 	let guardians = $state<Guardian[]>([
 		{
@@ -65,14 +78,20 @@
 		}
 	]); // initialize variable so that the page will have at least one guardian
 
-	let guardianErrors = $state(guardians.map(() => ({
-		firstName: '',
-		lastName: '',
-		sex: '',
-		contactNo: '',
-		fbLink: '',
-		address: ''
-	})));
+	let guardianErrors = $state<GuardianError[]>(
+		guardians.map((guardian) => {
+			return guardian.type === 'new'
+				? {
+					firstName: '',
+					lastName: '',
+					sex: '',
+					contactNo: '',
+					address: '',
+					brgy: ''
+				}
+				: { msg: '' };
+		})
+	);
 
 	function addNewGuardian() {
 		guardians = [
@@ -99,36 +118,23 @@
 				lastName: '',
 				sex: '',
 				contactNo: '',
-				fbLink: '',
+				brgy: '',
 				address: ''
 			}
 		];
 	}
-
-	// function linkOldGuardian() {
-	// 	guardians = [
-	// 		...guardians,
-	// 		{
-	// 			guardian_id: -100,
-	// 			relationship: ''
-	// 		}
-	// 	]
-	//
-	// 	guardianErrors = [
-	// 		...guardianErrors,
-	// 		{
-	// 			guardian_id: ''
-	// 		}
-	// 	]
-	// }
 
 	/**
 	 * deletes item from the array (reflected on the ui too)
 	 * @param index
 	 */
 	function deleteGuardian(index: number) {
+		console.log("before delete", guardians)
 		guardians = guardians.filter((_, i) => i !== index);
 		guardianErrors = guardianErrors.filter((_, i) => i !== index);
+		console.log("after delete", guardians)
+		linkedIndex = guardians.findIndex(g => g.type === 'linked');
+		console.log("guardiansfindindex: ", linkedIndex)
 	}
 
 	/**
@@ -136,7 +142,43 @@
 	 * returns the index if a family is linked
 	 * returns -1 if not
 	 */
-		const linkedIndex = $derived(guardians.findIndex(g => g.type === 'linked'));
+	let linkedIndex = $derived(guardians.findIndex(g => g.type === 'linked'));
+
+	// // will re-run whenever `guardians` is changed
+	$effect(() =>
+	{
+		console.log("linkedindex variable: ", linkedIndex)
+		// console.log(guardians)
+	})
+
+	function validateForm(): boolean {
+		let isValid = true;
+
+		guardianErrors = guardians.map((guardian, index) => {
+			if (guardian.type === 'linked') {
+				if (!guardian.infoLinked || guardian.infoLinked.length === 0) {
+					isValid = false;
+					return { msg: "Please have at least one family member" };
+				}
+				return { msg: '' };
+			} else {
+				const errors = {
+					firstName: !guardian.firstName.trim() ? 'Required' : '',
+					lastName: !guardian.lastName.trim() ? 'Required' : '',
+					sex: !guardian.sex ? 'Required' : '',
+					contactNo: !guardian.contactNo.trim() ? 'Required' : '',
+					address: !guardian.address.trim() ? 'Required' : '',
+					brgy: !guardian.brgy ? 'Required' : ''
+				};
+				if (Object.values(errors).some(msg => msg)) isValid = false;
+				return errors;
+			}
+		});
+
+		return isValid;
+	}
+
+
 </script>
 
 <Header category="members" page="children" />
@@ -161,5 +203,5 @@
 
 <section style="text-align: center;">
 	<button onclick={() => location.href = '/registration/child'}>Back</button>
-	<button class="green">Submit</button>
+	<button class="green" onclick="{validateForm}">Submit</button>
 </section>

@@ -3,6 +3,7 @@
 	import InputText from '../../../components/input/InputText.svelte';
 	import Select from '../../../components/input/Select.svelte';
 	import SearchBtn from '../../../components/styled-buttons/SearchBtn.svelte';
+	import Validation from '../../../components/text/Validation.svelte';
 
 	export let formData;
 	export let errors;
@@ -14,30 +15,31 @@
 	let showtable = false;
 	let disabled = false;
 
-	let linkedGuardians = [
+
+	const linkedGuardians = [
 		{
-			guardian_id: '',
+			guardian_id: 0,
 			firstName: 'Gideon',
 			lastName: 'Chua',
 			contactNo: '0912 123 1234',
 			relationship: ''
 		},
 		{
-			guardianId: '',
+			guardian_id: 0,
 			firstName: 'Gabrielle',
 			lastName: 'Chua',
 			contactNo: '0912 123 1234',
 			relationship: ''
 		},
 		{
-			guardianId: '',
+			guardian_id: 0,
 			firstName: 'Graciella',
 			lastName: 'Chua',
 			contactNo: '0912 123 1234',
 			relationship: ''
 		},
 		{
-			guardianId: '',
+			guardian_id: 0,
 			firstName: 'Gian',
 			lastName: 'Chua',
 			contactNo: '0912 123 1234',
@@ -46,22 +48,86 @@
 	]
 
 	/**
-	 * function passed to SearchBtn
+	 * function passed to SearchBtn, shows table if the search is valid. else, error messages are shown
 	 */
 	function handleSearch() {
-		showtable = true;
-	}
+		if (formData.type === 'linked') {
+			const hasName = formData.firstName.trim() && formData.lastName.trim();
+			const hasContact = formData.contactNo.trim();
+			const incompleteFields = !hasName && !hasContact
+			const found = true;
 
-	/**
-	 * watching for radio button changes, update the parent array's data type into the updated guardian type
-	 */
-	$: formData.type = guardiantype;
+			errors.msg = incompleteFields ? "Imcomplete fields" : ""
+
+			if (!incompleteFields && found) {
+				showtable = hasName || hasContact;
+				formData.infoLinked = [...linkedGuardians];
+
+				// console.log(linkedGuardians.length)
+				// console.log(formData.infoLinked.length)
+				// console.log(formData.infoLinked)
+			}
+			else if (!incompleteFields) {
+				showtable = false;
+				errors.msg = "Record not found";
+			}
+		} else {
+			showtable = false;
+		}
+	}
+	//
+	// /**
+	//  * watching for radio button changes, update the parent array's data type into the updated guardian type
+	//  */
+	// $: formData.type = guardiantype;
 
 	/**
 	 * one member can only join one family, this will disable all the buttons so that they will be unable
 	 * to join another family
 	 */
 	$: disabled = (linkedIndex !== -1 && linkedIndex !== index);
+
+	$:
+	if (guardiantype != formData.type) {	// change only if there's a change in the form type selected
+		if (guardiantype === 'linked') {
+			// change formData into NewGuardian instead of LinkedGuardian data type
+			formData = {
+				type: 'linked',
+				firstName: formData.firstName,
+				lastName: formData.lastName,
+				contactNo: formData.contactNo,
+				infoLinked: []
+			};
+			errors = {
+				msg: ''
+			};
+		} else if (guardiantype === 'new') {
+			// change formData into LinkedGuardian instead of NewGuardian
+			formData = {
+				type: 'new',
+				firstName: formData.firstName,
+				lastName: formData.lastName,
+				sex: '',
+				contactNo: formData.contactNo,
+				fbLink: '',
+				email: '',
+				address: '',
+				brgy: '',
+				occupation: '',
+				relationship: ''
+			};
+			errors = {
+				firstName: '',
+				lastName: '',
+				sex: '',
+				contactNo: '',
+				brgy: '',
+				address: ''
+			};
+		}
+	}
+
+
 
 
 </script>
@@ -98,8 +164,11 @@
 			</div>
 			<InputText label="Contact No." id={`contact-no-${index}`} bind:value={formData.contactNo} msg={errors.contactNo} />
 
-			<div style="text-align: right; width:740px; margin-top: 2rem">
-				<SearchBtn onSearch={handleSearch} /></div>
+			<div style="display: flex; flex-direction: row; width:740px; margin-top: 2rem">
+				<Validation msg="{errors.msg}"style="width: 300px; margin-left: 2rem; font-size: var(--medium-text)"/>
+
+				<div style="margin-left: auto">
+				<SearchBtn onSearch={handleSearch} /></div></div>
 
 
 
@@ -117,14 +186,16 @@
 						</tr>
 						</thead>
 						<tbody>
-						{#each linkedGuardians as _, linked_i}
-							<tr>
-								<td>{linkedGuardians[linked_i].firstName}</td>
-								<td>{linkedGuardians[linked_i].lastName}</td>
-								<td>{linkedGuardians[linked_i].contactNo}</td>
-								<td><InputText id="relationship-{linked_i}" /></td>
-							</tr>
-						{/each}
+							{#if formData.type === 'linked'}
+								{#each formData.infoLinked as _, linked_i}
+									<tr>
+										<td>{formData.infoLinked[linked_i].firstName}</td>
+										<td>{formData.infoLinked[linked_i].lastName}</td>
+										<td>{formData.infoLinked[linked_i].contactNo}</td>
+										<td><InputText id="relationship-{linked_i}" /></td>
+									</tr>
+								{/each}
+							{/if}
 						</tbody>
 					</table>
 				</div>
