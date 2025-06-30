@@ -129,12 +129,8 @@
 	 * @param index
 	 */
 	function deleteGuardian(index: number) {
-		console.log("before delete", guardians)
 		guardians = guardians.filter((_, i) => i !== index);
 		guardianErrors = guardianErrors.filter((_, i) => i !== index);
-		console.log("after delete", guardians)
-		linkedIndex = guardians.findIndex(g => g.type === 'linked');
-		console.log("guardiansfindindex: ", linkedIndex)
 	}
 
 	/**
@@ -145,11 +141,11 @@
 	let linkedIndex = $derived(guardians.findIndex(g => g.type === 'linked'));
 
 	// // will re-run whenever `guardians` is changed
-	$effect(() =>
-	{
-		console.log("linkedindex variable: ", linkedIndex)
-		// console.log(guardians)
-	})
+	// $effect(() =>
+	// {
+	// 	console.log("linkedindex variable: ", linkedIndex)
+	// 	console.log(guardians)
+	// })
 
 	function validateForm(): boolean {
 		let isValid = true;
@@ -186,7 +182,7 @@
 <section>
 	<h1>Family Information</h1>
 
-	{#each guardians as _, index}
+	{#each guardians as guardian, index (index + guardian.firstName + guardian.lastName + guardian.contactNo + guardian.type)}
 		<GuardianForm
 			bind:formData={guardians[index]}
 			errors={guardianErrors[index]}
