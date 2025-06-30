@@ -491,34 +491,34 @@ export type Database = {
       employment_status: {
         Row: {
           able_to_work: boolean
-          child_id: string
           employment_type:
             | Database["public"]["Enums"]["employment_type_enum"]
             | null
           id: number
+          member_id: string
         }
         Insert: {
           able_to_work?: boolean
-          child_id: string
           employment_type?:
             | Database["public"]["Enums"]["employment_type_enum"]
             | null
           id?: number
+          member_id: string
         }
         Update: {
           able_to_work?: boolean
-          child_id?: string
           employment_type?:
             | Database["public"]["Enums"]["employment_type_enum"]
             | null
           id?: number
+          member_id?: string
         }
         Relationships: [
           {
-            foreignKeyName: "employment_status_child_id_fkey"
-            columns: ["child_id"]
+            foreignKeyName: "employment_status_member_id_fkey"
+            columns: ["member_id"]
             isOneToOne: true
-            referencedRelation: "children"
+            referencedRelation: "members"
             referencedColumns: ["id"]
           },
         ]
