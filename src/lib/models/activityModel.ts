@@ -18,7 +18,7 @@ export class ActivityModel extends TableManager<"activity">('activity') {
    * @param type activity type
    * @param target_activity_id id of the target activity
    * @param date_and_time_conducted when the activity was conducted
-   * @param completion_staus completion status of the activity
+   * @param completion_status completion status of the activity
    * @param indicators activity indicators
    * @param outcome activity outcome
    * @param remarks additional remarks
@@ -29,7 +29,7 @@ export class ActivityModel extends TableManager<"activity">('activity') {
     type: string, 
     target_activity_id: number,
     date_and_time_conducted: string,
-    completion_staus?: string | null,
+    completion_status?: string | null,
     indicators?: string | null,
     outcome?: string | null,
     remarks?: string | null
@@ -39,7 +39,7 @@ export class ActivityModel extends TableManager<"activity">('activity') {
       type, 
       target_activity_id,
       date_and_time_conducted,
-      completion_staus,
+      completion_status,
       indicators,
       outcome,
       remarks
@@ -102,12 +102,12 @@ export class ActivityModel extends TableManager<"activity">('activity') {
   /**
    * Update activity record's completion status
    * @param id the unique id of the activity in the DB
-   * @param completion_staus the updated completion status to be applied
+   * @param completion_status the updated completion status to be applied
    * @returns boolean if update is successful or not
    */
-  async updateCompletionStatus(id: number, completion_staus: string | null): Promise<boolean>{
+  async updateCompletionStatus(id: number, completion_status: string | null): Promise<boolean>{
     const reference: Partial<ActivityRow> = { id: id }
-    const updates: Partial<ActivityRow> = { completion_staus: completion_staus }
+    const updates: Partial<ActivityRow> = { completion_status: completion_status }
     const data = await this.updateOne(reference, updates)
 
     return data
