@@ -18,7 +18,6 @@ export class MajorTargetActivityModel extends TableManager<"major_target_activit
    * @param type activity type
    * @param service_objective_id id of the service objective
    * @param target_no_of_participants target number of participants
-   * @param date_and_time_last_updated last updated timestamp
    * @param remarks additional remarks
    * @returns created major target activity record or null
    */
@@ -27,15 +26,16 @@ export class MajorTargetActivityModel extends TableManager<"major_target_activit
     type: string,
     service_objective_id: number,
     target_no_of_participants: number,
-    date_and_time_last_updated: string,
     remarks?: string | null
   ): Promise<MajorTargetActivityRow | null>{
+    const now = new Date().toISOString();
     const new_major_target_activity : Partial<MajorTargetActivityRow> = { 
       name,
       type,
       service_objective_id,
       target_no_of_participants,
-      date_and_time_last_updated,
+      date_and_time_created: now,
+      date_and_time_last_updated: now,
       remarks
     }
     const data  = await this.insertOne(new_major_target_activity)
@@ -86,8 +86,9 @@ export class MajorTargetActivityModel extends TableManager<"major_target_activit
    * @returns boolean if update is successful or not
    */
   async updateName(id: number, name: string): Promise<boolean>{
+    const now = new Date().toISOString();
     const reference: Partial<MajorTargetActivityRow> = { id: id }
-    const updates: Partial<MajorTargetActivityRow> = { name: name }
+    const updates: Partial<MajorTargetActivityRow> = { name: name, date_and_time_last_updated: now }
     const data = await this.updateOne(reference, updates)
 
     return data
@@ -100,8 +101,9 @@ export class MajorTargetActivityModel extends TableManager<"major_target_activit
    * @returns boolean if update is successful or not
    */
   async updateTargetParticipants(id: number, target_no_of_participants: number): Promise<boolean>{
+    const now = new Date().toISOString();
     const reference: Partial<MajorTargetActivityRow> = { id: id }
-    const updates: Partial<MajorTargetActivityRow> = { target_no_of_participants: target_no_of_participants }
+    const updates: Partial<MajorTargetActivityRow> = { target_no_of_participants: target_no_of_participants, date_and_time_last_updated: now }
     const data = await this.updateOne(reference, updates)
 
     return data
@@ -114,8 +116,9 @@ export class MajorTargetActivityModel extends TableManager<"major_target_activit
    * @returns boolean if update is successful or not
    */
   async updateRemarks(id: number, remarks: string | null): Promise<boolean>{
+    const now = new Date().toISOString();
     const reference: Partial<MajorTargetActivityRow> = { id: id }
-    const updates: Partial<MajorTargetActivityRow> = { remarks: remarks }
+    const updates: Partial<MajorTargetActivityRow> = { remarks: remarks, date_and_time_last_updated: now  }
     const data = await this.updateOne(reference, updates)
 
     return data
