@@ -21,8 +21,10 @@
 		{@render children?.()}
         <br>
 		<!-- svelte-ignore a11y_autofocus -->
+		<div class="flex justify-center">
 		<button autofocus onclick={() => dialog.close()} 
-        class = '!mx-85 !px-25'> Login </button>
+        class = '!px-25 green'> Login </button>
+		</div>
 	</div>
 </dialog>
 

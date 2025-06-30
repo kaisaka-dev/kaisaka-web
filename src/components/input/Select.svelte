@@ -13,14 +13,14 @@
 	<label for={id}>{label} {required ? " *" : ""}</label>
 
 	<div class="input-wrapper">
-		<select id={id} class="input" bind:value={selected}>
+		<select id={id} class="input" bind:value={value}>
 			<option value="" disabled selected></option> <!-- Default option -->
 			{#each options as option}
 				<option value={option}>{option}</option>
 			{/each}
 		</select>
 
-		{#if required && selected === ""}
+		{#if required && value === ""}
 			<Validation msg={msg} />
 		{/if}
 	</div>
