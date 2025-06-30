@@ -1,4 +1,5 @@
 import TableManager, { type tableRow } from '../types/manager.js';
+import type { Database } from '../types/supabase-types.ts';
 
 /**
  * A model concerning about CRUD operations on *attendance_log*. 
@@ -7,6 +8,7 @@ import TableManager, { type tableRow } from '../types/manager.js';
  * 
  * **Reference**: Database Model `src/lib/models/db.md`
  */
+type ParticipationType = Database["public"]["Enums"]["participant_type_enum"] | null;
 type AttendanceLogRow = tableRow<"attendance_log">
 
 export class AttendanceLogModel extends TableManager<"attendance_log">('attendance_log') {
@@ -27,7 +29,7 @@ export class AttendanceLogModel extends TableManager<"attendance_log">('attendan
     conducted_activity_id: number,
     participant_id: string,
     is_late: boolean = false,
-    participant_type?: string | null,
+    participant_type?: ParticipationType,
     individual_intervention_plan?: boolean | null,
     transition_graduation_plan?: boolean | null,
     remarks?: string | null
@@ -78,7 +80,7 @@ export class AttendanceLogModel extends TableManager<"attendance_log">('attendan
    * @param participant_type the type of participant
    * @returns array of attendance logs for the given participant type
    */
-  async findByParticipantType(participant_type: string): Promise<AttendanceLogRow[] | null>{
+  async findByParticipantType(participant_type: ParticipationType): Promise<AttendanceLogRow[] | null>{
     return this.findMany({ participant_type: participant_type })
   }
 
