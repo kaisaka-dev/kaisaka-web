@@ -19,7 +19,7 @@ export const POST: RequestHandler = async({request}) => {
     body.type, 
     body.target_activity_id,
     body.date_and_time_conducted,
-    body.completion_staus,
+    body.completion_status,
     body.indicators,
     body.outcome,
     body.remarks
@@ -55,10 +55,10 @@ export const PUT: RequestHandler = async({request}) => {
     hasUpdates = true
   }
 
-  if (body.completion_staus !== undefined) {
-    const updated = await ActivityModel.instance.updateCompletionStatus(body.id, body.completion_staus)
+  if (body.completion_status !== undefined) {
+    const updated = await ActivityModel.instance.updateCompletionStatus(body.id, body.completion_status)
     if (!updated) {
-      throw error(500, 'Failed to update completion_staus')
+      throw error(500, 'Failed to update completion_status')
     }
     hasUpdates = true
   }
