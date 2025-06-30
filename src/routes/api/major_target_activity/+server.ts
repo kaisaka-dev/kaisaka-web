@@ -10,8 +10,8 @@ export const POST: RequestHandler = async({request}) => {
     throw error(400, 'Missing required fields.')
   }
 
-  if (!body.name || !body.type || !body.service_objective_id || !body.target_no_of_participants || !body.date_and_time_last_updated) {
-    throw error(400, 'Missing required fields: name, type, service_objective_id, target_no_of_participants, date_and_time_last_updated.')
+  if (!body.name || !body.type || !body.service_objective_id || !body.target_no_of_participants) {
+    throw error(400, 'Missing required fields: name, type, service_objective_id, target_no_of_participants')
   }
 
   const inserted = await MajorTargetActivityModel.instance.insertMajorTargetActivity(
@@ -19,7 +19,6 @@ export const POST: RequestHandler = async({request}) => {
     body.type,
     body.service_objective_id,
     body.target_no_of_participants,
-    body.date_and_time_last_updated,
     body.remarks
   )
 
