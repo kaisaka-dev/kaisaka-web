@@ -5,7 +5,7 @@ type employment_type_enum = Database['public']['Enums']['employment_type_enum'];
 type EmploymentStatusRow = tableRow<"employment_status">
 
 /**
- * A model concerning about CRUD operations on employment status of children. 
+ * A model concerning about CRUD operations on employment status of members. 
  * 
  * Made for the `employment_status` API. 
  * 
@@ -15,19 +15,19 @@ export class EmploymentStatusModel extends TableManager<"employment_status">('em
   public static instance: EmploymentStatusModel = new EmploymentStatusModel();
   
   /**
-   * Creates an employment status record for an existing child
-   * @param able_to_work indicates whether or not child is able to work
-   * @param employment_type the employment type of the child
-   * @param child_id unique id of the child in the DB
+   * Creates an employment status record for an existing member
+   * @param able_to_work indicates whether or not member is able to work
+   * @param employment_type the employment type of the member
+   * @param member_id unique id of the member in the DB
    * @returns created employment status record
    */
-  async insertEmploymentStatus(able_to_work: boolean, employment_type: employment_type_enum | null, child_id: string): Promise<EmploymentStatusRow | null>{
+  async insertEmploymentStatus(able_to_work: boolean, employment_type: employment_type_enum | null, member_id: string): Promise<EmploymentStatusRow | null>{
     const finalEmploymentType = able_to_work ? employment_type : null; //prevents having employment type if able_to_work is false
     
     const employment_status : Partial<EmploymentStatusRow> = { 
       able_to_work: able_to_work, 
       employment_type: finalEmploymentType, 
-      child_id: child_id 
+      member_id: member_id
     }
     const data = await this.insertOne(employment_status)
 
@@ -44,12 +44,12 @@ export class EmploymentStatusModel extends TableManager<"employment_status">('em
   }
 
   /**
-   * Finds employment status record given the child's id
-   * @param child_id unique id of the child in the DB
-   * @returns employment status record of the given child
+   * Finds employment status record given the member's id
+   * @param member_id unique id of the member in the DB
+   * @returns employment status record of the given member
    */
-  async findByChildId(child_id: string): Promise<EmploymentStatusRow | null>{
-    return this.findOne({ child_id: child_id })
+  async findByMemberId(member_id: string): Promise<EmploymentStatusRow | null>{
+    return this.findOne({ member_id: member_id })
   }
 
   /**
@@ -80,12 +80,12 @@ export class EmploymentStatusModel extends TableManager<"employment_status">('em
   }
 
   /**
-   * Deletes employment status record given the child's id 
-   * @param child_id unique id of the child in the DB
+   * Deletes employment status record given the member's id 
+   * @param member_id unique id of the member in the DB
    * @returns boolean if deleted successfully
    */
-  async deleteByChildId(child_id: string): Promise<boolean>{
-    const result = await this.deleteOne({ child_id: child_id });
+  async deleteByMemberId(member_id: string): Promise<boolean>{
+    const result = await this.deleteOne({ member_id: member_id });
     return result !== null;
   }
 }
