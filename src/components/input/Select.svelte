@@ -6,7 +6,7 @@
 	export let required = false;
 	export let msg = ""; // Validation message
 
-	export let selected = ""; // Declare selected as a reactive variable
+	export let value = ""; // Declare selected as a reactive variable
 </script>
 
 <div class="input-container">
