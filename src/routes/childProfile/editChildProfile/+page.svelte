@@ -77,7 +77,7 @@
 </div>
 
 <!-- PERSONAL INFORMATION SECTION BELOW-->
- <div class = "ml-22 -mt-70" id ="Personal Info">
+ <div class = "ml-22 -mt-50" id ="Personal Info">
     <h1 class = "!text-[var(--green)] font-[JSans] ml-33 mt-5 mb-2">
         Information
     </h1>
@@ -87,22 +87,22 @@
         <div class = "flex flex-col">
             <div class = "flex flex-row">
                 <div class = "ml-4 mt-3 w-40"> First Name</div>
-                <div> <Input value = {user.firstName}/> </div>
+                <div class = "mt-4"> <Input  value = {user.firstName}/> </div>
             </div>
 
             <div class = "flex flex-row">
                 <div class = "ml-4 mt-3 w-40"> Last Name</div>
-                <div class = "!z-900"> <Input  value = {user.lastName}/> </div>
+                <div class = "mt-4"> <Input  value = {user.lastName}/> </div>
             </div>
 
             <div class = "flex flex-row">
                 <div class = "ml-4 mt-3 w-40"> Education </div>
-                <div> <Input value = {user.education}/> </div>
+                <div class = "mt-4"> <Input value = {user.education}/> </div>
             </div>
 
             <div class = "flex flex-row">
                 <div class = "ml-4 mt-3 w-40"> Education Status </div>
-                <div> <select id = "educstatus" class = "!mt-6 ml-7 w-81 rounded-md text-[var(--background)] mr-20"> 
+                <div> <select id = "educstatus" class = "!mt-6 w-81 rounded-md text-[var(--background)] mr-20"> 
                         <option selected value> Dropped out</option>
                         <option> New student</option>
                         <option> Completed </option>
@@ -112,32 +112,32 @@
 
             <div class = "flex flex-row">
                 <div class = "ml-4 mt-3 w-40"> Birthday</div>
-                <div> <DateInput value = {user.birthday} label = ""/> </div>
+                <div class = "mr-35"> <DateInput value = {user.birthday} label = ""/> </div>
             </div>
 
             <div class = "flex flex-row">
                 <div class = "ml-4 mt-3 w-40"> Age</div>
-                <div> <Input disabled value = "Age"/> </div>
+                <div class = "mt-4"> <Input value = "Age"/> </div>
             </div>
 
             <div class = "flex flex-row">
                 <div class = "ml-4 mt-3 w-40"> Sex</div>
-                <div> <Input type = "Drop" value = "Sex"/> </div>
+                <div class = "mt-3"> <Input value = "Sex"/> </div>
             </div>
 
             <div class = "flex flex-row">
                 <div class = "ml-4 mt-3 w-40"> Address</div>
-                <div> <Input value = "Address"/> </div>
+                <div class = "mt-3"> <Input value = "Address"/> </div>
             </div>
 
             <div class = "flex flex-row">
                 <div class = "ml-4 mt-3 w-40"> Barangay</div>
-                <div> <Input value = "Barangay"/> </div>
+                <div class = "mt-3"> <Input value = "Barangay"/> </div>
             </div>
 
             <div class = "flex flex-row">
                 <div class = "ml-4 mt-3 w-40"> Employment Status </div>
-                <div> <select id = "educstatus" class = "!mt-6 ml-7.5 w-81 rounded-md text-[var(--background)] mr-20"> 
+                <div> <select id = "educstatus" class = "!mt-6 mr-5 w-81 rounded-md text-[var(--background)] mr-20"> 
                         <option selected value> Sheltered Workshop</option>
                         <option> Self Employed</option>
                         <option> Wage Employed </option>
@@ -148,22 +148,22 @@
 
             <div class = "flex flex-row mt-10">
                 <div class = "ml-4 mt-3 w-73"> Category of Disability</div>
-                <div> <Input value = "Category"/> </div>
+                <div class = "mt-4"> <Input value = "Category"/> </div>
             </div>
 
             <div class = "flex flex-row">
                 <div class = "ml-4 mt-3 w-73"> Nature of Disability</div>
-                <div> <Input value = "Nature"/> </div>
+                <div class = "mt-4"> <Input value = "Nature"/> </div>
             </div>
 
             <div class = "flex flex-row mt-10">
                 <div class = "ml-4 mt-3 w-70"> Date of Admission</div>
-                <div> <DateInput value = "Date"/> </div>
+                <div> <DateInput label = "" value = "Date"/> </div>
             </div>
 
             <div class = "flex flex-row">
                 <div class = "ml-4 mt-3 w-70"> Date of Termination</div>
-                <div> <DateInput value = "Date"/> </div>
+                <div> <DateInput label = "" value = "Date"/> </div>
             </div>
         </div>
         
@@ -253,7 +253,7 @@
             {#each  events  as eventVar}
  
             <div class = "flex flex-row mb-10">
-                <div class = "w-75 -ml-7">
+                <div class = "w-75 ml-2 mt-4.5">
                    <Input label = "" value = {eventVar.name}/>
                 </div>
 
@@ -352,7 +352,7 @@
                     <option value = "livelihood"> HEALTH</option>
                     </select>
                 </div>
-                <div class = "mb-10 ">
+                <div class = "mb-10 mt-4 ml-10">
                    <Input value = {interventionvar.name}/>
                 </div>
                 <div class =  "collapse">

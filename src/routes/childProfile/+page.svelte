@@ -3,7 +3,8 @@
     import Input from '../../components/input/InputText.svelte'
     import TextArea from '../../components/input/InputTextarea.svelte'
     import Check from '../../components/input/Checkbox.svelte'
-
+    import DateInput from '../../components/input/InputDate.svelte'
+    import Select from '../../components/input/Select.svelte'
     export let data
     const { user } = data
 </script>
@@ -14,7 +15,7 @@
        {user.firstName} {user.lastName}'s Profile 
     </h1>
 
-    
+
 </section>
 <div class = "flex flex-row ml-10 m-4 sticky top-20 z-1000">
     <div class = "flex flex-col !font-[JSans]">
@@ -41,78 +42,90 @@
 </div>
 
 <!-- PERSONAL INFORMATION SECTION BELOW-->
- <div class = "ml-22 -mt-40" id ="Personal Info">
+ <div class = "ml-22 -mt-50" id ="Personal Info">
     <h1 class = "!text-[var(--green)] font-[JSans] ml-33 mt-5 mb-2">
         Information
     </h1>
 </div>
-<div class = "border-[var(--border)] border-4 ml-55 mr-10 !font-bold" >
+<div class = "border-[var(--border)] border-4 ml-55 mr-10 !font-bold z-2000" >
     <div class = "!flex !flex-row !justify-start mt-2">
         <div class = "flex flex-col">
             <div class = "flex flex-row">
                 <div class = "ml-4 mt-3 w-40"> First Name</div>
-                <div> <Input disabled value = "First Name"/> </div>
+                <div class = "mt-4"> <Input disabled value = {user.firstName}/> </div>
             </div>
 
             <div class = "flex flex-row">
                 <div class = "ml-4 mt-3 w-40"> Last Name</div>
-                <div> <Input disabled value = "Last Name"/> </div>
+                <div class = "mt-4"> <Input  disabled value = {user.lastName}/> </div>
             </div>
 
             <div class = "flex flex-row">
                 <div class = "ml-4 mt-3 w-40"> Education </div>
-                <div> <Input disabled value = "Education"/> </div>
+                <div class = "mt-4"> <Input disabled value = {user.education}/> </div>
             </div>
 
-            <div class = "flex flex-row mt-10">
+            <div class = "flex flex-row">
+                <div class = "ml-4 mt-3 w-40"> Education Status </div>
+                <div class = "mt-5"> <Input value = "Dropped out" disabled/>
+                </div>
+            </div>
+
+            <div class = "flex flex-row">
                 <div class = "ml-4 mt-3 w-40"> Birthday</div>
-                <div> <Input disabled value = "Birthday"/> </div>
+                <div class = "mr-40"> <DateInput label = ""/> </div>
             </div>
 
             <div class = "flex flex-row">
                 <div class = "ml-4 mt-3 w-40"> Age</div>
-                <div> <Input disabled value = "Age"/> </div>
+                <div class = "mt-4"> <Input disabled value = "Age"/> </div>
             </div>
 
             <div class = "flex flex-row">
                 <div class = "ml-4 mt-3 w-40"> Sex</div>
-                <div> <Input disabled value = "Sex"/> </div>
+                <div class = "mt-3"> <Input disabled value = "Sex"/> </div>
             </div>
 
             <div class = "flex flex-row">
                 <div class = "ml-4 mt-3 w-40"> Address</div>
-                <div> <Input disabled value = "Address"/> </div>
+                <div class = "mt-3"> <Input disabled value = "Address"/> </div>
             </div>
 
             <div class = "flex flex-row">
                 <div class = "ml-4 mt-3 w-40"> Barangay</div>
-                <div> <Input disabled value = "Barangay"/> </div>
+                <div class = "mt-3"> <Input disabled value = "Barangay"/> </div>
             </div>
+
+            <div class = "flex flex-row">
+                <div class = "ml-4 mt-3 w-40"> Employment Status </div>
+                <div class = "mt-7"> <Input value = "Sheltered Workshop" disabled /> </div>
+            </div>
+
 
             <div class = "flex flex-row mt-10">
                 <div class = "ml-4 mt-3 w-73"> Category of Disability</div>
-                <div> <Input disabled value = "Category"/> </div>
+                <div class = "mt-4"> <Input value = "Category"/> </div>
             </div>
 
             <div class = "flex flex-row">
                 <div class = "ml-4 mt-3 w-73"> Nature of Disability</div>
-                <div> <Input disabled value = "Nature"/> </div>
+                <div class = "mt-4"> <Input value = "Nature"/> </div>
             </div>
 
             <div class = "flex flex-row mt-10">
                 <div class = "ml-4 mt-3 w-70"> Date of Admission</div>
-                <div> <Input disabled value = "Date"/> </div>
+                <div> <DateInput label = "" value = "Date"/> </div>
             </div>
 
             <div class = "flex flex-row">
                 <div class = "ml-4 mt-3 w-70"> Date of Termination</div>
-                <div> <Input disabled value = "Date"/> </div>
+                <div> <DateInput label = "" value = "Date"/> </div>
             </div>
         </div>
         
         
-        <div class = "flex flex-col -ml-10"> 
-            <div class = "-ml-8"> <TextArea label = "Remarks" disabled rows = 10/> </div>
+        <div class = "flex flex-col ml-3"> 
+            <div class = "-ml-8"> <TextArea label = "Remarks" rows = 10/> </div>
         </div>
     </div>
 </div>
@@ -183,7 +196,7 @@
 
         <div class = "border-[var(--border)] border-4 flex flex-col p-3 ">
             <div class = "flex flex-row">
-                <div>
+                <div class = "mt-2">
                     EVENT NAME
                 </div>
 
@@ -191,13 +204,13 @@
                     <div class = "!bg-[var(--green)] p-2 w-45 rounded-full text-center !font-bold !text-[var(--background)]" > SOCIAL </div>
                 </div>
 
-                <div class = "ml-25">
+                <div class = "ml-25 mt-2">
                     DATE ATTENDED
                 </div>
             </div>
 
             <div class = "flex flex-row mt-3">
-                <div>
+                <div class = "mt-2">
                     EVENT NAME
                 </div>
 
@@ -205,7 +218,7 @@
                     <div class = "!bg-[var(--pink)] p-2 w-45 rounded-full text-center !font-bold !text-[var(--background)]" > EDUCATION </div>
                 </div>
 
-                <div class = "ml-25">
+                <div class = "ml-25 mt-2">
                     DATE ATTENDED
                 </div>
             </div>
