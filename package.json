@@ -13,8 +13,6 @@
 		"lint": "prettier --check . && eslint .",
 		"test:unit": "vitest",
 		"test": "npx vitest run --coverage",
-		"lint": "eslint . && prettier --check .",
-		"format": "prettier --write .",
 		"storybook": "storybook dev -p 6006",
 		"build-storybook": "storybook build"
 	},
@@ -73,6 +71,7 @@
 		"prettier-plugin-tailwindcss": "^0.6.11",
 		"publint": "^0.3.2",
 		"storybook": "^8.6.14",
+		"supabase": "^2.24.3",
 		"svelte": "^5.0.0",
 		"svelte-check": "^4.0.0",
 		"tailwindcss": "^4.0.0",
@@ -83,5 +82,8 @@
 	},
 	"keywords": [
 		"svelte"
-	]
+	],
+	"dependencies": {
+		"@supabase/supabase-js": "^2.50.0"
+	}
 }
