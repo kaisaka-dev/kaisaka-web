@@ -106,7 +106,7 @@ export class MembershipAnnualRenewalModel extends TableManager<"membership_annua
    * @param total_amount_due the new total amount due
    * @returns boolean if update is successful
    */
-  async updateAmountDue(id: number, total_amount_due: number): Promise<boolean> {
+  async updateTotalAmountDue(id: number, total_amount_due: number): Promise<boolean> {
     const now = new Date().toISOString();
     const reference: Partial<MembershipAnnualRenewalRow> = { id };
     const updates: Partial<MembershipAnnualRenewalRow> = { 
