@@ -12,7 +12,7 @@
 
     <div class="dropdown dropdown-hover">
         <div class="navlink" role="button" tabindex="-1">Members</div>
-        <ul tabindex="-1" class="dropdown-content menu rounded-box z-1 w-52 p-2 shadow-sm !bg-[#513737]">
+        <ul tabindex="-1" class="dropdown-content menu rounded-box z-1 w-52 p-2 shadow-sm !bg-[var(--header-color)]">
             <li><a>Children</a></li>
             <li><a>Caregivers</a></li>
             <li><a>Families</a></li>
@@ -22,7 +22,7 @@
 
     <div class="dropdown dropdown-hover">
         <div class="navlink" role="button" tabindex="-1">Events</div>
-        <ul tabindex="-1" class="dropdown-content menu rounded-box z-1 w-52 p-2 shadow-sm !bg-[#513737]">
+        <ul tabindex="-1" class="dropdown-content menu rounded-box z-1 w-52 p-2 shadow-sm !bg-[var(--header-color)]">
             <li><a>Target Events</a></li>
             <li><a>Conducted Events</a></li>
         </ul>
@@ -30,7 +30,7 @@
 
     <div class="dropdown dropdown-hover">
         <div class="navlink" role="button" tabindex="-1">Reports</div>
-        <ul tabindex="-1" class="dropdown-content menu rounded-box z-1 w-52 p-2 shadow-sm !bg-[#513737]">
+        <ul tabindex="-1" class="dropdown-content menu rounded-box z-1 w-52 p-2 shadow-sm !bg-[var(--header-color)]">
             <li><a>Item</a></li>
             <li><a>Item</a></li>
         </ul>
@@ -39,7 +39,7 @@
     <div class="dropdown dropdown-left dropdown-hover" id="profile">
         <div class="navlink" role="button" tabindex="-1"><img src = {profileimg} alt = "profile" style="height:50px;" /></div>
 
-        <ul tabindex="-1" class="dropdown-content menu rounded-box z-1 w-52 p-2 shadow-sm !bg-[#513737]">
+        <ul tabindex="-1" class="dropdown-content menu rounded-box z-1 w-52 p-2 shadow-sm !bg-[var(--header-color)]">
             <li><a>My Profile</a></li>
             <li><a href="/">Log Out</a></li>
         </ul>
@@ -67,11 +67,14 @@
 </div>
 
 <style>
-
+    :root {
+        --header-color: rgb(245, 231, 243);
+    }
     #navbar {
         position: relative;
         top: 0;
-        background-color : #513737;
+        /*background-color : #513737;*/
+        background-color: var(--header-color);
         display:flex;
         padding: 10px;
         height: 90px;
@@ -111,14 +114,14 @@
     }
 
     li.active {         /* shading for active page */
-        background-color: rgb(123, 88, 102);
+        /*background-color: rgb(123, 88, 102);*/
+        background-color: var(--green);
     }
 
     #subnav li:hover {
         transition: 0.3s;
-        background-color: rgb(123, 88, 102);
-        color: var(--pink) !important;
-
+        /*background-color: rgb(123, 88, 102);*/
+        box-shadow: 0 2px 0 rgba(0, 0, 0, 0.4);
     }
 
     #subnav ul {
