@@ -137,7 +137,7 @@
 
 <section id="labour-market-status">
     <h1 style="margin-bottom: 0.5rem;">Labor Market Status</h1>
-    <Checkbox label="Able to work" id="pwd" bind:checked={ableToWork}/>
+    <Checkbox label="Able to work" id="able-to-work" bind:checked={ableToWork}/>
     {#if ableToWork}
         <div style="margin-left: 35px">
             <Select label="Employment Type" id="employment" options={["Wage-employed", "Self-employed", "Sheltered workshop"]} bind:value={employmentType} />
