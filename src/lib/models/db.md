@@ -34,35 +34,35 @@ This deals with every information under *barangay*.
 This for the T3AY2024-2025 Team Members.
 
 ## List of Models
-- activity
-- addresses
-- annual_program
-- attendance_log
-- barangays
-- caregiver_groups
-- caregivers
-- children
-- cities
-- community_group_type
-- disability_category
-- education_status
-- employment_status
-- families
-- family_members
-- income_type
-- intervention
-- intervention_history
-- major_target_activity
-- members
-- membership_annual_renewal
-- membership_payment
-- philhealth_ids
-- pwd_ids
-- relationship_cc
-- service_category
-- service_objective
-- social_protection_status
-- streets
+- [activity](./activityModel.ts)
+- [addresses](./addressesModel.ts)
+- [annual_program](./annualProgramModel.ts)
+- [attendance_log](./attendanceLogModel.ts)
+- [barangays](./barangaysModel.ts)
+- [caregiver_groups](./caregiverGroupsModel.ts)
+- [caregivers](./caregiversModel.ts)
+- [children](./childrenModel.ts)
+- [cities](./citiesModel.ts)
+- [community_group_type](./communityGroupTypeModel.ts)
+- [disability_category](./disabilityCategoryModel.ts)
+- [education_status](./educationStatusModel.ts)
+- [employment_status](./employmentStatusModel.ts)
+- [families](./familiesModel.ts)
+- [family_members](./FamilyMembersModel.ts)
+- [income_type](./incomeTypeModel.ts)
+- [intervention](./interventionModel.ts)
+- [intervention_history](./interventionHistoryModel.ts)
+- [major_target_activity](./majorTargetActivityModel.ts)
+- [members](./membersModel.ts)
+- [membership_annual_renewal](./MemberShipAnnualRenewalModel.ts)
+- [membership_payment](./MembershipPaymentModel.ts)
+- [philhealth_ids](./philhealthIdsModel.ts)
+- [pwd_ids](./pwdIdsModel.ts)
+- [relationship_cc](./relationshipCCModel.ts)
+- [service_category](./serviceCategoryModel.ts)
+- [service_objective](./serviceObjectiveModel.ts)
+- [social_protection_status](./socialProtectionStatusModel.ts)
+- [streets](./streetsModel.ts)
 - users
 
 On June 29,
