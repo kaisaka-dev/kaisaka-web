@@ -33,6 +33,54 @@ This deals with every information under *barangay*.
 
 This for the T3AY2024-2025 Team Members.
 
+## List of Models
+- activity
+- addresses
+- annual_program
+- attendance_log
+- barangays
+- caregiver_groups
+- caregivers
+- children
+- cities
+- community_group_type
+- disability_category
+- education_status
+- employment_status
+- families
+- family_members
+- income_type
+- intervention
+- intervention_history
+- major_target_activity
+- members
+- membership_annual_renewal
+- membership_payment
+- philhealth_ids
+- pwd_ids
+- relationship_cc
+- service_category
+- service_objective
+- social_protection_status
+- streets
+- users
+
+On June 29,
+The following were removed:
+- disabilities
+- disability_status
+
+The following were added:
+- activity
+- attendance_log
+- caregiver_groups
+- community_group_type
+- disability_category
+- income_type
+- major_target_activity
+- service_objective
+- users
+
 ### Developers
 
 @ImaginaryLogs already made it work, so if you want you can just replicate the existing barangay code (the thought pattern, so dont need to think too much).
@@ -51,3 +99,5 @@ For the api, if you need to retrieve any sort of information, ex: login page, if
 ### P.S
 
 @ImaginaryLogs: Session API soon
+
+
