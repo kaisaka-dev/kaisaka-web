@@ -14,7 +14,7 @@ export const POST: RequestHandler = async({request}) => {
     throw error(400, 'Missing required fields.')
   }
 
-  const inserted = await annualProgramModel.instance.insertAnnualProgram(body.start_year, body.start_month, body.start_date, body.end_year, body.end_month, body.end_date, body.target_new_cwds, body.general_reflection, body.lessons_learned);
+  const inserted = await annualProgramModel.instance.insertAnnualProgram(body);
 
   if (!inserted){
     throw error(500, 'Failed to insert')
