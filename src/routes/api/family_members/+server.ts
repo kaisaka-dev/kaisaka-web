@@ -44,7 +44,7 @@ export const PUT: RequestHandler = async({request}) => {
   let hasUpdates = false
 
   if (body.is_child !== undefined) {
-    const updated = await FamilyMembersModel.instance.updateIsChild(body.family_id, body.member_id, body.is_child)
+    const updated = await FamilyMembersModel.instance.updateChildStatus(body.family_id, body.member_id, body.is_child)
     if (!updated) {
       throw error(500, 'Failed to update is_child')
     }

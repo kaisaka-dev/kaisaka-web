@@ -9,11 +9,11 @@ export const POST: RequestHandler = async ({ request }) => {
     throw error(400, 'Invalid JSON format.')
   }
 
-  if (!body.intervention) {
+  if (!body.intervention_id || !body.improvement || !body.status) {
     throw error(400, 'Missing required field: intervention object')
   }
 
-  const inserted = await InterventionHistoryModel.instance.recordIntervention(body.intervention);
+  const inserted = await InterventionHistoryModel.instance.recordInterventionHistory(body.intervention_id, body.improvment, body.status, body.remarks, body.date_checked);
 
   if (!inserted) {
     throw error(500, 'Failed to record intervention history');
@@ -38,7 +38,7 @@ export const PUT: RequestHandler = async({request}) => {
   let hasUpdates = false
 
   // The intervention history model has an updateRecord method that takes an intervention object
-  const updated = await InterventionHistoryModel.instance.updateRecord(body.id, body.intervention)
+  const updated = await InterventionHistoryModel.instance.updateHistoryRecord(body.id, body.intervention)
   if (!updated) {
     throw error(500, 'Failed to update intervention history record')
   }

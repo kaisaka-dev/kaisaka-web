@@ -27,7 +27,6 @@ export const POST: RequestHandler = async ({ request }) => {
     body.remarks !== undefined ? body.remarks : null,
     body.service_category_id,
     body.status,
-    body.type
   );
 
   if (!inserted) {
@@ -67,17 +66,6 @@ export const PUT: RequestHandler = async({request}) => {
     const updated = await InterventionModel.instance.updateStatus(body.id, body.status)
     if (!updated) {
       throw error(500, 'Failed to update status')
-    }
-    hasUpdates = true
-  }
-
-  if (body.type !== undefined) {
-    if (!['education', 'social'].includes(body.type)) {
-      throw error(400, 'Invalid type. Must be: education or social')
-    }
-    const updated = await InterventionModel.instance.updateInterventionType(body.id, body.type)
-    if (!updated) {
-      throw error(500, 'Failed to update type')
     }
     hasUpdates = true
   }
