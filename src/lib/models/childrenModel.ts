@@ -38,7 +38,7 @@ export class ChildrenModel extends TableManager<"children">('children') {
     disability_nature: string | null,
     remarks: string | null 
   ): Promise<ChildrenRow | null>{
-      
+      try{
       const has_philhealth = philhealth_id ? true : false
 
       const child: Partial<ChildrenRow> = {
@@ -54,8 +54,13 @@ export class ChildrenModel extends TableManager<"children">('children') {
         disability_nature: disability_nature,
         remarks: remarks
       }
+      console.log("inserting: ", child);
       const data = await this.insertOne(child);
       return data
+      } catch(err){
+        console.error("Insert failed:", err);
+        return null
+      }
   }
 
   /**

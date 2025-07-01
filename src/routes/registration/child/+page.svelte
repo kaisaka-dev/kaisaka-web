@@ -6,14 +6,16 @@
     import Checkbox from '../../../components/input/Checkbox.svelte';
     import Validation from '../../../components/text/Validation.svelte';
     import Header from '../../../components/Header.svelte';
-
+    
+    import { childFormData } from '../../../lib/stores/childForm.js';
+    import { goto } from '$app/navigation';
 
     let firstName = "";
     let lastName = "";
     let birthday = "";
     let sex = "";
     let address = "";
-    let barangay = "";
+    let barangay = 0;
     let school = "";
     let educationLevel = "";
     let hasPwdId = false;
@@ -21,6 +23,14 @@
     let pwdExpy = "";
     let ableToWork = false;
     let employmentType = "";
+
+    let has_med_cert = false;
+    let has_brgy_cert = false;
+    let has_brth_cert = false;
+    let remarks = "";
+    let part_family = false;
+    let part_community = false;
+
 
     /* special fields */
     let age = "";
@@ -57,7 +67,7 @@
         errors.birthday = birthday.trim() === "" ? "birthday: field is required" : "";
         errors.sex = sex.trim() === "" ? "sex: field is required" : "";
         errors.address = address.trim() === "" ? "address: field is required" : "";
-        errors.barangay = barangay.trim() === "" ? "barangay: field is required" : "";
+        errors.barangay = !barangay ? "barangay: field is required" : "";
         errors.school = school.trim() === "" ? "school: field is required" : "";
         errors.educationLevel = educationLevel.trim() === "" ? "educationLevel: field is required" : "";
 
@@ -82,10 +92,59 @@
 
     function handleNext() {
         if (validateForm()) {
-            location.href = '/registration/family-info';
+            childFormData.update(current => ({
+                ...current,
+                address: {
+                    barangay_id: barangay,
+                    address: address,
+                    street_id: 1 //set to 1 for now xpp
+                },
+                member: {
+                    first_name: firstName,
+                    last_name: lastName, 
+                    birthday: birthday,
+                    sex: sex
+                },
+                child: {
+                    has_barangay_cert: has_brgy_cert,
+                    has_birth_cert: has_brth_cert,
+                    has_medical_cert: has_med_cert,
+                    is_active: true,
+                    philhealth_id: null, //null for now
+                    disability_id: null, //null for now
+                    disability_nature: null, //null for now
+                    remarks: remarks
+                },
+                education_status: {
+                    year_start: 2025, //2025 for now
+                    education_type: school,
+                    year_end: null, //for now
+                    grade_level: educationLevel
+                },
+                social_protection_status: {
+                    participates_community_club: part_community,
+                    participates_family_life: part_family
+                },
+                employment_status: {
+                    able_to_work: ableToWork,
+                    employment_type: employmentType
+                },
+                //only if theres pwdId
+                ...(hasPwdId && pwdId
+				? {
+						pwd_id: {
+							pwd_id: pwdId,
+							expiry_date: pwdExpy
+						}
+				  }
+				: {})
+            }));
+
+            goto('/registration/family-info');
             console.log("Form submitted")
         }
     }
+    
 
 
 </script>
@@ -100,19 +159,25 @@
     <InputText label="Last name" id="last-name" bind:value={lastName} required msg={errors.lastName}/>
     <InputDate label="Birthday" id="bday" bind:value={birthday} required msg={errors.birthday}/>
     <InputText label="Age" id="age" value={age} disabled />
-    <Select label="Sex" id="sex" options={["Male", "Female"]} bind:value={sex} required msg={errors.sex}/>
+    <Select label="Sex" id="sex" options={["Male", "Female", "Other"]} bind:value={sex} required msg={errors.sex}/>
     <InputText label="Address" id="address" bind:value={address} required msg={errors.address}/>
 
-    <Select label="Barangay" id="barangay" options={["Barangay 1", "Barangay 2", "Barangay 3"]} bind:value={barangay} required msg={errors.barangay}/>
-    <Textarea label="Remarks" id="remarks" />
+    
+    <Textarea label="Remarks" id="remarks" bind:value={remarks}/><Select label="Barangay" id="barangay" options={[
+        { label: "Barangay 1", value: 1 },
+        { label: "Barangay 2", value: 2 },
+        { label: "Barangay 3", value: 3 }]} bind:value={barangay} required msg={errors.barangay}/>
 
 
 </section>
 
 <section>
     <h1>Education Information</h1>
-
-    <Select label="School" id="" options={["Home program", "Non-formal", "Special (Exclusive school, blind / deaf)", "Integrated / SPED classes", "Inclusive / General education"]} required bind:value={school} msg="{errors.school}"/>
+    <Select label="School" id="" options={[
+        { label: "Home Program", value: "Home Program" },
+        { label: "Non-formal", value: "Nonformal" },
+        { label: "Integrated / SPED classes", value: "Integrated/SPED" },
+        { label: "Inclusive / General education", value: "Inclusive/Gen. Ed." }]} required bind:value={school} msg="{errors.school}"/>
     <InputText label="Education Level" id="education" required msg="{errors.educationLevel}" bind:value={educationLevel} />
 </section>
 
@@ -131,8 +196,8 @@
 
 <section id="social-protection-status">
     <h1 style="margin-bottom: 0.5rem;">Social Protection Status</h1>
-    <Checkbox label="Participation in family life" style="width:30rem" id="participation-family"/>
-    <Checkbox label="Participation in community life / clubs" style="width:30rem" id="participation-community"/>
+    <Checkbox label="Participation in family life" style="width:30rem" id="participation-family" bind:checked={part_family}/>
+    <Checkbox label="Participation in community life / clubs" style="width:30rem" id="participation-community" bind:checked={part_community}/>
 </section>
 
 <section id="labour-market-status">
@@ -140,7 +205,7 @@
     <Checkbox label="Able to work" id="pwd" bind:checked={ableToWork}/>
     {#if ableToWork}
         <div style="margin-left: 35px">
-            <Select label="Employment Type" id="employment" options={["Wage-employed", "Self-employed", "Sheltered workshop"]} bind:value={employmentType} />
+            <Select label="Employment Type" id="employment" options={["Wage Employed","Self-Employed","Sheltered Workshop"]} bind:value={employmentType} />
         </div>
     {/if}
 </section>
@@ -150,9 +215,9 @@ you may contact them here xxxxx -->
 <section id="certificate-verification">
     <h1 style="margin-bottom: 0.5rem;">Certificate Verification</h1>
     <Validation msg="Let the officer-in-charge verify the portion below" style="color:lightgray; margin-bottom: 25px; padding: 0 35px;"/>
-    <Checkbox label="Medical Certificate" id="med-cert"/>
-    <Checkbox label="Birth Certificate" id="birth-cert"/>
-    <Checkbox label="Barangay Certificate" id="brgy-cert"/>
+    <Checkbox label="Medical Certificate" id="med-cert" bind:checked={has_med_cert}/>
+    <Checkbox label="Birth Certificate" id="birth-cert" bind:checked={has_brth_cert}/>
+    <Checkbox label="Barangay Certificate" id="brgy-cert" bind:checked={has_brgy_cert}/>
 
 </section>
 
