@@ -2,7 +2,7 @@
 	import Validation from '../text/Validation.svelte';
 	export let label = "";
 	export let id = "";
-	export let options: string[] = []; // Array of dropdown options
+	export let options: ({ label: string; value: number } | string)[] = []; 	// Array of dropdown options
 	export let required = false;
 	export let msg = ""; // Validation message
 
@@ -16,7 +16,11 @@
 		<select id={id} class="input" bind:value={value}>
 			<option value="" disabled selected></option> <!-- Default option -->
 			{#each options as option}
-				<option value={option}>{option}</option>
+				{#if typeof option === 'string'}
+					<option value={option}>{option}</option>
+				{:else}
+					<option value={option.value}>{option.label}</option>
+				{/if}
 			{/each}
 		</select>
 

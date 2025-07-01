@@ -107,12 +107,17 @@
 
 <!-- hide this if user is not signed in, show: please prepare the following documents to show the officer physically on your scheduled visit
 you may contact them here xxxxx -->
-<section>
+<section id="certificate-verification">
     <h1 style="margin-bottom: 0.5rem;">Certificate Verification</h1>
     <Validation msg="Let the officer-in-charge verify the portion below" style="color:lightgray; margin-bottom: 25px; padding: 0 35px;"/>
     <Checkbox label="Medical Certificate" id="med-cert"/>
     <Checkbox label="Birth Certificate" id="birth-cert"/>
     <Checkbox label="Barangay Certificate" id="brgy-cert"/>
+
+</section>
+
+<!-- also hide this if not signed in -->
+<section id="staff-only">
 
 </section>
 
