@@ -52,8 +52,8 @@
     };
 
     function validateForm() {
-        errors.firstName = firstName.trim() === "" ? "First name: field is required" : "";
-        errors.lastName = lastName.trim() === "" ? "Last name: field is required" : "";
+        errors.firstName = firstName.trim() === "" ? "first name: field is required" : "";
+        errors.lastName = lastName.trim() === "" ? "last name: field is required" : "";
         errors.birthday = birthday.trim() === "" ? "birthday: field is required" : "";
         errors.sex = sex.trim() === "" ? "sex: field is required" : "";
         errors.address = address.trim() === "" ? "address: field is required" : "";
@@ -149,7 +149,7 @@
 you may contact them here xxxxx -->
 <section>
     <h1 style="margin-bottom: 0.5rem;">Certificate Verification</h1>
-    <Validation msg="Let the officer-in-charge verify the portion below" style="color:lightgray; margin-bottom: 25px; padding: 0 35px;"/>
+    <Validation msg="Let the officer-in-charge verify the portion below" style="color:var(--text-color); margin-bottom: 25px; padding: 0 35px;"/>
     <Checkbox label="Medical Certificate" id="med-cert"/>
     <Checkbox label="Birth Certificate" id="birth-cert"/>
     <Checkbox label="Barangay Certificate" id="brgy-cert"/>
