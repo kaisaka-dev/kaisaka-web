@@ -13,7 +13,7 @@
     /*--background: rgb(59, 46, 40);*/
     --background: ghostwhite;
     --green: rgb(164,197,54);
-    --border: rgb(68,55,50);
+    --border: lightgray;
     --text-color: rgb(59, 46, 40);
     --error-color: rgb(255,100,103);
 
@@ -129,7 +129,7 @@ td {
     padding: 0.8rem;
 }
 tr:hover {
-    background-color: var(--border);
+    background-color: rgba(211,211,211,0.5)
 }
 table {
     border-collapse: collapse;
