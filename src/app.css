@@ -5,13 +5,14 @@
 
 @font-face {
     font-family: JSans;
-    src: url(PlusJakartaSans-VariableFont_wght.ttf);
+    src: url("/PlusJakartaSans-VariableFont_wght.ttf") format("truetype");
     font-weight: bold;
 }
 :root {
     --pink: rgb(247, 176, 205);
     --background: rgb(59, 46, 40);
     --green: rgb(164,197,54);
+    --border: rgb(68,55,50);
 
     --small-text: 1rem;
     --medium-text: 1.25rem;
@@ -25,6 +26,7 @@ body {
 }
 
 * {
+    font-family: "JSans", sans-serif;
     background-color: transparent;
     color: lightgray;
     font-size: var(--medium-text);
@@ -112,8 +114,27 @@ label{
     width: 15rem;
 }
 
-.input-wrapper {
+.input-wrapper { /* for vertically aligning input text and the error message */
     display: flex;
     flex-direction: column;
     width: 400px;
+}
+
+/* tables */
+td {
+    border: 3px solid var(--border);
+    padding: 0.8rem;
+}
+tr:hover {
+    background-color: var(--border);
+}
+table {
+    border-collapse: collapse;
+    text-align: left;
+}
+th {
+    color: var(--background);
+    background-color: var(--green);
+    border: 3px solid var(--green);
+    padding: 0.5rem;
 }

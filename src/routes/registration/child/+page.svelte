@@ -159,5 +159,4 @@ you may contact them here xxxxx -->
 
 <section style="text-align: center;">
     <button onclick={handleNext}>Next</button>
-
 </section>
