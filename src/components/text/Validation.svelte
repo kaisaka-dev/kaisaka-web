@@ -10,7 +10,7 @@
 
 <style>
     .error-message {
-        color: var(--pink);
+        color: var(--error-color);
         font-size: 0.75rem;
         font-style: italic;
         height: auto;
