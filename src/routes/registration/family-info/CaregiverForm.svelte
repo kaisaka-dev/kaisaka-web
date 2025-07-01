@@ -159,6 +159,8 @@
 								{ label: "PTA", value: 3 },
 								{ label: "Others", value: 4 }
 							]} bind:value={formData.communityGrp_id} />
+			<Select label="Income Generation" id={`income-${index}`} options={["Home-based", "Self-employed"]} bind:value={formData.income} />
+
 
 		{:else if caregivertype === "linked" }
 			<InputText label="First name" id={`first-name-${index}`} bind:value={formData.firstName} msg={errors.firstName} />
