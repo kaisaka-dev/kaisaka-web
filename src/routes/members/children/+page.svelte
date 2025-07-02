@@ -97,8 +97,48 @@ let filter = $state({
 })
 
 // options for the dropdown
-const options_disCategory = ['Learning Disability', 'Psychosocial Disability', 'Speech/Language Impairment', 'Deaf/Hard of Hearing']
-const options_disNature = ['Autism Spectrum Disorder', 'Epilepsy', 'Cleft Palate', 'Deaf']
+const options_disCategory = [
+    "Deaf/Hard of Hearing",
+    "Intellectual Disability",
+    "Learning Disability",
+    "Mental Disability",
+    "Physical Disability",
+    "Psychosocial Disability",
+    "Speech and Language Impairment",
+    "Visual Disability",
+    "Cancer",
+    "Rare Disease (RA10747)",
+    "Multiple Disability"
+];  // from KAISAKA's 2024-jan-nov-list-of-children
+const options_disNature = [
+    "ADHD",
+    "Autism Spectrum Disorder",
+    "Cerebral Palsy",
+    "Cleft Lip Palate",
+    "Cleft Palate",
+    "Communication Disorder",
+    "Congenital Michocephaly",
+    "Deaf",
+    "Down Syndrome",
+    "Ducent Muscular Dystrophy",
+    "Epilepsy",
+    "GDD",
+    "Hearing Impairment",
+    "Hyperactive",
+    "Intellectual",
+    "Learning",
+    "Low Vision",
+    "Orthopedic",
+    "Osteogenetic Imperfecta",
+    "Psychosocial Disability",
+    "Rubinstein Taybi Syndrome",
+    "Speech",
+    "Speech and Hearing Impairment",
+    "Speech Delay",
+    "Speech Problem",
+    "Tb Spondylodiscitis of the Spine",
+    "Visual Impairment"
+]; // from KAISAKA's 2024-jan-nov-list-of-children
 const options_school = ["Home program", "Non-formal", "Special (Exclusive school, blind / deaf)", "Integrated / SPED classes", "Inclusive / General education"]
 
 // filter logic
