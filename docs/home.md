@@ -44,6 +44,8 @@ Refer to Github's style of markdown as a basis to how you write[^2].
 ## Table of Contents
 
  1. [Testing](./testing.md)
+ 2. [Database Managers](../src/lib/models/db.md)
+ 3. [General Tests](../tests/general-tests.md)
 
 ---
 [^1]: [Storybook](https://storybook.js.org/docs/get-started/frameworks/sveltekit)

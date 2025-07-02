@@ -1,0 +1,110 @@
+@import 'tailwindcss';
+@plugin '@tailwindcss/forms';
+@plugin '@tailwindcss/typography';
+@plugin "daisyui";
+
+@font-face {
+    font-family: JSans;
+    src: url(PlusJakartaSans-VariableFont_wght.ttf);
+    font-weight: bold;
+}
+
+   #navbar {
+         background-color : #513737;
+         display:flex;
+         padding: 5px;
+         gap: 30px;
+   }
+
+   #navbar > p {
+    color: #F7B0CD;
+    font-size: 20px;
+    padding-top: 25px;
+   }
+
+   #navbar > #logo {
+    height: 70px;
+    padding-top:10px;
+   }
+
+   #navbar > #profile {
+    height: 70px;
+    padding-top:20px;
+    padding-left:50px;
+   }
+
+   #navbar > #reports {
+    padding-right: 60%;
+   }
+
+:root {
+    --pink: rgb(247, 176, 205);
+    --background: rgb(59, 46, 40);
+    --green: rgb(164,197,54);
+
+    --medium-text: 1.25rem;
+    --large-text: 1.75rem;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    font-family: 'JSans';
+    background-color: var(--background);
+    color: lightgray;
+    font-size: var(--medium-text);
+}
+
+div {
+    background-color: transparent;
+}
+
+button {
+    border-radius: 5px;
+    padding: 1.5px;
+    color: var(--background);
+}
+
+button {
+    border: 0;
+    background-color: var(--pink);
+    padding: 12px 35px;
+    font-size: var(--medium-text);
+    font-weight: bold;
+}
+button:hover {
+    box-shadow: 0 0 0 1px var(--pink);
+    background-color: var(--background);
+    transition: 0.2s ease-out;
+    color: var(--pink);
+}
+
+button.green {
+    background-color: var(--green);
+}
+button.green:hover {
+    box-shadow: 0 0 0 1px var(--green);
+    background-color: var(--background);
+    color: var(--green);
+
+}
+
+section {
+    margin: 30px;
+}
+
+section h1 {
+    width: 100%;
+    padding: 12px 35px;
+    background-color: var(--green);
+    font-size: var(--large-text);
+    font-weight: bold;
+    color: var(--background);
+}
+
+section h2 {
+    padding: 12px 35px;
+    color: var(--green);
+    font-size: var(--large-text);
+    font-weight: bold;
+}

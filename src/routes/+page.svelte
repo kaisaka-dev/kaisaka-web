@@ -13,8 +13,10 @@
 <div
    class="hero min-h-screen"
    style = "background-image: url(/img/bgimage.png);">
+
   <div class = "absolute inset-x-0 bottom-10 grid grid-cols-1 grid-rows-2 gap-5 sm:mx-auto" style="margin-inline: clamp(1rem, 10vw, 220px)" >
-        <button class = "btn !text-black font-[JSans] !text-[var(--medium-text)] !bg-[#C5C5C5]  !p-8  !rounded-md hover:!shadow-xl">
+        <button class = "btn !text-black font-[JSans] !text-[var(--medium-text)] !bg-[#C5C5C5]  !p-8  !rounded-md hover:!shadow-xl"
+                onclick={() => location.href = '/registration/child'}>
             Register a Child
         </button>
 
@@ -67,6 +69,13 @@
     </label>
     <input type = "password" class = "input !min-w-[50%] grow basis-0 !h-10" placeholder = "Type password..."/>
   </div>
+
+    <div style="text-align:center;">
+        <a href="/sign-up" style="text-decoration: underline; color: cornflowerblue;">
+            <i style="color: cornflowerblue;">Click here to sign-up</i>
+        </a>
+
+    </div>
 
   <!--BODY ENDS HERE-->
    
