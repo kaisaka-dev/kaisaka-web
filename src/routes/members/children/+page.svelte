@@ -102,10 +102,10 @@ const options_disNature = ['Autism Spectrum Disorder', 'Epilepsy', 'Cleft Palate
 const options_school = ["Home program", "Non-formal", "Special (Exclusive school, blind / deaf)", "Integrated / SPED classes", "Inclusive / General education"]
 
 // filter logic
-$effect(() => applyFilter(filter))
+$effect(() => applyFilter())
 
-function applyFilter(value) {
-    console.log($inspect(value));
+function applyFilter() {
+    console.log($inspect(filter));
     const search = filter.main?.toLowerCase();
 
     filteredData = childrenList.filter(child => {

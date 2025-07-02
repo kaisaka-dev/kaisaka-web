@@ -1,5 +1,4 @@
 <script lang="ts">
-    import { createEventDispatcher } from 'svelte';
 
     /**
      * an array of object, where object is a row of data. to be filtered and then returned to parent
