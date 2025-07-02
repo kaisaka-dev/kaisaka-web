@@ -1,11 +1,16 @@
 <script>
-	let { showModal = $bindable(), header, children } = $props();
-
+	let { showModal = $bindable(), 
+		loginFunction, 
+		header, 
+		children 
+	} = $props();
+  
 	let dialog = $state(); // HTMLDialogElement
 
 	$effect(() => {
 		if (showModal) dialog.showModal();
 	});
+
 </script>
 
 
@@ -22,7 +27,10 @@
         <br>
 		<!-- svelte-ignore a11y_autofocus -->
 		<div class="flex justify-center">
-		<button autofocus onclick={() => dialog.close()} 
+		<button autofocus type="submit" onclick={() => {
+			loginFunction()
+			dialog.close()
+			}} 
         class = '!px-25 green'> Login </button>
 		</div>
 	</div>

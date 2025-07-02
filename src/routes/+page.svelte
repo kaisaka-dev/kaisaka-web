@@ -1,11 +1,23 @@
 <script>
-   import LoginModal from '../components/LoginModal.svelte'
+  import LoginModal from '../components/LoginModal.svelte'
    //var controls if the modal is on screen
-   let showModal = $state(false)
-
+  let showModal = $state(false)
+  let isError = $state(false)
    //function that closes the modal
+   
+   let username = $state("");
+   let password = $state("");
+
    const handleClose = () => {
       showModal = false;
+   }
+
+   const handleLogin = () => {
+    try {
+
+    } catch (err) {
+
+    }
    }
 </script>
 
@@ -29,7 +41,7 @@
 </div>
 
 <!--Below is the login modal code-->
-<LoginModal bind:showModal>
+<LoginModal loginFunction={handleLogin} bind:showModal>
   {#snippet header()}
     <div class="flex justify-center">
       <img src="/img/logo.png" alt="logo" class="w-55 h-40" />
@@ -38,37 +50,41 @@
 
 
   <!--Only one of these error divs will display depending on the kind of failure that is returned by the login API-->
-   <div class = "!mb-5 !bg-red-400 !text-black !text-sm !border-red-400 !rounded-lg alert alert-warning">
+   {#if isError}
+    <div class = "!mb-5 !bg-red-400 !text-black !text-sm !border-red-400 !rounded-lg alert alert-warning">
       <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 shrink-0 stroke-current" fill="none" viewBox="0 0 24 24">
-         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z" />
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z" />
       </svg>
-          Incorrect Username or Password!
-   </div>
+        Incorrect Username or Password!
+    </div>
 
 
-   <div class = "!mb-5 !bg-red-400 !text-black !text-sm !border-red-400 !rounded-lg alert alert-warning">
-      <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 shrink-0 stroke-current" fill="none" viewBox="0 0 24 24">
-         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z" />
-      </svg>
-          Incomplete Information!
-   </div>
+    <div class = "!mb-5 !bg-red-400 !text-black !text-sm !border-red-400 !rounded-lg alert alert-warning">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 shrink-0 stroke-current" fill="none" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z" />
+        </svg>
+            Incomplete Information!
+    </div>
+   {/if}
    <!--ERROR MESSAGES END HERE-->
 
    <!--Body formatting of the modal-->
+  
 
-  <div class="flex flex-wrap items-center mb-4 mx-10 gap-2">
-    <label class="!shrink-0 !text-[var(--green)] !text-[35px] !font-bold" for="username">
-      USERNAME:
-    </label>
-    <input class = "input !min-w-[50%] grow basis-0 !h-10" placeholder = "Type username..."/>
-  </div>
+    <div class="flex flex-wrap items-center mb-4 mx-10 gap-2">
+      <label class="!shrink-0 !text-[var(--green)] !text-[35px] !font-bold" for="username">
+        USERNAME:
+      </label>
+      <input bind:value={username} class = "input !min-w-[50%] grow basis-0 !h-10" placeholder = "Type username..."/>
+    </div>
 
-  <div class="flex flex-wrap items-center mb-8 mx-10 gap-2">
-    <label class="!shrink-0 !text-[var(--green)] !text-[35px] !font-bold" for="password">
-      PASSWORD:
-    </label>
-    <input type = "password" class = "input !min-w-[50%] grow basis-0 !h-10" placeholder = "Type password..."/>
-  </div>
+    <div class="flex flex-wrap items-center mb-8 mx-10 gap-2">
+      <label class="!shrink-0 !text-[var(--green)] !text-[35px] !font-bold" for="password">
+        PASSWORD:
+      </label>
+      <input bind:value={password} type = "password" class = "input !min-w-[50%] grow basis-0 !h-10" placeholder = "Type password..."/>
+    </div>
+
 
     <div style="text-align:center;">
         <a href="/sign-up" style="text-decoration: underline; color: cornflowerblue;">

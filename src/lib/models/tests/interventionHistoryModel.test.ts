@@ -2,7 +2,7 @@ import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { InterventionHistoryModel } from '$lib/models/interventionHistoryModel.js';
 import TableManager, { type tableRow } from '$lib/types/manager.js';
 import { InterventionModel } from '$lib/models/interventionModel.js';
-import { supabase } from '$lib/types/client.js';
+import { supabase } from '$lib/types/supabase.js';
 
 type InterventionRow = tableRow<"intervention">
 

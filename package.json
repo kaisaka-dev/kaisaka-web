@@ -83,6 +83,8 @@
 		"svelte"
 	],
 	"dependencies": {
-		"@supabase/supabase-js": "^2.50.0"
+		"@supabase/auth-helpers-sveltekit": "^0.13.0",
+		"@supabase/ssr": "^0.6.1",
+		"@supabase/supabase-js": "^2.50.2"
 	}
 }

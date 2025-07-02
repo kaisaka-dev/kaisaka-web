@@ -1,6 +1,6 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { FamiliesModel } from '$lib/models/familiesModel.js';
-import { supabase } from '$lib/types/client.js';
+import { supabase } from '$lib/types/supabase.js';
 
 vi.mock('$lib/types/client', () => ({
   supabase: {

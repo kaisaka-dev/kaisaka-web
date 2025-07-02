@@ -1,5 +1,5 @@
 import { PostgrestFilterBuilder } from "@supabase/postgrest-js";
-import { supabase } from "./client.js";
+import { supabase } from "./supabase.js";
 import type { Database } from "./supabase-types.js";
 
 // All the names in the database
