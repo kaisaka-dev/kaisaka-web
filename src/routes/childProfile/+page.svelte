@@ -10,12 +10,10 @@
 </script>
 <Header/>
 
-<section  class = "sticky top-0 z-1000">
+<section>
     <h1>
        {user.firstName} {user.lastName}'s Profile 
     </h1>
-
-
 </section>
 <div class = "flex flex-row ml-10 m-4 sticky top-20 z-1000">
     <div class = "flex flex-col !font-[JSans]">

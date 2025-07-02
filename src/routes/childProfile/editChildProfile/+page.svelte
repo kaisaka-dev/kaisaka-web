@@ -47,7 +47,7 @@
 <Header/>
 
 <form method = "GET">
-<section  class = "sticky top-0 z-1000">
+<section>
     <h1>
        {user.firstName} {user.lastName}'s Profile 
     </h1>
