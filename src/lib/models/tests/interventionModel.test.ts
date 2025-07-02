@@ -43,8 +43,7 @@ describe('InterventionModel', () => {
             'string',
             'Remarks',
             2,
-            'Neutral',
-            'education',
+            'Neutral'
         );
         expect(result).toEqual(sampleIntervention);
     });
@@ -58,8 +57,7 @@ describe('InterventionModel', () => {
             'string',
             'Remarks',
             2,
-            'Neutral',
-            'education',
+            'Neutral'
         );
         expect(result).toBeNull();
     });
@@ -153,32 +151,9 @@ describe('InterventionModel', () => {
         expect(result).toBeNull();
     });
 
-    // findByInterventionType
-    it('findByInterventionType should return matching records when found', async () => {
-        const mockFindMany = vi.fn().mockResolvedValue([sampleIntervention]);
-        (InterventionModel.instance as any).findMany = mockFindMany;
-
-        const result = await InterventionModel.instance.findByInterventionType('education');
-        expect(result).toEqual([sampleIntervention]);
-    });
-
-    it('findByInterventionType should return empty array when no record is found', async () => {
-        const mockFindMany = vi.fn().mockResolvedValue([]);
-        (InterventionModel.instance as any).findMany = mockFindMany;
-
-        const result = await InterventionModel.instance.findByInterventionType('education');
-        expect(result).toEqual([]);
-    });
-
-    it('findByInterventionType should return null on error', async () => {
-        const mockFindMany = vi.fn().mockResolvedValue(null);
-        (InterventionModel.instance as any).findMany = mockFindMany;
-
-        const result = await InterventionModel.instance.findByInterventionType('education');
-        expect(result).toBeNull();
-    });
 
 
+    
     // Update methods
 
     // updateRemarks
