@@ -22,4 +22,7 @@
         background-color:gray;
 				cursor: not-allowed;
     }
+		input[type=checkbox] {
+				border: none;
+		}
 </style>

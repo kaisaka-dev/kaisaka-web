@@ -6,6 +6,7 @@
     import Checkbox from '../../../components/input/Checkbox.svelte';
     import Validation from '../../../components/text/Validation.svelte';
     import Header from '../../../components/Header.svelte';
+
     
     import { childFormData } from '../../../lib/stores/childForm.js';
     import { goto } from '$app/navigation';
@@ -23,6 +24,7 @@
     let pwdExpy = "";
     let ableToWork = false;
     let employmentType = "";
+
 
     let has_med_cert = false;
     let has_brgy_cert = false;
@@ -62,12 +64,12 @@
     };
 
     function validateForm() {
-        errors.firstName = firstName.trim() === "" ? "First name: field is required" : "";
-        errors.lastName = lastName.trim() === "" ? "Last name: field is required" : "";
+        errors.firstName = firstName.trim() === "" ? "first name: field is required" : "";
+        errors.lastName = lastName.trim() === "" ? "last name: field is required" : "";
         errors.birthday = birthday.trim() === "" ? "birthday: field is required" : "";
         errors.sex = sex.trim() === "" ? "sex: field is required" : "";
         errors.address = address.trim() === "" ? "address: field is required" : "";
-        errors.barangay = !barangay ? "barangay: field is required" : "";
+        errors.barangay = barangay.trim() === "" ? "barangay: field is required" : "";
         errors.school = school.trim() === "" ? "school: field is required" : "";
         errors.educationLevel = educationLevel.trim() === "" ? "educationLevel: field is required" : "";
 
@@ -201,10 +203,10 @@
 
 <section id="labour-market-status">
     <h1 style="margin-bottom: 0.5rem;">Labor Market Status</h1>
-    <Checkbox label="Able to work" id="pwd" bind:checked={ableToWork}/>
+    <Checkbox label="Able to work" id="able-to-work" bind:checked={ableToWork}/>
     {#if ableToWork}
         <div style="margin-left: 35px">
-            <Select label="Employment Type" id="employment" options={["Wage Employed","Self-Employed","Sheltered Workshop"]} bind:value={employmentType} />
+            <Select label="Employment Type" id="employment" options={["Wage-employed", "Self-employed", "Sheltered workshop"]} bind:value={employmentType} />
         </div>
     {/if}
 </section>
@@ -217,7 +219,6 @@ you may contact them here xxxxx -->
     <Checkbox label="Medical Certificate" id="med-cert" bind:checked={has_med_cert}/>
     <Checkbox label="Birth Certificate" id="birth-cert" bind:checked={has_brth_cert}/>
     <Checkbox label="Barangay Certificate" id="brgy-cert" bind:checked={has_brgy_cert}/>
-
 </section>
 
 <!-- also hide this if not signed in -->

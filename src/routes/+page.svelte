@@ -70,6 +70,13 @@
     <input type = "password" class = "input !min-w-[50%] grow basis-0 !h-10" placeholder = "Type password..."/>
   </div>
 
+    <div style="text-align:center;">
+        <a href="/sign-up" style="text-decoration: underline; color: cornflowerblue;">
+            <i style="color: cornflowerblue;">Click here to sign-up</i>
+        </a>
+
+    </div>
+
   <!--BODY ENDS HERE-->
    
 

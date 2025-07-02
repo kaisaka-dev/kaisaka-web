@@ -268,5 +268,6 @@
 
 <section style="text-align: center;">
 	<button onclick={() => location.href = '/registration/child'}>Back</button>
+
 	<button class="green" onclick="{handleSubmit}">Submit</button>
 </section>
