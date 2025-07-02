@@ -15,7 +15,7 @@
     let birthday = "";
     let sex = "";
     let address = "";
-    let barangay = 0;
+    let barangay = "";
     let school = "";
     let educationLevel = "";
     let hasPwdId = false;
@@ -161,12 +161,11 @@
     <InputText label="Age" id="age" value={age} disabled />
     <Select label="Sex" id="sex" options={["Male", "Female", "Other"]} bind:value={sex} required msg={errors.sex}/>
     <InputText label="Address" id="address" bind:value={address} required msg={errors.address}/>
-
-    
-    <Textarea label="Remarks" id="remarks" bind:value={remarks}/><Select label="Barangay" id="barangay" options={[
+    <Select label="Barangay" id="barangay" options={[
         { label: "Barangay 1", value: 1 },
         { label: "Barangay 2", value: 2 },
         { label: "Barangay 3", value: 3 }]} bind:value={barangay} required msg={errors.barangay}/>
+    <Textarea label="Remarks" id="remarks" bind:value={remarks}/>
 
 
 </section>

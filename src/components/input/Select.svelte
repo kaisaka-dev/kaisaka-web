@@ -2,7 +2,7 @@
 	import Validation from '../text/Validation.svelte';
 	export let label = "";
 	export let id = "";
-	export let options: ({ label: string; value: number } | string)[] = []; 	// Array of dropdown options
+	export let options: ({ label: string; value: string | number } | string)[] = []; 	// Array of dropdown options
 	export let required = false;
 	export let msg = ""; // Validation message
 
