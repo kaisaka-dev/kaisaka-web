@@ -52,8 +52,8 @@
     };
 
     function validateForm() {
-        errors.firstName = firstName.trim() === "" ? "First name: field is required" : "";
-        errors.lastName = lastName.trim() === "" ? "Last name: field is required" : "";
+        errors.firstName = firstName.trim() === "" ? "first name: field is required" : "";
+        errors.lastName = lastName.trim() === "" ? "last name: field is required" : "";
         errors.birthday = birthday.trim() === "" ? "birthday: field is required" : "";
         errors.sex = sex.trim() === "" ? "sex: field is required" : "";
         errors.address = address.trim() === "" ? "address: field is required" : "";
@@ -137,7 +137,7 @@
 
 <section id="labour-market-status">
     <h1 style="margin-bottom: 0.5rem;">Labor Market Status</h1>
-    <Checkbox label="Able to work" id="pwd" bind:checked={ableToWork}/>
+    <Checkbox label="Able to work" id="able-to-work" bind:checked={ableToWork}/>
     {#if ableToWork}
         <div style="margin-left: 35px">
             <Select label="Employment Type" id="employment" options={["Wage-employed", "Self-employed", "Sheltered workshop"]} bind:value={employmentType} />
@@ -147,12 +147,17 @@
 
 <!-- hide this if user is not signed in, show: please prepare the following documents to show the officer physically on your scheduled visit
 you may contact them here xxxxx -->
-<section>
+<section id="certificate-verification">
     <h1 style="margin-bottom: 0.5rem;">Certificate Verification</h1>
-    <Validation msg="Let the officer-in-charge verify the portion below" style="color:lightgray; margin-bottom: 25px; padding: 0 35px;"/>
+    <Validation msg="Let the officer-in-charge verify the portion below" style="color:var(--text-color); margin-bottom: 25px; padding: 0 35px;"/>
     <Checkbox label="Medical Certificate" id="med-cert"/>
     <Checkbox label="Birth Certificate" id="birth-cert"/>
     <Checkbox label="Barangay Certificate" id="brgy-cert"/>
+
+</section>
+
+<!-- also hide this if not signed in -->
+<section id="staff-only">
 
 </section>
 
