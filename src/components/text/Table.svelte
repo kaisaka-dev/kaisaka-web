@@ -7,10 +7,10 @@
     export let data: Record<string, any>[] = [];
 
     /**
-     * an array of column keys (strings) to be excluded from the table view
-     * EX: excludedKeys={['caregiver_id', 'relationship']}
+     * an array of column keys (strings) to be INCLUDED in the table view
+     * EX: includedKeys={['firstName', 'lastName', 'age']}
      */
-    export let excludedKeys: string[] = [];
+    export let includedKeys: string[] = [];
 
     /**
      * (optional) list of column headers to be displayed
@@ -41,12 +41,14 @@
     }
 
     // Extract visible keys (in order)
-    $: visibleKeys = Object.keys(data[0] ?? {}).filter(key => !excludedKeys.includes(key));
+    $: visibleKeys = includedKeys.length > 0
+      ? includedKeys.filter(key => data[0]?.hasOwnProperty(key))
+      : Object.keys(data[0] ?? {});
 
     // Create pairs of [key, headerLabel]
     $: displayColumns = visibleKeys.map((key, i) => ({
         key,
-        label: headers[i] ?? key  // fallback to key name if no header provided
+        label: headers[i] ?? key.replace(/([A-Z])/g, ' $1').replace(/^./, str => str.toUpperCase()) // Convert camelCase to Title Case
     }));
 
 </script>

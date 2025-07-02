@@ -8,31 +8,31 @@
 
 <div id = "navbar" style="font-weight:bold; position: sticky">
     <img src = {logoimg} alt = "logo" id = "logo">
-    <a href="/" id="home"> Home</a>
+    <a href="/home" id="home"> Home</a>
 
     <div class="dropdown dropdown-hover">
         <div class="navlink" role="button" tabindex="-1">Members</div>
         <ul tabindex="-1" class="dropdown-content menu rounded-box z-1 w-52 p-2 shadow-sm !bg-[var(--header-color)]">
-            <li><a>Children</a></li>
-            <li><a>Caregivers</a></li>
-            <li><a>Families</a></li>
-            <li><a>Pending</a></li>
+            <li><a href="/members/children">Children</a></li>
+            <li><a href="/members/caregivers">Caregivers</a></li>
+            <li><a href="/members/families">Families</a></li>
+            <li><a href="/members/pending">Pending</a></li>
         </ul>
     </div>
 
     <div class="dropdown dropdown-hover">
         <div class="navlink" role="button" tabindex="-1">Events</div>
         <ul tabindex="-1" class="dropdown-content menu rounded-box z-1 w-52 p-2 shadow-sm !bg-[var(--header-color)]">
-            <li><a>Target Events</a></li>
-            <li><a>Conducted Events</a></li>
+            <li><a href="/events/target">Target Events</a></li>
+            <li><a href="/events/conducted">Conducted Events</a></li>
         </ul>
     </div>
 
     <div class="dropdown dropdown-hover">
         <div class="navlink" role="button" tabindex="-1">Reports</div>
         <ul tabindex="-1" class="dropdown-content menu rounded-box z-1 w-52 p-2 shadow-sm !bg-[var(--header-color)]">
-            <li><a>Item</a></li>
-            <li><a>Item</a></li>
+            <li><a href="/">Item</a></li>
+            <li><a href="/">Item</a></li>
         </ul>
     </div>
 
@@ -40,7 +40,7 @@
         <div class="navlink" role="button" tabindex="-1"><img src = {profileimg} alt = "profile" style="height:50px;" /></div>
 
         <ul tabindex="-1" class="dropdown-content menu rounded-box z-1 w-52 p-2 shadow-sm !bg-[var(--header-color)]">
-            <li><a>My Profile</a></li>
+            <li><a href="/profile">My Profile</a></li>
             <li><a href="/">Log Out</a></li>
         </ul>
     </div>
@@ -51,17 +51,17 @@
 <div id="subnav">
     {#if category === "members"}
         <ul>
-            <li class={page === "children" ? "active" : ""}><a>Children</a></li>
-            <li class={page === "caregivers" ? "active" : ""}><a>Caregivers</a></li>
-            <li class={page === "families" ? "active" : ""}><a>Families</a></li>
-            <li class={page === "pending" ? "active" : ""}><a>Pending</a></li>
+            <li class={page === "children" ? "active" : ""}><a href="/members/children">Children</a></li>
+            <li class={page === "caregivers" ? "active" : ""}><a href="/members/caregivers">Caregivers</a></li>
+            <li class={page === "families" ? "active" : ""}><a href="/members/families">Families</a></li>
+            <li class={page === "pending" ? "active" : ""}><a href="/members/pending">Pending</a></li>
         </ul>
     {/if}
 
     {#if category === "events"}
         <ul>
-            <li class={page === "targeted" ? "active" : ""}><a>Targeted</a></li>
-            <li class={page === "conducted" ? "active" : ""}><a>Conducted</a></li>
+            <li class={page === "targeted" ? "active" : ""}><a href="/members/target">Targeted</a></li>
+            <li class={page === "conducted" ? "active" : ""}><a href="/members/conducted">Conducted</a></li>
         </ul>
     {/if}
 </div>
