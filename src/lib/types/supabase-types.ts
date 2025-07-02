@@ -439,7 +439,7 @@ export type Database = {
           education_type:
             | Database["public"]["Enums"]["education_type_enum"]
             | null
-          grade_level: number | null
+          grade_level: string | null
           id: number
           last_updated: string
           student_status_type:

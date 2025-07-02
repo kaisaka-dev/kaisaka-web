@@ -15,7 +15,9 @@ export const POST: RequestHandler = async ({ request }) => {
 
   const statusData = {
     child_id: body.child_id,
-    year_accessed: body.year_accessed !== undefined ? body.year_accessed : null
+    year_accessed: body.year_accessed !== undefined ? body.year_accessed : null,
+    participates_community_club: body.participates_community_club,
+    participates_family_life: body.participates_family_life
   };
 
   const inserted = await socialProtectionStatusModel.instance.insertStatus(statusData);
