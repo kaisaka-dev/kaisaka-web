@@ -4,7 +4,12 @@
     /**
      * an array of object, where object is a row of data. to be filtered and then returned to parent
      */
-    export let searchedValue: string;
+    export let searchedValue: string
+
+    /**
+     * string containing the link for the add button
+     */
+    export let addLink = "";
     let showModal = false;
 
     function filter() {
@@ -13,20 +18,26 @@
 
 </script>
 
-<div style="display: flex; flex-direction: row; background-color: lightgray; border-radius: 5px;
+<div style="display:flex; flex-direction: row;">
+    <div style="display: flex; flex-direction: row; background-color: lightgray; border-radius: 5px;
         width: fit-content;">
-    <button on:click={filter}>Filter</button>
 
-    <input
-      type="text"
-      id="search"
-      class="input"
-      bind:value={searchedValue}
-      style="height: auto; width: 30rem;"
-    />
-    <i class="fa fa-search" style="color: var(--background); margin-top: 1rem; margin-right: 1rem"></i>
+        <button onclick={filter}>Filter</button>
 
+        <input
+          type="text"
+          id="search"
+          class="input"
+          bind:value={searchedValue}
+          style="height: auto; width: 30rem;"
+        />
+        <i class="fa fa-search" style="color: var(--background); margin-top: 1rem; margin-right: 1rem"></i>
 
+    </div>
+
+    {#if addLink !== ""}
+        <button onclick={() => location.href=addLink} style="margin-left: 1rem">Add</button>
+    {/if}
 </div>
 
 {#if showModal}

@@ -148,7 +148,7 @@ function resetFilters() {
 <Header category="members" page="children" />
 
 <section id="main">
-    <FilterSearch bind:searchedValue={filter.main}>
+    <FilterSearch bind:searchedValue={filter.main} addLink="/registration/child">
         <!-- to be rendered inside the Filter Search component-->
         <div slot="modal">
             <InputText label="First name" id="first-name" bind:value={filter.firstName} />
