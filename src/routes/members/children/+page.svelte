@@ -3,7 +3,6 @@ import Header from "../../../components/Header.svelte";
 import FilterSearch from "../../../components/styled-buttons/FilterSearch.svelte";
 import Table from "../../../components/text/Table.svelte";
 import InputText from '../../../components/input/InputText.svelte';
-import InputDate from '../../../components/input/InputDate.svelte';
 import Select from '../../../components/input/Select.svelte';
 
 
@@ -191,15 +190,15 @@ function resetFilters() {
     <FilterSearch bind:searchedValue={filter.main} addLink="/registration/child">
         <!-- to be rendered inside the Filter Search component-->
         <div slot="modal">
-            <InputText label="First name" id="first-name" bind:value={filter.firstName} />
-            <InputText label="Last name" id="last-name" bind:value={filter.lastName} />
-            <InputDate label="Birthday" id="bday" bind:value={filter.birthday} />
-            <InputText label="Age" id="age" bind:value={filter.age} />
-            <Select label="Sex" id="sex" options={["Male", "Female"]} bind:value={filter.sex} />
-            <Select label="Disability Category" id="dis-category" options={options_disCategory} bind:value={filter.disCategory} />
-            <Select label="Disability Nature" id="dis-nature" options={options_disNature} bind:value={filter.disNature} />
-            <Select label="School" id="" options={options_school} bind:value={filter.school}/>
-            <InputText label="Education Level" id="education" bind:value={filter.educationLevel} />
+            <InputText label="First name" id="first-name" bind:value={filter.firstName} margin={false}/>
+            <InputText label="Last name" id="last-name" bind:value={filter.lastName} margin={false}/>
+            <InputText type="date" label="Birthday" id="bday" bind:value={filter.birthday} margin={false}/>
+            <InputText label="Age" id="age" bind:value={filter.age} margin={false}/>
+            <Select label="Sex" id="sex" options={["Male", "Female"]} bind:value={filter.sex} margin={false}/>
+            <Select label="Disability Category" id="dis-category" options={options_disCategory} bind:value={filter.disCategory} margin={false}/>
+            <Select label="Disability Nature" id="dis-nature" options={options_disNature} bind:value={filter.disNature} margin={false}/>
+            <Select label="School" id="" options={options_school} bind:value={filter.school} margin={false}/>
+            <InputText label="Education Level" id="education" bind:value={filter.educationLevel} margin={false}/>
 
             <div id="reset" class="flex justify-end"><button onclick={resetFilters}>Reset Filters</button></div>
         </div>
