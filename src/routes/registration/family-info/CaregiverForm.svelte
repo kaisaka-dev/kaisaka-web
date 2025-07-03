@@ -4,9 +4,10 @@
 	import Select from '../../../components/input/Select.svelte';
 	import SearchBtn from '../../../components/styled-buttons/SearchBtn.svelte';
 	import Validation from '../../../components/text/Validation.svelte';
+	import type { Caregiver, CaregiverError } from './caregiverFormTypes.js';
 
-	export let formData;
-	export let errors;
+	export let formData: Caregiver;
+	export let errors: CaregiverError;
 	export let index: number;
 	export let deleteCaregiver: (index: number) => void;
 	export let linkedIndex: number;
@@ -113,7 +114,7 @@
 				fbLink: '',
 				email: '',
 				address: '',
-				brgy: '',
+				brgy: -1,
 				occupation: '',
 				relationship: ''
 			};
@@ -129,8 +130,6 @@
 	}
 
 
-
-
 </script>
 
 <div class="collapse collapse-arrow" style="box-shadow: 0 4px 0 var(--border); border-radius:0px">
@@ -143,7 +142,7 @@
 		</div>
 
 
-		{#if caregivertype === "new" }
+		{#if caregivertype === "new"}
 			<InputText label="First name" id={`first-name-${index}`} bind:value={formData.firstName} required msg={errors.firstName} />
 			<InputText label="Last name" id={`last-name-${index}`} bind:value={formData.lastName} required msg={errors.lastName} />
 			<InputText label="Birthday" id="bday" bind:value={formData.bday} type="date" />
@@ -152,19 +151,26 @@
 			<InputText label="Facebook Link" id={`fb-link-${index}`} bind:value={formData.fbLink} />
 			<InputText label="Email" id={`email-${index}`} bind:value={formData.email} />
 			<InputText label="Address" id={`address-${index}`} bind:value={formData.address} required msg={errors.address} />
-			<Select label="Barangay" id={`brgy-${index}`} options={["Barangay 1", "Barangay 2"]} required bind:value={formData.brgy} msg={errors.brgy} />
+			<Select label="Barangay" id={`brgy-${index}`} options={[
+				{ label: "Barangay 1", value: 1 },
+				{ label: "Barangay 2", value: 2 },
+				{ label: "Barangay 3", value: 3 }]
+			} required bind:value={formData.brgy} msg={errors.brgy} />
 			<InputText label="Occupation" id={`occupation-${index}`} bind:value={formData.occupation} />
-			<InputText label="Relationship" id={`relationship-${index}`} bind:value={formData.relationship} />
+			<InputText label="Relationship" id={`relationship-${index}`} required bind:value={formData.relationship} />
 			<Select label="Community Group" id={`community-grp-${index}`} options={[
 								{ label: "Parent organization", value: 1 },
 								{ label: "School", value: 2 },
 								{ label: "PTA", value: 3 },
 								{ label: "Others", value: 4 }
 							]} bind:value={formData.communityGrp_id} />
-			<Select label="Income Generation" id={`income-${index}`} options={["Home-based", "Self-employed"]} bind:value={formData.income} />
+			<Select label="Income Generation" id={`income-${index}`} options={[
+				{ label: "Home-based", value: 1},
+				{ label: "Self-employed", value: 2}
+				]} bind:value={formData.income} />
 
 
-		{:else if caregivertype === "linked" }
+		{:else if caregivertype === "linked"}
 			<InputText label="First name" id={`first-name-${index}`} bind:value={formData.firstName} msg={errors.firstName} />
 			<InputText label="Last name" id={`last-name-${index}`} bind:value={formData.lastName} msg={errors.lastName} />
 			<div style="width:720px; text-align:center;" class="flex gap-4 items-center ml-6 mb-1">
@@ -196,7 +202,7 @@
 						</tr>
 						</thead>
 						<tbody>
-							{#if formData.type === 'linked'}
+							{#if caregivertype === 'linked'}
 								{#each formData.infoLinked as _, linked_i}
 									<tr>
 										<td>{formData.infoLinked[linked_i].firstName}</td>

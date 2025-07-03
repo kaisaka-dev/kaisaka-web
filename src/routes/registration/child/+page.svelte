@@ -6,9 +6,10 @@
     import Validation from '../../../components/text/Validation.svelte';
     import Header from '../../../components/Header.svelte';
 
-    
+    import { submitChildRegData } from '../submission.js';
     import { childFormData } from '../../../lib/stores/childForm.js';
-    import { goto } from '$app/navigation';
+
+	import { get } from 'svelte/store';
 
     let firstName = "";
     let middleName = "";
@@ -180,7 +181,7 @@
         return true;
     }
 
-    function handleNext() {
+    async function handleNext() {
         if (validateForm()) {
             childFormData.update(current => ({
                 ...current,
@@ -236,8 +237,16 @@
 				: {})
             }));
 
-            goto('/registration/family-info');
-            console.log("Form submitted")
+            const childRegData = get(childFormData)
+            console.log(childRegData);
+            
+            const submit = await submitChildRegData(childRegData)
+			if(submit.success){
+				const childId = submit.childId;
+				childFormData.set({});
+                location.href = `/registration/family-info?childId=${childId}`;
+                console.log("Form submitted")
+			}
         }
     }
     

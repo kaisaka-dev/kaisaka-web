@@ -2,72 +2,20 @@
 
 	import Header from '../../../components/Header.svelte';
 	import CaregiverForm from './CaregiverForm.svelte';
-	import { childFormData } from '$lib/stores/childForm.js';
-	import { get } from 'svelte/store';
-	import { submitChildRegData } from './submission.js';
+	import type { Caregiver, CaregiverError } from './caregiverFormTypes.js';
+	import { submitCaregivers, addToFamily } from '../submission.js';
 
-	const childRegData = get(childFormData)
-	console.log(childRegData);
+	import { browser } from '$app/environment';
 
-	/**
-	 * object type used to store information about a new caregiver.
-	 */
-	type NewCaregiver = {
-		type: 'new';
-		firstName: string;
-		lastName: string;
-		bday: string;
-		sex: string;
-		contactNo: string;
-		fbLink?: string;
-		email?: string;
-		address: string;
-		brgy: string;
-		occupation: string;
-		relationship: string;
-		communityGrp_id: number;
-	};
+	let childId: string | null = null;
 
-	/**
-	 * object type used to store information about a linked caregiver
-	 */
-	type LinkedCaregiver = {
-		// info about the search
-		type: 'linked';
-		firstName: string;
-		lastName: string;
-		contactNo: string;
-
-		// info of a list of family members which are linked to the searched family member
-		infoLinked: InfoLinked[];
-
-	};
-
-	/**
-	 * object type used to store information about the searched caregiver
-	 */
-	type InfoLinked = {
-		caregiver_id: string;
-		firstName: string;
-		lastName: string;
-		contactNo: string;
-		relationship: string;
+	if (browser) {
+		const url = new URL(window.location.href);
+		childId = url.searchParams.get('childId');
 	}
 
-	type Caregiver =
-		| NewCaregiver
-		| LinkedCaregiver;
+	console.log(childId)
 
-	type CaregiverError =
-		| {			// for new caregivers
-		firstName: string;
-		lastName: string;
-		sex: string;
-		contactNo: string;
-		address: string;
-		brgy: string;
-	}				// for existing caregivers
-		| { msg: string };
 
 	let caregivers = $state<Caregiver[]>([
 		{
@@ -80,10 +28,11 @@
 			fbLink: '',
 			email: '',
 			address: '',
-			brgy: '',
+			brgy: -1,
 			occupation: '',
 			relationship: '',
-			communityGrp_id: -1
+			communityGrp_id: -1,
+			income: -1
 		}
 	]); // initialize variable so that the page will have at least one caregiver
 
@@ -115,10 +64,11 @@
 				fbLink: '',
 				email: '',
 				address: '',
-				brgy: '',
+				brgy: -1,
 				occupation: '',
 				relationship: '',
-				communityGrp_id: -1
+				communityGrp_id: -1,
+				income: -1
 			}
 		];
 
@@ -175,7 +125,7 @@
 					sex: !caregiver.sex ? 'Required' : '',
 					contactNo: !caregiver.contactNo.trim() ? 'Required' : '',
 					address: !caregiver.address.trim() ? 'Required' : '',
-					brgy: !caregiver.brgy ? 'Required' : ''
+					brgy: caregiver.brgy === -1 ? 'Required' : ''
 				};
 				if (Object.values(errors).some(msg => msg)) isValid = false;
 				return errors;
@@ -188,14 +138,14 @@
 	async function handleSubmit() {
 		try {
 			if (!validateForm()) return;
-			const submit = await submitChildRegData(childRegData)
-			if(submit.success){
-				const childId = submit.childId;
-			}
+			if (!childId) throw "childId not found!";
+			const caregiverRes = await submitCaregivers(caregivers, childId)
+			const familyRes = await addToFamily(caregiverRes.newCaregiverMemberIds, childId, caregiverRes.family_id)
+			
+			if (familyRes) console.log('successfully added caregivers and family.')
 		} catch (err) {
 			console.error('Submission failed:', err);
 		}
-
     }
 </script>
 
