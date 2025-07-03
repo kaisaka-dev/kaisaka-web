@@ -4,10 +4,12 @@
     import type { membershipFee } from '$lib/types/membershipFee.js'
     import type { EventType } from '$lib/types/event.js'
 
-    import Header from '../../components/Header.svelte'
-    import Textarea from '../../components/input/InputTextarea.svelte'
-    import Textinput from '../../components/input/InputText.svelte'
-    import Dateinput from '../../components/input/InputDate.svelte'
+    import Select from '../../../components/input/Select.svelte'
+    import Header from '../../../components/Header.svelte'
+    import Textarea from '../../../components/input/InputTextarea.svelte'
+    import Textinput from '../../../components/input/InputText.svelte'
+    import Dateinput from '../../../components/input/InputDate.svelte'
+    
 
     //below are sample data declarations just to test if the page works, will delete when relevant APIs are complete
     let sampleFamily1: family = {
@@ -43,8 +45,7 @@
     ]
 
     let today = new Date()
-
-    let famlength = sample.family.length
+    let bindedDate: Date
 
 //below are essential functions for the page to work
     function familyName(family:family): string {
@@ -72,6 +73,22 @@
     for(let i = sample.dateAdmission.getFullYear(); i <= today.getFullYear(); i++ ) {
         yearsCounter.push(i);
     }
+
+    function deleteFamily(id:number): void{
+        sample.family = sample.family.filter((fam) => fam.id != id)
+    }
+
+    function deleteMember(id:number, name:string): void{
+        sample.family[id].members = sample.family[id].members.filter((member) => member.firstName !== name)
+    }
+
+    function assignID(): void {
+        let i = 0;
+        for(let fam of sample.family) {
+            fam.id = i;
+            i++;
+        }
+    }
 </script>
 
 <style>
@@ -86,6 +103,8 @@
         align-self: flex-start;
     }
 </style>
+
+{assignID()}
 <!--Page Headers-->
 <Header/>
 <section>
@@ -110,12 +129,13 @@
                 <a class = "hover:!text-[var(--green)]" href = "#Event Info">Attendance </a>
             </div>
             <div>
-                <a href = "parentProfile/editParentProfile" class = "hover:!text-[var(--green)]">Edit Profile </a>
+                <button class = "w-40 -ml-5 mt-5"> Save Changes </button>
             </div>
         </div>
-        <div class = "!bg-[var(--green)] w-[4px] h-[175px] rounded-full ml-5"></div> 
+        <div class = "!bg-[var(--green)] w-[4px] h-[250px] rounded-full ml-5"></div> 
     </div>
 
+    <form method = "GET">
     <!--Container for profile information-->
     <div>
         <!--Container for the personal information portion of the profile-->
@@ -128,48 +148,53 @@
                 <div class = "flex flex-col">
                     <div class ="information">
                         <div class = "min-w-30"> First Name</div>
-                        <div> <Textinput disabled value = {sample.firstName}/></div>
+                        <div class = "mt-1"> <Textinput required msg = "Required" value = {sample.firstName}/></div>
                     </div>
                      <div class ="information">
                         <div class = "min-w-30"> Last Name</div>
-                        <div> <Textinput disabled value = {sample.lastName}/></div>
+                        <div class = "mt-1"> <Textinput required msg = "Required" value = {sample.lastName}/></div>
                     </div>
-                    <div class ="information !mt-10">
+                    <div class ="information !mt-6">
                         <div class = "min-w-35"> Contact No.</div>
-                        <div class = "ml-5"> <Textinput disabled value = {sample.contactNo}/></div>
+                        <div class = "ml-5"> <Textinput required msg = "Required" value = {sample.contactNo}/></div>
                     </div>
                     <div class ="information">
                         <div class = "min-w-40"> Facebook Link</div>
                         {#if sample.fblink == null}
-                        <div> <Textinput disabled value = "N/A"/></div>
+                        <div> <Textinput value = "N/A"/></div>
                         {:else}
-                        <div> <Textinput disabled value = {sample.fblink}/></div>
+                        <div> <Textinput value = {sample.fblink}/></div>
                         {/if}
                     </div> 
                     <div class ="information">
                         <div class = "min-w-40"> Email</div>
                         {#if sample.email == null}
-                        <div> <Textinput disabled value = "N/A"/></div>
+                        <div> <Textinput value = "N/A"/></div>
                         {:else}
-                        <div> <Textinput disabled value = {sample.email}/></div>
+                        <div> <Textinput value = {sample.email}/></div>
                         {/if}
                     </div>
                     <div class ="information !mt-10">
                         <div class = "min-w-30"> Address</div>
-                        <div> <Textinput disabled value = {sample.address}/></div>
+                        <div class = "ml-8"> <Textinput required msg = "Required" value = {sample.address}/></div>
                     </div>
                     <div class ="information">
                         <div class = "min-w-30"> Barangay</div>
-                        <div> <Textinput disabled value = {sample.barangay}/></div>
+                        <div class = "-mt-4"> <Select value = {sample.barangay} options = {["Whatever", "Works"]} /></div>
                     </div>
                     <div class ="information !mt-10">
                         <div class = "min-w-50"> Date of Admission</div>
-                        <div class = "-mt-3 -ml-5"> <Dateinput value = {sample.dateAdmission.toISOString().split('T')[0]} label = "" disabled/></div>
+                        <div class = "-mt-3 -ml-5"> <Dateinput msg = "Required"  value = {sample.dateAdmission.toISOString().split('T')[0]} label = ""/></div>
                     </div>
                      {#if sample.dateTermination!=null}
                     <div class ="information">
                         <div class = "min-w-50"> Date of Termination</div>
-                        <div class = "-mt-3 -ml-5"> <Dateinput label = ""value ={sample.dateTermination.toISOString().split('T')[0]}  /></div>
+                        <div class = "-mt-3 -ml-5"> <Dateinput  label = ""value ={sample.dateTermination.toISOString().split('T')[0]}  /></div>
+                    </div>
+                    {:else}
+                    <div class ="information">
+                        <div class = "min-w-50"> Date of Termination</div>
+                        <div class = "-mt-3 -ml-5"> <Dateinput label = ""/></div>
                     </div>
                     {/if}
                     
@@ -177,9 +202,9 @@
                 <div class = "!flex !flex-col ml-20"> 
                     <div>Remarks </div>
                     {#if sample.remarks != null}
-                    <div class = "-ml-10 -mt-5"> <Textarea value = {sample.remarks} rows=10 disabled label = ""/></div>
+                    <div class = "-ml-10 -mt-5"> <Textarea value = {sample.remarks} rows=10 label = ""/></div>
                     {:else}
-                    <div class = "-ml-10 -mt-5"> <Textarea value = "N/A" rows=10 disabled label = ""/></div>
+                    <div class = "-ml-10 -mt-5"> <Textarea value = "N/A" rows=10 label = ""/></div>
                     {/if}
                 </div>
             </div>
@@ -191,17 +216,41 @@
                 <h1 class = "!text-[var(--green)] font-[JSans]"> Families </h1>
                 <div class = "grid grid-cols-2 gap-5 mt-2" >
                 {#each sample.family as family}
-                    <div class = "flex flex-col min-w-100 w-105">
-                       <span class = "!bg-[var(--green)] p-2 w-105 min-w-105 !text-white">  {familyName(family)} </span>
+                    <div class = "flex flex-col min-w-150 w-150">
+                        <div class =  "!bg-[var(--green)] w-150 min-w-150 flex flex-row" >
+                            <div class = "!text-white w-150 mt-2.5 ml-3">  {familyName(family)} </div> 
+                            <div>
+                                <button  class = "!bg-[var(--green)] !text-red-500 hover:!text-red-400 hover:!shadow-[var(--background)]" on:click = {()=>deleteFamily(family.id)}>
+                                x
+                                </button> 
+                            </div>
+                        </div>
                        <div class = "border-4 border-[var(--border)]">
                         {#each family.members as member}
                             <div class = "information"> 
                                 {#if member.role == "Caregiver"}
-                                <div class ="!bg-[var(--pink)] w-35 p-2 rounded-full text-center !font-bold !text-white"> {member.role}</div>
+                                <select id = "familyrole2" class = "!mt-2 w-45 rounded-full text-[var(--background)] mr-20" > 
+                                <option selected value = "caregiver"> Caregiver </option>
+                                <option value = "child"> Child</option>
+                                 </select>
                                 {:else if member.role == "Child"}
-                                <div class ="!bg-[var(--green)] w-35 p-2 rounded-full text-center !font-bold !text-white"> {member.role}</div>
+                                <select id = "familyrole2" class = "!mt-2 w-45 rounded-full text-[var(--background)] mr-20" > 
+                                <option selected value = "child"> Child </option>
+                                <option value = "caregiver"> Caregiver</option>
+                                </select>
                                 {/if}
-                                <div class = "mt-2 ml-10"> {member.firstName} {member.lastName}</div>
+                                <div class = "mt-2 ml-12 w-100"> {member.firstName} {member.lastName}</div>
+
+                                {#if member.firstName !== sample.firstName }
+                                <div class = "-mt-2">
+                                    <button  class = "!bg-[var(--background)] !text-red-500 hover:!text-red-400 hover:!shadow-[var(--background)]"
+                                            on:click = {()=>deleteMember(family.id, member.firstName)}>
+                                        x
+                                    </button> 
+                                </div>
+                                {:else}
+                                    <div class = "ml-15"></div>
+                                {/if}
                             </div>
                         {/each}
                         </div>
@@ -211,9 +260,13 @@
                                 <div class = "flex flex-row">
                                  <div class = "ml-5"> {year} </div>
                                 {#if paymentYears(sample.paymentHistory).includes(year)}
-                                <div class = "ml-14 mb-5">  P{sample.paymentHistory[paymentYears(sample.paymentHistory).indexOf(year)].amount} paid on {sample.paymentHistory[paymentYears(sample.paymentHistory).indexOf(year)].date.toISOString().split('T')[0]}  </div>
+                                    <div class = "ml-10 mb-5">  P{sample.paymentHistory[paymentYears(sample.paymentHistory).indexOf(year)].amount} paid on {sample.paymentHistory[paymentYears(sample.paymentHistory).indexOf(year)].date.toISOString().split('T')[0]}  </div>
+                                    <Dateinput label = "" value = {sample.paymentHistory[paymentYears(sample.paymentHistory).indexOf(year)].date.toISOString().split('T')[0]} on:input = {e => sample.paymentHistory[paymentYears(sample.paymentHistory).indexOf(year)] = e.target.value}  />
                                 {:else}
-                                <div class = "!text-red-500 mb-5 ml-35"> Payment Pending!</div>
+                                    <div class = "!text-red-500 mb-5 ml-21"> Payment Pending!</div>
+                                    <div class = "mb-10 mr-15">
+                                        <Dateinput label = "" on:input = {e => bindedDate = e.target.value}/>
+                                    </div>
                                 {/if}
                                 </div>
                             {/each}
@@ -232,18 +285,38 @@
                <span class = "!text-white mr-34" >Event Type </span>
                <span class = "!text-white" >Date Attended </span>  
             </div>
-            <div class = "flex flex-col border-[var(--border)] border-4">
+            <div class = "w-255  min-w-255 flex flex-col border-[var(--border)] border-4">
                 {#each events as event}
                     <div class = "flex flex-row mb-5">
-                        <div class = "ml-2 mt-1.5 w-50"> {event.name}</div>
+                        <div class = "ml-2 mt-1.5 w-50"> <Textinput label = "" value = {event.name}/></div>
                         {#if event.type === "Education"}
-                        <div class = "ml-75 w-50 !bg-[var(--pink)] w-35 p-2 rounded-full text-center !font-bold !text-white"> {event.type}</div>
+                        <select id = "familyrole2" class = "!mt-2 w-45 rounded-full text-[var(--background)] ml-80" > 
+                                <option selected value = "Education"> {event.type} </option>
+                                <option value = "Livelihood"> Livelihood</option>
+                                <option value = "Health"> Health</option>
+                                <option value = "Social"> Social</option>
+                        </select>                        
                         {:else if event.type === "Livelihood"}
-                        <div class = "ml-75 w-50 !bg-[var(--text-color)] w-35 p-2 rounded-full text-center !font-bold !text-white"> {event.type}</div>
+                        <select id = "familyrole2" class = "!mt-2 w-45 rounded-full text-[var(--background)] ml-80" > 
+                                <option selected value = "Livelihood"> {event.type} </option>
+                                <option value = "Education"> Education</option>
+                                <option value = "Health"> Health</option>
+                                <option value = "Social"> Social</option>
+                        </select>
                         {:else if event.type === "Health"}
-                        <div class = "ml-75 w-50 !bg-[var(--error-color)] w-35 p-2 rounded-full text-center !font-bold !text-white"> {event.type}</div>
+                        <select id = "familyrole2" class = "!mt-2 w-45 rounded-full text-[var(--background)] ml-80" > 
+                                <option selected value = "Health"> {event.type} </option>
+                                <option value = "Livelihood"> Livelihood</option>
+                                <option value = "Education"> Educaiton</option>
+                                <option value = "Social"> Social</option>
+                        </select>                          
                         {:else}
-                        <div class = "ml-75 w-50 !bg-[var(--green)] w-35 p-2 rounded-full text-center !font-bold !text-white"> {event.type}</div>
+                        <select id = "familyrole2" class = "!mt-2 w-45 rounded-full text-[var(--background)] ml-80" > 
+                                <option selected value = "Social"> {event.type} </option>
+                                <option value = "Livelihood"> Livelihood</option>
+                                <option value = "Education"> Educaiton</option>
+                                <option value = "Education"> Education</option>
+                        </select>                           
                         {/if}
                         <div class = "ml-25 mt-1.5"> {event.date} </div>
                     </div>
@@ -251,4 +324,5 @@
             </div>
         </div>
     </div>
+    </form>
 </div>

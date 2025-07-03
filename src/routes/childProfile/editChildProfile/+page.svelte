@@ -228,7 +228,7 @@
 
          <div class = "flex flex-row mt-5">
             <div class = 'mr-25 font-bold'> 2024 </div>
-            <div class = "mr-10 w-60"> PAYMENT: {bindedDate || "PENDING"}</div>
+            <div class = "mr-10 w-60">  {bindedDate || "PENDING"}</div>
             <input type = "Date" value = {bindedDate} on:input = {e => bindedDate = e.target.value}/>
         </div>
     </div>
