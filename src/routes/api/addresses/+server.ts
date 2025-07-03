@@ -10,11 +10,11 @@ export const POST: RequestHandler = async({request}) => {
     throw error(400, 'Missing required fields.')
   }
 
-  if (!body.address || !body.barangay_id || !body.street_id) {
+  if (!body.address || !body.barangay_id) {
     throw error(400, 'Missing required fields.')
   }
 
-  const inserted = await AddressesModel.instance.insertAddress(body.address, body.barangay_id, body.street_id)
+  const inserted = await AddressesModel.instance.insertAddress(body.address, body.barangay_id)
 
   if (!inserted){
     throw error(500, 'Failed to insert')
@@ -50,14 +50,6 @@ export const PUT: RequestHandler = async({request}) => {
     const updated = await AddressesModel.instance.updateBarangayId(body.id, body.barangay_id)
     if (!updated) {
       throw error(500, 'Failed to update barangay_id')
-    }
-    hasUpdates = true
-  }
-
-  if (body.street_id !== undefined) {
-    const updated = await AddressesModel.instance.updateStreetId(body.id, body.street_id)
-    if (!updated) {
-      throw error(500, 'Failed to update street_id')
     }
     hasUpdates = true
   }
