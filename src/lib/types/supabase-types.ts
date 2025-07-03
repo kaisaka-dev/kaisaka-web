@@ -979,30 +979,33 @@ export type Database = {
       social_protection_status: {
         Row: {
           child_id: string
+          comm_year_accessed: number | null
           date_created: string
+          fam_year_accessed: number | null
           id: number
           last_updated: string | null
           participates_community_club: boolean | null
           participates_family_life: boolean | null
-          year_accessed: number | null
         }
         Insert: {
           child_id?: string
+          comm_year_accessed?: number | null
           date_created?: string
+          fam_year_accessed?: number | null
           id?: number
           last_updated?: string | null
           participates_community_club?: boolean | null
           participates_family_life?: boolean | null
-          year_accessed?: number | null
         }
         Update: {
           child_id?: string
+          comm_year_accessed?: number | null
           date_created?: string
+          fam_year_accessed?: number | null
           id?: number
           last_updated?: string | null
           participates_community_club?: boolean | null
           participates_family_life?: boolean | null
-          year_accessed?: number | null
         }
         Relationships: [
           {
