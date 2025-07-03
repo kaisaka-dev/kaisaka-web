@@ -141,7 +141,7 @@
         errors.sex = sex.trim() === "" ? "sex: field is required" : "";
         errors.address = address.trim() === "" ? "address: field is required" : "";
         errors.barangay = barangay === -1 ? "barangay: field is required" : "";
-        errors.disCategory = disCategory.trim() === "" ? "disCategory: field is required" : "";
+        errors.disCategory = disCategory === -1 ? "disCategory: field is required" : "";
         errors.disNature = disNature.trim() === "" ? "disNature: field is required" : "";
         errors.educType = educType.trim() === "" ? "educType: field is required" : "";
         errors.educLvl = educLvl.trim() === "" ? "educLvl: field is required" : "";
