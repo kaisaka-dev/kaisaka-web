@@ -1,21 +1,26 @@
 <script lang="ts">
 	import Validation from '../text/Validation.svelte';
 
+	// things that usually affect the component
 	export let label = "";
 	export let id = "";
+	export let value: string | number = "";		// string for date, number for number
+
+	// other extra things to customize the input
+	export let type = "text";			// can also be: date, number
 	export let required = false;
-	export let msg = ""; // Error message passed from parent
-	export let value = "";
+	export let msg = ""; 					// error message passed from parent
 	export let disabled = false;
+	export let margin = true;			// false if no margin, true if the default margin
 </script>
 
-<div class="input-container" class:no-margin={label === ''}>
+<div class="input-container" class:no-margin={label === '' || !margin}>
 	{#if label !== ""}
 		<label for={id}>{label} {required ? " *" : ""}</label>
 	{/if}
 
 	<div class="input-wrapper">
-		<input type="text" {id} class="input" bind:value {disabled}/>
+		<input {type} {id} class="input" bind:value {disabled}/>
 
 		{#if msg}
 			<Validation {msg} />
@@ -29,7 +34,8 @@
 			background-color:gray;
 			color: lightgray;
 	}
-  .no-margin {
-      margin: 0 !important;
+  input[type="number"] {
+			padding-right: 15px;
   }
+
 </style>
