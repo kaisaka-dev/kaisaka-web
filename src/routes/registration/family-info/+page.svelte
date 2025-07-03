@@ -2,7 +2,7 @@
 
 	import Header from '../../../components/Header.svelte';
 	import CaregiverForm from './CaregiverForm.svelte';
-	import { childFormData } from '../../../lib/stores/childForm.js';
+	import { childFormData } from '$lib/stores/childForm.js';
 	import { get } from 'svelte/store';
 
 	const childRegData = get(childFormData)
@@ -15,6 +15,7 @@
 		type: 'new';
 		firstName: string;
 		lastName: string;
+		bday: string;
 		sex: string;
 		contactNo: string;
 		fbLink?: string;
@@ -72,6 +73,7 @@
 			type: 'new', // explicit discriminator
 			firstName: '',
 			lastName: '',
+			bday: '',
 			sex: '',
 			contactNo: '',
 			fbLink: '',
@@ -106,6 +108,7 @@
 				type: 'new',
 				firstName: '',
 				lastName: '',
+				bday: '',
 				sex: '',
 				contactNo: '',
 				fbLink: '',
