@@ -10,7 +10,7 @@ type SocProtectStatusRow = tableRow<"social_protection_status">;
 type EmploymentStatusRow = tableRow<"employment_status">;
 type PwdIdRow = tableRow<"pwd_ids">;
 
-type ChildFormData = {
+export type ChildFormData = {
     address: Partial<AddressRow>;
     member: Partial<MemberRow>;
     child: Partial<ChildRow>;
