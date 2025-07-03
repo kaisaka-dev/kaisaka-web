@@ -40,7 +40,7 @@
 </div>
 
 {#if showModal}
-    <div style="height: fit-content; width: fit-content; box-shadow: 0 4px 4px rgba(0,0,0,0.2); border-radius:16px; padding: 1rem;">
+    <div style="height: fit-content; width: fit-content; box-shadow: 0 4px 4px rgba(0,0,0,0.2); border-radius:16px; padding: 1.8rem; ">
         <slot name="modal" />
     </div>
 {/if}

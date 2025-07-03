@@ -4,17 +4,19 @@
 	export let id = "";
 	export let options: ({ label: string; value: string | number } | string)[] = []; 	// Array of dropdown options
 	export let required = false;
-	export let msg = ""; // Validation message
-
-	export let value = ""; // Declare selected as a reactive variable
+	export let msg = ""; 										// Validation message
+	export let value: string | number = ""; // Declare selected as a reactive variable
+	export let margin = true;								// false if no margin, true if the default margin
 </script>
 
-<div class="input-container">
+<div class="input-container" class:no-margin={label === '' || !margin}>
 	<label for={id}>{label} {required ? " *" : ""}</label>
 
 	<div class="input-wrapper">
 		<select id={id} class="input" bind:value={value}>
-			<option value="" disabled selected></option> <!-- Default option -->
+			{#if !required}
+				<option value="" disabled={required} selected></option> <!-- Default option -->
+			{/if}
 			{#each options as option}
 				{#if typeof option === 'string'}
 					<option value={option}>{option}</option>

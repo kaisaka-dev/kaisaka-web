@@ -107,6 +107,7 @@
 				type: 'new',
 				firstName: formData.firstName,
 				lastName: formData.lastName,
+				bday: '',
 				sex: '',
 				contactNo: formData.contactNo,
 				fbLink: '',
@@ -145,6 +146,7 @@
 		{#if caregivertype === "new" }
 			<InputText label="First name" id={`first-name-${index}`} bind:value={formData.firstName} required msg={errors.firstName} />
 			<InputText label="Last name" id={`last-name-${index}`} bind:value={formData.lastName} required msg={errors.lastName} />
+			<InputText label="Birthday" id="bday" bind:value={formData.bday} type="date" />
 			<Select label="Sex" id={`sex-${index}`} options={["Male", "Female"]} required bind:value={formData.sex} msg={errors.sex} />
 			<InputText label="Contact No." id={`contact-no-${index}`} bind:value={formData.contactNo} required msg={errors.contactNo} />
 			<InputText label="Facebook Link" id={`fb-link-${index}`} bind:value={formData.fbLink} />
