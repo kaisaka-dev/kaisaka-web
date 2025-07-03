@@ -24,7 +24,7 @@
         <div class="navlink" role="button" tabindex="-1">Events</div>
         <ul tabindex="-1" class="dropdown-content menu rounded-box z-1 w-52 p-2 shadow-sm !bg-[var(--header-color)]">
             <li><a href="/events/target">Target Events</a></li>
-            <li><a href="/events/conducted">Conducted Events</a></li>
+            <li><a href="/events/actual">Actual Events</a></li>
         </ul>
     </div>
 
@@ -60,8 +60,8 @@
 
     {#if category === "events"}
         <ul>
-            <li class={page === "targeted" ? "active" : ""}><a href="/members/target">Targeted</a></li>
-            <li class={page === "conducted" ? "active" : ""}><a href="/members/conducted">Conducted</a></li>
+            <li class={page === "target" ? "active" : ""}><a href="/members/target">Target</a></li>
+            <li class={page === "actual" ? "active" : ""}><a href="/members/actual">Actual</a></li>
         </ul>
     {/if}
 </div>
