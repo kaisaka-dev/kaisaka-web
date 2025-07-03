@@ -135,4 +135,34 @@ describe('DisabilityCategoryModel', () => {
         const result = await DisabilityCategoryModel.instance.updateName(1, 'Disability2');
         expect(result).toBe(false);
     });
+
+    /*
+    // deleteById
+    it('deleteById should return true on success', async () => {
+        const mockDelete = vi.fn().mockResolvedValue(true);
+        (DisabilityCategoryModel.instance as any).deleteOne = mockDelete;
+
+        const result = await DisabilityCategoryModel.instance.deleteById(1);
+        expect(mockDelete).toHaveBeenCalledWith({ id: 1 });
+        expect(result).toBe(true);
+    });
+
+    it('deleteById should return false on failure', async () => {
+        const mockDelete = vi.fn().mockResolvedValue(false);
+        (DisabilityCategoryModel.instance as any).deleteOne = mockDelete;
+
+        const result = await DisabilityCategoryModel.instance.deleteById(1);
+        expect(result).toBe(false);
+    });
+
+    // deleteByName
+    it('deleteByName should return true on success', async () => {
+        const mockDelete = vi.fn().mockResolvedValue(true);
+        (DisabilityCategoryModel.instance as any).deleteOne = mockDelete;
+
+        const result = await DisabilityCategoryModel.instance.deleteByName('Disability1');
+        expect(mockDelete).toHaveBeenCalledWith({ name: 'Disability1' });
+        expect(result).toBe(true);
+    });
+    */
 });
