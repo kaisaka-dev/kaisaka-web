@@ -4,12 +4,12 @@
 	export let id = "";
 	export let options: ({ label: string; value: string | number } | string)[] = []; 	// Array of dropdown options
 	export let required = false;
-	export let msg = ""; // Validation message
-
-	export let value = ""; // Declare selected as a reactive variable
+	export let msg = ""; 										// Validation message
+	export let value: string | number = ""; // Declare selected as a reactive variable
+	export let margin = true;								// false if no margin, true if the default margin
 </script>
 
-<div class="input-container">
+<div class="input-container" class:no-margin={label === '' || !margin}>
 	<label for={id}>{label} {required ? " *" : ""}</label>
 
 	<div class="input-wrapper">
