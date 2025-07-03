@@ -26,7 +26,7 @@ export class CaregiversModel extends TableManager<"caregivers">('caregivers') {
   async insertCaregiver(
     member_id: string,
     income_id: number,
-    contact_number?: string | null,
+    contact_number: string,
     facebook_link?: string | null,
     email?: string | null,
     occupation?: string | null,
@@ -35,7 +35,7 @@ export class CaregiversModel extends TableManager<"caregivers">('caregivers') {
     const caregiver: Partial<CaregiverRow> = {
       member_id,
       income_id,
-      contact_number: contact_number || null,
+      contact_number: contact_number,
       facebook_link: facebook_link || null,
       email: email || null,
       occupation: occupation || null,

@@ -282,31 +282,31 @@ export type Database = {
       }
       caregivers: {
         Row: {
-          contact_number: string | null
+          contact_number: string
           email: string | null
           facebook_link: string | null
           id: string
-          income_id: number
+          income_id: number | null
           member_id: string
           occupation: string | null
           remarks: string | null
         }
         Insert: {
-          contact_number?: string | null
+          contact_number: string
           email?: string | null
           facebook_link?: string | null
           id?: string
-          income_id: number
+          income_id?: number | null
           member_id?: string
           occupation?: string | null
           remarks?: string | null
         }
         Update: {
-          contact_number?: string | null
+          contact_number?: string
           email?: string | null
           facebook_link?: string | null
           id?: string
-          income_id?: number
+          income_id?: number | null
           member_id?: string
           occupation?: string | null
           remarks?: string | null
