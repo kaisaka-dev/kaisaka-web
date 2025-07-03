@@ -48,6 +48,10 @@
     let bindedDate: Date
 
 //below are essential functions for the page to work
+function deleteEvent(name:string): void{
+        events = events.filter((event) => event.name !== name)
+    }
+
     function familyName(family:family): string {
         let lastnames: string[] = []
 
@@ -281,44 +285,49 @@
         <div class = "mt-10" id = "Event Info">
             <h1 class = "!text-[var(--green)] mb-2"> Training and Attendance </h1>
             <div class = "!bg-[var(--green)] p-3 w-255 min-w-255">
-               <span class = "!text-white mr-105" >Event Name </span> 
+               <span class = "!text-white mr-55" >Event Name </span> 
                <span class = "!text-white mr-34" >Event Type </span>
                <span class = "!text-white" >Date Attended </span>  
             </div>
             <div class = "w-255  min-w-255 flex flex-col border-[var(--border)] border-4">
                 {#each events as event}
-                    <div class = "flex flex-row mb-5">
+                    <div class = "flex flex-row mb-5 mt-6">
                         <div class = "ml-2 mt-1.5 w-50"> <Textinput label = "" value = {event.name}/></div>
                         {#if event.type === "Education"}
-                        <select id = "familyrole2" class = "!mt-2 w-45 rounded-full text-[var(--background)] ml-80" > 
+                        <select id = "familyrole2" class = "!mt-2 w-45 rounded-full text-[var(--background)] ml-30" > 
                                 <option selected value = "Education"> {event.type} </option>
-                                <option value = "Livelihood"> Livelihood</option>
+                                <option value = "Education"> Education</option>
                                 <option value = "Health"> Health</option>
                                 <option value = "Social"> Social</option>
                         </select>                        
                         {:else if event.type === "Livelihood"}
-                        <select id = "familyrole2" class = "!mt-2 w-45 rounded-full text-[var(--background)] ml-80" > 
+                        <select id = "familyrole2" class = "!mt-2 w-45 rounded-full text-[var(--background)] ml-30" > 
                                 <option selected value = "Livelihood"> {event.type} </option>
                                 <option value = "Education"> Education</option>
                                 <option value = "Health"> Health</option>
                                 <option value = "Social"> Social</option>
                         </select>
                         {:else if event.type === "Health"}
-                        <select id = "familyrole2" class = "!mt-2 w-45 rounded-full text-[var(--background)] ml-80" > 
+                        <select id = "familyrole2" class = "!mt-2 w-45 rounded-full text-[var(--background)] ml-30" > 
                                 <option selected value = "Health"> {event.type} </option>
                                 <option value = "Livelihood"> Livelihood</option>
-                                <option value = "Education"> Educaiton</option>
+                                <option value = "Education"> Education</option>
                                 <option value = "Social"> Social</option>
                         </select>                          
                         {:else}
-                        <select id = "familyrole2" class = "!mt-2 w-45 rounded-full text-[var(--background)] ml-80" > 
+                        <select id = "familyrole2" class = "!mt-2 w-45 rounded-full text-[var(--background)] ml-30" > 
                                 <option selected value = "Social"> {event.type} </option>
                                 <option value = "Livelihood"> Livelihood</option>
-                                <option value = "Education"> Educaiton</option>
                                 <option value = "Education"> Education</option>
+                                <option value = "Health"> Health</option>
                         </select>                           
                         {/if}
-                        <div class = "ml-25 mt-1.5"> {event.date} </div>
+                        <div class = "ml-15 -mt-3"> <Dateinput label = "" value = {event.date}/> </div>
+                        <div class = "-mt-2">
+                            <button  class = "!bg-[var(--background)] !text-red-500 hover:!text-red-400 hover:!shadow-[var(--background)]"on:click = {()=>deleteEvent(event.name)} >
+                             x
+                            </button> 
+                        </div>
                     </div>
                 {/each}
             </div>
