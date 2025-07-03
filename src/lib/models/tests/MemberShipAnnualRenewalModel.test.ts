@@ -224,7 +224,7 @@ describe('MembershipAnnualRenewalModel', () => {
             })
         });
 
-        const result = await MembershipAnnualRenewalModel.instance.updateAmountDue(1, 999);
+        const result = await MembershipAnnualRenewalModel.instance.updateTotalAmountDue(1, 999);
         expect(result).toBe(true);
     });
 
@@ -237,7 +237,7 @@ describe('MembershipAnnualRenewalModel', () => {
             })
         });
 
-        const result = await MembershipAnnualRenewalModel.instance.updateAmountDue(1, 999);
+        const result = await MembershipAnnualRenewalModel.instance.updateTotalAmountDue(1, 999);
         expect(result).toBe(false);
     });
 
