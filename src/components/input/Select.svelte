@@ -14,7 +14,9 @@
 
 	<div class="input-wrapper">
 		<select id={id} class="input" bind:value={value}>
-			<option value="" disabled selected></option> <!-- Default option -->
+			{#if !required}
+				<option value="" disabled={required} selected></option> <!-- Default option -->
+			{/if}
 			{#each options as option}
 				{#if typeof option === 'string'}
 					<option value={option}>{option}</option>
