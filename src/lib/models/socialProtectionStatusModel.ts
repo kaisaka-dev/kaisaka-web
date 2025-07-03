@@ -23,12 +23,22 @@ export class socialProtectionStatusModel extends TableManager<"social_protection
 
   /**
    * Finds status records by year accessed
-   * @param year_accessed Year accessed
+   * @param fam_year_accessed Year accessed of family life participation
    * @returns array of status records or null
    */
-  async findByYearAccessed(year_accessed: number) {
-    return this.findMany({ year_accessed });
+  async findByFamYearAccessed(fam_year_accessed: number) {
+    return this.findMany({ fam_year_accessed });
   }
+
+  /**
+   * Finds status records by year accessed
+   * @param comm_year_accessed Year accessed of family life participation
+   * @returns array of status records or null
+   */
+  async findByCommYearAccessed(comm_year_accessed: number) {
+    return this.findMany({ comm_year_accessed });
+  }
+
 
   /**
    * Finds status records by participation in community club
@@ -68,13 +78,28 @@ export class socialProtectionStatusModel extends TableManager<"social_protection
   /**
    * Updates the year accessed for a status record
    * @param id Record ID (bigint)
-   * @param year_accessed New year accessed
+   * @param fam_year_accessed New year accessed in family life
    * @returns boolean success indicator
    */
-  async updateYearAccessed(id: number, year_accessed: number): Promise<boolean> {
+  async updateFamYearAccessed(id: number, fam_year_accessed: number): Promise<boolean> {
     const references: Partial<SocialProtectionStatusRow> = { id };
     const updates: Partial<SocialProtectionStatusRow> = { 
-      year_accessed,
+      fam_year_accessed,
+      last_updated: new Date().toISOString() 
+    };
+    return this.updateOne(references, updates);
+  }
+
+    /**
+   * Updates the year accessed for a status record
+   * @param id Record ID (bigint)
+   * @param comm_year_accessed New year accessed in community
+   * @returns boolean success indicator
+   */
+  async updateYearAccessed(id: number, comm_year_accessed: number): Promise<boolean> {
+    const references: Partial<SocialProtectionStatusRow> = { id };
+    const updates: Partial<SocialProtectionStatusRow> = { 
+      comm_year_accessed,
       last_updated: new Date().toISOString() 
     };
     return this.updateOne(references, updates);
@@ -134,7 +159,7 @@ export class socialProtectionStatusModel extends TableManager<"social_protection
   async updateStatus(
     id: number, 
     updates: Partial<Pick<SocialProtectionStatusRow, 
-      'year_accessed' | 'child_id' | 'participates_community_club' | 'participates_family_life'
+      'comm_year_accessed' | 'fam_year_accessed' | 'child_id' | 'participates_community_club' | 'participates_family_life'
     >>
   ): Promise<boolean> {
     const references: Partial<SocialProtectionStatusRow> = { id };
