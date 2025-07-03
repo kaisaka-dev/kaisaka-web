@@ -14,12 +14,12 @@ export class ChildrenModel extends TableManager<"children">('children') {
 
   /**
    * Creates a new child record in the DB.
+   * @param has_philhealth boolean if child has philhealth.
    * @param has_barangay_cert boolean if child's barangay certificate is submitted.
    * @param has_birth_cert boolean if child's birth certificate is submitted.
    * @param has_medical_cert boolean if child's medical certificate is submitted.
    * @param is_active boolean if child is active in the organization
    * @param member_id member id of child
-   * @param philhealth_id philhealth id of child
    * @param pwd_id pwd id of child
    * @param disability_id disability category id (optional)
    * @param disability_nature description of disability nature (optional)
@@ -27,20 +27,17 @@ export class ChildrenModel extends TableManager<"children">('children') {
    * @returns created child record
    */
   async insertChild (
+    has_philhealth: boolean,
     has_barangay_cert: boolean, 
     has_birth_cert: boolean, 
     has_medical_cert: boolean, 
     is_active: boolean, 
     member_id: string, 
-    philhealth_id: string | null, 
     pwd_id: string | null, 
     disability_id: number | null,
     disability_nature: string | null,
     remarks: string | null 
   ): Promise<ChildrenRow | null>{
-      
-      const has_philhealth = philhealth_id ? true : false
-
       const child: Partial<ChildrenRow> = {
         has_barangay_cert: has_barangay_cert, 
         has_birth_cert: has_birth_cert, 
@@ -48,12 +45,12 @@ export class ChildrenModel extends TableManager<"children">('children') {
         has_philhealth: has_philhealth,
         is_active: is_active, 
         member_id: member_id, 
-        philhealth_id: philhealth_id, 
         pwd_id: pwd_id, 
         disability_id: disability_id,
         disability_nature: disability_nature,
         remarks: remarks
       }
+      console.log("inserting: ", child);
       const data = await this.insertOne(child);
       return data
   }
@@ -145,17 +142,14 @@ export class ChildrenModel extends TableManager<"children">('children') {
   }
 
   /**
-   * Updates the child's PhilHealth ID.
+   * Updates the child's PhilHealth ID status
    * @param id unique id of the child in the DB
-   * @param philhealth_id updated philhealth id to be applied
+   * @param has_philhealth updated philhealth id to be applied
    * @returns boolean if update is successful.
    */
-  async updatePhilHealthId(id: string, philhealth_id: string): Promise<boolean>{
+  async updatePhilHealthId(id: string, has_philhealth: boolean): Promise<boolean>{
     const reference: Partial<ChildrenRow> = { id: id }
-
-    const has_philhealth = philhealth_id ? true : false
-
-    const updates: Partial<ChildrenRow> = { philhealth_id: philhealth_id, has_philhealth: has_philhealth}
+    const updates: Partial<ChildrenRow> = { has_philhealth: has_philhealth}
     const data = await this.updateOne(reference, updates)
 
     return data

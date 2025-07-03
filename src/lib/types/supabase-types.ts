@@ -7,11 +7,36 @@ export type Json =
   | Json[]
 
 export type Database = {
+  graphql_public: {
+    Tables: {
+      [_ in never]: never
+    }
+    Views: {
+      [_ in never]: never
+    }
+    Functions: {
+      graphql: {
+        Args: {
+          operationName?: string
+          query?: string
+          variables?: Json
+          extensions?: Json
+        }
+        Returns: Json
+      }
+    }
+    Enums: {
+      [_ in never]: never
+    }
+    CompositeTypes: {
+      [_ in never]: never
+    }
+  }
   public: {
     Tables: {
       activity: {
         Row: {
-          completion_staus:
+          completion_status:
             | Database["public"]["Enums"]["completion_status_enum"]
             | null
           date_and_time_conducted: string
@@ -26,13 +51,13 @@ export type Database = {
           type: string
         }
         Insert: {
-          completion_staus?:
+          completion_status?:
             | Database["public"]["Enums"]["completion_status_enum"]
             | null
           date_and_time_conducted?: string
           date_and_time_created?: string
           date_and_time_last_updated?: string
-          id: number
+          id?: number
           indicators?: string | null
           name: string
           outcome?: string | null
@@ -41,7 +66,7 @@ export type Database = {
           type: string
         }
         Update: {
-          completion_staus?:
+          completion_status?:
             | Database["public"]["Enums"]["completion_status_enum"]
             | null
           date_and_time_conducted?: string
@@ -70,19 +95,16 @@ export type Database = {
           address: string
           barangay_id: number
           id: string
-          street_id: number
         }
         Insert: {
           address: string
           barangay_id: number
           id?: string
-          street_id: number
         }
         Update: {
           address?: string
           barangay_id?: number
           id?: string
-          street_id?: number
         }
         Relationships: [
           {
@@ -90,13 +112,6 @@ export type Database = {
             columns: ["barangay_id"]
             isOneToOne: false
             referencedRelation: "barangays"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "addresses_street_id_fkey"
-            columns: ["street_id"]
-            isOneToOne: false
-            referencedRelation: "streets"
             referencedColumns: ["id"]
           },
         ]
@@ -158,7 +173,7 @@ export type Database = {
         }
         Insert: {
           conducted_activity_id: number
-          id: number
+          id?: number
           individual_intervention_plan?: boolean | null
           is_late?: boolean
           participant_id: string
@@ -239,7 +254,7 @@ export type Database = {
           community_group_id: number
           date_joined?: string
           date_left?: string | null
-          id: number
+          id?: number
         }
         Update: {
           caregiver_id?: string
@@ -267,31 +282,31 @@ export type Database = {
       }
       caregivers: {
         Row: {
-          contact_number: string | null
+          contact_number: string
           email: string | null
           facebook_link: string | null
           id: string
-          income_id: number
+          income_id: number | null
           member_id: string
           occupation: string | null
           remarks: string | null
         }
         Insert: {
-          contact_number?: string | null
+          contact_number: string
           email?: string | null
           facebook_link?: string | null
           id?: string
-          income_id: number
+          income_id?: number | null
           member_id?: string
           occupation?: string | null
           remarks?: string | null
         }
         Update: {
-          contact_number?: string | null
+          contact_number?: string
           email?: string | null
           facebook_link?: string | null
           id?: string
-          income_id?: number
+          income_id?: number | null
           member_id?: string
           occupation?: string | null
           remarks?: string | null
@@ -320,11 +335,12 @@ export type Database = {
           has_barangay_cert: boolean
           has_birth_cert: boolean
           has_medical_cert: boolean
+          has_national_id: boolean
           has_philhealth: boolean
+          has_vote: boolean
           id: string
           is_active: boolean
           member_id: string | null
-          philhealth_id: string | null
           pwd_id: string | null
           remarks: string | null
         }
@@ -334,11 +350,12 @@ export type Database = {
           has_barangay_cert?: boolean
           has_birth_cert?: boolean
           has_medical_cert?: boolean
+          has_national_id?: boolean
           has_philhealth?: boolean
+          has_vote?: boolean
           id?: string
           is_active?: boolean
           member_id?: string | null
-          philhealth_id?: string | null
           pwd_id?: string | null
           remarks?: string | null
         }
@@ -348,11 +365,12 @@ export type Database = {
           has_barangay_cert?: boolean
           has_birth_cert?: boolean
           has_medical_cert?: boolean
+          has_national_id?: boolean
           has_philhealth?: boolean
+          has_vote?: boolean
           id?: string
           is_active?: boolean
           member_id?: string | null
-          philhealth_id?: string | null
           pwd_id?: string | null
           remarks?: string | null
         }
@@ -369,13 +387,6 @@ export type Database = {
             columns: ["member_id"]
             isOneToOne: false
             referencedRelation: "members"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "children_philhealth_id_fkey"
-            columns: ["philhealth_id"]
-            isOneToOne: false
-            referencedRelation: "philhealth_ids"
             referencedColumns: ["id"]
           },
           {
@@ -408,7 +419,7 @@ export type Database = {
           name: string
         }
         Insert: {
-          id: number
+          id?: number
           name: string
         }
         Update: {
@@ -439,7 +450,7 @@ export type Database = {
           education_type:
             | Database["public"]["Enums"]["education_type_enum"]
             | null
-          grade_level: number | null
+          grade_level: string | null
           id: number
           last_updated: string
           student_status_type:
@@ -454,7 +465,7 @@ export type Database = {
           education_type?:
             | Database["public"]["Enums"]["education_type_enum"]
             | null
-          grade_level?: number | null
+          grade_level?: string | null
           id?: number
           last_updated: string
           student_status_type?:
@@ -469,7 +480,7 @@ export type Database = {
           education_type?:
             | Database["public"]["Enums"]["education_type_enum"]
             | null
-          grade_level?: number | null
+          grade_level?: string | null
           id?: number
           last_updated?: string
           student_status_type?:
@@ -583,7 +594,7 @@ export type Database = {
           name: string
         }
         Insert: {
-          id: number
+          id?: number
           name: string
         }
         Update: {
@@ -689,7 +700,7 @@ export type Database = {
         Insert: {
           date_and_time_created?: string
           date_and_time_last_updated: string
-          id: number
+          id?: number
           name: string
           remarks?: string | null
           service_objective_id: number
@@ -720,7 +731,7 @@ export type Database = {
         Row: {
           address_id: string | null
           admission_date: string | null
-          birthday: string
+          birthday: string | null
           date_created: string
           first_name: string
           id: string
@@ -733,7 +744,7 @@ export type Database = {
         Insert: {
           address_id?: string | null
           admission_date?: string | null
-          birthday: string
+          birthday?: string | null
           date_created?: string
           first_name: string
           id?: string
@@ -746,7 +757,7 @@ export type Database = {
         Update: {
           address_id?: string | null
           admission_date?: string | null
-          birthday?: string
+          birthday?: string | null
           date_created?: string
           first_name?: string
           id?: string
@@ -853,21 +864,39 @@ export type Database = {
           },
         ]
       }
-      philhealth_ids: {
+      permissions: {
         Row: {
-          exp_date: string
+          action: Database["public"]["Enums"]["actions"]
+          created_at: string
+          description: string
           id: string
-          philhealth_id: number
+          is_active: boolean
+          is_system: boolean
+          name: string
+          resource: Database["public"]["Enums"]["resources"]
+          updated_at: string
         }
         Insert: {
-          exp_date: string
+          action: Database["public"]["Enums"]["actions"]
+          created_at?: string
+          description: string
           id?: string
-          philhealth_id: number
+          is_active?: boolean
+          is_system?: boolean
+          name: string
+          resource: Database["public"]["Enums"]["resources"]
+          updated_at?: string
         }
         Update: {
-          exp_date?: string
+          action?: Database["public"]["Enums"]["actions"]
+          created_at?: string
+          description?: string
           id?: string
-          philhealth_id?: number
+          is_active?: boolean
+          is_system?: boolean
+          name?: string
+          resource?: Database["public"]["Enums"]["resources"]
+          updated_at?: string
         }
         Relationships: []
       }
@@ -922,6 +951,75 @@ export type Database = {
           },
         ]
       }
+      role_permissions: {
+        Row: {
+          created_at: string
+          granted: boolean
+          is_system: boolean
+          permission_id: string
+          role_id: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          granted: boolean
+          is_system?: boolean
+          permission_id?: string
+          role_id?: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          granted?: boolean
+          is_system?: boolean
+          permission_id?: string
+          role_id?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "role_permissions_permission_id_fkey"
+            columns: ["permission_id"]
+            isOneToOne: false
+            referencedRelation: "permissions"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "role_permissions_role_id_fkey"
+            columns: ["role_id"]
+            isOneToOne: false
+            referencedRelation: "roles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      roles: {
+        Row: {
+          description: string
+          id: string
+          is_system: boolean
+          level: number
+          name: string
+          slug: string
+        }
+        Insert: {
+          description?: string
+          id?: string
+          is_system?: boolean
+          level?: number
+          name: string
+          slug: string
+        }
+        Update: {
+          description?: string
+          id?: string
+          is_system?: boolean
+          level?: number
+          name?: string
+          slug?: string
+        }
+        Relationships: []
+      }
       service_category: {
         Row: {
           id: number
@@ -946,7 +1044,7 @@ export type Database = {
         }
         Insert: {
           annual_program_id: number
-          id: number
+          id?: number
           objective_description: string
           service_category_id: number
         }
@@ -976,30 +1074,33 @@ export type Database = {
       social_protection_status: {
         Row: {
           child_id: string
+          comm_year_accessed: number | null
           date_created: string
+          fam_year_accessed: number | null
           id: number
           last_updated: string | null
           participates_community_club: boolean | null
           participates_family_life: boolean | null
-          year_accessed: number | null
         }
         Insert: {
           child_id?: string
+          comm_year_accessed?: number | null
           date_created?: string
+          fam_year_accessed?: number | null
           id?: number
           last_updated?: string | null
           participates_community_club?: boolean | null
           participates_family_life?: boolean | null
-          year_accessed?: number | null
         }
         Update: {
           child_id?: string
+          comm_year_accessed?: number | null
           date_created?: string
+          fam_year_accessed?: number | null
           id?: number
           last_updated?: string | null
           participates_community_club?: boolean | null
           participates_family_life?: boolean | null
-          year_accessed?: number | null
         }
         Relationships: [
           {
@@ -1011,28 +1112,25 @@ export type Database = {
           },
         ]
       }
-      streets: {
+      user_roles: {
         Row: {
-          barangay_id: number | null
-          id: number
-          street: string
+          role_id: string
+          user_id: string
         }
         Insert: {
-          barangay_id?: number | null
-          id: number
-          street: string
+          role_id?: string
+          user_id?: string
         }
         Update: {
-          barangay_id?: number | null
-          id?: number
-          street?: string
+          role_id?: string
+          user_id?: string
         }
         Relationships: [
           {
-            foreignKeyName: "streets_barangay_id_fkey"
-            columns: ["barangay_id"]
+            foreignKeyName: "user_roles_role_id_fkey"
+            columns: ["role_id"]
             isOneToOne: false
-            referencedRelation: "barangays"
+            referencedRelation: "roles"
             referencedColumns: ["id"]
           },
         ]
@@ -1042,9 +1140,15 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      user_has_permission: {
+        Args:
+          | { permission_name: string }
+          | { user_uuid?: string; permission_name?: string }
+        Returns: boolean
+      }
     }
     Enums: {
+      actions: "create" | "retrieve" | "update" | "delete"
       comp_status: "planned" | "completed" | "cancelled"
       completion_status_enum: "planned" | "completed" | "cancelled"
       education_type_enum:
@@ -1060,13 +1164,47 @@ export type Database = {
       intervention_type: "education" | "social"
       part_type: "caregiver" | "child"
       participant_type_enum: "caregiver" | "child"
+      resources:
+        | "activity"
+        | "addresses"
+        | "annual_program"
+        | "attendance_log"
+        | "barangays"
+        | "caregiver_groups"
+        | "caregivers"
+        | "children"
+        | "cities"
+        | "communit_group_type"
+        | "disability_category"
+        | "education_status"
+        | "families"
+        | "family_members"
+        | "income_type"
+        | "intervention"
+        | "intervention_history"
+        | "major_target_activity"
+        | "members"
+        | "membership_annual_renewal"
+        | "membership_payment"
+        | "philhealth_ids"
+        | "pwd_ids"
+        | "relationship_cc"
+        | "service_category"
+        | "service_objective"
+        | "sessions"
+        | "social_protection_status"
+        | "streets"
+        | "users"
+        | "roles"
+        | "role_permissions"
+        | "permissions"
+        | "user_roles"
       sex_enum: "Male" | "Female" | "Other"
       student_status_enum:
         | "past_student"
         | "new_student"
         | "dropped_out"
         | "completed"
-      yes_no: "yes" | "no"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -1180,8 +1318,12 @@ export type CompositeTypes<
     : never
 
 export const Constants = {
+  graphql_public: {
+    Enums: {},
+  },
   public: {
     Enums: {
+      actions: ["create", "retrieve", "update", "delete"],
       comp_status: ["planned", "completed", "cancelled"],
       completion_status_enum: ["planned", "completed", "cancelled"],
       education_type_enum: [
@@ -1199,6 +1341,42 @@ export const Constants = {
       intervention_type: ["education", "social"],
       part_type: ["caregiver", "child"],
       participant_type_enum: ["caregiver", "child"],
+      resources: [
+        "activity",
+        "addresses",
+        "annual_program",
+        "attendance_log",
+        "barangays",
+        "caregiver_groups",
+        "caregivers",
+        "children",
+        "cities",
+        "communit_group_type",
+        "disability_category",
+        "education_status",
+        "families",
+        "family_members",
+        "income_type",
+        "intervention",
+        "intervention_history",
+        "major_target_activity",
+        "members",
+        "membership_annual_renewal",
+        "membership_payment",
+        "philhealth_ids",
+        "pwd_ids",
+        "relationship_cc",
+        "service_category",
+        "service_objective",
+        "sessions",
+        "social_protection_status",
+        "streets",
+        "users",
+        "roles",
+        "role_permissions",
+        "permissions",
+        "user_roles",
+      ],
       sex_enum: ["Male", "Female", "Other"],
       student_status_enum: [
         "past_student",
@@ -1206,7 +1384,6 @@ export const Constants = {
         "dropped_out",
         "completed",
       ],
-      yes_no: ["yes", "no"],
     },
   },
 } as const
