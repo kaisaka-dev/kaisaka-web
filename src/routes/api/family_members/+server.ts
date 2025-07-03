@@ -25,7 +25,7 @@ export const POST: RequestHandler = async({request}) => {
     throw error(500, 'Failed to insert')
   }
 
-  return json({ message: 'Inserted', data: inserted})
+  return json({ message: 'Inserted family_member', data: inserted})
 }
 
 export const PUT: RequestHandler = async({request}) => {
