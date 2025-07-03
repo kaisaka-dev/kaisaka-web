@@ -29,7 +29,7 @@
     let ableToWork = false;
     let employmentType = "";
 
-    let disCategory = "";
+    let disCategory = -1;
     let disNature = "";
 
     let hasMedCert = false;
@@ -45,17 +45,17 @@
     let admissionDate = new Date().toISOString().slice(0, 7);
 
     const options_disCategory = [
-        "Deaf/Hard of Hearing",
-        "Intellectual Disability",
-        "Learning Disability",
-        "Mental Disability",
-        "Physical Disability",
-        "Psychosocial Disability",
-        "Speech and Language Impairment",
-        "Visual Disability",
-        "Cancer",
-        "Rare Disease (RA10747)",
-        "Multiple Disability"
+        { label: "Deaf/Hard of Hearing", value: 1 },
+        { label: "Intellectual Disability", value: 2 },
+        { label: "Learning Disability", value: 3 },
+        { label: "Mental Disability", value: 4 },
+        { label:"Physical Disability", value: 5 },
+        { label:"Psychosocial Disability", value: 6 },
+        { label:"Speech and Language Impairment", value: 7 },
+        { label:"Visual Disability", value: 8 },
+        { label:"Cancer", value: 9 },
+        { label:"Rare Disease (RA10747)", value: 10 },
+        { label:"Multiple Disability", value: 11 }
     ];  // from KAISAKA's 2024-jan-nov-list-of-children
     const options_disNature = [
         "ADHD",
@@ -187,33 +187,39 @@
                 address: {
                     barangay_id: barangay,
                     address: address,
-                    street_id: 1 //set to 1 for now xpp
                 },
                 member: {
                     first_name: firstName,
+                    middle_name: middleName,
                     last_name: lastName, 
                     birthday: birthday,
-                    sex: sex
+                    sex: sex,
+                    admissionDate: admissionDate
                 },
                 child: {
+                    has_philhealth: hasPhId,
                     has_barangay_cert: hasBrgyCert,
                     has_birth_cert: hasBrthCert,
                     has_medical_cert: hasMedCert,
                     is_active: true,
-                    philhealth_id: null, //null for now
-                    disability_id: null, //null for now
-                    disability_nature: null, //null for now
-                    remarks: remarks
+                    disability_id: disCategory,
+                    disability_nature: disNature,
+                    remarks: remarks,
+                    has_national_id: hasNatId,
+                    has_vote: hasVote
                 },
                 education_status: {
-                    year_start: 2025, //2025 for now
+                    year_start: ayStart,
                     education_type: educType,
-                    year_end: null, //for now
-                    grade_level: educLvl
+                    year_end: ayEnd,
+                    grade_level: educLvl,
+                    education_status: educStatus
                 },
                 social_protection_status: {
                     participates_community_club: partCommunity,
-                    participates_family_life: partFamily
+                    participates_family_life: partFamily,
+                    fam_year_accessed: partFamilyYear,
+                    comm_year_accessed: partCommunityYear
                 },
                 employment_status: {
                     able_to_work: ableToWork,
