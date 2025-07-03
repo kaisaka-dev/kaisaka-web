@@ -10,17 +10,25 @@ export const POST: RequestHandler = async({request}) => {
     throw error(400, 'Missing required fields.')
   }
 
-  if (!body.member_id || !body.income_id) {
-    throw error(400, 'Missing required fields: member_id and income_id.')
+  if (!body.member_id || !body.contact_number) {
+    throw error(400, 'Missing required fields: member_id, income_id and contact_number.')
   }
 
-  const inserted = await CaregiversModel.instance.insertCaregiver(body.member_id, body.income_id, body.contact_number, body.facebook_link, body.email, body.occupation, body.remarks)
+  const inserted = await CaregiversModel.instance.insertCaregiver(
+    body.member_id, 
+    body.income_id !== -1 ? body.income_id: null, 
+    body.contact_number, 
+    body.facebook_link !== undefined ? body.facebook_link: null, 
+    body.email !== undefined ? body.email: null, 
+    body.occupation !== undefined ? body.occupation: null,
+    body.remarks !== undefined ? body.remarks: null
+  )
 
   if (!inserted){
     throw error(500, 'Failed to insert')
   }
 
-  return json({ message: 'Inserted', data: inserted})
+  return json({ message: 'Inserted caregiver data', data: inserted})
 }
 
 export const PUT: RequestHandler = async({request}) => {
