@@ -18,7 +18,6 @@ describe('AddressesModel', () => {
 
     const sampleAddress = {
         barangay_id: 1,
-        street_id: 2,
         address: '25 Hop Avenue',
         id: 'uuid-some-unique-id',
     };
@@ -37,7 +36,7 @@ describe('AddressesModel', () => {
             insert: mockInsert
         });
 
-        const result = await AddressesModel.instance.insertAddress('25 Hop Avenue', 1, 2);
+        const result = await AddressesModel.instance.insertAddress('25 Hop Avenue', 1);
 
         expect(result).toEqual(sampleAddress);
     });
@@ -116,23 +115,6 @@ describe('AddressesModel', () => {
     });
 
 
-    // findByStreetId
-    it('findByStreetId should return addresses by street id', async () => {
-        const mockMatch = vi.fn().mockResolvedValue([sampleAddress]);
-        (AddressesModel.instance as any).findMany = mockMatch;
-
-        const result = await AddressesModel.instance.findByStreetId(2);
-        expect(result).toEqual([sampleAddress]);
-    });
-
-    it('findByStreetId should return empty array when no addresses are found', async () => {
-        const mockMatch = vi.fn().mockResolvedValue([]);
-        (AddressesModel.instance as any).findMany = mockMatch;
-
-        const result = await AddressesModel.instance.findByStreetId(999);
-        expect(result).toEqual([]);
-    });
-
 
 
     
@@ -171,26 +153,6 @@ describe('AddressesModel', () => {
         (AddressesModel.instance as any).updateOne = mockUpdate;
 
         const result = await AddressesModel.instance.updateBarangayId('uuid-some-unique-id', 1);
-
-        expect(result).toBe(false);
-    });
-
-
-    // updateStreetId
-    it('updateStreetId should return true on successful update', async () => {
-        const mockUpdate = vi.fn().mockResolvedValue(true);
-        (AddressesModel.instance as any).updateOne = mockUpdate;
-
-        const result = await AddressesModel.instance.updateStreetId('uuid-some-unique-id', 2);
-
-        expect(result).toBe(true);
-    });
-
-    it('updateStreetId should return false on unsuccessful update', async () => {
-        const mockUpdate = vi.fn().mockResolvedValue(false);
-        (AddressesModel.instance as any).updateOne = mockUpdate;
-
-        const result = await AddressesModel.instance.updateStreetId('uuid-some-unique-id', 2);
 
         expect(result).toBe(false);
     });
