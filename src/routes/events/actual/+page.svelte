@@ -257,7 +257,6 @@
 <section id="main">
 	<FilterSearch bind:searchedValue={filter.main} addLink="/activities/add">
 		<div slot="modal">
-			<!-- Category remains as dropdown -->
 			<Select label="Category" options={categories} bind:value={filter.category} margin={false} />
 			<InputText label="Objective" bind:value={filter.objective} margin={false} />
 			<InputText label="Target Activity" bind:value={filter.target_activity} margin={false} />
