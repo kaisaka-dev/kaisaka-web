@@ -60,6 +60,7 @@
     // Create pairs of [key, headerLabel]
     $: displayColumns = visibleKeys.map((key, i) => ({
         key,
+        label: headers[i] ?? key.replace(/([A-Z])/g, ' $1').replace(/^./, str => str.toUpperCase())
     }));
 
     // Handle row click
