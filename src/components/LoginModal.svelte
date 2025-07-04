@@ -31,7 +31,7 @@
 			loginFunction()
 			dialog.close()
 			}} 
-        class = '!px-25 green'> Login </button>
+        class = '!px-25 green hover:cursor-pointer'> Login </button>
 		</div>
 	</div>
 </dialog>

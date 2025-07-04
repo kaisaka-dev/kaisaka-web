@@ -1,18 +1,20 @@
+import { supabase } from '$lib/types/supabase.js';
 import { json } from '@sveltejs/kit';
-import { supabaseAdmin } from '$lib/server/supabase.js';
 
-export async function POST({ request, cookies }) {
+
+export async function POST({ request }) {
   try {
-    const { email, password, firstName, lastName } = await request.json();
-
+    const body = await request.json();
+    console.log("Body: ")
+    console.log(body)
+    const {username, email, password} = body
     // Create user in Supabase Auth
-    const { data, error } = await supabaseAdmin.auth.admin.createUser({
+    const { data, error } = await supabase.auth.admin.createUser({
       email,
       password,
       email_confirm: true, // Auto-confirm for demo, remove in production
       user_metadata: {
-        firstName,
-        lastName
+        username
       }
     });
 
@@ -24,12 +26,12 @@ export async function POST({ request, cookies }) {
     }
 
     // Create user profile in custom table
-    const { error: profileError } = await supabaseAdmin
+    const { error: profileError } = await supabase
+      .schema('account')
       .from('user_profiles')
       .insert({
         user_id: data.user.id,
-        first_name: firstName,
-        last_name: lastName,
+        username: username,
         is_active: true
       });
 
@@ -39,11 +41,11 @@ export async function POST({ request, cookies }) {
     }
 
     // Assign default role
-    const { error: roleError } = await supabaseAdmin
+    const { error: roleError } = await supabase
       .from('user_roles')
       .insert({
         user_id: data.user.id,
-        role_id: 'default-role-uuid' // Your default role ID
+        role_id: '8685e227-0b98-45c7-8363-02100d8a18ce' // Your default role ID
       });
 
     if (roleError) {
@@ -54,8 +56,7 @@ export async function POST({ request, cookies }) {
       user: {
         id: data.user.id,
         email: data.user.email,
-        firstName,
-        lastName
+        username
       }
     });
 

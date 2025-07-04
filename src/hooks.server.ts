@@ -54,13 +54,19 @@ const authGuard: Handle = async ({ event, resolve }) => {
   event.locals.session = session
   event.locals.user = user
 
-  const publicPaths = ['/', '/register/child'];
+  const publicPaths = ['/', '/register/child', `/sign-up`];
   const isPublic = publicPaths.includes(event.url.pathname);
 
-  if (!session && !isPublic) {
-    // Not authenticated and accessing a private route
-    throw redirect(303, '/');
+  if (isPublic) {
+    return resolve(event)
   }
+  
+
+  // if (!session && !isPublic) {
+  //   // Not authenticated and accessing a private route
+  //   throw redirect(303, '/');
+  // }
+
 
   
   return resolve(event)
