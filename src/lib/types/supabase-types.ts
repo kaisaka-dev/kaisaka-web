@@ -289,7 +289,6 @@ export type Database = {
           income_id: number | null
           member_id: string
           occupation: string | null
-          remarks: string | null
         }
         Insert: {
           contact_number: string
@@ -299,7 +298,6 @@ export type Database = {
           income_id?: number | null
           member_id?: string
           occupation?: string | null
-          remarks?: string | null
         }
         Update: {
           contact_number?: string
@@ -309,7 +307,6 @@ export type Database = {
           income_id?: number | null
           member_id?: string
           occupation?: string | null
-          remarks?: string | null
         }
         Relationships: [
           {
@@ -922,17 +919,17 @@ export type Database = {
         Row: {
           caregiver: string
           child: string
-          relationship: string
+          relationship: string | null
         }
         Insert: {
           caregiver?: string
           child?: string
-          relationship: string
+          relationship?: string | null
         }
         Update: {
           caregiver?: string
           child?: string
-          relationship?: string
+          relationship?: string | null
         }
         Relationships: [
           {
