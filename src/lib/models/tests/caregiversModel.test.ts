@@ -24,7 +24,6 @@ describe('caregiversModel', () => {
     facebook_link: 'https://facebook.com/test',
     email: 'test@gmail.com',
     occupation: 'Housewife',
-    remarks: 'I am remarking on this caregiver'
   };
 
   // insertCaregiver
@@ -44,7 +43,6 @@ describe('caregiversModel', () => {
       sampleCaregiver.facebook_link,
       sampleCaregiver.email,
       sampleCaregiver.occupation,
-      sampleCaregiver.remarks
     );
 
     expect(result).toEqual(sampleCaregiver);
@@ -59,7 +57,7 @@ describe('caregiversModel', () => {
       })
     });
 
-    const result = await CaregiversModel.instance.insertCaregiver(sampleCaregiver.member_id, sampleCaregiver.income_id);
+    const result = await CaregiversModel.instance.insertCaregiver(sampleCaregiver.member_id, sampleCaregiver.income_id, sampleCaregiver.contact_number);
     expect(result).toBeNull();
   });
 
