@@ -45,8 +45,13 @@ export const PUT: RequestHandler = async({request}) => {
   let hasUpdates = false
   const updates: any = {}
 
-  if (body.year_accessed !== undefined) {
-    updates.year_accessed = body.year_accessed
+  if (body.comm_year_accessed !== undefined) {
+    updates.comm_year_accessed = body.comm_year_accessed
+    hasUpdates = true
+  }
+
+  if (body.fam_year_accessed !== undefined) {
+    updates.fam_year_accessed = body.fam_year_accessed
     hasUpdates = true
   }
 

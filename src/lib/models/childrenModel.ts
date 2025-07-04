@@ -24,6 +24,8 @@ export class ChildrenModel extends TableManager<"children">('children') {
    * @param disability_id disability category id (optional)
    * @param disability_nature description of disability nature (optional)
    * @param remarks additional remarks of child
+   * @param has_national_id boolean if child has national id
+   * @param has_vote boolean if child has voters id
    * @returns created child record
    */
   async insertChild (
@@ -36,7 +38,9 @@ export class ChildrenModel extends TableManager<"children">('children') {
     pwd_id: string | null, 
     disability_id: number | null,
     disability_nature: string | null,
-    remarks: string | null 
+    remarks: string | null ,
+    has_national_id: boolean,
+    has_vote: boolean 
   ): Promise<ChildrenRow | null>{
       const child: Partial<ChildrenRow> = {
         has_barangay_cert: has_barangay_cert, 
@@ -48,7 +52,9 @@ export class ChildrenModel extends TableManager<"children">('children') {
         pwd_id: pwd_id, 
         disability_id: disability_id,
         disability_nature: disability_nature,
-        remarks: remarks
+        remarks: remarks,
+        has_national_id: has_national_id,
+        has_vote: has_vote
       }
       console.log("inserting: ", child);
       const data = await this.insertOne(child);

@@ -287,32 +287,31 @@ export type Database = {
           email: string | null
           facebook_link: string | null
           id: string
-          income_id: number
+          income_id: number | null
           member_id: string
           occupation: string | null
-          remarks: string | null
         }
         Insert: {
+
           caregiver_group_id?: number | null
           contact_number?: string | null
           email?: string | null
           facebook_link?: string | null
           id?: string
-          income_id: number
+          income_id?: number | null
           member_id?: string
           occupation?: string | null
-          remarks?: string | null
         }
         Update: {
+
           caregiver_group_id?: number | null
           contact_number?: string | null
           email?: string | null
           facebook_link?: string | null
           id?: string
-          income_id?: number
+          income_id?: number | null
           member_id?: string
           occupation?: string | null
-          remarks?: string | null
         }
         Relationships: [
           {
@@ -896,17 +895,17 @@ export type Database = {
         Row: {
           caregiver: string
           child: string
-          relationship: string
+          relationship: string | null
         }
         Insert: {
           caregiver?: string
           child?: string
-          relationship: string
+          relationship?: string | null
         }
         Update: {
           caregiver?: string
           child?: string
-          relationship?: string
+          relationship?: string | null
         }
         Relationships: [
           {
@@ -924,6 +923,75 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      role_permissions: {
+        Row: {
+          created_at: string
+          granted: boolean
+          is_system: boolean
+          permission_id: string
+          role_id: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          granted: boolean
+          is_system?: boolean
+          permission_id?: string
+          role_id?: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          granted?: boolean
+          is_system?: boolean
+          permission_id?: string
+          role_id?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "role_permissions_permission_id_fkey"
+            columns: ["permission_id"]
+            isOneToOne: false
+            referencedRelation: "permissions"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "role_permissions_role_id_fkey"
+            columns: ["role_id"]
+            isOneToOne: false
+            referencedRelation: "roles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      roles: {
+        Row: {
+          description: string
+          id: string
+          is_system: boolean
+          level: number
+          name: string
+          slug: string
+        }
+        Insert: {
+          description?: string
+          id?: string
+          is_system?: boolean
+          level?: number
+          name: string
+          slug: string
+        }
+        Update: {
+          description?: string
+          id?: string
+          is_system?: boolean
+          level?: number
+          name?: string
+          slug?: string
+        }
+        Relationships: []
       }
       service_category: {
         Row: {
@@ -979,30 +1047,33 @@ export type Database = {
       social_protection_status: {
         Row: {
           child_id: string
+          comm_year_accessed: number | null
           date_created: string
+          fam_year_accessed: number | null
           id: number
           last_updated: string | null
           participates_community_club: boolean | null
           participates_family_life: boolean | null
-          year_accessed: number | null
         }
         Insert: {
           child_id?: string
+          comm_year_accessed?: number | null
           date_created?: string
+          fam_year_accessed?: number | null
           id?: number
           last_updated?: string | null
           participates_community_club?: boolean | null
           participates_family_life?: boolean | null
-          year_accessed?: number | null
         }
         Update: {
           child_id?: string
+          comm_year_accessed?: number | null
           date_created?: string
+          fam_year_accessed?: number | null
           id?: number
           last_updated?: string | null
           participates_community_club?: boolean | null
           participates_family_life?: boolean | null
-          year_accessed?: number | null
         }
         Relationships: [
           {

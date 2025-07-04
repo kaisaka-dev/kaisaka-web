@@ -32,7 +32,8 @@
 <style>
 	input:disabled {
 			background-color:gray;
-			color: lightgray;
+			font-weight: bold;
+			color: white;
 	}
   input[type="number"] {
 			padding-right: 15px;
