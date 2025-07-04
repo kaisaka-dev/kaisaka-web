@@ -14,6 +14,7 @@
 		date_time: string;
 		target_participants: number | null;
 		actual_participants: number | null;
+		link: string;
 	};
 
 	// [TEMPLATE] Activities data (it's fine if date_time is formatted that way, since it'll run through a function
@@ -25,7 +26,8 @@
 			activity_name: "medical asst and referrals (medicines, vitamins, dental, laboratory, check up, supplements)",
 			date_time: "2025-01-12T09:00",
 			target_participants: 15,
-			actual_participants: 3
+			actual_participants: 3,
+			link: "/events/actual/attendance"
 		},
 		{
 			category: "Health",
@@ -34,7 +36,8 @@
 			activity_name: "medical check up and referrals, assessment and hospitalization assistance",
 			date_time: "2025-01-15T13:30",
 			target_participants: 15,
-			actual_participants: 8
+			actual_participants: 8,
+			link: "/events/actual/attendance"
 		},
 		{
 			category: "Health",
@@ -43,7 +46,8 @@
 			activity_name: "PT, OT, Music therapies",
 			date_time: "2025-01-20T10:00",
 			target_participants: 20,
-			actual_participants: 11
+			actual_participants: 11,
+			link: "/events/actual/attendance"
 		},
 		{
 			category: "Health",
@@ -52,7 +56,8 @@
 			activity_name: "referral, provision",
 			date_time: "2025-01-22T11:15",
 			target_participants: 5,
-			actual_participants: null
+			actual_participants: null,
+			link: "/events/actual/attendance"
 		},
 		{
 			category: "Health",
@@ -61,7 +66,8 @@
 			activity_name: "provision of health/ hygiene kits, fire relief and burial asst",
 			date_time: "2025-02-01T16:45",
 			target_participants: 20,
-			actual_participants: 13
+			actual_participants: 13,
+			link: "/events/actual/attendance"
 		},
 		{
 			category: "Health",
@@ -70,7 +76,8 @@
 			activity_name: "transpo/ meals / load support",
 			date_time: "2025-02-10T08:00",
 			target_participants: 150,
-			actual_participants: 69
+			actual_participants: 69,
+			link: "/events/actual/attendance"
 		},
 		{
 			category: "Health",
@@ -79,7 +86,8 @@
 			activity_name: "infotalks, activities and FGDs",
 			date_time: "2025-02-14T14:00",
 			target_participants: 75,
-			actual_participants: 22
+			actual_participants: 22,
+			link: "/events/actual/attendance"
 		},
 		{
 			category: "Education",
@@ -88,7 +96,8 @@
 			activity_name: "provision of educ supplies, early intervention classes, monitoring",
 			date_time: "2025-01-17T09:30",
 			target_participants: 85,
-			actual_participants: 54
+			actual_participants: 54,
+			link: "/events/actual/attendance"
 		},
 		{
 			category: "Education",
@@ -97,7 +106,8 @@
 			activity_name: "handle EIC, monitoring, area visitations, trainings, parent case conference, HMP",
 			date_time: "2025-01-23T15:00",
 			target_participants: 25,
-			actual_participants: 25
+			actual_participants: 25,
+			link: "/events/actual/attendance"
 		},
 		{
 			category: "Education",
@@ -106,7 +116,8 @@
 			activity_name: "orientation and child rights sessions/ activities",
 			date_time: "2025-02-03T10:30",
 			target_participants: 50,
-			actual_participants: 12
+			actual_participants: 12,
+			link: "/events/actual/attendance"
 		},
 		{
 			category: "Social",
@@ -115,7 +126,8 @@
 			activity_name: "special socialization activities, special games, art sessions, children's consultation and conferences",
 			date_time: "2025-03-05T09:00",
 			target_participants: 75,
-			actual_participants: 34
+			actual_participants: 34,
+			link: "/events/actual/attendance"
 		},
 		{
 			category: "Social",
@@ -124,7 +136,8 @@
 			activity_name: "Training, meetings, special activities",
 			date_time: "2025-03-08T11:00",
 			target_participants: 15,
-			actual_participants: 7
+			actual_participants: 7,
+			link: "/events/actual/attendance"
 		},
 		{
 			category: "Livelihood",
@@ -133,7 +146,8 @@
 			activity_name: "prevocational activities",
 			date_time: "2025-03-11T14:30",
 			target_participants: 20,
-			actual_participants: 15
+			actual_participants: 15,
+			link: "/events/actual/attendance"
 		},
 		{
 			category: "Livelihood",
@@ -142,7 +156,8 @@
 			activity_name: "meetings, training, transition assessments, sessions",
 			date_time: "2025-03-15T13:00",
 			target_participants: 30,
-			actual_participants: 9
+			actual_participants: 9,
+			link: "/events/actual/attendance"
 		}
 	];
 
@@ -263,5 +278,6 @@
 		data={filteredData}
 		headers={['Category', /*'Objective',*/ 'Target Activity', 'Activity Name', 'Date', 'Target', 'Actual']}
 		includedKeys={['category', /*'objective',*/ 'target_activity', 'activity_name', 'formatted_date', 'target_participants', 'actual_participants']}
+		hasLink={true}
 	/>
 </section>

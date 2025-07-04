@@ -18,6 +18,18 @@
      */
     export let headers: string[] = [];
 
+    /**
+     * (optional) key for the link property in each row
+     * Defaults to 'link' if not specified
+     */
+    export let linkKey: string = 'link';
+
+    /**
+     * (optional) whether to enable clickable rows with links
+     * Defaults to false
+     */
+    export let hasLink: boolean = false;
+
     let sortKey: string = '';
     let sortAsc: boolean = true;
 
@@ -42,15 +54,25 @@
 
     // Extract visible keys (in order)
     $: visibleKeys = includedKeys.length > 0
-      ? includedKeys.filter(key => data[0]?.hasOwnProperty(key))
-      : Object.keys(data[0] ?? {});
+      ? includedKeys.filter(key => data[0]?.hasOwnProperty(key) && (!hasLink || key !== linkKey))
+      : Object.keys(data[0] ?? {}).filter(key => !hasLink || key !== linkKey);
 
     // Create pairs of [key, headerLabel]
     $: displayColumns = visibleKeys.map((key, i) => ({
         key,
-        label: headers[i] ?? key.replace(/([A-Z])/g, ' $1').replace(/^./, str => str.toUpperCase()) // Convert camelCase to Title Case
     }));
 
+    // Handle row click
+    function handleRowClick(link: string, event: MouseEvent) {
+        if (!link || !hasLink) return;
+
+        const target = event.target as HTMLElement;
+        if (target.tagName === 'A' || target.tagName === 'BUTTON') {
+            return;
+        }
+
+        window.location.href = link;
+    }
 </script>
 
 {#if data.length > 0}
@@ -61,26 +83,36 @@
                 <th on:click={() => sortBy(col.key)} style="cursor: pointer;">
                     {col.label}
                     <i
-                        class={
+                      class={
                           sortKey === col.key
                             ? sortAsc
                               ? 'fa-solid fa-arrow-up active'
                               : 'fa-solid fa-arrow-down active'
                             : 'fa-solid fa-sort'
                         }
-                        style="margin-left: 0.5rem; opacity: {sortKey === col.key ? 1 : 0.5}; transition: opacity 0.2s ease; color: var(--background)"
-                        aria-hidden="true"
+                      style="margin-left: 0.5rem; opacity: {sortKey === col.key ? 1 : 0.5}; transition: opacity 0.2s ease; color: var(--background)"
+                      aria-hidden="true"
                     ></i>
                 </th>
-
             {/each}
         </tr>
         </thead>
         <tbody>
         {#each sortedData as row}
-            <tr>
+            <tr
+              on:click={hasLink ? (e) => handleRowClick(row[linkKey], e) : null}
+              style="cursor: {hasLink && row[linkKey] ? 'pointer' : 'default'}"
+              class:clickable={hasLink && !!row[linkKey]}>
                 {#each displayColumns as col}
-                    <td>{row[col.key]}</td>
+                    <td>
+                        {#if hasLink && row[linkKey] && col.key === visibleKeys[0]}
+                            <a href={row[linkKey]} style="color: inherit; text-decoration: none;">
+                                {row[col.key]}
+                            </a>
+                        {:else}
+                            {row[col.key]}
+                        {/if}
+                    </td>
                 {/each}
             </tr>
         {/each}
