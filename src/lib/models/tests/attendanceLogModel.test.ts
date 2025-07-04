@@ -50,7 +50,7 @@ describe('AttendanceLogModel', () => {
     });
 
     it('insertActivity should return null if insertion fails', async () => {
-        const mockInsert = vi.fn().mockResolvedValue(sampleAttendanceLog);
+        const mockInsert = vi.fn().mockResolvedValue(null);
         (AttendanceLogModel.instance as any).insertOne = mockInsert;
 
         const result = await AttendanceLogModel.instance.insertAttendanceLog(
@@ -89,7 +89,7 @@ describe('AttendanceLogModel', () => {
 
     // findByConductedActivityId
     it('findByConductedActivityId should return a matching record when found', async () => {
-        const mockFindMany = vi.fn().mockResolvedValue(sampleAttendanceLog);
+        const mockFindMany = vi.fn().mockResolvedValue([sampleAttendanceLog]);
         (AttendanceLogModel.instance as any).findMany = mockFindMany;
 
         const result = await AttendanceLogModel.instance.findByConductedActivityId(2);
@@ -101,7 +101,7 @@ describe('AttendanceLogModel', () => {
         (AttendanceLogModel.instance as any).findMany = mockFindMany;
 
         const result = await AttendanceLogModel.instance.findByConductedActivityId(2);
-        expect(result).toBe([]);
+        expect(result).toEqual([]);
     });
 
     it('findByConductedActivityId should return null on error', async () => {
@@ -114,7 +114,7 @@ describe('AttendanceLogModel', () => {
 
     // findByParticipantId
     it('findByParticipantId should return a matching record when found', async () => {
-        const mockFindMany = vi.fn().mockResolvedValue(sampleAttendanceLog);
+        const mockFindMany = vi.fn().mockResolvedValue([sampleAttendanceLog]);
         (AttendanceLogModel.instance as any).findMany = mockFindMany;
 
         const result = await AttendanceLogModel.instance.findByParticipantId('uuid-participant');
@@ -126,7 +126,7 @@ describe('AttendanceLogModel', () => {
         (AttendanceLogModel.instance as any).findMany = mockFindMany;
 
         const result = await AttendanceLogModel.instance.findByParticipantId('uuid-participant');
-        expect(result).toBe([]);
+        expect(result).toEqual([]);
     });
 
     it('findByParticipantId should return null on error', async () => {
@@ -139,7 +139,7 @@ describe('AttendanceLogModel', () => {
 
     // findLateAttendances
     it('findLateAttendances should return a matching record when found', async () => {
-        const mockFindMany = vi.fn().mockResolvedValue(sampleAttendanceLog);
+        const mockFindMany = vi.fn().mockResolvedValue([sampleAttendanceLog]);
         (AttendanceLogModel.instance as any).findMany = mockFindMany;
 
         const result = await AttendanceLogModel.instance.findLateAttendances();
@@ -151,7 +151,7 @@ describe('AttendanceLogModel', () => {
         (AttendanceLogModel.instance as any).findMany = mockFindMany;
 
         const result = await AttendanceLogModel.instance.findLateAttendances();
-        expect(result).toBe([]);
+        expect(result).toEqual([]);
     });
 
     it('findLateAttendances should return null on error', async () => {

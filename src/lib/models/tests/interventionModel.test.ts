@@ -25,8 +25,7 @@ describe('InterventionModel', () => {
         last_updated: '2025-04-01T00:00:00Z',
         status: 'Neutral',
         remarks: 'Remarks',
-        child_id: 'uuid-child-id',
-        type: 'education'
+        child_id: 'uuid-child-id'
     };
 
 
@@ -170,23 +169,6 @@ describe('InterventionModel', () => {
         (InterventionModel.instance as any).updateOne = mockUpdate;
 
         const result = await InterventionModel.instance.updateRemarks('uuid-intervention-id', 'New Remark');
-        expect(result).toBe(false);
-    });
-
-    // updateInterventionType
-    it('updateInterventionType should return true if successful', async () => {
-        const mockUpdate = vi.fn().mockResolvedValue(true);
-        (InterventionModel.instance as any).updateOne = mockUpdate;
-
-        const result = await InterventionModel.instance.updateInterventionType('uuid-intervention-id', 'social');
-        expect(result).toBe(true);
-    });
-
-    it('updateInterventionType should return false if update fails', async () => {
-        const mockUpdate = vi.fn().mockResolvedValue(false);
-        (InterventionModel.instance as any).updateOne = mockUpdate;
-
-        const result = await InterventionModel.instance.updateInterventionType('uuid-intervention-id', 'social');
         expect(result).toBe(false);
     });
 

@@ -50,16 +50,16 @@ describe('CommunityGroupTypeModel', () => {
 
     // findById
     it('findById should return a matching record when found', async () => {
-        const mockFindMany = vi.fn().mockResolvedValue(sampleCommunityGroupType);
-        (CommunityGroupTypeModel.instance as any).findMany = mockFindMany;
+        const mockFindOne = vi.fn().mockResolvedValue(sampleCommunityGroupType);
+        (CommunityGroupTypeModel.instance as any).findOne = mockFindOne;
 
         const result = await CommunityGroupTypeModel.instance.findById(1);
         expect(result).toEqual(sampleCommunityGroupType);
     });
 
     it('findById should return null when no record is found', async () => {
-        const mockFindMany = vi.fn().mockResolvedValue(null);
-        (CommunityGroupTypeModel.instance as any).findMany = mockFindMany;
+        const mockFindOne = vi.fn().mockResolvedValue(null);
+        (CommunityGroupTypeModel.instance as any).findOne = mockFindOne;
 
         const result = await CommunityGroupTypeModel.instance.findById(1);
         expect(result).toBeNull();
@@ -67,16 +67,16 @@ describe('CommunityGroupTypeModel', () => {
 
     // findByName
     it('findByName should return a matching record when found', async () => {
-        const mockFindMany = vi.fn().mockResolvedValue(sampleCommunityGroupType);
-        (CommunityGroupTypeModel.instance as any).findMany = mockFindMany;
+        const mockFindOne = vi.fn().mockResolvedValue(sampleCommunityGroupType);
+        (CommunityGroupTypeModel.instance as any).findOne = mockFindOne;
 
         const result = await CommunityGroupTypeModel.instance.findByName('Name');
         expect(result).toEqual(sampleCommunityGroupType);
     });
 
     it('findByName should return null when no record is found', async () => {
-        const mockFindMany = vi.fn().mockResolvedValue(null);
-        (CommunityGroupTypeModel.instance as any).findMany = mockFindMany;
+        const mockFindOne = vi.fn().mockResolvedValue(null);
+        (CommunityGroupTypeModel.instance as any).findOne = mockFindOne;
 
         const result = await CommunityGroupTypeModel.instance.findByName('Name');
         expect(result).toBeNull();
@@ -121,7 +121,7 @@ describe('CommunityGroupTypeModel', () => {
         (CommunityGroupTypeModel.instance as any).findMany = mockFindMany;
 
         const result = await CommunityGroupTypeModel.instance.getAll();
-        expect(result).toBe([]);
+        expect(result).toEqual([]);
     });
 
     it('getAll should return null on error', async () => {
@@ -130,6 +130,40 @@ describe('CommunityGroupTypeModel', () => {
 
         const result = await CommunityGroupTypeModel.instance.getAll();
         expect(result).toBeNull();
+    });
+
+    // exists
+    it('exists should return true if a matching record is found', async () => {
+        const mockFindByName = vi.fn().mockResolvedValue(sampleCommunityGroupType);
+        (CommunityGroupTypeModel.instance as any).findByName = mockFindByName;
+
+        const result = await CommunityGroupTypeModel.instance.exists('Name');
+        expect(result).toBe(true);
+    });
+
+    it('exists should return false if a matching record is not found', async () => {
+        const mockFindByName = vi.fn().mockResolvedValue(null);
+        (CommunityGroupTypeModel.instance as any).findByName = mockFindByName;
+
+        const result = await CommunityGroupTypeModel.instance.exists('Name');
+        expect(result).toBe(false);
+    });
+
+    // existsById
+    it('existsById should return true if a matching record is found', async () => {
+        const mockFindById = vi.fn().mockResolvedValue(sampleCommunityGroupType);
+        (CommunityGroupTypeModel.instance as any).findById = mockFindById;
+
+        const result = await CommunityGroupTypeModel.instance.existsById(1);
+        expect(result).toBe(true);
+    });
+
+    it('existsById should return false if a matching record is not found', async () => {
+        const mockFindById = vi.fn().mockResolvedValue(null);
+        (CommunityGroupTypeModel.instance as any).findById = mockFindById;
+
+        const result = await CommunityGroupTypeModel.instance.existsById(1);
+        expect(result).toBe(false);
     });
 
 
@@ -173,6 +207,23 @@ describe('CommunityGroupTypeModel', () => {
         (CommunityGroupTypeModel.instance as any).deleteOne = mockDelete;
 
         const result = await CommunityGroupTypeModel.instance.deleteById(1);
+        expect(result).toBe(false);
+    });
+
+    // deleteByName
+    it('deleteByName should return true if deletion is successful', async () => {
+        const mockDelete = vi.fn().mockResolvedValue(true);
+        (CommunityGroupTypeModel.instance as any).deleteOne = mockDelete;
+
+        const result = await CommunityGroupTypeModel.instance.deleteByName('Name');
+        expect(result).toBe(true);
+    });
+
+    it('deleteByName should return false if deletion fails', async () => {
+        const mockDelete = vi.fn().mockResolvedValue(null);
+        (CommunityGroupTypeModel.instance as any).deleteOne = mockDelete;
+
+        const result = await CommunityGroupTypeModel.instance.deleteByName('Name');
         expect(result).toBe(false);
     });
 });

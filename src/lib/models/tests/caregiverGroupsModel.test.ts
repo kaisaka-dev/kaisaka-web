@@ -42,7 +42,7 @@ describe('CaregiverGroupsModel', () => {
     });
 
     it('insertActivity should return null if insertion fails', async () => {
-        const mockInsert = vi.fn().mockResolvedValue(sampleCaregiverGroup);
+        const mockInsert = vi.fn().mockResolvedValue(null);
         (CaregiverGroupsModel.instance as any).insertOne = mockInsert;
 
         const result = await CaregiverGroupsModel.instance.insertCaregiverGroup(
@@ -78,7 +78,7 @@ describe('CaregiverGroupsModel', () => {
 
     // findByCaregiverId
     it('findByCaregiverId should return a matching record when found', async () => {
-        const mockFindMany = vi.fn().mockResolvedValue(sampleCaregiverGroup);
+        const mockFindMany = vi.fn().mockResolvedValue([sampleCaregiverGroup]);
         (CaregiverGroupsModel.instance as any).findMany = mockFindMany;
 
         const result = await CaregiverGroupsModel.instance.findByCaregiverId('Caregiver');
@@ -90,7 +90,7 @@ describe('CaregiverGroupsModel', () => {
         (CaregiverGroupsModel.instance as any).findMany = mockFindMany;
 
         const result = await CaregiverGroupsModel.instance.findByCaregiverId('Caregiver');
-        expect(result).toBe([]);
+        expect(result).toEqual([]);
     });
 
     it('findByCaregiverId should return null on error', async () => {
@@ -103,7 +103,7 @@ describe('CaregiverGroupsModel', () => {
 
     // findByCommunityGroupId
     it('findByCommunityGroupId should return a matching record when found', async () => {
-        const mockFindMany = vi.fn().mockResolvedValue(sampleCaregiverGroup);
+        const mockFindMany = vi.fn().mockResolvedValue([sampleCaregiverGroup]);
         (CaregiverGroupsModel.instance as any).findMany = mockFindMany;
 
         const result = await CaregiverGroupsModel.instance.findByCommunityGroupId(2);
@@ -115,7 +115,7 @@ describe('CaregiverGroupsModel', () => {
         (CaregiverGroupsModel.instance as any).findMany = mockFindMany;
 
         const result = await CaregiverGroupsModel.instance.findByCommunityGroupId(2);
-        expect(result).toBe([]);
+        expect(result).toEqual([]);
     });
 
     it('findByCommunityGroupId should return null on error', async () => {
@@ -128,7 +128,7 @@ describe('CaregiverGroupsModel', () => {
 
     // findActiveMembers
     it('findActiveMembers should return a matching record when found', async () => {
-        const mockFindMany = vi.fn().mockResolvedValue(sampleCaregiverGroup);
+        const mockFindMany = vi.fn().mockResolvedValue([sampleCaregiverGroup]);
         (CaregiverGroupsModel.instance as any).findMany = mockFindMany;
 
         const result = await CaregiverGroupsModel.instance.findActiveMembers();
@@ -140,7 +140,7 @@ describe('CaregiverGroupsModel', () => {
         (CaregiverGroupsModel.instance as any).findMany = mockFindMany;
 
         const result = await CaregiverGroupsModel.instance.findActiveMembers();
-        expect(result).toBe([]);
+        expect(result).toEqual([]);
     });
 
     it('findActiveMembers should return null on error', async () => {
@@ -153,7 +153,7 @@ describe('CaregiverGroupsModel', () => {
 
     // findInactiveMembers
     it('findInactiveMembers should return a matching record when found', async () => {
-        const mockFindMany = vi.fn().mockResolvedValue(sampleCaregiverGroup);
+        const mockFindMany = vi.fn().mockResolvedValue([sampleCaregiverGroup]);
         (CaregiverGroupsModel.instance as any).findMany = mockFindMany;
 
         const result = await CaregiverGroupsModel.instance.findInactiveMembers();
@@ -165,7 +165,7 @@ describe('CaregiverGroupsModel', () => {
         (CaregiverGroupsModel.instance as any).findMany = mockFindMany;
 
         const result = await CaregiverGroupsModel.instance.findInactiveMembers();
-        expect(result).toBe([]);
+        expect(result).toEqual([]);
     });
 
     it('findInactiveMembers should return null on error', async () => {

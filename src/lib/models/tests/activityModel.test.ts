@@ -94,7 +94,7 @@ describe('ActivityModel', () => {
 
     // findByName
     it('findByName should return a matching record when found', async () => {
-        const mockFindMany = vi.fn().mockResolvedValue(sampleActivity);
+        const mockFindMany = vi.fn().mockResolvedValue([sampleActivity]);
         (ActivityModel.instance as any).findMany = mockFindMany;
 
         const result = await ActivityModel.instance.findByName('Activity');
@@ -106,7 +106,7 @@ describe('ActivityModel', () => {
         (ActivityModel.instance as any).findMany = mockFindMany;
 
         const result = await ActivityModel.instance.findByName('Activity');
-        expect(result).toBe([]);
+        expect(result).toEqual([]);
     });
 
     it('findByName should return null on error', async () => {
@@ -119,7 +119,7 @@ describe('ActivityModel', () => {
 
     // findByType
     it('findByType should return a matching record when found', async () => {
-        const mockFindMany = vi.fn().mockResolvedValue(sampleActivity);
+        const mockFindMany = vi.fn().mockResolvedValue([sampleActivity]);
         (ActivityModel.instance as any).findMany = mockFindMany;
 
         const result = await ActivityModel.instance.findByType('Dark');
@@ -131,7 +131,7 @@ describe('ActivityModel', () => {
         (ActivityModel.instance as any).findMany = mockFindMany;
 
         const result = await ActivityModel.instance.findByType('Dark');
-        expect(result).toBe([]);
+        expect(result).toEqual([]);
     });
 
     it('findByType should return null on error', async () => {
@@ -144,7 +144,7 @@ describe('ActivityModel', () => {
 
     // findByTargetActivityId
     it('findByTargetActivityId should return a matching record when found', async () => {
-        const mockFindMany = vi.fn().mockResolvedValue(sampleActivity);
+        const mockFindMany = vi.fn().mockResolvedValue([sampleActivity]);
         (ActivityModel.instance as any).findMany = mockFindMany;
 
         const result = await ActivityModel.instance.findByTargetActivityId(2);
@@ -156,7 +156,7 @@ describe('ActivityModel', () => {
         (ActivityModel.instance as any).findMany = mockFindMany;
 
         const result = await ActivityModel.instance.findByTargetActivityId(2);
-        expect(result).toBe([]);
+        expect(result).toEqual([]);
     });
 
     it('findByTargetActivityId should return null on error', async () => {
