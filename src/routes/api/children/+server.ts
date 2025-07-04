@@ -10,19 +10,30 @@ export const POST: RequestHandler = async({request}) => {
     throw error(400, 'Missing required fields.')
   }
 
-  if (!('has_barangay_cert' in body) || !('has_birth_cert' in body) || !('has_medical_cert' in body) || !('is_active' in body) || !('has_philhealth' in body) || !body.member_id) {
+  if (!('has_barangay_cert' in body) || !('has_birth_cert' in body) || !('has_medical_cert' in body) || !('is_active' in body) || !body.member_id) {
     throw error(400, 'Missing required fields.')
   }
 
   const inserted = await ChildrenModel.instance.insertChild(
-    body.has_barangay_cert, body.has_birth_cert, body.has_medical_cert, body.is_active, body.member_id, body.philhealth_id,  body.pwd_id, body.disability_id, body.disability_nature, body.remarks
+    body.has_philhealth,
+    body.has_barangay_cert, 
+    body.has_birth_cert, 
+    body.has_medical_cert, 
+    body.is_active, 
+    body.member_id, 
+    body.pwd_id, 
+    body.disability_id, 
+    body.disability_nature, 
+    body.remarks,
+    body.has_national_id,
+    body.has_vote
   )
 
   if (!inserted){
     throw error(500, 'Failed to insert')
   }
 
-  return json({ message: 'Inserted', data: inserted})
+  return json({ message: 'Child Data Inserted', data: inserted})
 
 }
 
@@ -61,14 +72,6 @@ export const PUT: RequestHandler = async({request}) => {
     const updated = await ChildrenModel.instance.updateMedCert(body.id, body.has_medical_cert)
     if (!updated) {
       throw error(500, 'Failed to update has_medical_cert')
-    }
-    hasUpdates = true
-  }
-
-  if (body.philhealth_id !== undefined) {
-    const updated = await ChildrenModel.instance.updatePhilHealthId(body.id, body.philhealth_id)
-    if (!updated) {
-      throw error(500, 'Failed to update philhealth_id')
     }
     hasUpdates = true
   }

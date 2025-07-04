@@ -12,7 +12,7 @@ export const POST: RequestHandler = async ({ request }) => {
   }
 
   // Required fields
-  if (!body.first_name || !body.last_name || !body.birthday || !body.sex) {
+  if (!body.first_name || !body.last_name || !body.sex) {
     throw error(400, 'Missing required fields: first_name, last_name, birthday, sex')
   }
 
@@ -25,7 +25,7 @@ export const POST: RequestHandler = async ({ request }) => {
   const memberData = {
     first_name: body.first_name,
     last_name: body.last_name,
-    birthday: body.birthday,
+    birthday: body.birthday !== undefined ? body.birthday: null,
     sex: body.sex,
     middle_name: body.middle_name !== undefined ? body.middle_name : null,
     address_id: body.address_id !== undefined ? body.address_id : null,

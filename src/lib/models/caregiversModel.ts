@@ -20,26 +20,23 @@ export class CaregiversModel extends TableManager<"caregivers">('caregivers') {
    * @param facebook_link Facebook profile link (optional)
    * @param email email address of the caregiver (optional)
    * @param occupation occupation of the caregiver (optional)
-   * @param remarks additional remarks (optional)
    * @returns created caregiver record or null
    */
   async insertCaregiver(
     member_id: string,
     income_id: number,
-    contact_number?: string | null,
+    contact_number: string,
     facebook_link?: string | null,
     email?: string | null,
     occupation?: string | null,
-    remarks?: string | null
   ): Promise<CaregiverRow | null> {
     const caregiver: Partial<CaregiverRow> = {
       member_id,
       income_id,
-      contact_number: contact_number || null,
+      contact_number: contact_number,
       facebook_link: facebook_link || null,
       email: email || null,
       occupation: occupation || null,
-      remarks: remarks || null
     };
     
     return this.insertOne(caregiver);

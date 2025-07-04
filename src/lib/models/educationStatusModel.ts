@@ -101,7 +101,7 @@ export class educationStatusModel extends TableManager<"education_status">('educ
    * @param grade_level New grade level
    * @returns boolean success indicator
    */
-  async updateGradeLevel(id: number, grade_level: number): Promise<boolean> {
+  async updateGradeLevel(id: number, grade_level: string): Promise<boolean> {
     const references: Partial<EducationStatusRow> = { id };
     const updates: Partial<EducationStatusRow> = { 
       grade_level,
