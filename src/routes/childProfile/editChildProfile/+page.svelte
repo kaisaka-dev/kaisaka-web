@@ -1,6 +1,8 @@
 <script lang="ts">
-    import type { EventType } from '$lib/types/event.js'
-    import type { interventionType } from '$lib/types/intervention.js'
+    import type { EventType } from '$lib/types/event.ts'
+    import type { interventionType } from '$lib/types/intervention.ts'
+    import type { child } from '$lib/types/child.ts'
+
 
 
     import Header from '../../../components/Header.svelte'
@@ -9,9 +11,6 @@
     import Check from '../../../components/input/Checkbox.svelte'
     import DateInput from '../../../components/input/InputDate.svelte'
     import Select from '../../../components/input/Select.svelte'
-    export let data
-    const { user } = data
-
     
     //below are sample data declarations for the sake of testing, will delete once APIs are created
     let events: EventType[] = [
@@ -29,10 +28,39 @@
         }
     ]
 
-    let bindedDate = (new Date()).toJSON().slice(0, 10)
+    let bindedDate = ""
+
+    let user: child = {
+        firstName: "Juan", lastName: "De La Cruz", educationStatus: "Dropped Out", birthday: new Date(2011,2,3), sex: "M", address: "Sample Address",
+        barangay: "Barangay 721", employmentStatus: "Sheltered Workshop", disabilityCategory: "Mental", disabilityNature: "Schizophrenic", dateAdmission: new Date(2012, 9,11),
+
+        family: {id: 1, members:[{role: "Caregiver", firstName:"Paolo", lastName: "Rivera"}, {role: "Child" , firstName: "Juan" , lastName:"De La Cruz"}]},
+        eventAttendance:[{id: 1231, name: "Health event", type: "Health", date: new Date(2022,2,12).toISOString().split('T')[0]},
+                        {id: 12345, name: "Social event", type: "Social", date: new Date(2023,5, 16).toISOString().split('T')[0]}],
+        PWD: false,
+        PhilHealth: true,
+        medCert: true,
+        birthCert: false,
+        barangayCert: true,
+
+        interventionHistory: [
+        {id:1321123, name: "Learning Intervention" , type: "Education", 
+            status: [{status: "REGRESSED", date:new Date(2012,5, 16).toISOString().split('T')[0] }, {status: "IMPROVED" , date: new Date(2012,8, 25).toISOString().split('T')[0]} , {status: "REGRESSED" , date: new Date(2012,9, 25).toISOString().split('T')[0] }]
+        },
+
+        {id:1232132, name: "Livelihood Intervention" , type: "Livelihood", status:
+            [{status: "REGRESSED", date:new Date(2012,5, 16).toISOString().split('T')[0] }, {status: "REGRESSED" , date: new Date(2012,8, 25).toISOString().split('T')[0]}]
+        }
+        ]
+    }
 
 
     //below are essential functions for the page, will add on functionalities once APIs are created
+    function setDate(date:string) {
+        user.birthday = new Date(date)
+    }
+
+
     function deleteEvent(name:string): void{
         events = events.filter((event) => event.name !== name)
     }
@@ -77,7 +105,7 @@
 </div>
 
 <!-- PERSONAL INFORMATION SECTION BELOW-->
- <div class = "ml-22 -mt-50" id ="Personal Info">
+ <div class = "ml-22 -mt-70" id ="Personal Info">
     <h1 class = "!text-[var(--green)] font-[JSans] ml-33 mt-5 mb-2">
         Information
     </h1>
@@ -97,11 +125,15 @@
 
             <div class = "flex flex-row">
                 <div class = "ml-4 mt-3 w-40"> Education </div>
-                <div class = "mt-4"> <Input value = {user.education}/> </div>
+                {#if user.education == null}
+                <div class = "mt-5"> <Input value = "N/A"/> </div>
+                {:else}
+                <div class = "mt-5"> <Input value = {user.education}/> </div>
+                {/if}            
             </div>
 
             <div class = "flex flex-row">
-                <div class = "ml-4 mt-3 w-40"> Education Status </div>
+                <div class = "ml-3 mt-3 w-40"> Education Status </div>
                 <div> <select id = "educstatus" class = "!mt-6 w-81 rounded-md text-[var(--background)] mr-20"> 
                         <option selected value> Dropped out</option>
                         <option> New student</option>
@@ -112,27 +144,27 @@
 
             <div class = "flex flex-row">
                 <div class = "ml-4 mt-3 w-40"> Birthday</div>
-                <div class = "mr-35"> <DateInput value = {user.birthday} label = ""/> </div>
+                <div class = "mr-55 mt-2"> <input class = "w-80 rounded-s" type = "Date" value = { user.birthday.toISOString().split("T")[0]} on:input = {e => setDate(e.target.value) }/> </div>
             </div>
 
             <div class = "flex flex-row">
                 <div class = "ml-4 mt-3 w-40"> Age</div>
-                <div class = "mt-4"> <Input value = "Age"/> </div>
+                <div class = "mt-4"> <Input value = {new Date().getFullYear() - user.birthday.getFullYear()} disabled/> </div>
             </div>
 
             <div class = "flex flex-row">
                 <div class = "ml-4 mt-3 w-40"> Sex</div>
-                <div class = "mt-3"> <Input value = "Sex"/> </div>
+                <div class = " mr-50"> <Select value = {user.sex} options = {["M","F"]}/> </div>
             </div>
 
             <div class = "flex flex-row">
                 <div class = "ml-4 mt-3 w-40"> Address</div>
-                <div class = "mt-3"> <Input value = "Address"/> </div>
+                <div class = "mt-3"> <Input value = {user.address}/> </div>
             </div>
 
             <div class = "flex flex-row">
                 <div class = "ml-4 mt-3 w-40"> Barangay</div>
-                <div class = "mt-3"> <Input value = "Barangay"/> </div>
+                <div class = "mt-3"> <Input value = {user.barangay}/> </div>
             </div>
 
             <div class = "flex flex-row">
@@ -148,17 +180,17 @@
 
             <div class = "flex flex-row mt-10">
                 <div class = "ml-4 mt-3 w-73"> Category of Disability</div>
-                <div class = "mt-4"> <Input value = "Category"/> </div>
+                <div class = "mt-4"> <Input value = {user.disabilityCategory}/> </div>
             </div>
 
             <div class = "flex flex-row">
                 <div class = "ml-4 mt-3 w-73"> Nature of Disability</div>
-                <div class = "mt-4"> <Input value = "Nature"/> </div>
+                <div class = "mt-4"> <Input value = {user.disabilityNature}/> </div>
             </div>
 
             <div class = "flex flex-row mt-10">
                 <div class = "ml-4 mt-3 w-70"> Date of Admission</div>
-                <div> <DateInput label = "" value = "Date"/> </div>
+                <div> <DateInput label = "" value = {user.dateAdmission.toISOString().split('T')[0]}/> </div>
             </div>
 
             <div class = "flex flex-row">
@@ -228,8 +260,12 @@
 
          <div class = "flex flex-row mt-5">
             <div class = 'mr-25 font-bold'> 2024 </div>
-            <div class = "mr-10 w-60">  {bindedDate || "PENDING"}</div>
-            <input type = "Date" value = {bindedDate} on:input = {e => bindedDate = e.target.value}/>
+            {#if !bindedDate}
+            <div class = "mr-10 w-60 !text-red-500">  Payment Pending! </div>
+            {:else}
+            <div class = "mr-10 w-60">  Payment Made On {bindedDate}</div>
+            {/if}
+            <input type = "Date" value = { bindedDate} on:input = {e => bindedDate =e.target.value }/>
         </div>
     </div>
 </div>
@@ -257,7 +293,7 @@
                    <Input label = "" value = {eventVar.name}/>
                 </div>
 
-                <div class = "ml-20">
+                <div class = "ml-10">
                    <select id = "interventiontype1" class = "!mt-4 w-45 rounded-full text-[var(--background)]" > 
                     <option selected value = "education"> {eventVar.type} </option>
                     <option value = "livelihood"> LIVELIHOOD</option>
@@ -298,18 +334,20 @@
        <div>
             <Check label = "PWD ID" checked/>
        </div> 
-       <div class = "ml-20">
+       {#if !user.PWD}
+       <div class = "ml-20 mb-5">
             <span class = "mr-37">
                 ID#
             </span>
-            [ID NUMBER]
+            <Input/>
        </div>
        <div class = "ml-20">
             <span class = "mr-15">
                 EXPIRY DATE
             </span>
-            [EXPIRY DATE]
+            <Input/>
        </div>
+       {/if}
 
        <div class ='mt-5'>
             <Check label = "PhilHealth" checked/>

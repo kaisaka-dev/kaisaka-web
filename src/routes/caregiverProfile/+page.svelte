@@ -1,8 +1,8 @@
 <script lang="ts">
-    import type { caregiver } from '$lib/types/caregiver.js'
-    import type { family } from '$lib/types/family.js'
-    import type { membershipFee } from '$lib/types/membershipFee.js'
-    import type { EventType } from '$lib/types/event.js'
+    import type { caregiver } from '$lib/types/caregiver.ts'
+    import type { family } from '$lib/types/family.ts'
+    import type { membershipFee } from '$lib/types/membershipFee.ts'
+    import type { EventType } from '$lib/types/event.ts'
 
     import Header from '../../components/Header.svelte'
     import Textarea from '../../components/input/InputTextarea.svelte'
