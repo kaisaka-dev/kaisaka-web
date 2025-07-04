@@ -57,7 +57,7 @@
     }
 </script>
 
-<Header category="members" page="children" />
+<Header category="members" page="caregivers" />
 
 <section id="main">
     <FilterSearch bind:searchedValue={filter.main}>
