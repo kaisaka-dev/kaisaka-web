@@ -98,7 +98,7 @@
 	<br>
 
 	{#each filteredData as family}
-		<div style="border: 3px solid var(--border); max-width: 70rem; padding: 1rem; border-radius: 16px; margin-bottom: 1rem;">
+		<div style="border: 3px solid var(--border); max-width: 70rem; padding: 1rem; border-radius: 8px; margin-bottom: 1rem;">
 			<div style="display: flex; flex-direction: row; justify-content: space-between">
 				<h3>{family.surnames}</h3>
 				<span style="color: {family.yrLastPaid === thisYear ? 'var(--green)' : 'var(--pink)'}">

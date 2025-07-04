@@ -19,6 +19,7 @@ type ChildrenList = {
     sex: string;
     school: string;
     educationLevel: string;
+    link: string;
 };
 
 const childrenList: ChildrenList[] = [
@@ -31,7 +32,8 @@ const childrenList: ChildrenList[] = [
         age: 18,
         sex: "Male",
         school: "Special (Exclusive school, blind / deaf)",
-        educationLevel: "Grade 10"
+        educationLevel: "Grade 10",
+        link: "/childProfile"
     },
     {
         firstName: "Paolo",
@@ -42,7 +44,8 @@ const childrenList: ChildrenList[] = [
         age: 18,
         sex: "Male",
         school: "Integrated / SPED classes",
-        educationLevel: "Grade 11"
+        educationLevel: "Grade 11",
+        link: "/childProfile"
     },
     {
         firstName: "Mariella Jeans",
@@ -53,7 +56,8 @@ const childrenList: ChildrenList[] = [
         age: 18,
         sex: "Female",
         school: "Inclusive / General education",
-        educationLevel: "Grade 12"
+        educationLevel: "Grade 12",
+        link: "/childProfile"
     },
     {
         firstName: "Bea Antoinette",
@@ -64,7 +68,8 @@ const childrenList: ChildrenList[] = [
         age: 18,
         sex: "Female",
         school: "Non-formal",
-        educationLevel: "Vocational"
+        educationLevel: "Vocational",
+        link: "/childProfile"
     },
     {
         firstName: "Gideon",
@@ -75,7 +80,8 @@ const childrenList: ChildrenList[] = [
         age: 18,
         sex: "Male",
         school: "Home program",
-        educationLevel: "Basic Skills"
+        educationLevel: "Basic Skills",
+        link: "/childProfile"
     },
 ];
 
@@ -205,5 +211,6 @@ function resetFilters() {
     </FilterSearch>
 
     <br>
-    <Table data={filteredData} headers={['First Name', 'Last Name', 'Birthday', 'Disability Category', 'Disability Nature']} includedKeys={['firstName', 'lastName', 'birthday', 'category', 'nature']}/>
+    <Table data={filteredData} headers={['First Name', 'Last Name', 'Birthday', 'Disability Category', 'Disability Nature']}
+           includedKeys={['firstName', 'lastName', 'birthday', 'category', 'nature']} hasLink={true}/>
 </section>
