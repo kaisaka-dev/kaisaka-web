@@ -15,8 +15,7 @@ export const POST: RequestHandler = async ({ request }) => {
 
   const statusData = {
     child_id: body.child_id,
-    comm_year_accessed: body.comm_year_accessed !== undefined ? body.comm_year_accessed : null,
-    fam_year_accessed: body.fam_year_accessed !== undefined ? body.fam_year_accessed : null,
+    year_accessed: body.year_accessed !== undefined ? body.year_accessed : null,
     participates_community_club: body.participates_community_club,
     participates_family_life: body.participates_family_life
   };

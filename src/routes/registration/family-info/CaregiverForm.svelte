@@ -8,38 +8,38 @@
 	export let formData;
 	export let errors;
 	export let index: number;
-	export let deleteGuardian: (index: number) => void;
+	export let deleteCaregiver: (index: number) => void;
 	export let linkedIndex: number;
 
-	let guardiantype = formData.type;
+	let caregivertype = formData.type;
 	let showtable = false;
 	let disabled = false;
 
 
-	const linkedGuardians = [
+	const linkedCaregivers = [
 		{
-			guardian_id: 0,
+			caregiver_id: '0',
 			firstName: 'Gideon',
 			lastName: 'Chua',
 			contactNo: '0912 123 1234',
 			relationship: ''
 		},
 		{
-			guardian_id: 0,
+			caregiver_id: '1',
 			firstName: 'Gabrielle',
 			lastName: 'Chua',
 			contactNo: '0912 123 1234',
 			relationship: ''
 		},
 		{
-			guardian_id: 0,
+			caregiver_id: '2',
 			firstName: 'Graciella',
 			lastName: 'Chua',
 			contactNo: '0912 123 1234',
 			relationship: ''
 		},
 		{
-			guardian_id: 0,
+			caregiver_id: '3',
 			firstName: 'Gian',
 			lastName: 'Chua',
 			contactNo: '0912 123 1234',
@@ -61,9 +61,9 @@
 
 			if (!incompleteFields && found) {
 				showtable = hasName || hasContact;
-				formData.infoLinked = [...linkedGuardians];
+				formData.infoLinked = [...linkedCaregivers];
 
-				// console.log(linkedGuardians.length)
+				// console.log(linkedCaregivers.length)
 				// console.log(formData.infoLinked.length)
 				// console.log(formData.infoLinked)
 			}
@@ -77,9 +77,9 @@
 	}
 	//
 	// /**
-	//  * watching for radio button changes, update the parent array's data type into the updated guardian type
+	//  * watching for radio button changes, update the parent array's data type into the updated caregiver type
 	//  */
-	// $: formData.type = guardiantype;
+	// $: formData.type = caregivertype;
 
 	/**
 	 * one member can only join one family, this will disable all the buttons so that they will be unable
@@ -88,9 +88,9 @@
 	$: disabled = (linkedIndex !== -1 && linkedIndex !== index);
 
 	$:
-	if (guardiantype != formData.type) {	// change only if there's a change in the form type selected
-		if (guardiantype === 'linked') {
-			// change formData into NewGuardian instead of LinkedGuardian data type
+	if (caregivertype != formData.type) {	// change only if there's a change in the form type selected
+		if (caregivertype === 'linked') {
+			// change formData into NewCaregiver instead of LinkedCaregiver data type
 			formData = {
 				type: 'linked',
 				firstName: formData.firstName,
@@ -101,12 +101,13 @@
 			errors = {
 				msg: ''
 			};
-		} else if (guardiantype === 'new') {
-			// change formData into LinkedGuardian instead of NewGuardian
+		} else if (caregivertype === 'new') {
+			// change formData into LinkedCaregiver instead of NewCaregiver
 			formData = {
 				type: 'new',
 				firstName: formData.firstName,
 				lastName: formData.lastName,
+				bday: '',
 				sex: '',
 				contactNo: formData.contactNo,
 				fbLink: '',
@@ -134,17 +135,18 @@
 
 <div class="collapse collapse-arrow" style="box-shadow: 0 4px 0 var(--border); border-radius:0px">
 	<input type="checkbox" checked/>
-	<h2 class="collapse-title font-semibold">Guardian {index + 1}</h2>
+	<h2 class="collapse-title font-semibold">Caregiver {index + 1}</h2>
 	<div class="collapse-content text-sm">
 		<div style="display: flex; flex-direction: row; margin-bottom: 1.5rem" >
-			<Radio label="First time" id={`firsttime-${index}`} value="new" name={`guardian-type-${index}`} bind:group={guardiantype} />
-			<Radio label="Existing family" id={`existing-${index}`} value="linked" name={`guardian-type-${index}`} bind:group={guardiantype} {disabled} />
+			<Radio label="First time" id={`firsttime-${index}`} value="new" name={`caregiver-type-${index}`} bind:group={caregivertype} />
+			<Radio label="Existing family" id={`existing-${index}`} value="linked" name={`caregiver-type-${index}`} bind:group={caregivertype} {disabled} />
 		</div>
 
 
-		{#if guardiantype === "new" }
+		{#if caregivertype === "new" }
 			<InputText label="First name" id={`first-name-${index}`} bind:value={formData.firstName} required msg={errors.firstName} />
 			<InputText label="Last name" id={`last-name-${index}`} bind:value={formData.lastName} required msg={errors.lastName} />
+			<InputText label="Birthday" id="bday" bind:value={formData.bday} type="date" />
 			<Select label="Sex" id={`sex-${index}`} options={["Male", "Female"]} required bind:value={formData.sex} msg={errors.sex} />
 			<InputText label="Contact No." id={`contact-no-${index}`} bind:value={formData.contactNo} required msg={errors.contactNo} />
 			<InputText label="Facebook Link" id={`fb-link-${index}`} bind:value={formData.fbLink} />
@@ -153,8 +155,16 @@
 			<Select label="Barangay" id={`brgy-${index}`} options={["Barangay 1", "Barangay 2"]} required bind:value={formData.brgy} msg={errors.brgy} />
 			<InputText label="Occupation" id={`occupation-${index}`} bind:value={formData.occupation} />
 			<InputText label="Relationship" id={`relationship-${index}`} bind:value={formData.relationship} />
+			<Select label="Community Group" id={`community-grp-${index}`} options={[
+								{ label: "Parent organization", value: 1 },
+								{ label: "School", value: 2 },
+								{ label: "PTA", value: 3 },
+								{ label: "Others", value: 4 }
+							]} bind:value={formData.communityGrp_id} />
+			<Select label="Income Generation" id={`income-${index}`} options={["Home-based", "Self-employed"]} bind:value={formData.income} />
 
-		{:else if guardiantype === "linked" }
+
+		{:else if caregivertype === "linked" }
 			<InputText label="First name" id={`first-name-${index}`} bind:value={formData.firstName} msg={errors.firstName} />
 			<InputText label="Last name" id={`last-name-${index}`} bind:value={formData.lastName} msg={errors.lastName} />
 			<div style="width:720px; text-align:center;" class="flex gap-4 items-center ml-6 mb-1">
@@ -207,7 +217,7 @@
 
 		<div class="input-container">
 		{#if index !== 0}
-			<button on:click={() => deleteGuardian(index)}>Delete</button>
+			<button on:click={() => deleteCaregiver(index)}>Delete</button>
 		{/if}</div>
 
 

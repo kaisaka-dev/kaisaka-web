@@ -282,7 +282,8 @@ export type Database = {
       }
       caregivers: {
         Row: {
-          contact_number: string
+          caregiver_group_id: number | null
+          contact_number: string | null
           email: string | null
           facebook_link: string | null
           id: string
@@ -291,7 +292,9 @@ export type Database = {
           occupation: string | null
         }
         Insert: {
-          contact_number: string
+
+          caregiver_group_id?: number | null
+          contact_number?: string | null
           email?: string | null
           facebook_link?: string | null
           id?: string
@@ -300,7 +303,9 @@ export type Database = {
           occupation?: string | null
         }
         Update: {
-          contact_number?: string
+
+          caregiver_group_id?: number | null
+          contact_number?: string | null
           email?: string | null
           facebook_link?: string | null
           id?: string
@@ -309,6 +314,13 @@ export type Database = {
           occupation?: string | null
         }
         Relationships: [
+          {
+            foreignKeyName: "caregivers_caregiver_group_id_fkey"
+            columns: ["caregiver_group_id"]
+            isOneToOne: false
+            referencedRelation: "caregiver_groups"
+            referencedColumns: ["id"]
+          },
           {
             foreignKeyName: "caregivers_income_id_fkey"
             columns: ["income_id"]
@@ -861,42 +873,6 @@ export type Database = {
           },
         ]
       }
-      permissions: {
-        Row: {
-          action: Database["public"]["Enums"]["actions"]
-          created_at: string
-          description: string
-          id: string
-          is_active: boolean
-          is_system: boolean
-          name: string
-          resource: Database["public"]["Enums"]["resources"]
-          updated_at: string
-        }
-        Insert: {
-          action: Database["public"]["Enums"]["actions"]
-          created_at?: string
-          description: string
-          id?: string
-          is_active?: boolean
-          is_system?: boolean
-          name: string
-          resource: Database["public"]["Enums"]["resources"]
-          updated_at?: string
-        }
-        Update: {
-          action?: Database["public"]["Enums"]["actions"]
-          created_at?: string
-          description?: string
-          id?: string
-          is_active?: boolean
-          is_system?: boolean
-          name?: string
-          resource?: Database["public"]["Enums"]["resources"]
-          updated_at?: string
-        }
-        Relationships: []
-      }
       pwd_ids: {
         Row: {
           expiry_date: string
@@ -1105,29 +1081,6 @@ export type Database = {
             columns: ["child_id"]
             isOneToOne: false
             referencedRelation: "children"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
-      user_roles: {
-        Row: {
-          role_id: string
-          user_id: string
-        }
-        Insert: {
-          role_id?: string
-          user_id?: string
-        }
-        Update: {
-          role_id?: string
-          user_id?: string
-        }
-        Relationships: [
-          {
-            foreignKeyName: "user_roles_role_id_fkey"
-            columns: ["role_id"]
-            isOneToOne: false
-            referencedRelation: "roles"
             referencedColumns: ["id"]
           },
         ]

@@ -9,9 +9,10 @@
 	export let value = "";
 	export let disabled = false;
 
+	export let margin = true;			// false if no margin, true if the default margin
 </script>
 
-<div class="input-container">
+<div class="input-container" class:no-margin={label === '' || !margin}>
 	<label for={id}>{label} {required ? " *" : ""}</label>
 
 	<div class="input-wrapper">

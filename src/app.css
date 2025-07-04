@@ -110,6 +110,10 @@ input,select,textarea {
     filter: invert(1);
 }
 
+.no-margin {    /* mainly for input */
+    margin-left: 0 !important;
+}
+
 
 label{
     display: inline-block;

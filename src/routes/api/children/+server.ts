@@ -24,9 +24,7 @@ export const POST: RequestHandler = async({request}) => {
     body.pwd_id, 
     body.disability_id, 
     body.disability_nature, 
-    body.remarks,
-    body.has_national_id,
-    body.has_vote
+    body.remarks
   )
 
   if (!inserted){

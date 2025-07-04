@@ -1,16 +1,21 @@
 <script lang="ts">
 
 	import Header from '../../../components/Header.svelte';
-	import GuardianForm from './GuardianForm.svelte';
+	import CaregiverForm from './CaregiverForm.svelte';
+	import { childFormData } from '$lib/stores/childForm.js';
+	import { get } from 'svelte/store';
 
+	const childRegData = get(childFormData)
+	console.log(childRegData);
 
 	/**
-	 * object type used to store information about a new guardian.
+	 * object type used to store information about a new caregiver.
 	 */
-	type NewGuardian = {
+	type NewCaregiver = {
 		type: 'new';
 		firstName: string;
 		lastName: string;
+		bday: string;
 		sex: string;
 		contactNo: string;
 		fbLink?: string;
@@ -19,12 +24,13 @@
 		brgy: string;
 		occupation: string;
 		relationship: string;
+		communityGrp_id: number;
 	};
 
 	/**
-	 * object type used to store information about a linked guardian
+	 * object type used to store information about a linked caregiver
 	 */
-	type LinkedGuardian = {
+	type LinkedCaregiver = {
 		// info about the search
 		type: 'linked';
 		firstName: string;
@@ -37,36 +43,37 @@
 	};
 
 	/**
-	 * object type used to store information about the searched guardian
+	 * object type used to store information about the searched caregiver
 	 */
 	type InfoLinked = {
-		guardian_id: number;
+		caregiver_id: string;
 		firstName: string;
 		lastName: string;
 		contactNo: string;
 		relationship: string;
 	}
 
-	type Guardian =
-		| NewGuardian
-		| LinkedGuardian;
+	type Caregiver =
+		| NewCaregiver
+		| LinkedCaregiver;
 
-	type GuardianError =
-		| {			// for new guardians
+	type CaregiverError =
+		| {			// for new caregivers
 		firstName: string;
 		lastName: string;
 		sex: string;
 		contactNo: string;
 		address: string;
 		brgy: string;
-	}				// for existing guardians
+	}				// for existing caregivers
 		| { msg: string };
 
-	let guardians = $state<Guardian[]>([
+	let caregivers = $state<Caregiver[]>([
 		{
 			type: 'new', // explicit discriminator
 			firstName: '',
 			lastName: '',
+			bday: '',
 			sex: '',
 			contactNo: '',
 			fbLink: '',
@@ -74,13 +81,14 @@
 			address: '',
 			brgy: '',
 			occupation: '',
-			relationship: ''
+			relationship: '',
+			communityGrp_id: -1
 		}
-	]); // initialize variable so that the page will have at least one guardian
+	]); // initialize variable so that the page will have at least one caregiver
 
-	let guardianErrors = $state<GuardianError[]>(
-		guardians.map((guardian) => {
-			return guardian.type === 'new'
+	let caregiverErrors = $state<CaregiverError[]>(
+		caregivers.map((caregiver) => {
+			return caregiver.type === 'new'
 				? {
 					firstName: '',
 					lastName: '',
@@ -93,13 +101,14 @@
 		})
 	);
 
-	function addNewGuardian() {
-		guardians = [
-			...guardians,
+	function addNewCaregiver() {
+		caregivers = [
+			...caregivers,
 			{
 				type: 'new',
 				firstName: '',
 				lastName: '',
+				bday: '',
 				sex: '',
 				contactNo: '',
 				fbLink: '',
@@ -107,12 +116,13 @@
 				address: '',
 				brgy: '',
 				occupation: '',
-				relationship: ''
+				relationship: '',
+				communityGrp_id: -1
 			}
 		];
 
-		guardianErrors = [
-			...guardianErrors,
+		caregiverErrors = [
+			...caregiverErrors,
 			{
 				firstName: '',
 				lastName: '',
@@ -128,43 +138,43 @@
 	 * deletes item from the array (reflected on the ui too)
 	 * @param index
 	 */
-	function deleteGuardian(index: number) {
-		guardians = guardians.filter((_, i) => i !== index);
-		guardianErrors = guardianErrors.filter((_, i) => i !== index);
+	function deleteCaregiver(index: number) {
+		caregivers = caregivers.filter((_, i) => i !== index);
+		caregiverErrors = caregiverErrors.filter((_, i) => i !== index);
 	}
 
 	/**
-	 * checks if a linked guardian exists
+	 * checks if a linked caregiver exists
 	 * returns the index if a family is linked
 	 * returns -1 if not
 	 */
-	let linkedIndex = $derived(guardians.findIndex(g => g.type === 'linked'));
+	let linkedIndex = $derived(caregivers.findIndex(g => g.type === 'linked'));
 
-	// // will re-run whenever `guardians` is changed
+	// // will re-run whenever `caregivers` is changed
 	// $effect(() =>
 	// {
 	// 	console.log("linkedindex variable: ", linkedIndex)
-	// 	console.log(guardians)
+	// 	console.log(caregivers)
 	// })
 
 	function validateForm(): boolean {
 		let isValid = true;
 
-		guardianErrors = guardians.map((guardian, index) => {
-			if (guardian.type === 'linked') {
-				if (!guardian.infoLinked || guardian.infoLinked.length === 0) {
+		caregiverErrors = caregivers.map((caregiver, index) => {
+			if (caregiver.type === 'linked') {
+				if (!caregiver.infoLinked || caregiver.infoLinked.length === 0) {
 					isValid = false;
 					return { msg: "Please have at least one family member" };
 				}
 				return { msg: '' };
 			} else {
 				const errors = {
-					firstName: !guardian.firstName.trim() ? 'Required' : '',
-					lastName: !guardian.lastName.trim() ? 'Required' : '',
-					sex: !guardian.sex ? 'Required' : '',
-					contactNo: !guardian.contactNo.trim() ? 'Required' : '',
-					address: !guardian.address.trim() ? 'Required' : '',
-					brgy: !guardian.brgy ? 'Required' : ''
+					firstName: !caregiver.firstName.trim() ? 'Required' : '',
+					lastName: !caregiver.lastName.trim() ? 'Required' : '',
+					sex: !caregiver.sex ? 'Required' : '',
+					contactNo: !caregiver.contactNo.trim() ? 'Required' : '',
+					address: !caregiver.address.trim() ? 'Required' : '',
+					brgy: !caregiver.brgy ? 'Required' : ''
 				};
 				if (Object.values(errors).some(msg => msg)) isValid = false;
 				return errors;
@@ -174,7 +184,69 @@
 		return isValid;
 	}
 
+	async function safeFetch<T = any>(url: string, payload: any): Promise<T> {
+		const res = await fetch(url, {
+			method: 'POST',
+			body: JSON.stringify(payload),
+			headers: { 'Content-Type': 'application/json' }
+		});
+		if (!res.ok) {
+			const error = await res.text();
+			throw new Error(`Failed to POST ${url}: ${error}`);
+		}
+		return await res.json();
+	}
 
+	async function handleSubmit() {
+		try {
+			if (!validateForm()) return;
+			// Insert address
+			const addressData = await safeFetch('/api/addresses', childRegData.address);
+			console.log(addressData.message)
+			childRegData.member!.address_id = addressData.data.id;
+
+			// Insert member
+			const memberData = await safeFetch('/api/members', childRegData.member);
+			console.log(memberData.message)
+			const memberId = memberData.data.id;
+
+			var pwdId = null;
+
+			//insert PWD ID
+			if(childRegData.pwd_id !== undefined){
+				const pwdIdData = await safeFetch('/api/pwd_ids', childRegData.pwd_id);
+				console.log(pwdIdData.message)
+				pwdId = pwdIdData.data.id;
+			}
+
+			// Insert child info
+			childRegData.child!.member_id = memberId;
+			childRegData.child!.pwd_id = pwdId;
+			const childData = await safeFetch('/api/children', childRegData.child);
+			console.log(childData.message)
+			const childId = childData.data.id;
+
+			// Insert education status
+			childRegData.education_status!.child_id = childId;
+			const eduStatusData = await safeFetch('/api/education_status', childRegData.education_status);
+			console.log(eduStatusData.message)
+
+			// Insert social protection status
+			childRegData.social_protection_status!.child_id = childId;
+			const socProtStatusData = await safeFetch('/api/social_protection_status', childRegData.social_protection_status);
+			console.log(socProtStatusData.message)
+
+			// Insert employment status
+			childRegData.employment_status!.member_id = memberId;
+			const empStatusData = await safeFetch('/api/employment_status', childRegData.employment_status);
+			console.log(empStatusData.message)
+			
+			console.log('All data successfully inserted!');
+		} catch (err) {
+			console.error('Submission failed:', err);
+		}
+
+    }
 </script>
 
 <Header category="members" page="children" />
@@ -182,22 +254,23 @@
 <section>
 	<h1>Family Information</h1>
 
-	{#each guardians as guardian, index (index + guardian.firstName + guardian.lastName + guardian.contactNo + guardian.type)}
-		<GuardianForm
-			bind:formData={guardians[index]}
-			errors={guardianErrors[index]}
+	{#each caregivers as caregiver, index (index + caregiver.firstName + caregiver.lastName + caregiver.contactNo + caregiver.type)}
+		<CaregiverForm
+			bind:formData={caregivers[index]}
+			errors={caregiverErrors[index]}
 			{index}
 			{linkedIndex}
-			deleteGuardian={deleteGuardian}
+			deleteCaregiver={deleteCaregiver}
 		/>
 	{/each}
 
 	<br>
-	<button id="guardian-1" onclick={addNewGuardian}>Add another guardian</button>
+	<button id="caregiver-1" onclick={addNewCaregiver}>Add another caregiver</button>
 
 </section>
 
 <section style="text-align: center;">
 	<button onclick={() => location.href = '/registration/child'}>Back</button>
-	<button class="green" onclick="{validateForm}">Submit</button>
+
+	<button class="green" onclick="{handleSubmit}">Submit</button>
 </section>
