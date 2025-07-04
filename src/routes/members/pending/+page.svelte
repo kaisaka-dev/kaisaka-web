@@ -12,14 +12,15 @@
         birthCert: string;
         brgyCert: string;
         interventionPlan: string;
+        link: string;
     };
 
     const pendingList: PendingDocument[] = [
-        { firstName: "Roan", lastName: "Campo", medCert: "❌", birthCert: "❌", brgyCert: "❌", interventionPlan: "❌" },
-        { firstName: "Paolo", lastName: "Rivera", medCert: "❌", birthCert: "❌", brgyCert: "❌", interventionPlan: "❌" },
-        { firstName: "Mariella Jeans", lastName: "Dellosa", medCert: "❌", birthCert: "✅", brgyCert: "✅", interventionPlan: "✅" },
-        { firstName: "Bea Antoinette", lastName: "Uy", medCert: "❌", birthCert: "❌", brgyCert: "✅", interventionPlan: "❌" },
-        { firstName: "Gideon", lastName: "Chua", medCert: "❌", birthCert: "❌", brgyCert: "❌", interventionPlan: "❌" }
+        { firstName: "Roan", lastName: "Campo", medCert: "❌", birthCert: "❌", brgyCert: "❌", interventionPlan: "❌", link: "/childProfile" },
+        { firstName: "Paolo", lastName: "Rivera", medCert: "❌", birthCert: "❌", brgyCert: "❌", interventionPlan: "❌", link: "/childProfile" },
+        { firstName: "Mariella Jeans", lastName: "Dellosa", medCert: "❌", birthCert: "✅", brgyCert: "✅", interventionPlan: "✅", link: "/childProfile" },
+        { firstName: "Bea Antoinette", lastName: "Uy", medCert: "❌", birthCert: "❌", brgyCert: "✅", interventionPlan: "❌", link: "/childProfile" },
+        { firstName: "Gideon", lastName: "Chua", medCert: "❌", birthCert: "❌", brgyCert: "❌", interventionPlan: "❌", link: "/childProfile" }
     ];
 
     let filteredData = $state(pendingList);
@@ -74,32 +75,32 @@
 <section id="main">
     <FilterSearch bind:searchedValue={filter.main}>
         <div slot="modal" class="pending-filters">
-            <InputText label="First name" id="first-name" bind:value={filter.firstName} />
-            <InputText label="Last name" id="last-name" bind:value={filter.lastName} />
+            <InputText label="First name" id="first-name" bind:value={filter.firstName} margin={false} />
+            <InputText label="Last name" id="last-name" bind:value={filter.lastName} margin={false} />
 
             <Select
               label="Medical Certificate"
               id="med-cert"
               options={documentStatusOptions}
-              bind:value={filter.medCert}
+              bind:value={filter.medCert} margin={false}
             />
             <Select
               label="Birth Certificate"
               id="birth-cert"
               options={documentStatusOptions}
-              bind:value={filter.birthCert}
+              bind:value={filter.birthCert} margin={false}
             />
             <Select
               label="Barangay Certificate"
               id="brgy-cert"
               options={documentStatusOptions}
-              bind:value={filter.brgyCert}
+              bind:value={filter.brgyCert} margin={false}
             />
             <Select
               label="Intervention Plan"
               id="intervention-plan"
               options={documentStatusOptions}
-              bind:value={filter.interventionPlan}
+              bind:value={filter.interventionPlan} margin={false}
             />
 
             <div id="reset" class="flex justify-end">
@@ -111,7 +112,7 @@
     <br>
     <Table
       data={filteredData}
-      headers={['First Name', 'Last Name', 'Med Cert', 'Birth Cert', 'Brgy Cert', 'Intervention Plan']}
       includedKeys={['firstName', 'lastName', 'medCert', 'birthCert', 'brgyCert', 'interventionPlan']}
+      hasLink={true}
     />
 </section>

@@ -5,21 +5,22 @@
     import InputText from '../../../components/input/InputText.svelte';
     import Select from '../../../components/input/Select.svelte';
 
-    type ChildrenList = {
+    type caregiverList = {
         firstName: string;
         lastName: string;
         contact: string;
+        link: string;
     };
 
-    const childrenList: ChildrenList[] = [
-        { firstName: "Roan", lastName: "Campo", contact: "0912 123 1234" },
-        { firstName: "Paolo", lastName: "Rivera", contact: "0912 123 1234" },
-        { firstName: "Mariella Jeans", lastName: "Dellosa", contact: "0912 123 1234" },
-        { firstName: "Bea Antoinette", lastName: "Uy", contact: "0912 123 1234" },
-        { firstName: "Gideon", lastName: "Chua", contact: "0912 123 1234" }
+    const caregiverList: caregiverList[] = [
+        { firstName: "Roan", lastName: "Campo", contact: "0912 123 1234", link: "/caregiverProfile"},
+        { firstName: "Paolo", lastName: "Rivera", contact: "0912 123 1234", link: "/caregiverProfile" },
+        { firstName: "Mariella Jeans", lastName: "Dellosa", contact: "0912 123 1234", link: "/caregiverProfile" },
+        { firstName: "Bea Antoinette", lastName: "Uy", contact: "0912 123 1234", link: "/caregiverProfile" },
+        { firstName: "Gideon", lastName: "Chua", contact: "0912 123 1234", link: "/caregiverProfile" }
     ];
 
-    let filteredData = $state(childrenList);
+    let filteredData = $state(caregiverList);
     let filter = $state({
         main: "",
         firstName: "",
@@ -32,7 +33,7 @@
     function applyFilter() {
         const search = filter.main?.toLowerCase();
 
-        filteredData = childrenList.filter(child => {
+        filteredData = caregiverList.filter(child => {
             const matchesMain = !search ||
               Object.values(child).some(val =>
                 String(val).toLowerCase().includes(search)
@@ -54,7 +55,7 @@
             lastName: "",
             contact: ""
         }
-        filteredData = childrenList;
+        filteredData = caregiverList;
     }
 </script>
 
@@ -77,5 +78,6 @@
     <Table
       data={filteredData}
       includedKeys={['firstName', 'lastName', 'contact']}
+      hasLink={true}
     />
 </section>
