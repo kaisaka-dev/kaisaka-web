@@ -21,7 +21,6 @@ export const POST: RequestHandler = async({request}) => {
     body.facebook_link !== undefined ? body.facebook_link: null, 
     body.email !== undefined ? body.email: null, 
     body.occupation !== undefined ? body.occupation: null,
-    body.remarks !== undefined ? body.remarks: null
   )
 
   if (!inserted){
@@ -74,14 +73,6 @@ export const PUT: RequestHandler = async({request}) => {
     const updated = await CaregiversModel.instance.updateOccupation(body.id, body.occupation)
     if (!updated) {
       throw error(500, 'Failed to update occupation')
-    }
-    hasUpdates = true
-  }
-
-  if (body.remarks !== undefined) {
-    const updated = await CaregiversModel.instance.updateRemarks(body.id, body.remarks)
-    if (!updated) {
-      throw error(500, 'Failed to update remarks')
     }
     hasUpdates = true
   }

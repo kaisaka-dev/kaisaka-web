@@ -9,14 +9,14 @@ export const POST: RequestHandler = async ({ request }) => {
     throw error(400, 'Invalid JSON format.')
   }
 
-  if (!body.caregiver || !body.child || !body.relationship) {
+  if (!body.caregiver || !body.child) {
     throw error(400, 'Missing required fields: caregiver, child, relationship')
   }
 
   const relationshipData = {
     caregiver: body.caregiver,
     child: body.child,
-    relationship: body.relationship
+    relationship: body.relationship !== undefined ? body.relationship : null
   };
 
   const inserted = await relationshipCCModel.instance.insertRelationship(relationshipData);
