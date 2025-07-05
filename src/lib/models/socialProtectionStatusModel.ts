@@ -17,7 +17,7 @@ export class socialProtectionStatusModel extends TableManager<"social_protection
    * @param child_id Child's UUID
    * @returns array of status records or null
    */
-  async findByChildId(child_id: string) {
+  async findByChildId(child_id: string): Promise<SocialProtectionStatusRow[] | null> {
     return this.findMany({ child_id });
   }
 
@@ -26,7 +26,7 @@ export class socialProtectionStatusModel extends TableManager<"social_protection
    * @param fam_year_accessed Year accessed of family life participation
    * @returns array of status records or null
    */
-  async findByFamYearAccessed(fam_year_accessed: number) {
+  async findByFamYearAccessed(fam_year_accessed: number): Promise<SocialProtectionStatusRow[] | null> {
     return this.findMany({ fam_year_accessed });
   }
 
@@ -35,7 +35,7 @@ export class socialProtectionStatusModel extends TableManager<"social_protection
    * @param comm_year_accessed Year accessed of family life participation
    * @returns array of status records or null
    */
-  async findByCommYearAccessed(comm_year_accessed: number) {
+  async findByCommYearAccessed(comm_year_accessed: number): Promise<SocialProtectionStatusRow[] | null> {
     return this.findMany({ comm_year_accessed });
   }
 
@@ -45,7 +45,7 @@ export class socialProtectionStatusModel extends TableManager<"social_protection
    * @param participates_community_club Boolean value
    * @returns array of status records or null
    */
-  async findByParticipatesCommunityClub(participates_community_club: boolean) {
+  async findByParticipatesCommunityClub(participates_community_club: boolean): Promise<SocialProtectionStatusRow[] | null> {
     return this.findMany({ participates_community_club });
   }
 
@@ -54,7 +54,7 @@ export class socialProtectionStatusModel extends TableManager<"social_protection
    * @param participates_family_life Boolean value
    * @returns array of status records or null
    */
-  async findByParticipatesFamilyLife(participates_family_life: boolean) {
+  async findByParticipatesFamilyLife(participates_family_life: boolean): Promise<SocialProtectionStatusRow[] | null> {
     return this.findMany({ participates_family_life });
   }
 
@@ -65,7 +65,7 @@ export class socialProtectionStatusModel extends TableManager<"social_protection
    */
   async insertStatus(
     statusData: Omit<SocialProtectionStatusRow, 'id' | 'date_created' | 'last_updated'>
-  ) {
+  ): Promise<SocialProtectionStatusRow | null> {
     const now = new Date().toISOString();
     const fullData: Partial<SocialProtectionStatusRow> = {
       ...statusData,

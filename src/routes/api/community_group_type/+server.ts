@@ -1,6 +1,20 @@
 import { CommunityGroupTypeModel } from "$lib/models/communityGroupTypeModel.js";
 import { error, json, type RequestHandler } from "@sveltejs/kit";
 
+export const GET: RequestHandler = async () => {
+  try {
+    const communityGroupTypes = await CommunityGroupTypeModel.instance.findMany();
+    
+    if (!communityGroupTypes) {
+      throw error(500, 'Failed to fetch community group types');
+    }
+    
+    return json(communityGroupTypes);
+  } catch {
+    throw error(500, 'Failed to fetch community group types');
+  }
+};
+
 export const POST: RequestHandler = async({request}) => {
   
   let body: any = {}

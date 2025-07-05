@@ -1,6 +1,20 @@
 import { IncomeTypeModel } from "$lib/models/incomeTypeModel.js";
 import { error, json, type RequestHandler } from "@sveltejs/kit";
 
+export const GET: RequestHandler = async () => {
+  try {
+    const items = await IncomeTypeModel.instance.findMany();
+    
+    if (!items) {
+      throw error(500, 'Failed to fetch income types');
+    }
+    
+    return json(items);
+  } catch {
+    throw error(500, 'Failed to fetch income types');
+  }
+};
+
 export const POST: RequestHandler = async({request}) => {
   
   let body: any = {}

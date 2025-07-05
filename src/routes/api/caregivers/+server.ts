@@ -1,6 +1,20 @@
 import { CaregiversModel } from "$lib/models/caregiversModel.js";
 import { error, json, type RequestHandler } from "@sveltejs/kit";
 
+export const GET: RequestHandler = async () => {
+  try {
+    const caregivers = await CaregiversModel.instance.findMany();
+    
+    if (!caregivers) {
+      throw error(500, 'Failed to fetch caregivers');
+    }
+    
+    return json(caregivers);
+  } catch {
+    throw error(500, 'Failed to fetch caregivers');
+  }
+};
+
 export const POST: RequestHandler = async({request}) => {
   
   let body: any = {}

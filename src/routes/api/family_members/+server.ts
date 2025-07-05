@@ -1,6 +1,20 @@
 import { FamilyMembersModel } from "$lib/models/FamilyMembersModel.js";
 import { error, json, type RequestHandler } from "@sveltejs/kit";
 
+export const GET: RequestHandler = async () => {
+  try {
+    const items = await FamilyMembersModel.instance.findMany();
+    
+    if (!items) {
+      throw error(500, 'Failed to fetch family members');
+    }
+    
+    return json(items);
+  } catch {
+    throw error(500, 'Failed to fetch family members');
+  }
+};
+
 export const POST: RequestHandler = async({request}) => {
   
   let body: any = {}

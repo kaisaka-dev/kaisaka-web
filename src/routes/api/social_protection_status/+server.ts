@@ -1,6 +1,20 @@
 import { socialProtectionStatusModel } from "$lib/models/socialProtectionStatusModel.js";
 import { error, json, type RequestHandler } from "@sveltejs/kit";
 
+export const GET: RequestHandler = async () => {
+  try {
+    const items = await socialProtectionStatusModel.instance.findMany();
+    
+    if (!items) {
+      throw error(500, 'Failed to fetch social protection statuses');
+    }
+    
+    return json(items);
+  } catch {
+    throw error(500, 'Failed to fetch social protection statuses');
+  }
+};
+
 export const POST: RequestHandler = async ({ request }) => {
   let body: any = {}
   try {

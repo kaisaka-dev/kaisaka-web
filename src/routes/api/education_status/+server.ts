@@ -1,6 +1,20 @@
 import { educationStatusModel } from "$lib/models/educationStatusModel.js";
 import { error, json, type RequestHandler } from "@sveltejs/kit";
 
+export const GET: RequestHandler = async () => {
+  try {
+    const educationStatuses = await educationStatusModel.instance.findMany();
+    
+    if (!educationStatuses) {
+      throw error(500, 'Failed to fetch education statuses');
+    }
+    
+    return json(educationStatuses);
+  } catch {
+    throw error(500, 'Failed to fetch education statuses');
+  }
+};
+
 export const POST: RequestHandler = async ({ request }) => {
   let body: any = {}
   try {

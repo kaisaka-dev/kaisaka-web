@@ -1,6 +1,20 @@
 import { MembershipAnnualRenewalModel } from "$lib/models/MemberShipAnnualRenewalModel.js";
 import { error, json, type RequestHandler } from "@sveltejs/kit";
 
+export const GET: RequestHandler = async () => {
+  try {
+    const items = await MembershipAnnualRenewalModel.instance.findMany();
+    
+    if (!items) {
+      throw error(500, 'Failed to fetch membership annual renewals');
+    }
+    
+    return json(items);
+  } catch {
+    throw error(500, 'Failed to fetch membership annual renewals');
+  }
+};
+
 export const POST: RequestHandler = async({request}) => {
   
   let body: any = {}

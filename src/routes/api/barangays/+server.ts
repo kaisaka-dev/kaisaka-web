@@ -2,6 +2,20 @@
 import { BarangayModel } from "$lib/models/barangaysModel.js";
 import { error, json, type RequestHandler } from "@sveltejs/kit";
 
+export const GET: RequestHandler = async () => {
+  try {
+    const barangays = await BarangayModel.instance.findMany();
+    
+    if (!barangays) {
+      throw error(500, 'Failed to fetch barangays');
+    }
+    
+    return json(barangays);
+  } catch {
+    throw error(500, 'Failed to fetch barangays');
+  }
+};
+
 export const POST: RequestHandler = async({request}) => {
   
   let body: any = {}

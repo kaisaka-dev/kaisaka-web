@@ -1,6 +1,20 @@
 import { CaregiverGroupsModel } from "$lib/models/caregiverGroupsModel.js";
 import { error, json, type RequestHandler } from "@sveltejs/kit";
 
+export const GET: RequestHandler = async () => {
+  try {
+    const caregiverGroups = await CaregiverGroupsModel.instance.findMany();
+    
+    if (!caregiverGroups) {
+      throw error(500, 'Failed to fetch caregiver groups');
+    }
+    
+    return json(caregiverGroups);
+  } catch {
+    throw error(500, 'Failed to fetch caregiver groups');
+  }
+};
+
 export const POST: RequestHandler = async({request}) => {
   
   let body: any = {}

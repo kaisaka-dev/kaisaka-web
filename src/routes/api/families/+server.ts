@@ -1,6 +1,20 @@
 import { FamiliesModel } from "$lib/models/familiesModel.js";
 import { error, json, type RequestHandler } from "@sveltejs/kit";
 
+export const GET: RequestHandler = async () => {
+  try {
+    const items = await FamiliesModel.instance.findMany();
+    
+    if (!items) {
+      throw error(500, 'Failed to fetch families');
+    }
+    
+    return json(items);
+  } catch {
+    throw error(500, 'Failed to fetch families');
+  }
+};
+
 export const POST: RequestHandler = async ({ request }) => {
   const inserted = await FamiliesModel.instance.createFamily();
 

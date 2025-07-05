@@ -1,6 +1,20 @@
 import { AttendanceLogModel } from "$lib/models/attendanceLogModel.js";
 import { error, json, type RequestHandler } from "@sveltejs/kit";
 
+export const GET: RequestHandler = async () => {
+  try {
+    const attendanceLogs = await AttendanceLogModel.instance.findMany();
+    
+    if (!attendanceLogs) {
+      throw error(500, 'Failed to fetch attendance logs');
+    }
+    
+    return json(attendanceLogs);
+  } catch {
+    throw error(500, 'Failed to fetch attendance logs');
+  }
+};
+
 export const POST: RequestHandler = async({request}) => {
   
   let body: any = {}

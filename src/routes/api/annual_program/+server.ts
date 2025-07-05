@@ -1,6 +1,20 @@
 import { annualProgramModel } from "$lib/models/annualProgramModel.js";
 import { error, json, type RequestHandler } from "@sveltejs/kit";
 
+export const GET: RequestHandler = async () => {
+  try {
+    const items = await annualProgramModel.instance.findMany();
+    
+    if (!items) {
+      throw error(500, 'Failed to fetch annual programs');
+    }
+    
+    return json(items);
+  } catch {
+    throw error(500, 'Failed to fetch annual programs');
+  }
+};
+
 export const POST: RequestHandler = async({request}) => {
   
   let body: any = {}

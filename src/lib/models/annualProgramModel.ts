@@ -17,7 +17,7 @@ export class annualProgramModel extends TableManager<"annual_program">('annual_p
    * @param start_year 
    * @returns array of programs or null
    */
-  async findByStartYear(start_year: number) {
+  async findByStartYear(start_year: number): Promise<AnnualProgramRow[] | null> {
     return this.findMany({ start_year });
   }
 
@@ -26,7 +26,7 @@ export class annualProgramModel extends TableManager<"annual_program">('annual_p
    * @param end_year 
    * @returns array of programs or null
    */
-  async findByEndYear(end_year: number) {
+  async findByEndYear(end_year: number): Promise<AnnualProgramRow[] | null> {
     return this.findMany({ end_year });
   }
 
@@ -35,7 +35,7 @@ export class annualProgramModel extends TableManager<"annual_program">('annual_p
    * @param target_new_cwds 
    * @returns array of programs or null
    */
-  async findByTargetCwds(target_new_cwds: number) {
+  async findByTargetCwds(target_new_cwds: number): Promise<AnnualProgramRow[] | null> {
     return this.findMany({ target_new_cwds });
   }
 
@@ -46,7 +46,7 @@ export class annualProgramModel extends TableManager<"annual_program">('annual_p
    */
   async insertAnnualProgram(
     programData: Omit<AnnualProgramRow, 'id' | 'date_created'>
-  ) {
+  ): Promise<AnnualProgramRow | null> {
     return this.insertOne(programData);
   }
 

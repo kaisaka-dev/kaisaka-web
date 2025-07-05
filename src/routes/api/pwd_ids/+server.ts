@@ -1,6 +1,20 @@
 import { pwdIdsModel } from "$lib/models/pwdIdsModel.js";
 import { error, json, type RequestHandler } from "@sveltejs/kit";
 
+export const GET: RequestHandler = async () => {
+  try {
+    const items = await pwdIdsModel.instance.findMany();
+    
+    if (!items) {
+      throw error(500, 'Failed to fetch PWD IDs');
+    }
+    
+    return json(items);
+  } catch {
+    throw error(500, 'Failed to fetch PWD IDs');
+  }
+};
+
 export const POST: RequestHandler = async ({ request }) => {
   let body: any = {}
   try {

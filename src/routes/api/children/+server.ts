@@ -1,6 +1,20 @@
 import { ChildrenModel } from "$lib/models/childrenModel.js";
 import { error, json, type RequestHandler } from "@sveltejs/kit";
 
+export const GET: RequestHandler = async () => {
+  try {
+    const children = await ChildrenModel.instance.findMany();
+    
+    if (!children) {
+      throw error(500, 'Failed to fetch children');
+    }
+    
+    return json(children);
+  } catch {
+    throw error(500, 'Failed to fetch children');
+  }
+};
+
 export const POST: RequestHandler = async({request}) => {
   
   let body: any = {}
