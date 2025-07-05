@@ -8,7 +8,7 @@
     import Header from '../../../components/Header.svelte'
     import Textarea from '../../../components/input/InputTextarea.svelte'
     import Textinput from '../../../components/input/InputText.svelte'
-    import Dateinput from '../../../components/input/InputDate.svelte'
+	import InputText from '../../../components/input/InputText.svelte';
     
 
     //below are sample data declarations just to test if the page works, will delete when relevant APIs are complete
@@ -184,21 +184,21 @@ function deleteEvent(name:string): void{
                     </div>
                     <div class ="information">
                         <div class = "min-w-30"> Barangay</div>
-                        <div class = "-mt-4"> <Select value = {sample.barangay} options = {["Whatever", "Works"]} /></div>
+                        <div class = "-mt-4 ml-7.5"> <Select value = {sample.barangay} options = {["Whatever", "Works"]} /></div>
                     </div>
                     <div class ="information !mt-10">
                         <div class = "min-w-50"> Date of Admission</div>
-                        <div class = "-mt-3 -ml-5"> <Dateinput msg = "Required"  value = {sample.dateAdmission.toISOString().split('T')[0]} label = ""/></div>
+                        <div class = "ml-5"> <InputText type = "date" msg = "Required"  value = {sample.dateAdmission.toISOString().split('T')[0]} label = ""/></div>
                     </div>
                      {#if sample.dateTermination!=null}
                     <div class ="information">
                         <div class = "min-w-50"> Date of Termination</div>
-                        <div class = "-mt-3 -ml-5"> <Dateinput  label = ""value ={sample.dateTermination.toISOString().split('T')[0]}  /></div>
+                        <div class = "ml-5"> <InputText type = "date"  label = ""value ={sample.dateTermination.toISOString().split('T')[0]}  /></div>
                     </div>
                     {:else}
                     <div class ="information">
                         <div class = "min-w-50"> Date of Termination</div>
-                        <div class = "-mt-3 -ml-5"> <Dateinput label = ""/></div>
+                        <div class = "ml-5"> <InputText type = "date" label = ""/></div>
                     </div>
                     {/if}
                     
@@ -265,11 +265,11 @@ function deleteEvent(name:string): void{
                                  <div class = "ml-5"> {year} </div>
                                 {#if paymentYears(sample.paymentHistory).includes(year)}
                                     <div class = "ml-10 mb-5">  P{sample.paymentHistory[paymentYears(sample.paymentHistory).indexOf(year)].amount} paid on {sample.paymentHistory[paymentYears(sample.paymentHistory).indexOf(year)].date.toISOString().split('T')[0]}  </div>
-                                    <Dateinput label = "" value = {sample.paymentHistory[paymentYears(sample.paymentHistory).indexOf(year)].date.toISOString().split('T')[0]} on:input = {e => sample.paymentHistory[paymentYears(sample.paymentHistory).indexOf(year)] = e.target.value}  />
+                                    <div class= "mt-2"> <InputText type = "date" label = "" value = {sample.paymentHistory[paymentYears(sample.paymentHistory).indexOf(year)].date.toISOString().split('T')[0]} on:input = {e => sample.paymentHistory[paymentYears(sample.paymentHistory).indexOf(year)] = e.target.value}  /> </div>
                                 {:else}
                                     <div class = "!text-red-500 mb-5 ml-21"> Payment Pending!</div>
-                                    <div class = "mb-10 mr-15">
-                                        <Dateinput label = "" on:input = {e => bindedDate = e.target.value}/>
+                                    <div class = "mb-10 mt-2">
+                                        <InputText type = "date" label = "" on:input = {e => bindedDate = e.target.value}/>
                                     </div>
                                 {/if}
                                 </div>
@@ -322,8 +322,8 @@ function deleteEvent(name:string): void{
                                 <option value = "Health"> Health</option>
                         </select>                           
                         {/if}
-                        <div class = "ml-15 -mt-3"> <Dateinput label = "" value = {event.date}/> </div>
-                        <div class = "-mt-2">
+                        <div class = "ml-15 mt-2"> <InputText type = "date" label = "" value = {event.date}/> </div>
+                        <div class = "-mt-1">
                             <button  class = "!bg-[var(--background)] !text-red-500 hover:!text-red-400 hover:!shadow-[var(--background)]"on:click = {()=>deleteEvent(event.name)} >
                              x
                             </button> 

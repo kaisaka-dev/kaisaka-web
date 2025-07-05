@@ -7,7 +7,7 @@
     import Header from '../../components/Header.svelte'
     import Textarea from '../../components/input/InputTextarea.svelte'
     import Textinput from '../../components/input/InputText.svelte'
-    import Dateinput from '../../components/input/InputDate.svelte'
+	import InputText from '../../components/input/InputText.svelte';
 
     //below are sample data declarations just to test if the page works, will delete when relevant APIs are complete
     let sampleFamily1: family = {
@@ -32,7 +32,7 @@
                 ]
     }
     let sample: caregiver = {firstName: 'Paolo', lastName: 'Rivera', contactNo: '09171275268',
-                 address:'Hacienda Royale', barangay:'Barangay 218', dateAdmission:new Date(2023,5, 16), remarks: 'Nothing Remarkable',
+                 address:'Hacienda Royale', barangay:'Barangay 218', dateAdmission:new Date(2023,5, 16), dateTermination: new Date(2024,5,12), remarks: 'Nothing Remarkable',
                  family: [sampleFamily1, sampleFamily2, sampleFamily3],
                  paymentHistory: [{amount:200, date: new Date(2024,1,5)}, {amount:200, date: new Date(2023, 4,10)}]
             }
@@ -44,7 +44,6 @@
 
     let today = new Date()
 
-    let famlength = sample.family.length
 
 //below are essential functions for the page to work
     function familyName(family:family): string {
@@ -110,7 +109,7 @@
                 <a class = "hover:!text-[var(--green)]" href = "#Event Info">Attendance </a>
             </div>
             <div>
-                <a href = "parentProfile/editParentProfile" class = "hover:!text-[var(--green)]">Edit Profile </a>
+                <a href = "caregiverProfile/editcaregiverProfile" class = "hover:!text-[var(--green)]">Edit Profile </a>
             </div>
         </div>
         <div class = "!bg-[var(--green)] w-[4px] h-[175px] rounded-full ml-5"></div> 
@@ -155,21 +154,21 @@
                         {/if}
                     </div>
                     <div class ="information !mt-10">
-                        <div class = "min-w-30"> Address</div>
+                        <div class = "w-30 min-w-30"> Address</div>
                         <div> <Textinput disabled value = {sample.address}/></div>
                     </div>
                     <div class ="information">
-                        <div class = "min-w-30"> Barangay</div>
+                        <div class = "w-30 min-w-30"> Barangay</div>
                         <div> <Textinput disabled value = {sample.barangay}/></div>
                     </div>
                     <div class ="information !mt-10">
                         <div class = "min-w-50"> Date of Admission</div>
-                        <div class = "-mt-3 -ml-5"> <Dateinput value = {sample.dateAdmission.toISOString().split('T')[0]} label = "" disabled/></div>
+                        <div class = "ml-5"> <InputText type = "date" value = {sample.dateAdmission.toISOString().split('T')[0]} label = "" disabled/></div>
                     </div>
                      {#if sample.dateTermination!=null}
                     <div class ="information">
                         <div class = "min-w-50"> Date of Termination</div>
-                        <div class = "-mt-3 -ml-5"> <Dateinput label = ""value ={sample.dateTermination.toISOString().split('T')[0]}  /></div>
+                        <div class = "ml-5"> <InputText type = "date" disabled label = ""value ={sample.dateTermination.toISOString().split('T')[0]}  /></div>
                     </div>
                     {/if}
                     

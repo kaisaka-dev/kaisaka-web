@@ -6,8 +6,8 @@
     import Input from '../../components/input/InputText.svelte'
     import TextArea from '../../components/input/InputTextarea.svelte'
     import Check from '../../components/input/Checkbox.svelte'
-    import DateInput from '../../components/input/InputDate.svelte'
     import Select from '../../components/input/Select.svelte'
+	import InputText from '../../components/input/InputText.svelte';
 
     //below are sample data declarations for the page to work, will delete when the relevant APIs are made
     let user: child = {
@@ -101,7 +101,7 @@
 
             <div class = "flex flex-row">
                 <div class = "ml-4 mt-3 w-40"> Birthday</div>
-                <div class = "mr-50"> <DateInput value = {user.birthday.toISOString().split('T')[0]} label = ""/> </div>
+                <div class = "mr-50"> <InputText type = "date" value = {user.birthday.toISOString().split('T')[0]} label = ""/> </div>
             </div>
 
             <div class = "flex flex-row">
@@ -142,12 +142,12 @@
 
             <div class = "flex flex-row mt-10">
                 <div class = "ml-4 mt-3 w-70"> Date of Admission</div>
-                <div> <DateInput label = "" value = {user.dateAdmission.toISOString().split('T')[0]}/> </div>
+                <div class = "mt-3"> <InputText type = "date" label = "" value = {user.dateAdmission.toISOString().split('T')[0]}/> </div>
             </div>
             {#if user.dateTermination != null}
             <div class = "flex flex-row">
                 <div class = "ml-4 mt-3 w-70"> Date of Termination</div>
-                <div> <DateInput label = "" value = {user.dateTermination.toISOString().split('T')[0]}/> </div>
+                <div class = "mt-3"> <InputText type = "date" label = "" value = {user.dateTermination.toISOString().split('T')[0]}/> </div>
             </div>
             {/if}
         </div>

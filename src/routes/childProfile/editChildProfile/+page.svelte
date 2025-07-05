@@ -9,7 +9,6 @@
     import Input from '../../../components/input/InputText.svelte'
     import TextArea from '../../../components/input/InputTextarea.svelte'
     import Check from '../../../components/input/Checkbox.svelte'
-    import DateInput from '../../../components/input/InputDate.svelte'
     import Select from '../../../components/input/Select.svelte'
     
     //below are sample data declarations for the sake of testing, will delete once APIs are created
@@ -154,7 +153,7 @@
 
             <div class = "flex flex-row">
                 <div class = "ml-4 mt-3 w-40"> Sex</div>
-                <div class = " mr-50"> <Select value = {user.sex} options = {["M","F"]}/> </div>
+                <div class = "ml-1"> <Select value = {user.sex} options = {["M","F"]}/> </div>
             </div>
 
             <div class = "flex flex-row">
@@ -169,7 +168,7 @@
 
             <div class = "flex flex-row">
                 <div class = "ml-4 mt-3 w-40"> Employment Status </div>
-                <div> <select id = "educstatus" class = "!mt-6 mr-5 w-81 rounded-md text-[var(--background)] mr-20"> 
+                <div> <select id = "educstatus" class = "!mt-6 w-81 rounded-md text-[var(--background)] mr-20"> 
                         <option selected value> Sheltered Workshop</option>
                         <option> Self Employed</option>
                         <option> Wage Employed </option>
@@ -190,12 +189,12 @@
 
             <div class = "flex flex-row mt-10">
                 <div class = "ml-4 mt-3 w-70"> Date of Admission</div>
-                <div> <DateInput label = "" value = {user.dateAdmission.toISOString().split('T')[0]}/> </div>
+                <div class = "mt-3"> <Input type = "date" label = "" value = {user.dateAdmission.toISOString().split('T')[0]}/> </div>
             </div>
 
             <div class = "flex flex-row">
                 <div class = "ml-4 mt-3 w-70"> Date of Termination</div>
-                <div> <DateInput label = "" value = "Date"/> </div>
+                <div class = "mt-3"> <Input type = "date" label = "" value = "Date"/> </div>
             </div>
         </div>
         
@@ -293,7 +292,7 @@
                    <Input label = "" value = {eventVar.name}/>
                 </div>
 
-                <div class = "ml-10">
+                <div class = "ml-10 mt-1">
                    <select id = "interventiontype1" class = "!mt-4 w-45 rounded-full text-[var(--background)]" > 
                     <option selected value = "education"> {eventVar.type} </option>
                     <option value = "livelihood"> LIVELIHOOD</option>
@@ -303,8 +302,8 @@
                     </select>
                 </div>
 
-                <div class = "ml-30 w-50">
-                   <DateInput label = "" value = {eventVar.date}/>
+                <div class = "ml-30 mt-5 w-50">
+                   <Input type = "date" label = "" value = {eventVar.date}/>
                 </div>
 
                 <div class = "!mt-1.5">
