@@ -3,7 +3,7 @@ import { error, json, type RequestHandler } from "@sveltejs/kit";
 
 export const GET: RequestHandler = async () => {
   try {
-    const items = await MembershipAnnualRenewalModel.instance.findMany();
+    const items = await MembershipAnnualRenewalModel.instance.getAll();
     
     if (!items) {
       throw error(500, 'Failed to fetch membership annual renewals');

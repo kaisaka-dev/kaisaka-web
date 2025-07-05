@@ -3,7 +3,7 @@ import { error, json, type RequestHandler } from "@sveltejs/kit";
 
 export const GET: RequestHandler = async () => {
   try {
-    const communityGroupTypes = await CommunityGroupTypeModel.instance.findMany();
+    const communityGroupTypes = await CommunityGroupTypeModel.instance.getAll();
     
     if (!communityGroupTypes) {
       throw error(500, 'Failed to fetch community group types');

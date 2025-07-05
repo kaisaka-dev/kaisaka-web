@@ -3,7 +3,7 @@ import { error, json, type RequestHandler } from "@sveltejs/kit";
 
 export const GET: RequestHandler = async () => {
   try {
-    const cities = await CitiesModel.instance.findMany();
+    const cities = await CitiesModel.instance.getAll();
     
     if (!cities) {
       throw error(500, 'Failed to fetch cities');

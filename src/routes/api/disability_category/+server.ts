@@ -3,7 +3,7 @@ import { error, json, type RequestHandler } from "@sveltejs/kit";
 
 export const GET: RequestHandler = async () => {
   try {
-    const disabilityCategories = await DisabilityCategoryModel.instance.findMany();
+    const disabilityCategories = await DisabilityCategoryModel.instance.getAll();
     
     if (!disabilityCategories) {
       throw error(500, 'Failed to fetch disability categories');

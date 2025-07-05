@@ -4,7 +4,7 @@ import { error, json, type RequestHandler } from "@sveltejs/kit";
 
 export const GET: RequestHandler = async () => {
   try {
-    const barangays = await BarangayModel.instance.findMany();
+    const barangays = await BarangayModel.instance.getAll();
     
     if (!barangays) {
       throw error(500, 'Failed to fetch barangays');
