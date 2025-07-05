@@ -1,20 +1,6 @@
 import { InterventionModel } from "$lib/models/interventionModel.js";
 import { error, json, type RequestHandler } from "@sveltejs/kit";
 
-export const GET: RequestHandler = async () => {
-  try {
-    const items = await InterventionModel.instance.findMany();
-    
-    if (!items) {
-      throw error(500, 'Failed to fetch interventions');
-    }
-    
-    return json(items);
-  } catch {
-    throw error(500, 'Failed to fetch interventions');
-  }
-};
-
 export const POST: RequestHandler = async ({ request }) => {
   let body: any = {}
   try {

@@ -2,20 +2,6 @@
 import { membersModel } from "$lib/models/membersModel.js";
 import { error, json, type RequestHandler } from "@sveltejs/kit";
 
-export const GET: RequestHandler = async () => {
-  try {
-    const items = await membersModel.instance.findMany();
-    
-    if (!items) {
-      throw error(500, 'Failed to fetch members');
-    }
-    
-    return json(items);
-  } catch {
-    throw error(500, 'Failed to fetch members');
-  }
-};
-
 // CREATE - Add new member
 export const POST: RequestHandler = async ({ request }) => {
   let body: any = {}

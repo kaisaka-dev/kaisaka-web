@@ -1,20 +1,6 @@
 import { ActivityModel } from "$lib/models/activityModel.js";
 import { error, json, type RequestHandler } from "@sveltejs/kit";
 
-export const GET: RequestHandler = async () => {
-  try {
-    const activities = await ActivityModel.instance.findMany();
-    
-    if (!activities) {
-      throw error(500, 'Failed to fetch activities');
-    }
-    
-    return json(activities);
-  } catch {
-    throw error(500, 'Failed to fetch activities');
-  }
-};
-
 export const POST: RequestHandler = async({request}) => {
   
   let body: any = {}

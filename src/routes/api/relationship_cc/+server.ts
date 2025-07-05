@@ -1,20 +1,6 @@
 import { relationshipCCModel } from "$lib/models/relationshipCCModel.js";
 import { error, json, type RequestHandler} from "@sveltejs/kit";
 
-export const GET: RequestHandler = async () => {
-  try {
-    const items = await relationshipCCModel.instance.findMany();
-    
-    if (!items) {
-      throw error(500, 'Failed to fetch caregiver-child relationships');
-    }
-    
-    return json(items);
-  } catch {
-    throw error(500, 'Failed to fetch caregiver-child relationships');
-  }
-};
-
 export const POST: RequestHandler = async ({ request }) => {
   let body: any = {}
   try {

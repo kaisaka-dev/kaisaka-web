@@ -1,20 +1,6 @@
 import { MajorTargetActivityModel } from "$lib/models/majorTargetActivityModel.js";
 import { error, json, type RequestHandler } from "@sveltejs/kit";
 
-export const GET: RequestHandler = async () => {
-  try {
-    const items = await MajorTargetActivityModel.instance.findMany();
-    
-    if (!items) {
-      throw error(500, 'Failed to fetch major target activities');
-    }
-    
-    return json(items);
-  } catch {
-    throw error(500, 'Failed to fetch major target activities');
-  }
-};
-
 export const POST: RequestHandler = async({request}) => {
   
   let body: any = {}

@@ -1,20 +1,6 @@
 import { AddressesModel } from "$lib/models/addressesModel.js"
 import { error, json, type RequestHandler } from "@sveltejs/kit";
 
-export const GET: RequestHandler = async () => {
-  try {
-    const addresses = await AddressesModel.instance.findMany();
-    
-    if (!addresses) {
-      throw error(500, 'Failed to fetch addresses');
-    }
-    
-    return json(addresses);
-  } catch {
-    throw error(500, 'Failed to fetch addresses');
-  }
-};
-
 export const POST: RequestHandler = async({request}) => {
 
   let body: any = {}

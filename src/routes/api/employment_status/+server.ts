@@ -1,20 +1,6 @@
 import { EmploymentStatusModel } from "$lib/models/employmentStatusModel.js"
 import { error, json, type RequestHandler } from "@sveltejs/kit";
 
-export const GET: RequestHandler = async () => {
-  try {
-    const items = await EmploymentStatusModel.instance.findMany();
-    
-    if (!items) {
-      throw error(500, 'Failed to fetch employment statuses');
-    }
-    
-    return json(items);
-  } catch {
-    throw error(500, 'Failed to fetch employment statuses');
-  }
-};
-
 export const POST: RequestHandler = async({request}) => {
 
   let body: any = {}
