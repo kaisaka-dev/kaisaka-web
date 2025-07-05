@@ -189,7 +189,7 @@ describe('educationStatusModel', () => {
         const mockUpdate = vi.fn().mockResolvedValue(true);
         (educationStatusModel.instance as any).updateOne = mockUpdate;
 
-        const result = await educationStatusModel.instance.updateGradeLevel(1, 11);
+        const result = await educationStatusModel.instance.updateGradeLevel(1, '11');
         expect(result).toBe(true);
     });
 
@@ -197,7 +197,7 @@ describe('educationStatusModel', () => {
         const mockUpdate = vi.fn().mockResolvedValue(false);
         (educationStatusModel.instance as any).updateOne = mockUpdate;
 
-        const result = await educationStatusModel.instance.updateGradeLevel(0, 11);
+        const result = await educationStatusModel.instance.updateGradeLevel(0, '11');
         expect(result).toBe(false);
     });
 
