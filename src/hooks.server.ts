@@ -62,10 +62,11 @@ const authGuard: Handle = async ({ event, resolve }) => {
     return resolve(event)
   }
   
-  if (!isPublic && !session) {
-    // Not authenticated and accessing a private route
-    throw redirect(303, '/');
-  }
+  // Remove once deployed
+  // if (!isPublic && !session) {
+  //   // Not authenticated and accessing a private route
+  //   throw redirect(303, '/');
+  // }
 
   return resolve(event)
 }
