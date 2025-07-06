@@ -1,9 +1,9 @@
 
-import type { LayoutLoad } from './$types'
+import type { LayoutLoad, LayoutLoadEvent } from './$types.js'
 import { createBrowserClient, createServerClient, isBrowser } from '@supabase/ssr'
 import { PUBLIC_SUPABASE_URL, PUBLIC_SUPABASE_ANON_KEY } from '$env/static/public'
 
-export const load: LayoutLoad = async ({ data, depends, fetch }) => {
+export const load: LayoutLoad = async ({ data, depends, fetch }: LayoutLoadEvent) => {
   depends('supabase:auth')
 
   const supabase = isBrowser()
@@ -32,5 +32,11 @@ export const load: LayoutLoad = async ({ data, depends, fetch }) => {
     data: { session },
   } = await supabase.auth.getSession()
 
-  return { supabase, session }
+  const {
+    data: { user },
+  } = await supabase.auth.getUser()
+
+  console.log(session, user)
+
+  return { session, supabase, user }
 }

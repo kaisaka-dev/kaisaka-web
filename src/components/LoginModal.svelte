@@ -1,6 +1,6 @@
 <script>
 	let { showModal = $bindable(), 
-		loginFunction, 
+		
 		header, 
 		children 
 	} = $props();
@@ -28,7 +28,6 @@
 		<!-- svelte-ignore a11y_autofocus -->
 		<div class="flex justify-center">
 		<button autofocus type="submit" onclick={() => {
-			loginFunction()
 			dialog.close()
 			}} 
         class = '!px-25 green hover:cursor-pointer'> Login </button>

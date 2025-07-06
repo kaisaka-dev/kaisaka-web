@@ -4,7 +4,6 @@ import { redirect, type Handle } from '@sveltejs/kit'
 import { sequence } from '@sveltejs/kit/hooks'
 
 export const supabase: Handle = async ({ event, resolve }) => {
-  
   event.locals.supabase = createServerClient(supabaseURL, supabaseAnonKey, {
     cookies: {
       getAll: () => event.cookies.getAll(),
@@ -20,26 +19,27 @@ export const supabase: Handle = async ({ event, resolve }) => {
       },
     },
   })
+
+
   /**
    * Unlike `supabase.auth.getSession()`, which returns the session _without_
    * validating the JWT, this function also calls `getUser()` to validate the
    * JWT before returning the session.
    */
   event.locals.safeGetSession = async () => {
-    const {
-      data: { session },
-    } = await event.locals.supabase.auth.getSession()
+    const { data: { session }, } = await event.locals.supabase.auth.getSession()
+    
     if (!session) {
       return { session: null, user: null }
     }
-    const {
-      data: { user },
-      error,
-    } = await event.locals.supabase.auth.getUser()
+
+    const { data: { user }, error } = await event.locals.supabase.auth.getUser()
+    
     if (error) {
       // JWT validation has failed
       return { session: null, user: null }
     }
+    
     return { session, user }
   }
   return resolve(event, {
@@ -47,6 +47,7 @@ export const supabase: Handle = async ({ event, resolve }) => {
       return name === 'content-range' || name === 'x-supabase-api-version'
     },
   })
+
 }
 
 const authGuard: Handle = async ({ event, resolve }) => {
@@ -54,21 +55,18 @@ const authGuard: Handle = async ({ event, resolve }) => {
   event.locals.session = session
   event.locals.user = user
 
-  const publicPaths = ['/', '/register/child', `/sign-up`];
+  const publicPaths = ['/', '/register/child', `/sign-up`, `/dashboard/profile`, '/?/login', '/auth/', '/auth/register', '/auth/login'];
   const isPublic = publicPaths.includes(event.url.pathname);
 
   if (isPublic) {
     return resolve(event)
   }
   
+  if (!isPublic && !session) {
+    // Not authenticated and accessing a private route
+    throw redirect(303, '/');
+  }
 
-  // if (!session && !isPublic) {
-  //   // Not authenticated and accessing a private route
-  //   throw redirect(303, '/');
-  // }
-
-
-  
   return resolve(event)
 }
 

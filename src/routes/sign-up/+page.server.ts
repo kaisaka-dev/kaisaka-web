@@ -1,6 +1,9 @@
 import { redirect, type Actions } from '@sveltejs/kit'
 import { z } from 'zod'
 
+export type ActionData = 
+  | { success: boolean, error: string }
+
 const registrationFormValidator = z.object({
   username: z.string({ 
       required_error: "Username is required", 
@@ -24,7 +27,7 @@ const registrationFormValidator = z.object({
 })
 
 export const actions = {
-  register: async (event) => {
+  register: async (event): Promise<ActionData> => {
     const formData = await event.request.formData()
     const formDataObject = {
       username: formData.get('username'),
@@ -42,17 +45,18 @@ export const actions = {
     const response = await event.fetch('/auth/register', {
         method: 'POST',
         body: JSON.stringify(formDataObject),
-
 		    headers: {
 			    'Content-Type': 'application/json',
         },
       }
     )
 
+    console.log(response)
+
     if (!response.ok) {
-      return redirect(303, `/sign-up?error=${encodeURIComponent(JSON.stringify(response.body))}`)
+      return redirect(303, `/sign-up?error=${encodeURIComponent(response.statusText)}`)
     }
 
-    
+    return redirect(303, `/sign-up?success=true`)
   }
 } satisfies Actions
