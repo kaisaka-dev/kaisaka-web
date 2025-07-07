@@ -48,7 +48,7 @@
 
         <!-- Submit -->
         <div style="text-align:center; margin-top: 3rem">
-            <button class="green" style="width:100%" type="submit">Sign-up</button>
+            <button class="green" style="width:100%" type="submit" onclick={location.href="/dashboard"}>Sign-up</button>
         </div>
     </form>
 </div>

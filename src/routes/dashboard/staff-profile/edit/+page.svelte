@@ -1,7 +1,7 @@
 <script lang="ts">
-    import Input from '../../../components/input/InputText.svelte'
-    import Header from '../../../components/Header.svelte'
-    import Select from '../../../components/input/Select.svelte'
+    import Input from '../../../../components/input/InputText.svelte'
+    import Header from '../../../../components/Header.svelte'
+    import Select from '../../../../components/input/Select.svelte'
     import type { staff } from '$lib/types/staff.js'
 	import { userEvent } from '@storybook/test';
 
@@ -88,7 +88,7 @@
 </div>
 
 <div class = "mt-5 ml-25 flex flex-row">
-    <button class =  "mr-5" type = "submit" onclick = {()=> location.href="/staffProfile"}> Back</button>
+    <button class =  "mr-5" type = "submit" onclick = {()=> location.href="/dashboard/staff-profile"}> Back</button>
     <button class = "!bg-[var(--green)]" onclick = {() => handleSubmit(testacc, testpass,confirmpass, testemail)}> Save Changes</button>
 
 </div>

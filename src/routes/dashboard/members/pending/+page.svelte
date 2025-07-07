@@ -1,9 +1,9 @@
 <script lang="ts">
-    import Header from "../../../components/Header.svelte";
-    import FilterSearch from "../../../components/styled-buttons/FilterSearch.svelte";
-    import Table from "../../../components/text/Table.svelte";
-    import InputText from '../../../components/input/InputText.svelte';
-    import Select from '../../../components/input/Select.svelte';
+    import Header from "../../../../components/Header.svelte";
+    import FilterSearch from "../../../../components/styled-buttons/FilterSearch.svelte";
+    import Table from "../../../../components/text/Table.svelte";
+    import InputText from '../../../../components/input/InputText.svelte';
+    import Select from '../../../../components/input/Select.svelte';
 
     type PendingDocument = {
         firstName: string;
@@ -16,11 +16,11 @@
     };
 
     const pendingList: PendingDocument[] = [
-        { firstName: "Roan", lastName: "Campo", medCert: "❌", birthCert: "❌", brgyCert: "❌", interventionPlan: "❌", link: "/childProfile" },
-        { firstName: "Paolo", lastName: "Rivera", medCert: "❌", birthCert: "❌", brgyCert: "❌", interventionPlan: "❌", link: "/childProfile" },
-        { firstName: "Mariella Jeans", lastName: "Dellosa", medCert: "❌", birthCert: "✅", brgyCert: "✅", interventionPlan: "✅", link: "/childProfile" },
-        { firstName: "Bea Antoinette", lastName: "Uy", medCert: "❌", birthCert: "❌", brgyCert: "✅", interventionPlan: "❌", link: "/childProfile" },
-        { firstName: "Gideon", lastName: "Chua", medCert: "❌", birthCert: "❌", brgyCert: "❌", interventionPlan: "❌", link: "/childProfile" }
+        { firstName: "Roan", lastName: "Campo", medCert: "❌", birthCert: "❌", brgyCert: "❌", interventionPlan: "❌", link: "/profile" },
+        { firstName: "Paolo", lastName: "Rivera", medCert: "❌", birthCert: "❌", brgyCert: "❌", interventionPlan: "❌", link: "/profile" },
+        { firstName: "Mariella Jeans", lastName: "Dellosa", medCert: "❌", birthCert: "✅", brgyCert: "✅", interventionPlan: "✅", link: "/profile" },
+        { firstName: "Bea Antoinette", lastName: "Uy", medCert: "❌", birthCert: "❌", brgyCert: "✅", interventionPlan: "❌", link: "/profile" },
+        { firstName: "Gideon", lastName: "Chua", medCert: "❌", birthCert: "❌", brgyCert: "❌", interventionPlan: "❌", link: "/profile" }
     ];
 
     let filteredData = $state(pendingList);

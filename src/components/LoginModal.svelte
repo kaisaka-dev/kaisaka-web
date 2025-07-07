@@ -28,8 +28,9 @@
 		<!-- svelte-ignore a11y_autofocus -->
 		<div class="flex justify-center">
 		<button autofocus type="submit" onclick={() => {
-			dialog.close()
-			}} 
+			window.location.href = '/dashboard'
+			// dialog.close()
+			}}
         class = '!px-25 green hover:cursor-pointer'> Login </button>
 		</div>
 	</div>

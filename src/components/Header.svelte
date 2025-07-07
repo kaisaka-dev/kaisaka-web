@@ -2,37 +2,36 @@
 <script>
     let logoimg = '/img/logo.png';
     let profileimg = '/img/Profile Icon.png';
-    export let category = "members";
-    export let page = "children";
+    export let category = "";
+    export let page = "";
 </script>
 
 <div id = "navbar" style="font-weight:bold; position: sticky">
     <img src = {logoimg} alt = "logo" id = "logo">
-    <a href="/home" id="home"> Home</a>
+    <a href="/dashboard" id="home"> Home</a>
 
     <div class="dropdown dropdown-hover">
         <div class="navlink" role="button" tabindex="-1">Members</div>
         <ul tabindex="-1" class="dropdown-content menu rounded-box z-1 w-52 p-2 shadow-sm !bg-[var(--header-color)]">
-            <li><a href="/members/children">Children</a></li>
-            <li><a href="/members/caregivers">Caregivers</a></li>
-            <li><a href="/members/families">Families</a></li>
-            <li><a href="/members/pending">Pending</a></li>
+            <li><a href="/dashboard/members/children">Children</a></li>
+            <li><a href="/dashboard/members/caregivers">Caregivers</a></li>
+            <li><a href="/dashboard/members/families">Families</a></li>
+            <li><a href="/dashboard/members/pending">Pending</a></li>
         </ul>
     </div>
 
     <div class="dropdown dropdown-hover">
         <div class="navlink" role="button" tabindex="-1">Events</div>
         <ul tabindex="-1" class="dropdown-content menu rounded-box z-1 w-52 p-2 shadow-sm !bg-[var(--header-color)]">
-            <li><a href="/events/target">Target Events</a></li>
-            <li><a href="/events/actual">Actual Events</a></li>
+            <li><a href="/dashboard/events/target">Target Events</a></li>
+            <li><a href="/dashboard/events/actual">Actual Events</a></li>
         </ul>
     </div>
 
     <div class="dropdown dropdown-hover">
         <div class="navlink" role="button" tabindex="-1">Reports</div>
         <ul tabindex="-1" class="dropdown-content menu rounded-box z-1 w-52 p-2 shadow-sm !bg-[var(--header-color)]">
-            <li><a href="/">Item</a></li>
-            <li><a href="/">Item</a></li>
+            <li><a href="/dashboard/reports/annual">Annual Report</a></li>
         </ul>
     </div>
 
@@ -40,7 +39,7 @@
         <div class="navlink" role="button" tabindex="-1"><img src = {profileimg} alt = "profile" style="height:50px;" /></div>
 
         <ul tabindex="-1" class="dropdown-content menu rounded-box z-1 w-52 p-2 shadow-sm !bg-[var(--header-color)]">
-            <li><a href="/profile">My Profile</a></li>
+            <li><a href="/dashboard/staff-profile">My Profile</a></li>
             <li><a href="/">Log Out</a></li>
         </ul>
     </div>
@@ -51,17 +50,17 @@
 <div id="subnav">
     {#if category === "members"}
         <ul>
-            <li class={page === "children" ? "active" : ""}><a href="/members/children">Children</a></li>
-            <li class={page === "caregivers" ? "active" : ""}><a href="/members/caregivers">Caregivers</a></li>
-            <li class={page === "families" ? "active" : ""}><a href="/members/families">Families</a></li>
-            <li class={page === "pending" ? "active" : ""}><a href="/members/pending">Pending</a></li>
+            <li class={page === "children" ? "active" : ""}><a href="/dashboard/members/children">Children</a></li>
+            <li class={page === "caregivers" ? "active" : ""}><a href="/dashboard/members/caregivers">Caregivers</a></li>
+            <li class={page === "families" ? "active" : ""}><a href="/dashboard/members/families">Families</a></li>
+            <li class={page === "pending" ? "active" : ""}><a href="/dashboard/members/pending">Pending</a></li>
         </ul>
     {/if}
 
     {#if category === "events"}
         <ul>
-            <li class={page === "target" ? "active" : ""}><a href="/members/target">Target</a></li>
-            <li class={page === "actual" ? "active" : ""}><a href="/members/actual">Actual</a></li>
+            <li class={page === "target" ? "active" : ""}><a href="/dashboard/events/target">Target</a></li>
+            <li class={page === "actual" ? "active" : ""}><a href="/dashboard/events/actual">Actual</a></li>
         </ul>
     {/if}
 </div>

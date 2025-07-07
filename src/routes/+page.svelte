@@ -14,7 +14,7 @@ import LoginModal from '../components/LoginModal.svelte'
   //function that closes the modal
   const handleClose = () => showModal = false
   const handleOpen = () => showModal = true
-  const gotoChildRegister = () => location.href = '/registration/child'
+  const gotoChildRegister = () => location.href = '/dashboard/registration/child'
   const handleLogout = async () => {
     const formData = new FormData()
     await fetch('/auth/logout', {
@@ -44,7 +44,7 @@ import LoginModal from '../components/LoginModal.svelte'
 
 <!--Below is the login modal code-->
 {#if !data.session}
-  <form method="POST" action="?/login" >
+<!--  <form method="POST" action="?/login" >-->
   <LoginModal bind:showModal>
     
     {#snippet header()}
@@ -68,7 +68,7 @@ import LoginModal from '../components/LoginModal.svelte'
     <!--BODY ENDS HERE-->
     
   </LoginModal>
-</form>
+<!--</form>-->
 {/if}
 
 

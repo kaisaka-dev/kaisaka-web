@@ -1,9 +1,9 @@
 <script lang="ts">
-    import Header from "../../../components/Header.svelte";
-    import FilterSearch from "../../../components/styled-buttons/FilterSearch.svelte";
-    import Table from "../../../components/text/Table.svelte";
-    import InputText from '../../../components/input/InputText.svelte';
-    import Select from '../../../components/input/Select.svelte';
+    import Header from "../../../../components/Header.svelte";
+    import FilterSearch from "../../../../components/styled-buttons/FilterSearch.svelte";
+    import Table from "../../../../components/text/Table.svelte";
+    import InputText from '../../../../components/input/InputText.svelte';
+    import Select from '../../../../components/input/Select.svelte';
 
     type caregiverList = {
         firstName: string;
@@ -13,11 +13,11 @@
     };
 
     const caregiverList: caregiverList[] = [
-        { firstName: "Roan", lastName: "Campo", contact: "0912 123 1234", link: "/caregiverProfile"},
-        { firstName: "Paolo", lastName: "Rivera", contact: "0912 123 1234", link: "/caregiverProfile" },
-        { firstName: "Mariella Jeans", lastName: "Dellosa", contact: "0912 123 1234", link: "/caregiverProfile" },
-        { firstName: "Bea Antoinette", lastName: "Uy", contact: "0912 123 1234", link: "/caregiverProfile" },
-        { firstName: "Gideon", lastName: "Chua", contact: "0912 123 1234", link: "/caregiverProfile" }
+        { firstName: "Roan", lastName: "Campo", contact: "0912 123 1234", link: "/dashboard/members/caregivers/profile"},
+        { firstName: "Paolo", lastName: "Rivera", contact: "0912 123 1234", link: "/dashboard/members/caregivers/profile" },
+        { firstName: "Mariella Jeans", lastName: "Dellosa", contact: "0912 123 1234", link: "/dashboard/members/caregivers/profile" },
+        { firstName: "Bea Antoinette", lastName: "Uy", contact: "0912 123 1234", link: "/dashboard/members/caregivers/profile" },
+        { firstName: "Gideon", lastName: "Chua", contact: "0912 123 1234", link: "/dashboard/members/caregivers/profile" }
     ];
 
     let filteredData = $state(caregiverList);

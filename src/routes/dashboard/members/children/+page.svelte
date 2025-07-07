@@ -1,9 +1,9 @@
 <script lang="ts">
-import Header from "../../../components/Header.svelte";
-import FilterSearch from "../../../components/styled-buttons/FilterSearch.svelte";
-import Table from "../../../components/text/Table.svelte";
-import InputText from '../../../components/input/InputText.svelte';
-import Select from '../../../components/input/Select.svelte';
+import Header from "../../../../components/Header.svelte";
+import FilterSearch from "../../../../components/styled-buttons/FilterSearch.svelte";
+import Table from "../../../../components/text/Table.svelte";
+import InputText from '../../../../components/input/InputText.svelte';
+import Select from '../../../../components/input/Select.svelte';
 
 
 
@@ -33,7 +33,7 @@ const childrenList: ChildrenList[] = [
         sex: "Male",
         school: "Special (Exclusive school, blind / deaf)",
         educationLevel: "Grade 10",
-        link: "/childProfile"
+        link: "/dashboard/members/children/profile"
     },
     {
         firstName: "Paolo",
@@ -45,7 +45,7 @@ const childrenList: ChildrenList[] = [
         sex: "Male",
         school: "Integrated / SPED classes",
         educationLevel: "Grade 11",
-        link: "/childProfile"
+        link: "/dashboard/members/children/profile"
     },
     {
         firstName: "Mariella Jeans",
@@ -57,7 +57,7 @@ const childrenList: ChildrenList[] = [
         sex: "Female",
         school: "Inclusive / General education",
         educationLevel: "Grade 12",
-        link: "/childProfile"
+        link: "/dashboard/members/children/profile"
     },
     {
         firstName: "Bea Antoinette",
@@ -69,7 +69,7 @@ const childrenList: ChildrenList[] = [
         sex: "Female",
         school: "Non-formal",
         educationLevel: "Vocational",
-        link: "/childProfile"
+        link: "/dashboard/members/children/profile"
     },
     {
         firstName: "Gideon",
@@ -81,7 +81,7 @@ const childrenList: ChildrenList[] = [
         sex: "Male",
         school: "Home program",
         educationLevel: "Basic Skills",
-        link: "/childProfile"
+        link: "/dashboard/members/children/profile"
     },
 ];
 
