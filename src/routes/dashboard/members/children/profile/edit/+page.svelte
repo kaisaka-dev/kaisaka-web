@@ -31,7 +31,7 @@
 
     let user: child = {
         firstName: "Juan", lastName: "De La Cruz", educationStatus: "Dropped Out", birthday: new Date(2011,2,3), sex: "M", address: "Sample Address",
-        barangay: "Barangay 721", employmentStatus: "Sheltered Workshop", disabilityCategory: "Mental", disabilityNature: "Schizophrenic", dateAdmission: new Date(2012, 9,11),
+        barangay: "Barangay 721", employmentStatus: "Sheltered Workshop", disabilityCategory: "sampleCategory", disabilityNature: "sampleNature", dateAdmission: new Date(2012, 9,11),
 
         family: {id: 1, members:[{role: "Caregiver", firstName:"Paolo", lastName: "Rivera"}, {role: "Child" , firstName: "Juan" , lastName:"De La Cruz"}]},
         eventAttendance:[{id: 1231, name: "Health event", type: "Health", date: new Date(2022,2,12).toISOString().split('T')[0]},
