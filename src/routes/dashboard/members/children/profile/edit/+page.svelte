@@ -98,7 +98,7 @@
         </div>
         <div>
             <button class = "green w-40 -ml-5 mt-10"  on:click={() => location.href="../profile"}>
-
+                Save Changes </button>
         </div>
     </div> 
     <div class = "!bg-[var(--green)] w-[4px] l-[100px] rounded-full ml-5"></div>
