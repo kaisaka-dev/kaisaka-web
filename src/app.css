@@ -20,12 +20,14 @@
     --small-text: 1rem;
     --medium-text: 1.25rem;
     --large-text: 1.75rem;
+
+    background-image: var(--background);
+    background-color: var(--background);
 }
 
-html, body {
+body {
     margin: 0;
     padding: 0;
-    background-color: var(--background);
 }
 
 * {
