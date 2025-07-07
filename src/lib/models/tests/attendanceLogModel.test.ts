@@ -49,7 +49,7 @@ describe('AttendanceLogModel', () => {
         expect(result).toEqual(sampleAttendanceLog);
     });
 
-    it('insertActivity should return null if insertion fails', async () => {
+    it('insertAttendanceLog should return null if insertion fails', async () => {
         const mockInsert = vi.fn().mockResolvedValue(null);
         (AttendanceLogModel.instance as any).insertOne = mockInsert;
 
