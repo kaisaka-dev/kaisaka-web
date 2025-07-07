@@ -219,7 +219,7 @@ function deleteEvent(name:string): void{
         <div class = "mt-10">
             <div id = "Family Info">
                 <h1 class = "!text-[var(--green)] font-[JSans]"> Families </h1>
-                <div class = "grid grid-cols-2 gap-5 mt-2" >
+                <div class = "grid grid-cols-2 gap-y-10 gap-x-50 mt-2" >
                 {#each sample.family as family}
                     <div class = "flex flex-col min-w-150 w-150">
                         <div class =  "!bg-[var(--green)] w-150 min-w-150 flex flex-row" >
