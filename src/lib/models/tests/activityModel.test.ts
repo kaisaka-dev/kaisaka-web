@@ -47,14 +47,14 @@ describe('ActivityModel', () => {
             '2025-04-01T00:00:00Z',
             'completed',
             'Indicator',
-            'Sucess',
+            'Success',
             'Remarkable'
         );
         expect(result).toEqual(sampleActivity);
     });
 
     it('insertActivity should return null if insertion fails', async () => {
-        const mockInsert = vi.fn().mockResolvedValue(sampleActivity);
+        const mockInsert = vi.fn().mockResolvedValue(null);
         (ActivityModel.instance as any).insertOne = mockInsert;
 
         const result = await ActivityModel.instance.insertActivity(
@@ -64,10 +64,10 @@ describe('ActivityModel', () => {
             '2025-04-01T00:00:00Z',
             'completed',
             'Indicator',
-            'Sucess',
+            'Success',
             'Remarkable'
         );
-        expect(result).toEqual(sampleActivity);
+        expect(result).toBeNull();
     });
 
 
@@ -215,7 +215,7 @@ describe('ActivityModel', () => {
         expect(result).toBe(true);
     });
 
-    it('updateName should return false if update fails', async () => {
+    it('updateOutcome should return false if update fails', async () => {
         const mockUpdate = vi.fn().mockResolvedValue(false);
         (ActivityModel.instance as any).updateOne = mockUpdate;
 
