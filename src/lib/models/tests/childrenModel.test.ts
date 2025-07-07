@@ -1,6 +1,6 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { ChildrenModel } from '$lib/models/childrenModel.js';
-import { supabase } from '$lib/types/client.js';
+import { supabase } from '$lib/types/supabase.js';
 
 // create mock of the supabase client so tests never directly interact with the database
 vi.mock('$lib/types/client', () => {

@@ -1,13 +1,13 @@
 <script lang="ts">
-    import InputText from '../../../components/input/InputText.svelte';
-    import Select from '../../../components/input/Select.svelte';
-    import Textarea from '../../../components/input/InputTextarea.svelte';
-    import Checkbox from '../../../components/input/Checkbox.svelte';
-    import Validation from '../../../components/text/Validation.svelte';
-    import Header from '../../../components/Header.svelte';
+    import InputText from '../../../../components/input/InputText.svelte';
+    import Select from '../../../../components/input/Select.svelte';
+    import Textarea from '../../../../components/input/InputTextarea.svelte';
+    import Checkbox from '../../../../components/input/Checkbox.svelte';
+    import Validation from '../../../../components/text/Validation.svelte';
+    import Header from '../../../../components/Header.svelte';
 
     
-    import { childFormData } from '../../../lib/stores/childForm.js';
+    import { childFormData } from '../../../../lib/stores/childForm.js';
     import { goto } from '$app/navigation';
 
     let firstName = "";
