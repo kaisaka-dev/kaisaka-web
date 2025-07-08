@@ -17,7 +17,7 @@ describe('CaregiverGroupsModel', () => {
 
   const sampleCaregiverGroup = {
     id: 1,
-    caregiver_id: 'Caregiver',
+    caregiver_id: 'uuid-caregiver',
     community_group_id: 2,
     date_joined: '2025-04-01T00:00:00Z',
     date_left: '2025-04-01T00:00:00Z'
@@ -28,12 +28,12 @@ describe('CaregiverGroupsModel', () => {
 
 
     // insertCaregiverGroup
-    it('insertCaregiverGroup should create and return a new activity record', async () => {
+    it('insertCaregiverGroup should create and return a new caregiver group record', async () => {
         const mockInsert = vi.fn().mockResolvedValue(sampleCaregiverGroup);
         (CaregiverGroupsModel.instance as any).insertOne = mockInsert;
 
         const result = await CaregiverGroupsModel.instance.insertCaregiverGroup(
-            'Caregiver',
+            'uuid-caregiver',
             2,
             '2025-04-01T00:00:00Z',
             '2025-04-01T00:00:00Z',
@@ -41,12 +41,12 @@ describe('CaregiverGroupsModel', () => {
         expect(result).toEqual(sampleCaregiverGroup);
     });
 
-    it('insertActivity should return null if insertion fails', async () => {
+    it('insertCaregiverGroup should return null if insertion fails', async () => {
         const mockInsert = vi.fn().mockResolvedValue(null);
         (CaregiverGroupsModel.instance as any).insertOne = mockInsert;
 
         const result = await CaregiverGroupsModel.instance.insertCaregiverGroup(
-            'Caregiver',
+            'uuid-caregiver',
             2,
             '2025-04-01T00:00:00Z',
             '2025-04-01T00:00:00Z',
@@ -81,7 +81,7 @@ describe('CaregiverGroupsModel', () => {
         const mockFindMany = vi.fn().mockResolvedValue([sampleCaregiverGroup]);
         (CaregiverGroupsModel.instance as any).findMany = mockFindMany;
 
-        const result = await CaregiverGroupsModel.instance.findByCaregiverId('Caregiver');
+        const result = await CaregiverGroupsModel.instance.findByCaregiverId('uuid-caregiver');
         expect(result).toEqual([sampleCaregiverGroup]);
     });
 
@@ -89,7 +89,7 @@ describe('CaregiverGroupsModel', () => {
         const mockFindMany = vi.fn().mockResolvedValue([]);
         (CaregiverGroupsModel.instance as any).findMany = mockFindMany;
 
-        const result = await CaregiverGroupsModel.instance.findByCaregiverId('Caregiver');
+        const result = await CaregiverGroupsModel.instance.findByCaregiverId('uuid-caregiver');
         expect(result).toEqual([]);
     });
 
@@ -97,7 +97,7 @@ describe('CaregiverGroupsModel', () => {
         const mockFindMany = vi.fn().mockResolvedValue(null);
         (CaregiverGroupsModel.instance as any).findMany = mockFindMany;
 
-        const result = await CaregiverGroupsModel.instance.findByCaregiverId('Caregiver');
+        const result = await CaregiverGroupsModel.instance.findByCaregiverId('uuid-caregiver');
         expect(result).toBeNull();
     });
 
@@ -276,7 +276,7 @@ describe('CaregiverGroupsModel', () => {
         const mockDelete = vi.fn().mockResolvedValue(true);
         (CaregiverGroupsModel.instance as any).deleteOne = mockDelete;
 
-        const result = await CaregiverGroupsModel.instance.deleteByCaregiverId('Caregiver');
+        const result = await CaregiverGroupsModel.instance.deleteByCaregiverId('uuid-caregiver');
         expect(result).toBe(true);
     });
 
@@ -284,7 +284,7 @@ describe('CaregiverGroupsModel', () => {
         const mockDelete = vi.fn().mockResolvedValue(null);
         (CaregiverGroupsModel.instance as any).deleteOne = mockDelete;
 
-        const result = await CaregiverGroupsModel.instance.deleteByCaregiverId('Caregiver');
+        const result = await CaregiverGroupsModel.instance.deleteByCaregiverId('uuid-caregiver');
         expect(result).toBe(false);
     }); 
 });
