@@ -9,6 +9,7 @@
     
     import { childFormData } from '../../../../lib/stores/childForm.js';
     import { goto } from '$app/navigation';
+    import MultiSelect from "../../../../components/input/MultiSelect.svelte";
 
     let firstName = "";
     let middleName = "";
@@ -141,11 +142,11 @@
         errors.sex = sex.trim() === "" ? "sex: field is required" : "";
         errors.address = address.trim() === "" ? "address: field is required" : "";
         errors.barangay = barangay === -1 ? "barangay: field is required" : "";
-        errors.disCategory = disCategory.trim() === "" ? "disCategory: field is required" : "";
-        errors.disNature = disNature.trim() === "" ? "disNature: field is required" : "";
-        errors.educType = educType.trim() === "" ? "educType: field is required" : "";
-        errors.educLvl = educLvl.trim() === "" ? "educLvl: field is required" : "";
-        errors.educStatus = educStatus.trim() === "" ? "educStatus: field is required" : "";
+        errors.disCategory = disCategory.trim() === "" ? "disability category: field is required" : "";
+        errors.disNature = disNature.trim() === "" ? "disability nature: field is required" : "";
+        errors.educType = educType.trim() === "" ? "education type: field is required" : "";
+        errors.educLvl = educLvl.trim() === "" ? "education level: field is required" : "";
+        errors.educStatus = educStatus.trim() === "" ? "education status: field is required" : "";
         // errors.admissionDate = admissionDate.trim() === "" ? "admission date: field is required" : "";
 
         // only check if the child has pwd id
@@ -230,7 +231,7 @@
 				: {})
             }));
 
-            goto('/registration/family-info');
+            goto('family-info');
             console.log("Form submitted")
         }
     }
@@ -257,7 +258,7 @@
         { label: "Barangay 2", value: 2 },
         { label: "Barangay 3", value: 3 }]} bind:value={barangay} required msg={errors.barangay}/>
     <Select label="Disability Category" id="dis-category" options={options_disCategory} bind:value={disCategory} required msg={errors.disCategory}/>
-    <Select label="Disability Nature" id="dis-nature" options={options_disNature} bind:value={disNature} required msg={errors.disNature}/>
+    <Textarea label="Disability Nature" id="dis-nature" bind:value={disNature} required />
 
     <Textarea label="Remarks" id="remarks" bind:value={remarks}/>
 

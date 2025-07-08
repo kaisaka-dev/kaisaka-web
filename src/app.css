@@ -16,6 +16,7 @@
     --border: lightgray;
     --text-color: rgb(59, 46, 40);
     --error-color: rgb(255,100,103);
+    --input-color: lightgray;
 
     --small-text: 1rem;
     --medium-text: 1.25rem;
@@ -99,6 +100,11 @@ input,select,textarea {
     height: 1.75rem;
     background-color: lightgray;
     color: var(--text-color);
+}
+
+input:focus, select:focus, textarea:focus {
+    outline: 0;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.2);
 }
 .input-container {
     margin:  0 0 0.3rem 2rem;

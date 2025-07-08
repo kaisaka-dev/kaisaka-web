@@ -1,6 +1,6 @@
 <script lang="ts">
 
-	import Header from '../../../components/Header.svelte';
+	import Header from '../../../../components/Header.svelte';
 	import CaregiverForm from './CaregiverForm.svelte';
 	import { childFormData } from '$lib/stores/childForm.js';
 	import { get } from 'svelte/store';
@@ -270,7 +270,7 @@
 </section>
 
 <section style="text-align: center;">
-	<button onclick={() => location.href = '/registration/child'}>Back</button>
+	<button onclick={() => location.href = 'child'}>Back</button>
 
 	<button class="green" onclick="{handleSubmit}">Submit</button>
 </section>
