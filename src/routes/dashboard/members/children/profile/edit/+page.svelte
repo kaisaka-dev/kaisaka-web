@@ -2,6 +2,7 @@
     import type { EventType } from '$lib/types/event.ts'
     import type { interventionType } from '$lib/types/intervention.ts'
     import type { child } from '$lib/types/child.ts'
+    import type { membershipFee  } from '$lib/types/membershipFee.js'
 
 
 
@@ -12,30 +13,17 @@
     import Select from '../../../../../../components/input/Select.svelte'
     
     //below are sample data declarations for the sake of testing, will delete once APIs are created
-    let events: EventType[] = [
-        {id: 1231, name: "Learning event", type: "Education", date: new Date(2004,2,12).toISOString().split('T')[0]},
-        {id: 12345, name: "Livelihood event", type: "Livelihood", date: new Date(2012,5, 16).toISOString().split('T')[0]}
-    ]
-
-    let interventions: interventionType[] = [
-        {id:1321123, name: "Learning Intervention" , type: "Education", 
-            status: [{status: "REGRESSED", date:new Date(2012,5, 16).toISOString().split('T')[0] }, {status: "IMPROVED" , date: new Date(2012,8, 25).toISOString().split('T')[0]} , {status: "REGRESSED" , date: new Date(2012,9, 25).toISOString().split('T')[0] }]
-        },
-
-        {id:1232132, name: "Livelihood Intervention" , type: "Livelihood", status:
-            [{status: "REGRESSED", date:new Date(2012,5, 16).toISOString().split('T')[0] }, {status: "REGRESSED" , date: new Date(2012,8, 25).toISOString().split('T')[0]}]
-        }
-    ]
-
-    let bindedDate = ""
-
     let user: child = {
         firstName: "Juan", lastName: "De La Cruz", educationStatus: "Dropped Out", birthday: new Date(2011,2,3), sex: "M", address: "Sample Address",
         barangay: "Barangay 721", employmentStatus: "Sheltered Workshop", disabilityCategory: "sampleCategory", disabilityNature: "sampleNature", dateAdmission: new Date(2012, 9,11),
 
-        family: {id: 1, members:[{role: "Caregiver", firstName:"Paolo", lastName: "Rivera"}, {role: "Child" , firstName: "Juan" , lastName:"De La Cruz"}]},
+        family: {id: 1, members:[{role: "Parent", firstName:"Paolo", lastName: "Rivera"}, {role: "Child" , firstName: "Juan" , lastName:"De La Cruz"},  {role: "Child" , firstName: "John" , lastName:"De La Cruz"}],
+                 dateCreated: new Date(2023,9,24), payments: [{amount: 200, date: new Date(2024,3,2)}, {amount:200, date: new Date(2025,4,2)}]
+                },
+    
         eventAttendance:[{id: 1231, name: "Health event", type: "Health", date: new Date(2022,2,12).toISOString().split('T')[0]},
                         {id: 12345, name: "Social event", type: "Social", date: new Date(2023,5, 16).toISOString().split('T')[0]}],
+
         PWD: false,
         PhilHealth: true,
         medCert: true,
@@ -47,12 +35,18 @@
             status: [{status: "REGRESSED", date:new Date(2012,5, 16).toISOString().split('T')[0] }, {status: "IMPROVED" , date: new Date(2012,8, 25).toISOString().split('T')[0]} , {status: "REGRESSED" , date: new Date(2012,9, 25).toISOString().split('T')[0] }]
         },
 
-        {id:1232132, name: "Livelihood Intervention" , type: "Livelihood", status:
+        {
+            id:1232132, name: "Livelihood Intervention" , type: "Livelihood", status:
             [{status: "REGRESSED", date:new Date(2012,5, 16).toISOString().split('T')[0] }, {status: "REGRESSED" , date: new Date(2012,8, 25).toISOString().split('T')[0]}]
         }
         ]
     }
 
+
+    let samplePayments: membershipFee[] = user.family.payments
+    let today = new Date();
+    let yearCounter: number[] = [];
+    let paymentYears: number[] = [];
 
     //below are essential functions for the page, will add on functionalities once APIs are created
     function setDate(date:string) {
@@ -61,11 +55,20 @@
 
 
     function deleteEvent(name:string): void{
-        events = events.filter((event) => event.name !== name)
+        user.eventAttendance = user.eventAttendance.filter((event) => event.name !== name)
     }
 
     function deleteIntervention(name:string): void {
-        interventions = interventions.filter((intervention) => intervention.name !== name)
+        user.interventionHistory = user.interventionHistory.filter((intervention) => intervention.name !== name)
+        console.log(user.interventionHistory)
+    }
+
+    for(let i = user.family.dateCreated.getFullYear(); i <= today.getFullYear(); i++) {
+        yearCounter.push(i)
+    }
+
+    for(let i = 0; i < user.family.payments.length; i++) {
+       paymentYears.push(user.family.payments[i].date.getFullYear())
     }
     
    
@@ -100,12 +103,17 @@
             <button class = "green w-40 -ml-5 mt-10"  on:click={() => location.href="../profile"}>
                 Save Changes </button>
         </div>
+
+         <div>
+            <button class = " w-40 -ml-5 mt-10"  on:click={() => location.href="../profile"}>
+                Back </button>
+        </div>
     </div> 
     <div class = "!bg-[var(--green)] w-[4px] l-[100px] rounded-full ml-5"></div>
 </div>
 
 <!-- PERSONAL INFORMATION SECTION BELOW-->
- <div class = "ml-22 -mt-70" id ="Personal Info">
+ <div class = "ml-22 -mt-95" id ="Personal Info">
     <h1 class = "!text-[var(--green)] font-[JSans] ml-33 mt-5 mb-2">
         Information
     </h1>
@@ -144,7 +152,7 @@
 
             <div class = "flex flex-row">
                 <div class = "ml-4 mt-3 w-40"> Birthday</div>
-                <div class = "mr-55 mt-2"> <input class = "w-80 rounded-s" type = "Date" value = { user.birthday.toISOString().split("T")[0]} on:input = {e => setDate(e.target.value) }/> </div>
+                <div class = "mr-55 mt-3"> <input class = "w-80 rounded-s" type = "Date" value = { user.birthday.toISOString().split("T")[0]} on:input = {e => setDate(e.target.value) }/> </div>
             </div>
 
             <div class = "flex flex-row">
@@ -167,6 +175,7 @@
                 <div class = "mt-3"> <Input value = {user.barangay}/> </div>
             </div>
 
+            {#if today.getFullYear() - user.birthday.getFullYear() > 18}
             <div class = "flex flex-row">
                 <div class = "ml-4 mt-3 w-40"> Employment Status </div>
                 <div> <select id = "educstatus" class = "!mt-6 w-81 rounded-md text-[var(--background)] mr-20"> 
@@ -176,11 +185,13 @@
                       </select>
                 </div>
             </div>
+            {/if}
 
 
             <div class = "flex flex-row mt-10">
                 <div class = "ml-4 mt-3 w-73"> Category of Disability</div>
-                <div class = "mt-4"> <Input value = {user.disabilityCategory}/> </div>
+                <div class = "ml-20"> <Select value = "Deaf/Hard of Hearing"
+                                      options = {["Deaf/Hard of Hearing", "Intellectual Disability", "Learning Disability", "Mental Disability", "Physical Disability", "Psychosocial Disability","Speech and Language Impairment", "Visual Disability", "Cancer" , "Rare Disease (RA10747)", "Multiple Disabilities"]}/> </div>
             </div>
 
             <div class = "flex flex-row">
@@ -201,7 +212,7 @@
         
         
         <div class = "flex flex-col ml-3"> 
-            <div class = "-ml-8"> <TextArea label = "Remarks" rows = 10/> </div>
+            <div class = "-ml-50"> <TextArea label = "Remarks" rows = 10/> </div>
         </div>
     </div>
 </div>
@@ -226,47 +237,45 @@
 <!--CONTAINER FOR FAMILY AND MEMBERSHIP INFORMATION-->
 <div class = "flex flex-row mt-10">
     <div class = "flex flex-col border-[var(--border)] border-4 ml-55 mr-10 p-6 w-125">
+        {#each user.family.members as family}
         <div class = "flex flex-row">
             <select id = "familyrole" class = "!mt-2 w-45 rounded-full text-[var(--background)] mr-20" > 
-                <option selected value = "caregiver"> Caregiver </option>
-                <option value = "child"> Child</option>
-            </select>
-            <div class = "!font-[JSans] mt-2"> <input class = "text" value = "Paolo Rivera"/> </div>
-        </div>
+                <option selected value = {family.role}> {family.role} </option>
+                {#if family.role === "Parent"}
+                <option value = "Child"> Child</option>
+                <option value = "Grandparent"> Grandparent</option>
+                <option value = "Caregiver"> Caregiver</option>
 
-        <div class = "flex flex-row">
-            <select id = "familyrole1" class = "!mt-2 w-45 rounded-full text-[var(--background)] mr-20" > 
-                <option selected value = "caregiver"> Caregiver </option>
-                <option value = "child"> Child</option>
+                {:else if family.role === "Child"}
+                <option value = "Parent"> Parent</option>
+                <option value = "Grandparent"> Grandparent</option>
+                <option value = "Caregiver"> Caregiver</option>
+                {:else if family.role === "Grandparent"}
+                <option value = "Parent"> Parent</option>
+                <option value = "Child"> Child</option>
+                <option value = "Caregiver"> Caregiver</option>
+                {:else}
+                <option value = "Parent"> Parent</option>
+                <option value = "Child"> Child</option>
+                <option value = "Grandparent"> Grandparent</option>
+                {/if}
             </select>
-            <div class = "!font-[JSans] mt-2"> <input class = "text" value = "Paolo Rivera"/> </div>
+            <div class = "!font-[JSans] mt-2"> <input class = "text" value = "{family.firstName} {family.lastName}"/> </div>
         </div>
-
-        <div class = "flex flex-row">
-            <select id = "familyrole2" class = "!mt-2 w-45 rounded-full text-[var(--background)] mr-20" > 
-                <option selected value = "caregiver"> Caregiver </option>
-                <option value = "child"> Child</option>
-            </select>
-            <div class = "!font-[JSans] mt-2"> <input class = "text" value = "Paolo Rivera"/> </div>
-        </div>
-
+        {/each}
     </div>
 
     <div class = "border-[var(--border)] border-4 p-6 flex flex-col" id ="Membership Info">
-        <div class = "flex flex-row">
-            <div class = 'mr-25 font-bold'> 2025 </div>
-            <div> Payment Made on DATE</div>
-        </div>
-
-         <div class = "flex flex-row mt-5">
-            <div class = 'mr-25 font-bold'> 2024 </div>
-            {#if !bindedDate}
-            <div class = "mr-10 w-60 !text-red-500">  Payment Pending! </div>
+            {#each yearCounter as year}
+            <div class = "flex flex-row mb-5">
+            <div class = 'mr-25 font-bold'> {year} </div>
+            {#if paymentYears.includes(year)}
+            <div class = " mb-5">  P{user.family.payments[paymentYears.indexOf(year)].amount} paid on {user.family.payments[paymentYears.indexOf(year)].date.toISOString().split('T')[0]}  </div>
             {:else}
-            <div class = "mr-10 w-60">  Payment Made On {bindedDate}</div>
+            <div class = "!text-red-500 mb-5"> Payment Pending!</div>
             {/if}
-            <input type = "Date" value = { bindedDate} on:input = {e => bindedDate =e.target.value }/>
-        </div>
+             </div>
+            {/each}
     </div>
 </div>
 <!--END OF FAMILY AND MEMBERSHIP INFORMATION-->
@@ -286,7 +295,7 @@
         </div>
 
         <div class = "border-[var(--border)] border-4 flex flex-col p-3 ">
-            {#each  events  as eventVar}
+            {#each  user.eventAttendance  as eventVar}
  
             <div class = "flex flex-row mb-10">
                 <div class = "w-75 ml-2 mt-4.5">
@@ -380,7 +389,7 @@
            <div class = "!text-[var(--background)] !font-bold ml-65">Intervention Name </div>
            <div class = "!text-[var(--background)] !font-bold ml-55">Status History </div>
         </div>
-        {#each interventions as interventionvar}
+        {#each user.interventionHistory as interventionvar}
             <div class = "flex flex-row mt-5">
                 <div class = "-mr-15">
                     <select id = "interventiontype1" class = "!mt-4 w-45 rounded-full text-[var(--background)] mr-20" > 
@@ -394,24 +403,24 @@
                    <Input value = {interventionvar.name}/>
                 </div>
                 <div class =  "collapse">
-                    <input type="checkbox" />
+                <input type = "checkbox" />
                     <div class = "collapse-title ml-21 flex flex-row">
-                        <div class = "z-1000 -mt-4">
+                        <div class = "-mt-4">
                             <select id = "status" class = "!mt-4 w-45 rounded-full text-[var(--background)] mr-20" > 
                             <option selected value = "improved"> {interventionvar.status[0].status} </option>
-                            <option value = "regressed"> REGRESSED</option>
+                            <option value = "regressed"> Regressed </option>
                             </select>
                         </div> 
                         <input type = "Date" class = "z-1000 mt-0.5" value = {interventionvar.status[0].date}/>
                     </div>
                     <div class = "collapse-content flex flex-col">
-                        {#each interventionvar.status.splice(1) as status}
+                        {#each interventionvar.status.slice(1) as status}
                             <div class= "flex flex-row">
                                 <div class = "mr-21"> </div>
                                 <div class = "z-1000 ">
                                 <select id = "status" class = "!mt-4 w-45 rounded-full text-[var(--background)] mr-20" > 
                                 <option selected value = "improved"> {status.status} </option>
-                                <option value = "regressed"> REGRESSED</option>
+                                <option value = "regressed"> Regressed</option>
                                 </select>
                                 </div> 
                                 <input type = "Date" class = "mt-3 z-1000" value = {status.date}/>

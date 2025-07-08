@@ -14,9 +14,13 @@
         firstName: "Juan", lastName: "De La Cruz", educationStatus: "Dropped Out", birthday: new Date(2011,2,3), sex: "M", address: "Sample Address",
         barangay: "Barangay 721", employmentStatus: "Sheltered Workshop", disabilityCategory: "sampleCategory", disabilityNature: "sampleNature", dateAdmission: new Date(2012, 9,11),
 
-        family: {id: 1, members:[{role: "Caregiver", firstName:"Paolo", lastName: "Rivera"}, {role: "Child" , firstName: "Juan" , lastName:"De La Cruz"}]},
+        family: {id: 1, members:[{role: "Parent", firstName:"Paolo", lastName: "Rivera"}, {role: "Child" , firstName: "Juan" , lastName:"De La Cruz"},  {role: "Child" , firstName: "John" , lastName:"De La Cruz"}],
+                 dateCreated: new Date(2023,9,24), payments: [{amount: 200, date: new Date(2024,3,2)}, {amount:200, date: new Date(2025,4,2)}]
+                },
+    
         eventAttendance:[{id: 1231, name: "Health event", type: "Health", date: new Date(2022,2,12).toISOString().split('T')[0]},
                         {id: 12345, name: "Social event", type: "Social", date: new Date(2023,5, 16).toISOString().split('T')[0]}],
+
         PWD: false,
         PhilHealth: true,
         medCert: true,
@@ -34,6 +38,21 @@
         ]
     }
     let today = new Date();
+    let yearCounter: number[] = [];
+    let paymentYears: number[] = []
+    //below are functions needed for the page
+
+    for(let i = user.family.dateCreated.getFullYear(); i <= today.getFullYear(); i++) {
+        yearCounter.push(i)
+    }
+
+    for(let i = 0; i < user.family.payments.length; i++) {
+       paymentYears.push(user.family.payments[i].date.getFullYear())
+    }
+
+
+
+
 </script>
 <Header/>
 
@@ -72,7 +91,7 @@
         Information
     </h1>
 </div>
-<div class = "border-[var(--border)] border-4 ml-55 mr-10 !font-bold z-2000" >
+<div class = "border-[var(--border)] border-4 ml-55 mr-10 !font-bold z-2000 w-225 min-w-225" >
     <div class = "!flex !flex-row !justify-start mt-2">
         <div class = "flex flex-col">
             <div class = "flex flex-row">
@@ -101,7 +120,7 @@
 
             <div class = "flex flex-row">
                 <div class = "ml-4 mt-3 w-40"> Birthday</div>
-                <div class = "mr-50"> <InputText type = "date" value = {user.birthday.toISOString().split('T')[0]} label = ""/> </div>
+                <div class = "mr-50 mt-3"> <InputText type = "date" value = {user.birthday.toISOString().split('T')[0]} label = ""/> </div>
             </div>
 
             <div class = "flex flex-row">
@@ -124,10 +143,12 @@
                 <div class = "mt-3"> <Input disabled value = {user.barangay}/> </div>
             </div>
 
+            {#if today.getFullYear() - user.birthday.getFullYear() > 18}
             <div class = "flex flex-row">
                 <div class = "ml-4 mt-3 w-40"> Employment Status </div>
                 <div class = "mt-7"> <Input value = {user.employmentStatus} disabled /> </div>
             </div>
+            {/if}
 
 
             <div class = "flex flex-row mt-10">
@@ -154,7 +175,7 @@
         
         
         <div class = "flex flex-col ml-3"> 
-            <div class = "-ml-8"> <TextArea disabled value = {user.remarks} label = "Remarks" rows = 10/> </div>
+            <div class = "-ml-45"> <TextArea disabled value = {user.remarks} label = "Remarks" rows = 10/> </div>
         </div>
     </div>
 </div>
@@ -183,24 +204,33 @@
         <div class = "flex flex-row mb-5">
             {#if fammember.role == "Caregiver"}
             <div class = "!bg-[var(--pink)] p-2 w-45 rounded-full text-center !font-bold !text-[var(--background)] mr-20" > Caregiver </div>
-            {:else}
-            <div class = "!bg-[var(--green)] p-2 w-45 rounded-full text-center !font-bold !text-[var(--background)] mr-20" > Child </div>
+            {:else if fammember.role === "Parent"}
+            <div class = "!bg-[var(--pink)] p-2 w-45 rounded-full text-center !font-bold !text-[var(--background)] mr-20" > Parent </div>
+            {:else if fammember.role === "Grandparent"}
+            <div class = "!bg-[var(--pink)] p-2 w-45 rounded-full text-center !font-bold !text-[var(--background)] mr-20" > Grandparent </div>
+            {:else if fammember.role == "Child"}
+                {#if fammember.firstName === user.firstName}
+                <div class = "!bg-[var(--green)] p-2 w-45 rounded-full text-center !font-bold !text-[var(--background)] mr-20" > Child </div>
+                {:else}
+                <div class = "!bg-[var(--green)] p-2 w-45 rounded-full text-center !font-bold !text-[var(--background)] mr-20" > Sibling </div>
+                {/if}
             {/if}
             <div class = "!font-[JSans] mt-2"> {fammember.firstName} {fammember.lastName}</div>
         </div>
         {/each}
     </div>
 
-    <div class = "border-[var(--border)] border-4 p-6 flex flex-col" id ="Membership Info">
-        <div class = "flex flex-row">
-            <div class = 'mr-25 font-bold'> 2025 </div>
-            <div> Payment Made on DATE</div>
+    <div class = "border-[var(--border)] border-4 p-4 flex flex-col" id ="Membership Info">
+        {#each yearCounter as year}
+        <div class = "flex flex-row mb-5">
+            <div class = 'mr-25 font-bold'> {year} </div>
+            {#if paymentYears.includes(year)}
+            <div class = " mb-5">  P{user.family.payments[paymentYears.indexOf(year)].amount} paid on {user.family.payments[paymentYears.indexOf(year)].date.toISOString().split('T')[0]}  </div>
+            {:else}
+            <div class = "!text-red-500 mb-5"> Payment Pending!</div>
+            {/if}
         </div>
-
-         <div class = "flex flex-row mt-5">
-            <div class = 'mr-25 font-bold'> 2024 </div>
-            <div class = "!text-red-500 "> Payment Pending</div>
-        </div>
+        {/each}
     </div>
 </div>
 <!--END OF FAMILY AND MEMBERSHIP INFORMATION-->
