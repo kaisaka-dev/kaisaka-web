@@ -9,7 +9,6 @@
     
     import { childFormData } from '../../../../lib/stores/childForm.js';
     import { goto } from '$app/navigation';
-    import MultiSelect from "../../../../components/input/MultiSelect.svelte";
 
     let firstName = "";
     let middleName = "";
@@ -17,7 +16,7 @@
     let birthday = "";
     let sex = "";
     let address = "";
-    let barangay = -1;
+    let barangay = "";
     let educType = "";
     let educStatus = "";
     let educLvl = "";
@@ -141,7 +140,7 @@
         errors.birthday = birthday.trim() === "" ? "birthday: field is required" : "";
         errors.sex = sex.trim() === "" ? "sex: field is required" : "";
         errors.address = address.trim() === "" ? "address: field is required" : "";
-        errors.barangay = barangay === -1 ? "barangay: field is required" : "";
+        errors.barangay = barangay === "" ? "barangay: field is required" : "";
         errors.disCategory = disCategory.trim() === "" ? "disability category: field is required" : "";
         errors.disNature = disNature.trim() === "" ? "disability nature: field is required" : "";
         errors.educType = educType.trim() === "" ? "education type: field is required" : "";
@@ -253,10 +252,7 @@
     <InputText label="Age" id="age" value={age} disabled />
     <Select label="Sex" id="sex" options={["Male", "Female", "Other"]} bind:value={sex} required msg={errors.sex}/>
     <InputText label="Address" id="address" bind:value={address} required msg={errors.address}/>
-    <Select label="Barangay" id="barangay" options={[
-        { label: "Barangay 1", value: 1 },
-        { label: "Barangay 2", value: 2 },
-        { label: "Barangay 3", value: 3 }]} bind:value={barangay} required msg={errors.barangay}/>
+    <InputText label="Barangay" id="barangay" bind:value={barangay} required msg={errors.barangay}/>
     <Select label="Disability Category" id="dis-category" options={options_disCategory} bind:value={disCategory} required msg={errors.disCategory}/>
     <Textarea label="Disability Nature" id="dis-nature" bind:value={disNature} required />
 
