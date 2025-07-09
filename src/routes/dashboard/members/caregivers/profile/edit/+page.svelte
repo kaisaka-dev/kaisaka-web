@@ -13,7 +13,7 @@
 
     //below are sample data declarations just to test if the page works, will delete when relevant APIs are complete
     let sampleFamily1: family = {
-        members: [{firstName: "Juan", lastName: "De La Cruz", role: "Caregiver"},
+        members: [{firstName: "Juan", lastName: "De La Cruz", role: "Parent"},
                   {firstName: "Sample2", lastName: "Name1", role: "Child"},
                   {firstName: "Paolo", lastName: "Rivera", role: "Caregiver"}
                 ]
@@ -29,7 +29,7 @@
     let sampleFamily3: family = {
          members: [{firstName: "Sample71", lastName: "Name692", role: "Child"},
                   {firstName: "Sample2123", lastName: "Name692", role: "Child"},
-                  {firstName: "Paolo", lastName: "Rivera", role: "Caregiver"},
+                  {firstName: "Paolo", lastName: "Rivera", role: "Grandparent"},
                   {firstName: "Another", lastName: "Caregiver!", role: "Caregiver"}
                 ]
     }
@@ -40,8 +40,8 @@
             }
 
     let events: EventType[] = [
-        {id: 1231, name: "Health event", type: "Health", date: new Date(2022,2,12).toISOString().split('T')[0]},
-        {id: 12345, name: "Social event", type: "Social", date: new Date(2023,5, 16).toISOString().split('T')[0]}
+        {id: 1231, name: "Health event", type: "Training", date: new Date(2022,2,12).toISOString().split('T')[0]},
+        {id: 12345, name: "Social event", type: "FGD", date: new Date(2023,5, 16).toISOString().split('T')[0]}
     ]
 
     let today = new Date()
@@ -237,12 +237,31 @@ function deleteEvent(name:string): void{
                                 <select id = "familyrole2" class = "!mt-2 w-45 rounded-full text-[var(--background)] mr-20" > 
                                 <option selected value = "caregiver"> Caregiver </option>
                                 <option value = "child"> Child</option>
-                                 </select>
+                                <option value = "parent"> Parent</option>
+                                <option value = "grandparent"> Grandparent</option>
+                                </select>
                                 {:else if member.role == "Child"}
                                 <select id = "familyrole2" class = "!mt-2 w-45 rounded-full text-[var(--background)] mr-20" > 
                                 <option selected value = "child"> Child </option>
                                 <option value = "caregiver"> Caregiver</option>
+                                <option value = "parent"> Parent</option>
+
+                                <option value = "grandparent"> Grandparent</option>
                                 </select>
+                                {:else if member.role == "Grandparent"}
+                                <select id = "familyrole2" class = "!mt-2 w-45 rounded-full text-[var(--background)] mr-20" > 
+                                <option selected value = "grandparent"> Grandparent </option>
+                                <option value = "caregiver"> Caregiver</option>
+                                <option value = "parent"> Parent</option>
+                                <option value = "child"> Child</option>
+                                </select>
+                                {:else if member.role == "Parent"}
+                                <select id = "familyrole2" class = "!mt-2 w-45 rounded-full text-[var(--background)] mr-20" > 
+                                <option selected value = "parent"> Parent </option>
+                                <option value = "caregiver"> Caregiver</option>
+                                <option value = "grandparent"> Grandparent</option>
+                                <option value = "child"> Child</option>
+                                </select>   
                                 {/if}
                                 <div class = "mt-2 ml-12 w-100"> {member.firstName} {member.lastName}</div>
 
@@ -286,41 +305,41 @@ function deleteEvent(name:string): void{
         <div class = "mt-10" id = "Event Info">
             <h1 class = "!text-[var(--green)] mb-2"> Training and Attendance </h1>
             <div class = "!bg-[var(--green)] p-3 w-255 min-w-255">
-               <span class = "!text-white mr-55" >Event Name </span> 
-               <span class = "!text-white mr-34" >Event Type </span>
+               <span class = "!text-white mr-55" >Training Name </span> 
+               <span class = "!text-white mr-34" >Training Type </span>
                <span class = "!text-white" >Date Attended </span>  
             </div>
             <div class = "w-255  min-w-255 flex flex-col border-[var(--border)] border-4">
                 {#each events as event}
                     <div class = "flex flex-row mb-5 mt-6">
                         <div class = "ml-2 mt-1.5 w-50"> <Textinput label = "" value = {event.name}/></div>
-                        {#if event.type === "Education"}
+                        {#if event.type === "Training"}
                         <select id = "familyrole2" class = "!mt-2 w-45 rounded-full text-[var(--background)] ml-30" > 
-                                <option selected value = "Education"> {event.type} </option>
-                                <option value = "Education"> Education</option>
-                                <option value = "Health"> Health</option>
-                                <option value = "Social"> Social</option>
+                                <option selected value = "Training"> {event.type} </option>
+                                <option value = "FGD"> FGD</option>
+                                <option value = "Workshop"> Workshop</option>
+                                <option value = "Other"> Other</option>
                         </select>                        
-                        {:else if event.type === "Livelihood"}
+                        {:else if event.type === "FGD"}
                         <select id = "familyrole2" class = "!mt-2 w-45 rounded-full text-[var(--background)] ml-30" > 
-                                <option selected value = "Livelihood"> {event.type} </option>
-                                <option value = "Education"> Education</option>
-                                <option value = "Health"> Health</option>
-                                <option value = "Social"> Social</option>
+                                <option selected value = "FGD"> {event.type} </option>
+                                <option value = "Workshop"> Workshop</option>
+                                <option value = "Training"> Training</option>
+                                <option value = "Other"> Other</option>
                         </select>
-                        {:else if event.type === "Health"}
+                        {:else if event.type === "Workshop"}
                         <select id = "familyrole2" class = "!mt-2 w-45 rounded-full text-[var(--background)] ml-30" > 
-                                <option selected value = "Health"> {event.type} </option>
-                                <option value = "Livelihood"> Livelihood</option>
-                                <option value = "Education"> Education</option>
-                                <option value = "Social"> Social</option>
+                                <option selected value = "Workshop"> {event.type} </option>
+                                <option value = "FGD"> FGD</option>
+                                <option value = "Training"> Training</option>
+                                <option value = "Other"> Other</option>
                         </select>                          
                         {:else}
                         <select id = "familyrole2" class = "!mt-2 w-45 rounded-full text-[var(--background)] ml-30" > 
-                                <option selected value = "Social"> {event.type} </option>
-                                <option value = "Livelihood"> Livelihood</option>
-                                <option value = "Education"> Education</option>
-                                <option value = "Health"> Health</option>
+                                <option selected value = "Other"> {event.type} </option>
+                                <option value = "Workshop"> Workshop</option>
+                                <option value = "Training"> Training</option>
+                                <option value = "FGD"> FGD </option>
                         </select>                           
                         {/if}
                         <div class = "ml-15 mt-2"> <InputText type = "date" label = "" value = {event.date}/> </div>

@@ -12,7 +12,7 @@
     //below are sample data declarations for the page to work, will delete when the relevant APIs are made
     let user: child = {
         firstName: "Juan", lastName: "De La Cruz", educationStatus: "Dropped Out", birthday: new Date(2011,2,3), sex: "M", address: "Sample Address",
-        barangay: "Barangay 721", employmentStatus: "Sheltered Workshop", disabilityCategory: "sampleCategory", disabilityNature: "sampleNature", dateAdmission: new Date(2012, 9,11),
+        barangay: "Barangay 721", employmentStatus: "Sheltered Workshop", disabilityCategory: "sampleCategory", disabilityNature: "sampleNature", dateAdmission: new Date(2012, 9,11), education: "Home Program",
 
         family: {id: 1, members:[{role: "Parent", firstName:"Paolo", lastName: "Rivera"}, {role: "Child" , firstName: "Juan" , lastName:"De La Cruz"},  {role: "Child" , firstName: "John" , lastName:"De La Cruz"}],
                  dateCreated: new Date(2023,9,24), payments: [{amount: 200, date: new Date(2024,3,2)}, {amount:200, date: new Date(2025,4,2)}]
@@ -40,6 +40,8 @@
     let today = new Date();
     let yearCounter: number[] = [];
     let paymentYears: number[] = []
+
+
     //below are functions needed for the page
 
     for(let i = user.family.dateCreated.getFullYear(); i <= today.getFullYear(); i++) {
@@ -107,9 +109,9 @@
             <div class = "flex flex-row">
                 <div class = "ml-4 mt-3 w-40"> Education </div>
                 {#if user.education == null}
-                <div class = "mt-5"> <Input value = "N/A" disabled/> </div>
+                <div class = "mt-3"> <Input value = "N/A" disabled/> </div>
                 {:else}
-                <div class = "mt-5"> <Input value = {user.education} disabled/> </div>
+                <div class = "mt-3"> <Input value = {user.education} disabled/> </div>
                 {/if}            
             </div>
 

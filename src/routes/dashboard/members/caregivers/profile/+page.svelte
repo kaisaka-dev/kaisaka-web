@@ -11,14 +11,14 @@
 
     //below are sample data declarations just to test if the page works, will delete when relevant APIs are complete
     let sampleFamily1: family = {
-        members: [{firstName: "Juan", lastName: "De La Cruz", role: "Caregiver"},
+        members: [{firstName: "Juan", lastName: "De La Cruz", role: "Grandparent"},
                   {firstName: "Sample2", lastName: "Name1", role: "Child"},
                   {firstName: "Paolo", lastName: "Rivera", role: "Caregiver"}
                 ]
     }
 
     let sampleFamily2: family = {
-         members: [{firstName: "Sample25", lastName: "Name112", role: "Child"},
+         members: [{firstName: "Sample25", lastName: "Name112", role: "Parent"},
                   {firstName: "Sample2123", lastName: "Name2311", role: "Child"},
                   {firstName: "Paolo", lastName: "Rivera", role: "Caregiver"}
                 ]
@@ -28,7 +28,7 @@
          members: [{firstName: "Sample71", lastName: "Name692", role: "Child"},
                   {firstName: "Sample2123", lastName: "Name692", role: "Child"},
                   {firstName: "Paolo", lastName: "Rivera", role: "Caregiver"},
-                  {firstName: "Another", lastName: "Caregiver!", role: "Caregiver"}
+                  {firstName: "Another", lastName: "Caregiver!", role: "Parent"}
                 ]
     }
     let sample: caregiver = {firstName: 'Paolo', lastName: 'Rivera', contactNo: '09171275268',
@@ -38,8 +38,8 @@
             }
 
     let events: EventType[] = [
-        {id: 1231, name: "Health event", type: "Health", date: new Date(2022,2,12).toISOString().split('T')[0]},
-        {id: 12345, name: "Social event", type: "Social", date: new Date(2023,5, 16).toISOString().split('T')[0]}
+        {id: 1231, name: "Training event", type: "Training", date: new Date(2022,2,12).toISOString().split('T')[0]},
+        {id: 12345, name: "Workshop event", type: "Workshop", date: new Date(2023,5, 16).toISOString().split('T')[0]}
     ]
 
     let today = new Date()
@@ -197,6 +197,10 @@
                             <div class = "information"> 
                                 {#if member.role == "Caregiver"}
                                 <div class ="!bg-[var(--pink)] w-35 p-2 rounded-full text-center !font-bold !text-white"> {member.role}</div>
+                                {:else if member.role == "Grandparent"}
+                                <div class ="!bg-[var(--pink)] w-35 p-2 rounded-full text-center !font-bold !text-white"> {member.role}</div>
+                                {:else if member.role == "Parent"}
+                                <div class ="!bg-[var(--pink)] w-35 p-2 rounded-full text-center !font-bold !text-white"> {member.role}</div>
                                 {:else if member.role == "Child"}
                                 <div class ="!bg-[var(--green)] w-35 p-2 rounded-full text-center !font-bold !text-white"> {member.role}</div>
                                 {/if}
@@ -227,19 +231,19 @@
         <div class = "mt-10" id = "Event Info">
             <h1 class = "!text-[var(--green)] mb-2"> Training and Attendance </h1>
             <div class = "!bg-[var(--green)] p-3 w-255 min-w-255">
-               <span class = "!text-white mr-105" >Event Name </span> 
-               <span class = "!text-white mr-34" >Event Type </span>
+               <span class = "!text-white mr-105" >Training Name </span> 
+               <span class = "!text-white mr-34" >Training Type </span>
                <span class = "!text-white" >Date Attended </span>  
             </div>
             <div class = "flex flex-col border-[var(--border)] border-4">
                 {#each events as event}
                     <div class = "flex flex-row mb-5">
                         <div class = "ml-2 mt-1.5 w-50"> {event.name}</div>
-                        {#if event.type === "Education"}
+                        {#if event.type === "Workshop"}
                         <div class = "ml-75 w-50 !bg-[var(--pink)] w-35 p-2 rounded-full text-center !font-bold !text-white"> {event.type}</div>
-                        {:else if event.type === "Livelihood"}
+                        {:else if event.type === "Training"}
                         <div class = "ml-75 w-50 !bg-[var(--text-color)] w-35 p-2 rounded-full text-center !font-bold !text-white"> {event.type}</div>
-                        {:else if event.type === "Health"}
+                        {:else if event.type === "FGD"}
                         <div class = "ml-75 w-50 !bg-[var(--error-color)] w-35 p-2 rounded-full text-center !font-bold !text-white"> {event.type}</div>
                         {:else}
                         <div class = "ml-75 w-50 !bg-[var(--green)] w-35 p-2 rounded-full text-center !font-bold !text-white"> {event.type}</div>

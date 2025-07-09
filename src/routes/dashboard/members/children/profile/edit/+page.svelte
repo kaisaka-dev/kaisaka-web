@@ -14,7 +14,7 @@
     
     //below are sample data declarations for the sake of testing, will delete once APIs are created
     let user: child = {
-        firstName: "Juan", lastName: "De La Cruz", educationStatus: "Dropped Out", birthday: new Date(2011,2,3), sex: "M", address: "Sample Address",
+        firstName: "Juan", lastName: "De La Cruz", educationStatus: "Dropped Out", birthday: new Date(2011,2,3), sex: "M", address: "Sample Address", education: "Home program",
         barangay: "Barangay 721", employmentStatus: "Sheltered Workshop", disabilityCategory: "sampleCategory", disabilityNature: "sampleNature", dateAdmission: new Date(2012, 9,11),
 
         family: {id: 1, members:[{role: "Parent", firstName:"Paolo", lastName: "Rivera"}, {role: "Child" , firstName: "Juan" , lastName:"De La Cruz"},  {role: "Child" , firstName: "John" , lastName:"De La Cruz"}],
@@ -43,7 +43,7 @@
     }
 
 
-    let samplePayments: membershipFee[] = user.family.payments
+    const options_school = ["Home program", "Non-formal", "Special (Exclusive school, blind / deaf)", "Integrated / SPED classes", "Inclusive / General education"]
     let today = new Date();
     let yearCounter: number[] = [];
     let paymentYears: number[] = [];
@@ -134,9 +134,9 @@
             <div class = "flex flex-row">
                 <div class = "ml-4 mt-3 w-40"> Education </div>
                 {#if user.education == null}
-                <div class = "mt-5"> <Input value = "N/A"/> </div>
+                <div class = "mt-3"> <Input value = "N/A"/> </div>
                 {:else}
-                <div class = "mt-5"> <Input value = {user.education}/> </div>
+                <div class = "mr-34"> <Select value = { user.education } label = "" options = {options_school}/> </div>
                 {/if}            
             </div>
 
@@ -162,7 +162,7 @@
 
             <div class = "flex flex-row">
                 <div class = "ml-4 mt-3 w-40"> Sex</div>
-                <div class = "ml-1"> <Select value = {user.sex} options = {["M","F"]}/> </div>
+                <div class = "-ml-60 mt-3"> <Select label = "" value = {user.sex} options = {["M","F"]}/> </div>
             </div>
 
             <div class = "flex flex-row">
@@ -190,7 +190,7 @@
 
             <div class = "flex flex-row mt-10">
                 <div class = "ml-4 mt-3 w-73"> Category of Disability</div>
-                <div class = "ml-20"> <Select value = "Deaf/Hard of Hearing"
+                <div class ="ml-1"> <Select value = "Deaf/Hard of Hearing"
                                       options = {["Deaf/Hard of Hearing", "Intellectual Disability", "Learning Disability", "Mental Disability", "Physical Disability", "Psychosocial Disability","Speech and Language Impairment", "Visual Disability", "Cancer" , "Rare Disease (RA10747)", "Multiple Disabilities"]}/> </div>
             </div>
 
