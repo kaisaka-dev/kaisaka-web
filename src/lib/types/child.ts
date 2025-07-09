@@ -18,6 +18,8 @@ export type child = {
     dateTermination: Date | null,
     remarks: string | null
     family: family,
+    natID: boolean,
+    voterID: boolean,
     eventAttendance: EventType[],
     PWD: boolean,
     PhilHealth: boolean,

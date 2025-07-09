@@ -29,6 +29,8 @@
         medCert: true,
         birthCert: false,
         barangayCert: true,
+        natID: true,
+        voterID: true,
 
         interventionHistory: [
         {id:1321123, name: "Learning Intervention" , type: "Education", 
@@ -341,39 +343,44 @@
 <div class = "flex flex-row border-[var(--border)] border-4 ml-55 mr-10 p-6 w-238">
     <div class = "flex flex-col !font-bold"> 
        <div>
-            <Check label = "PWD ID" checked/>
-       </div> 
-       {#if !user.PWD}
-       <div class = "ml-20 mb-5">
+            <Check label = "PWD ID" bind:checked = {user.PWD}/>
+       </div>
+       {#if user.PWD} 
+       <div class = "ml-20">
             <span class = "mr-37">
                 ID#
             </span>
-            <Input/>
+            [ID NUMBER]
        </div>
        <div class = "ml-20">
             <span class = "mr-15">
                 EXPIRY DATE
             </span>
-            <Input/>
+            [EXPIRY DATE]
        </div>
        {/if}
 
-       <div class ='mt-5'>
-            <Check label = "PhilHealth" checked/>
-       </div> 
+       <div class = "mt-5">
+            <Check label = "PhilHealth" bind:checked = {user.PhilHealth} />
+       </div>
+
+       <div class = "mt-5">
+            <Check label = "National ID" bind:checked = {user.natID} />
+       </div>
     </div>
-
-
     <div class = "flex flex-col !font-bold ml-10">
         <div>
-            <Check label = "Medical Certificate" checked/>
-        </div>
+            <Check label = "Medical Certificate" bind:checked = {user.medCert} />
+       </div>
         <div>
-            <Check label = "Birth Certificate" checked/>
-        </div>
-         <div>
-            <Check label = "Barangay Certificate" checked/>
-        </div>
+            <Check label = "Birth Certificate" bind:checked = {user.birthCert} />
+       </div>
+        <div>
+            <Check label = "Barangay Certificate" bind:checked = {user.barangayCert} />
+       </div>
+        <div>
+            <Check label = "Voter ID" bind:checked = {user.voterID} />
+       </div>
     </div>
 </div>
 <!--END OF DOCUMENTS LISTING-->

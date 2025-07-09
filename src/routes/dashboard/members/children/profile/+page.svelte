@@ -21,12 +21,13 @@
         eventAttendance:[{id: 1231, name: "Health event", type: "Health", date: new Date(2022,2,12).toISOString().split('T')[0]},
                         {id: 12345, name: "Social event", type: "Social", date: new Date(2023,5, 16).toISOString().split('T')[0]}],
 
-        PWD: false,
+        PWD: true,
         PhilHealth: true,
         medCert: true,
         birthCert: false,
         barangayCert: true,
-
+        voterID: true,
+        natID: true,
         interventionHistory: [
         {id:1321123, name: "Learning Intervention" , type: "Education", 
             status: [{status: "REGRESSED", date:new Date(2012,5, 16).toISOString().split('T')[0] }, {status: "IMPROVED" , date: new Date(2012,8, 25).toISOString().split('T')[0]} , {status: "REGRESSED" , date: new Date(2012,9, 25).toISOString().split('T')[0] }]
@@ -290,11 +291,7 @@
 <div class = "flex flex-row border-[var(--border)] border-4 ml-55 mr-10 p-6 w-238">
     <div class = "flex flex-col !font-bold"> 
        <div>
-            {#if user.PWD}
-            <Check label = "PWD ID" disabled checked/>
-            {:else}
-            <Check label = "PWD ID" disabled/>
-            {/if}
+            <Check label = "PWD ID" bind:checked = {user.PWD} disabled/>
        </div>
        {#if user.PWD} 
        <div class = "ml-20">
@@ -311,38 +308,27 @@
        </div>
        {/if}
 
-       <div class ='mt-5'>
-            {#if user.PhilHealth}
-            <Check label = "PhilHealth" disabled checked/>
-            {:else}
-            <Check label = "PhilHealth" disabled/>
-            {/if}
-       </div> 
+       <div class = "mt-5">
+            <Check label = "PhilHealth" bind:checked = {user.PhilHealth} disabled/>
+       </div>
+
+       <div class = "mt-5">
+            <Check label = "National ID" bind:checked = {user.natID} disabled/>
+       </div>
     </div>
-
-
     <div class = "flex flex-col !font-bold ml-10">
         <div>
-            {#if user.medCert}
-            <Check label = "Medical Certificate" disabled checked/>
-            {:else}
-            <Check label = "Medical Certificate" disabled/>
-            {/if}
-        </div>
+            <Check label = "Medical Certificate" bind:checked = {user.medCert} disabled/>
+       </div>
         <div>
-            {#if user.birthCert}
-            <Check label = "Birth Certificate" disabled checked/>
-            {:else}
-            <Check label = "Birth Certificate" disabled/>
-            {/if}
-        </div>
-         <div>
-            {#if user.barangayCert}
-            <Check label = "Barangay Certificate" disabled checked/>
-            {:else}
-            <Check label = "Barangay Certificate" disabled/>
-            {/if}
-        </div>
+            <Check label = "Birth Certificate" bind:checked = {user.birthCert} disabled/>
+       </div>
+        <div>
+            <Check label = "Barangay Certificate" bind:checked = {user.barangayCert} disabled/>
+       </div>
+        <div>
+            <Check label = "Voter ID" bind:checked = {user.voterID} disabled/>
+       </div>
     </div>
 </div>
 <!--END OF DOCUMENTS LISTING-->
