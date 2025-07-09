@@ -85,7 +85,7 @@ export class socialProtectionStatusModel extends TableManager<"social_protection
     const references: Partial<SocialProtectionStatusRow> = { id };
     const updates: Partial<SocialProtectionStatusRow> = { 
       fam_year_accessed,
-      last_updated: new Date().toISOString() 
+      last_updated: new Date().toISOString()
     };
     return this.updateOne(references, updates);
   }
@@ -98,7 +98,7 @@ export class socialProtectionStatusModel extends TableManager<"social_protection
    */
   async updateYearAccessed(id: number, comm_year_accessed: number): Promise<boolean> {
     const references: Partial<SocialProtectionStatusRow> = { id };
-    const updates: Partial<SocialProtectionStatusRow> = { 
+    const updates: Partial<SocialProtectionStatusRow> = {
       comm_year_accessed,
       last_updated: new Date().toISOString() 
     };

@@ -1,6 +1,20 @@
 import { ChildrenModel } from "$lib/models/childrenModel.js";
 import { error, json, type RequestHandler } from "@sveltejs/kit";
 
+export const GET: RequestHandler = async () => {
+  try {
+    const children = await ChildrenModel.instance.getAll();
+
+    if (!children) {
+      throw error(500, 'Failed to fetch children');
+    }
+
+    return json(children);
+  } catch {
+    throw error(500, 'Failed to fetch children');
+  }
+};
+
 export const POST: RequestHandler = async({request}) => {
   
   let body: any = {}
@@ -16,15 +30,17 @@ export const POST: RequestHandler = async({request}) => {
 
   const inserted = await ChildrenModel.instance.insertChild(
     body.has_philhealth,
-    body.has_barangay_cert, 
-    body.has_birth_cert, 
-    body.has_medical_cert, 
-    body.is_active, 
-    body.member_id, 
-    body.pwd_id, 
-    body.disability_id, 
-    body.disability_nature, 
-    body.remarks
+    body.has_barangay_cert,
+    body.has_birth_cert,
+    body.has_medical_cert,
+    body.is_active,
+    body.member_id,
+    body.pwd_id,
+    body.disability_id,
+    body.disability_nature,
+    body.remarks,
+    body.has_national_id,
+    body.has_vote
   )
 
   if (!inserted){
