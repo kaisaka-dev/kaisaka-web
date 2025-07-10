@@ -43,7 +43,13 @@
             id:1232132, name: "Livelihood Intervention" , type: "Livelihood", status:
             [{status: "REGRESSED", date:new Date(2012,5, 16).toISOString().split('T')[0] }, {status: "REGRESSED" , date: new Date(2012,8, 25).toISOString().split('T')[0]}]
         }
-        ]
+        ],
+
+        socialSecurity: {
+            access: true,
+            type: "Participation in family life",
+            yearAccessed:2023
+        }
     })
 
 
@@ -402,25 +408,32 @@
 <h1 class = "!text-[var(--green)] font-[JSans] ml-55 mt-5 mb-2">
         Documents and Verification
 </h1>
-<div class = "flex flex-row border-[var(--border)] border-4 ml-55 mr-10 p-6 w-238">
+<div class = "flex flex-row border-[var(--border)] border-4 ml-55 mr-10 p-6 w-250">
     <div class = "flex flex-col !font-bold"> 
        <div>
             <Check label = "PWD ID" bind:checked = {user.PWD}/>
        </div>
        {#if user.PWD} 
-       <div class = "ml-20">
-            <span class = "mr-37">
-                ID#
-            </span>
-            [ID NUMBER]
+       <div class = "w-150">
+            <Input type = "text" label = "ID #"/>
        </div>
-       <div class = "ml-20">
-            <span class = "mr-15">
-                EXPIRY DATE
-            </span>
-            [EXPIRY DATE]
+       <div class = "w-150">
+            <Input type = "text" label = "Expiry Date"/>
        </div>
        {/if}
+
+       <div>
+            <Check label = "Social Security" bind:checked = {user.socialSecurity.access}/>
+       </div>
+       {#if user.socialSecurity.access} 
+       <div class = "w-150">
+            <Select label = "Type of Access" value = {user.socialSecurity.type} options = {["Participation in family life", "Participation in community life/clubs"]}/>
+       </div>
+       <div class = "w-150">
+            <Input type = "text" label = "Year Accessed" value = {user.socialSecurity.yearAccessed}/>
+       </div>
+       {/if}
+
 
        <div class = "mt-5">
             <Check label = "PhilHealth" bind:checked = {user.PhilHealth} />

@@ -28,6 +28,12 @@
         barangayCert: true,
         voterID: true,
         natID: true,
+        socialSecurity: {
+            access: true,
+            type: "Participation in family life",
+            yearAccessed:2023
+        },
+        
         interventionHistory: [
         {id:1321123, name: "Learning Intervention" , type: "Education", 
             status: [{status: "REGRESSED", date:new Date(2012,5, 16).toISOString().split('T')[0] }, {status: "IMPROVED" , date: new Date(2012,8, 25).toISOString().split('T')[0]} , {status: "REGRESSED" , date: new Date(2012,9, 25).toISOString().split('T')[0] }]
@@ -294,19 +300,26 @@
             <Check label = "PWD ID" bind:checked = {user.PWD} disabled/>
        </div>
        {#if user.PWD} 
-       <div class = "ml-20">
-            <span class = "mr-37">
-                ID#
-            </span>
-            [ID NUMBER]
+       <div class = "w-150">
+            <Input type = "text" disabled label = "ID #"/>
        </div>
-       <div class = "ml-20">
-            <span class = "mr-15">
-                EXPIRY DATE
-            </span>
-            [EXPIRY DATE]
+       <div class = "w-150">
+            <Input type = "text" disabled  label = "Expiry Date"/>
        </div>
        {/if}
+
+       <div>
+            <Check disabled label = "Social Security" bind:checked = {user.socialSecurity.access}/>
+       </div>
+       {#if user.socialSecurity.access} 
+       <div class = "w-150">
+            <Input type = "text" disabled label = "Type of Access" value = {user.socialSecurity.type} />
+       </div>
+       <div class = "w-150">
+            <Input disabled type = "text" label = "Year Accessed" value = {user.socialSecurity.yearAccessed}/>
+       </div>
+       {/if}
+
 
        <div class = "mt-5">
             <Check label = "PhilHealth" bind:checked = {user.PhilHealth} disabled/>
