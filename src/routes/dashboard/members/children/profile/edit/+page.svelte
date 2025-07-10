@@ -3,17 +3,19 @@
     import type { interventionType } from '$lib/types/intervention.ts'
     import type { child } from '$lib/types/child.ts'
     import type { membershipFee  } from '$lib/types/membershipFee.js'
-
-
+    import type { interventionStatus } from '$lib/types/interventionStatus.js'
 
     import Header from '../../../../../../components/Header.svelte'
     import Input from '../../../../../../components/input/InputText.svelte'
     import TextArea from '../../../../../../components/input/InputTextarea.svelte'
     import Check from '../../../../../../components/input/Checkbox.svelte'
     import Select from '../../../../../../components/input/Select.svelte'
+    import Modal from '../../../../../../components/Modal.svelte'
     
     //below are sample data declarations for the sake of testing, will delete once APIs are created
-    let user: child = {
+
+
+    let user: child = $state({
         firstName: "Juan", lastName: "De La Cruz", educationStatus: "Dropped Out", birthday: new Date(2011,2,3), sex: "M", address: "Sample Address", education: "Home program",
         barangay: "Barangay 721", employmentStatus: "Sheltered Workshop", disabilityCategory: "sampleCategory", disabilityNature: "sampleNature", dateAdmission: new Date(2012, 9,11),
 
@@ -42,13 +44,21 @@
             [{status: "REGRESSED", date:new Date(2012,5, 16).toISOString().split('T')[0] }, {status: "REGRESSED" , date: new Date(2012,8, 25).toISOString().split('T')[0]}]
         }
         ]
-    }
+    })
 
 
     const options_school = ["Home program", "Non-formal", "Special (Exclusive school, blind / deaf)", "Integrated / SPED classes", "Inclusive / General education"]
     let today = new Date();
     let yearCounter: number[] = [];
     let paymentYears: number[] = [];
+    let openModal = $state(false);
+    let statuses: interventionStatus[] = $state([{status: '',date:''}])
+    let interventionName: string = $state("")
+    let type: string = $state("")
+    let interventionError = $state(false)
+    let style = $state("")
+    let text = $state("")
+
 
     //below are essential functions for the page, will add on functionalities once APIs are created
     function setDate(date:string) {
@@ -60,9 +70,8 @@
         user.eventAttendance = user.eventAttendance.filter((event) => event.name !== name)
     }
 
-    function deleteIntervention(name:string): void {
-        user.interventionHistory = user.interventionHistory.filter((intervention) => intervention.name !== name)
-        console.log(user.interventionHistory)
+    function deleteIntervention(index:number): void {
+        user.interventionHistory.splice(index,1)
     }
 
     for(let i = user.family.dateCreated.getFullYear(); i <= today.getFullYear(); i++) {
@@ -73,12 +82,65 @@
        paymentYears.push(user.family.payments[i].date.getFullYear())
     }
     
+    
+    function addStatus(): void{
+        statuses = [
+            ...statuses,
+            {
+                status: "",
+                date: ""
+            }
+        ]
+
+
+    }
+
+    function deleteStatus(index:number): void {
+        statuses.splice(index,1);
+    }
    
+   function addIntervention() {
+
+    interventionError = false
+    for(let i=0; i< statuses.length; i++) {
+        if(statuses[i].date == "" || statuses[i].status == "") {            
+            interventionError = true
+        }
+    }
+
+    if(interventionName === "" || type === "") {
+        interventionError = true
+    }
+
+    if(interventionError) {
+        style = "ml-127 !text-red-500"
+            text = "Missing Information!"
+    }
+
+    else {
+
+        style = "ml-127 !text-[var(--green)]"
+        text = "Intervention added!"
+        user.interventionHistory = [
+        ...user.interventionHistory,
+        {
+            id:213213,
+            name: interventionName,
+            type: type,
+            status: statuses
+        }
+    ]
+
+    statuses = [{status:"", date:""}]
+    interventionName = ""
+    type = ""
+    }
+    
+}
 </script>
 
 <Header/>
 
-<form method = "GET">
 <section>
     <h1>
        {user.firstName} {user.lastName}'s Profile 
@@ -390,13 +452,42 @@
         Interventions
 </h1>
 
-<div class = "flex flex-col border-[var(--border)] border-4 ml-55 mr-10 p-6 w-305" id ="Intervention Info">
+<div class = "flex flex-col border-[var(--border)] border-4 ml-55 mr-10 p-4 w-305" id ="Intervention Info">
     <div class = "flex flex-col">
         <div class = "!bg-[var(--green)] p-3 flex flex-row">
-           <div class = "!text-[var(--background)] !font-bold ml-65">Intervention Name </div>
-           <div class = "!text-[var(--background)] !font-bold ml-55">Status History </div>
+           <div class = "!text-[var(--background)] !font-bold ml-65 mt-2">Intervention Name </div>
+           <div class = "!text-[var(--background)] !font-bold ml-55 mt-2">Status History </div>
+           <div class = "ml-25">
+           <Modal buttonText="Add Intervention" width="50%" isOpen={openModal}>
+            <div slot="modal">
+            <h2>Add New Intervention</h2>
+            <Input label="Intervention Name" id="newName" required bind:value ={interventionName}/>
+            <Select required label = "Intervention Type" options = {["Education","Social","Health","Livelihood"]} bind:value = {type}/>
+            <div class = "flex flex-row">
+                <Select label = "Status #1" options = {["Improved", "Neutral", "Regressed"]} bind:value= {statuses[0].status}/>
+                <div class = "ml-5"> <Input type = "Date" bind:value = {statuses[0].date}/>  </div>
+            </div>
+            {#each statuses.slice(1) as status,index}
+            <div class = "flex flex-row">
+                <Select label = "Status #{statuses.indexOf(status)+1}" options = {["Improved", "Neutral", "Regressed"]} bind:value= {statuses[index+1].status}/>
+                <div class = "ml-5"> <Input type = "Date" bind:value = {statuses[index+1].date}/>  </div>
+                <div class = "-mt-3">
+                <button
+                        class = "!bg-[var(--background)] !text-red-500 hover:!text-red-400 hover:!shadow-[var(--background)]"
+                        on:click = {()=>deleteStatus(index+1)}>
+                        x
+                </button>
+                </div>
+            </div>
+            {/each}
+            <button on:click = {()=>addStatus()} class="ml-5"> Add Status</button>
+            <div class = "mt-5 ml-125"><button class = "green" on:click = {()=>addIntervention()}> Add Intervention </button></div>
+            <div class = "{style}"> {text}</div>
+            </div>
+            </Modal>
+            </div>
         </div>
-        {#each user.interventionHistory as interventionvar}
+        {#each user.interventionHistory as interventionvar,index}
             <div class = "flex flex-row mt-5">
                 <div class = "-mr-15">
                     <select id = "interventiontype1" class = "!mt-4 w-45 rounded-full text-[var(--background)] mr-20" > 
@@ -436,17 +527,17 @@
                     </div>
                 </div>
                 <div class = "mt-2">
-                <button 
+                <button
                         class = "!bg-[var(--background)] !text-red-500 hover:!text-red-400 hover:!shadow-[var(--background)]"
-                        on:click = {()=>deleteIntervention(interventionvar.name)}>
+                        on:click = {()=>deleteIntervention(index)}>
                         x
                 </button>
                 </div>
             </div>
         {/each}
     </div>
+</div>
 
 
 <!--END OF INTERVENTIONS-->
 
-</form>
