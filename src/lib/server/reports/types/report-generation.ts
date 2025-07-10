@@ -40,7 +40,9 @@ export class ExcelGenerator {
     
     // Add metadata sheet
     const metadataSheet = this.createMetadataSheet(workbook, reportData.metadata);
-    
+
+    workbook.addWorksheet(workbook, metadataSheet );
+
     return await workbook.xlsx.writeBuffer();
   }
   
