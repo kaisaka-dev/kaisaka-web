@@ -241,22 +241,12 @@ export class ChildrenModel extends TableManager<"children">('children') {
     return result !== null;
   }
 
-  
+  /**
+   * Joins the table of ChildrenModel with Relationship_CC and Caregivers.
+   * @param id 
+   */
   async findThroughJoin_Caregivers(id: string = ''){
-    const joinStatement = `
-                        *,
-                        relationship_cc!inner(
-                        relationship,
-                        caregivers!inner(
-                            id,
-                            contact_number,
-                            facebook_link,
-                            email,
-                            occupation,
-                            member_id,
-                            income_id
-                            )
-                        )`;
+    const joinStatement = `*, relationship_cc!inner(relationship, caregivers!inner( id, contact_number, facebook_link, email, occupation, member_id, income_id))`;
     this.findWithJoin(joinStatement, {eq: {id: id}})
   }
 }

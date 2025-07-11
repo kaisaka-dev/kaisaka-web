@@ -15,8 +15,8 @@ class LogSidecar {
   constructor(options: Partial<LogSidecarOptions> = {}){
     // Default Settings
     this.options = {
-      maxFileSize:                options.maxFileSize             ?? '1m',
-      maxFiles:                   options.maxFiles                ?? '7d',
+      maxFileSize:                options.maxFileSize             ?? '1m',  
+      maxFiles:                   options.maxFiles                ?? '3d',
       maxTotalSize:               options.maxTotalSize            ?? 5 * 1024 * 1024, // 5MB
       logDir:                     options.logDir                  || './logs',
       enableSupabaseShipping:     options.enableSupabaseShipping  ?? true,
@@ -75,7 +75,7 @@ class LogSidecar {
         winston.format.json()
       )
 
-    transports.push(this.createDailyFileTransport())
+    // transports.push(this.createDailyFileTransport())
 
     if (process.env.NODE_ENV === 'development') 
       transports.push(this.createConsoleTransport());
@@ -84,8 +84,8 @@ class LogSidecar {
       level: this.options.logLevel,
       format: logFormat,
       transports,
-      exceptionHandlers: [ this.createFileTransport('exceptions.log') ],
-      rejectionHandlers: [ this.createFileTransport('rejections.log') ]
+      exceptionHandlers: [  ], // this.createFileTransport('exceptions.log')
+      rejectionHandlers: [  ], // this.createFileTransport('rejections.log')
     });
   }
 

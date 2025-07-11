@@ -133,7 +133,7 @@ export const consoleFormat = winston.format.combine(
     
     logMessage += url           ? ` '${colors.url(url)}'` : ``;
     
-    logMessage += status        ? ` ${getStatusColor(Number(status))(status)}` : ``;
+    logMessage += status        ? ` ${getStatusColor(Number(status))(status)}` : ` ---`;
     
     logMessage += responseTime  ? ` ${colors.time(`${responseTime}ms`)}` : ``;
     

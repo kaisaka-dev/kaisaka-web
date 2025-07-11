@@ -33,7 +33,7 @@ export const supabase: Handle = async ({ event, resolve }) => {
     },
   })
 
-  logger.info('Request received', {
+  logger.info('Request received ', {
     method: event.request.method,
     url: event.url.pathname,
     userAgent: event.request.headers.get('user-agent'),
@@ -74,7 +74,7 @@ export const supabase: Handle = async ({ event, resolve }) => {
     
   } catch (error) {
     // Log error
-    logger.error('Request failed', {
+    logger.error('Request failed    ', {
       method: event.request.method,
       url: event.url.pathname,
       error: error instanceof Error ? error.message : 'Unknown error',

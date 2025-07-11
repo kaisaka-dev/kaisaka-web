@@ -7,9 +7,9 @@ export const GET: RequestHandler = async ({ params, url}) => {
     const joinParams = parseJoinParams(url)
     
 
-    if(!id){
+    if (!id)
         throw error(400, 'Missing ID');
-    }
+    
 
     try{
         let child;
@@ -22,8 +22,7 @@ export const GET: RequestHandler = async ({ params, url}) => {
                     child = await ChildrenModel.instance.findThroughJoin_Caregivers(id)
                     break;
                 default:
-                    throw error(404, 'Select statement not found')
-                    
+                    throw error(404, 'Select statement not found')       
             }
         }
             
