@@ -2,6 +2,7 @@
 	import Header from "../../../../components/Header.svelte";
 	import FilterSearch from "../../../../components/styled-buttons/FilterSearch.svelte";
 	import InputText from '../../../../components/input/InputText.svelte';
+	import InputRange from '../../../../components/input/InputRange.svelte';
 
 
 	const thisYear = new Date().getFullYear();
@@ -86,8 +87,7 @@
 			<InputText label="Caregiver's name" id="caregiver" bind:value={filter.caregivers} margin={false} />
 			<InputText label="Child's name" id="child" bind:value={filter.children} margin={false} />
 
-				<InputText type="number" label="Last paid from" id="last-paid-start" bind:value={filter.yrLastPaidStart} margin={false} />
-				<InputText type="number" label="Last paid to" id="last-paid-end" bind:value={filter.yrLastPaidEnd} margin={false} />
+			<InputRange type="number" label="Last paid" id="last-paid" bind:valueFrom={filter.yrLastPaidStart} bind:valueTo={filter.yrLastPaidEnd} margin={false} />
 
 			<div id="reset" class="flex justify-end">
 				<button onclick={resetFilters}>Reset Filters</button>
