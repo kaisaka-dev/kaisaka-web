@@ -152,7 +152,7 @@
 			<InputText label="Facebook Link" id={`fb-link-${index}`} bind:value={formData.fbLink} />
 			<InputText label="Email" id={`email-${index}`} bind:value={formData.email} />
 			<InputText label="Address" id={`address-${index}`} bind:value={formData.address} required msg={errors.address} />
-			<Select label="Barangay" id={`brgy-${index}`} options={["Barangay 1", "Barangay 2"]} required bind:value={formData.brgy} msg={errors.brgy} />
+			<InputText label="Barangay" id={`brgy-${index}`} required bind:value={formData.brgy} msg={errors.brgy} />
 			<InputText label="Occupation" id={`occupation-${index}`} bind:value={formData.occupation} />
 			<InputText label="Relationship" id={`relationship-${index}`} bind:value={formData.relationship} />
 			<Select label="Community Group" id={`community-grp-${index}`} options={[
