@@ -9,6 +9,9 @@ coverage
 /.svelte-kit
 /build
 /dist
+/logs
+logs/*
+logs
 
 # OS
 .DS_Store
