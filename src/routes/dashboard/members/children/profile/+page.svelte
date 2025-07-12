@@ -1,13 +1,14 @@
 <script lang="ts">
     import type { child } from '$lib/types/child.js'
-    
-    
     import Header from '../../../../../components/Header.svelte'
     import Input from '../../../../../components/input/InputText.svelte'
     import TextArea from '../../../../../components/input/InputTextarea.svelte'
     import Check from '../../../../../components/input/Checkbox.svelte'
-    import Select from '../../../../../components/input/Select.svelte'
 	import InputText from '../../../../../components/input/InputText.svelte';
+
+    export let data;   
+
+    console.log(data.family);
 
     //below are sample data declarations for the page to work, will delete when the relevant APIs are made
     let user: child = {
@@ -67,7 +68,7 @@
 
 <section>
     <h1>
-       {user.firstName} {user.lastName}'s Profile 
+       {data.member.first_name} {data.member.last_name}'s Profile 
     </h1>
 </section>
 <div class = "flex flex-row ml-10 m-4 sticky top-20 z-1">
@@ -105,12 +106,12 @@
         <div class = "flex flex-col">
             <div class = "flex flex-row">
                 <div class = "ml-4 mt-3 w-40"> First Name</div>
-                <div class = "mt-4"> <Input disabled value = {user.firstName}/> </div>
+                <div class = "mt-4"> <Input disabled value = {data.member.first_name}/> </div>
             </div>
 
             <div class = "flex flex-row">
                 <div class = "ml-4 mt-3 w-40"> Last Name</div>
-                <div class = "mt-4"> <Input  disabled value = {user.lastName}/> </div>
+                <div class = "mt-4"> <Input  disabled value = {data.member.last_name}/> </div>
             </div>
 
             <div class = "flex flex-row">
@@ -118,61 +119,65 @@
                 {#if user.education == null}
                 <div class = "mt-3"> <Input value = "N/A" disabled/> </div>
                 {:else}
-                <div class = "mt-3"> <Input value = {user.education} disabled/> </div>
+                <div class = "mt-3"> <Input value = {data.education.education_type} disabled/> </div>
                 {/if}            
             </div>
 
             <div class = "flex flex-row">
                 <div class = "ml-4 mt-3 w-40"> Education Status </div>
-                <div class = "mt-5"> <Input value = {user.educationStatus} disabled/> </div>
+                <div class = "mt-5"> <Input value = {data.education.student_status_type} disabled/> </div>
             </div>
 
             <div class = "flex flex-row">
                 <div class = "ml-4 mt-3 w-40"> Birthday</div>
-                <div class = "mr-50 mt-3"> <InputText type = "date" value = {user.birthday.toISOString().split('T')[0]} label = ""/> </div>
+                <div class = "mr-50 mt-3"> <Input disabled value = {data.member.birthday} label = ""/> </div>
             </div>
 
             <div class = "flex flex-row">
                 <div class = "ml-4 mt-3 w-40"> Age</div>
-                <div class = "mt-4"> <Input disabled value = {today.getFullYear() - user.birthday.getFullYear()}/> </div>
+                <div class = "mt-4"> <Input disabled value = {today.getFullYear() - new Date(data.member.birthday).getFullYear()}/> </div>
             </div>
 
             <div class = "flex flex-row">
                 <div class = "ml-4 mt-3 w-40"> Sex</div>
-                <div class = "mt-3"> <Input disabled value = {user.sex}/> </div>
+                <div class = "mt-3"> <Input disabled value = {data.member.sex}/> </div>
             </div>
 
             <div class = "flex flex-row">
                 <div class = "ml-4 mt-3 w-40"> Address</div>
-                <div class = "mt-3"> <Input disabled value = {user.address}/> </div>
+                <div class = "mt-3"> <Input disabled value = {data.address.address}/> </div>
             </div>
 
             <div class = "flex flex-row">
                 <div class = "ml-4 mt-3 w-40"> Barangay</div>
-                <div class = "mt-3"> <Input disabled value = {user.barangay}/> </div>
+                <div class = "mt-3"> <Input disabled value = {data.barangay.name}/> </div>
             </div>
 
-            {#if today.getFullYear() - user.birthday.getFullYear() > 18}
+            {#if today.getFullYear() - new Date(data.member.birthday).getFullYear() > 18}
             <div class = "flex flex-row">
                 <div class = "ml-4 mt-3 w-40"> Employment Status </div>
-                <div class = "mt-7"> <Input value = {user.employmentStatus} disabled /> </div>
+                {#if data.employment.able_to_work == false}
+                <div class = "mt-7"> <Input value = "Unable to Work" disabled /> </div>
+                {:else}
+                <div class = "mt-7"> <Input value = {data.employment.employment_type} disabled /> </div>
+                {/if}
             </div>
             {/if}
 
 
             <div class = "flex flex-row mt-10">
                 <div class = "ml-4 mt-3 w-73"> Category of Disability</div>
-                <div class = "mt-4"> <Input value = {user.disabilityCategory} disabled/> </div>
+                <div class = "mt-4"> <Input value = {data.disabilityCategory.name} disabled/> </div>
             </div>
 
             <div class = "flex flex-row">
                 <div class = "ml-4 mt-3 w-73"> Nature of Disability</div>
-                <div class = "mt-4"> <Input value = {user.disabilityNature} disabled/> </div>
+                <div class = "mt-4"> <Input value = {data.member.children[0].disability_nature} disabled/> </div>
             </div>
 
             <div class = "flex flex-row mt-10">
                 <div class = "ml-4 mt-3 w-70"> Date of Admission</div>
-                <div class = "mt-3"> <InputText type = "date" label = "" value = {user.dateAdmission.toISOString().split('T')[0]}/> </div>
+                <div class = "mt-3"> <Input disabled label = "" value = {new Date(data.member.admission_date).toISOString().split('T')[0]}/> </div>
             </div>
             {#if user.dateTermination != null}
             <div class = "flex flex-row">
@@ -184,7 +189,7 @@
         
         
         <div class = "flex flex-col ml-3"> 
-            <div class = "-ml-45"> <TextArea disabled value = {user.remarks} label = "Remarks" rows = 10/> </div>
+            <div class = "-ml-45"> <TextArea disabled value = {data.member.children[0].remarks} label = "Remarks" rows = 10/> </div>
         </div>
     </div>
 </div>
@@ -209,22 +214,18 @@
 <!--CONTAINER FOR FAMILY AND MEMBERSHIP INFORMATION-->
 <div class = "flex flex-row mt-10">
     <div class = "flex flex-col border-[var(--border)] border-4 ml-55 mr-10 p-6 w-125">
-        {#each user.family.members as fammember}
+        {#each data.family as fammember}
         <div class = "flex flex-row mb-5">
-            {#if fammember.role == "Caregiver"}
-            <div class = "!bg-[var(--pink)] p-2 w-45 rounded-full text-center !font-bold !text-[var(--background)] mr-20" > Caregiver </div>
-            {:else if fammember.role === "Parent"}
-            <div class = "!bg-[var(--pink)] p-2 w-45 rounded-full text-center !font-bold !text-[var(--background)] mr-20" > Parent </div>
-            {:else if fammember.role === "Grandparent"}
-            <div class = "!bg-[var(--pink)] p-2 w-45 rounded-full text-center !font-bold !text-[var(--background)] mr-20" > Grandparent </div>
-            {:else if fammember.role == "Child"}
-                {#if fammember.firstName === user.firstName}
+            {#if fammember.is_child == false}
+            <div class = "!bg-[var(--pink)] p-2 w-45 rounded-full text-center !font-bold !text-[var(--background)] mr-20" > {fammember.relationship_type} </div>
+            {:else if fammember.is_child == true}
+                {#if fammember.members.first_name === data.member.first_name}
                 <div class = "!bg-[var(--green)] p-2 w-45 rounded-full text-center !font-bold !text-[var(--background)] mr-20" > Child </div>
                 {:else}
                 <div class = "!bg-[var(--green)] p-2 w-45 rounded-full text-center !font-bold !text-[var(--background)] mr-20" > Sibling </div>
                 {/if}
             {/if}
-            <div class = "!font-[JSans] mt-2"> {fammember.firstName} {fammember.lastName}</div>
+            <div class = "!font-[JSans] mt-2"> {fammember.members.first_name} {fammember.members.last_name}</div>
         </div>
         {/each}
     </div>
@@ -294,14 +295,14 @@
 <h1 class = "!text-[var(--green)] font-[JSans] ml-55 mt-5 mb-2">
         Documents and Verification
 </h1>
-<div class = "flex flex-row border-[var(--border)] border-4 ml-55 mr-10 p-6 w-238">
+<div class = "flex flex-row border-[var(--border)] border-4 ml-55 mr-10 p-6 w-250 min-w-250">
     <div class = "flex flex-col !font-bold"> 
        <div>
-            <Check label = "PWD ID" bind:checked = {user.PWD} disabled/>
+            <Check label = "PWD ID" bind:checked = {data.member.children[0].pwd_id} disabled/>
        </div>
-       {#if user.PWD} 
+       {#if data.member.children[0].pwd_id} 
        <div class = "w-150">
-            <Input type = "text" disabled label = "ID #"/>
+            <Input type = "text" disabled label = "ID #" value = {data.member.children[0].pwd_id} />
        </div>
        <div class = "w-150">
             <Input type = "text" disabled  label = "Expiry Date"/>
@@ -309,38 +310,45 @@
        {/if}
 
        <div>
-            <Check disabled label = "Social Security" bind:checked = {user.socialSecurity.access}/>
+            <Check disabled label = "Social Security" bind:checked = {data.socialProtection}/>
        </div>
-       {#if user.socialSecurity.access} 
+       {#if data.socialProtection} 
        <div class = "w-150">
-            <Input type = "text" disabled label = "Type of Access" value = {user.socialSecurity.type} />
-       </div>
-       <div class = "w-150">
-            <Input disabled type = "text" label = "Year Accessed" value = {user.socialSecurity.yearAccessed}/>
+            {#if data.socialProtection.participates_family_life == false}
+            <Input type = "text" disabled label = "Type of Access" value = "Participation in Community Life/Clubs"  />
+            <div class = "w-150">
+            <Input disabled type = "text" label = "Year Accessed" value = {data.socialProtection.comm_year_accessed}/>
+            </div>
+            {:else if data.socialProtection.participates_community_club == false}
+            <Input type = "text" disabled label = "Type of Access" value = "Participation in Family Life"  />
+            <div class = "w-150">
+            <Input disabled type = "text" label = "Year Accessed" value = {data.socialProtection.fam_year_accessed}/>
+            </div>
+            {/if} 
        </div>
        {/if}
 
 
        <div class = "mt-5">
-            <Check label = "PhilHealth" bind:checked = {user.PhilHealth} disabled/>
+            <Check label = "PhilHealth" bind:checked = {data.member.children[0].has_philhealth} disabled/>
        </div>
 
        <div class = "mt-5">
-            <Check label = "National ID" bind:checked = {user.natID} disabled/>
+            <Check label = "National ID" bind:checked = {data.member.children[0].has_nat_id} disabled/>
        </div>
     </div>
     <div class = "flex flex-col !font-bold ml-10">
         <div>
-            <Check label = "Medical Certificate" bind:checked = {user.medCert} disabled/>
+            <Check label = "Medical Certificate" bind:checked = {data.member.children[0].has_medical_cert} disabled/>
        </div>
         <div>
-            <Check label = "Birth Certificate" bind:checked = {user.birthCert} disabled/>
+            <Check label = "Birth Certificate" bind:checked = {data.member.children[0].birth} disabled/>
        </div>
         <div>
-            <Check label = "Barangay Certificate" bind:checked = {user.barangayCert} disabled/>
+            <Check label = "Barangay Certificate" bind:checked = {data.member.children[0].has_barangay_cert} disabled/>
        </div>
         <div>
-            <Check label = "Voter ID" bind:checked = {user.voterID} disabled/>
+            <Check label = "Voter ID" bind:checked = {data.member.children[0].has_vote} disabled/>
        </div>
     </div>
 </div>
