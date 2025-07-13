@@ -1,13 +1,13 @@
-import winston from 'winston';
-import DailyRotateFile from 'winston-daily-rotate-file';
 import fs from 'fs';
 import path from 'path';
+import winston from 'winston';
+import DailyRotateFile from 'winston-daily-rotate-file';
 import type { ConsoleTransportInstance } from 'winston/lib/winston/transports/index.js';
-import {consoleFormat, type LogSidecarOptions, type LogEntry} from './log-types.js' ;
+import { consoleFormat, type LogEntry, type LogSidecarOptions } from './log-types.js';
 
 
 
-class LogSidecar {
+export class LogSidecar {
   private logger!: winston.Logger;
   private options: Required<LogSidecarOptions>;
   private sizeCheckInterval: NodeJS.Timeout | null = null;
@@ -227,4 +227,4 @@ export function getLogSidecar(): LogSidecar {
   return logSidecar;
 }
 
-export type { LogSidecarOptions, LogEntry };
+export type { LogEntry, LogSidecarOptions };

@@ -1,4 +1,4 @@
-import type { FillPatterns } from "exceljs";
+import type { FillPatterns, Worksheet } from "exceljs";
 
 export interface ReportMetadata {
   generatedAt: Date;
@@ -30,10 +30,14 @@ export type PositionedCell = {
   style?: CellStyle;
 };
 
-export interface ExcelReportData {
+type ExcelRowData = {
+  [key: string]: string | number | Date | boolean | null | undefined;
+};
 
+export interface ExcelReportData {
   title: string;
-  data: unknown[];
+  rowOffset: number; 
+  data: ExcelRowData[];
   columns: ExcelColumn[];
   metadata: ReportMetadata;
   sections?: ReportSection[];
@@ -126,4 +130,10 @@ export interface ReportMergeConfig {
 export interface AddressPair {
   row: number,
   col: number
+}
+
+export interface WorksheetProgress {
+  worksheet: Worksheet,
+  reportData: ExcelReportData,
+  currAddress: AddressPair,
 }
