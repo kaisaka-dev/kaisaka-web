@@ -60,20 +60,8 @@
     // Create pairs of [key, headerLabel]
     $: displayColumns = visibleKeys.map((key, i) => ({
         key,
-        label: headers[i] ?? key.replace(/([A-Z])/g, ' $1').replace(/^./, str => str.toUpperCase())
+        label: headers[i] ?? key.replace(/([A-Z])/g, ' $1').replace(/^./, str => str.toUpperCase()) // camelCase -> Camel Case
     }));
-
-    // Handle row click
-    function handleRowClick(link: string, event: MouseEvent) {
-        if (!link || !hasLink) return;
-
-        const target = event.target as HTMLElement;
-        if (target.tagName === 'A' || target.tagName === 'BUTTON') {
-            return;
-        }
-
-        window.location.href = link;
-    }
 </script>
 
 {#if data.length > 0}
@@ -81,7 +69,7 @@
         <thead>
         <tr>
             {#each displayColumns as col}
-                <th on:click={() => sortBy(col.key)} style="cursor: pointer;">
+                <th onclick={() => sortBy(col.key)} style="cursor: pointer;">
                     {col.label}
                     <i
                       class={
@@ -100,13 +88,10 @@
         </thead>
         <tbody>
         {#each sortedData as row}
-            <tr
-              on:click={hasLink ? (e) => handleRowClick(row[linkKey], e) : null}
-              style="cursor: {hasLink && row[linkKey] ? 'pointer' : 'default'}"
-              class:clickable={hasLink && !!row[linkKey]}>
+            <tr>
                 {#each displayColumns as col}
                     <td>
-                        {#if hasLink && row[linkKey] && col.key === visibleKeys[0]}
+                        {#if hasLink && row[linkKey]}
                             <a href={row[linkKey]} style="color: inherit; text-decoration: none;">
                                 {row[col.key]}
                             </a>
@@ -122,3 +107,10 @@
 {:else}
     <p>No data to show.</p>
 {/if}
+
+
+<style>
+    tr:has(td a:hover) {
+        text-decoration: underline !important;
+    }
+</style>
