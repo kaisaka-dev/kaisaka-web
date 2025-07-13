@@ -1,4 +1,5 @@
-import { supabase } from "./supabase.js";
+import { PostgrestFilterBuilder } from "@supabase/postgrest-js";
+import { supabase } from "./client.js";
 import type { Database } from "./supabase-types.js";
 
 // All the names in the database
@@ -16,24 +17,27 @@ export type tableUpdate<T extends tableNames>
 = Database['public']['Tables'][T]['Update']
 
 // Database query type for Table T
-interface QueryConfig<T extends tableNames> {
-  where?: Partial<tableRow<T>>;
-  eq?: Record<string, string | number>;
-  gt?: Record<string, number>;
-  lt?: Record<string, number>;
-  order?: { column: string; ascending?: boolean };
-  limit?: number;
-}
+export type tableQuery<T extends tableNames> = PostgrestFilterBuilder<
+  Database['public'], 
+  tableRow<T>, 
+  tableRow<T>
+> 
+
+// A function that modifies said tableQuery
+export type filterFunction<
+  T extends tableNames
+> = (query: tableQuery<T>) => tableQuery<T>
 
 /**
  * 
  * @param table table name to be managed
  * @returns A Table Manager class
  */
-export default function TableManager<T extends tableNames>(table: T){
+export default function TableManager<T extends tableNames>(table: string){
   type Row = tableRow<T>;
-  class TableManager {
+  class TableManager<T> {
     private table = table;
+  
     
     protected getQuery() {
       return supabase.from(this.table).select('*');
@@ -88,7 +92,7 @@ export default function TableManager<T extends tableNames>(table: T){
       return !error
     }
 
-    protected async deleteOne(match: Partial<Row>): Promise<Row | null> {
+    protected async deleteOne(match: Partial<Row>): Promise<T | null> {
       const { data, error } = await supabase
         .from(this.table)
         .delete()
@@ -96,7 +100,7 @@ export default function TableManager<T extends tableNames>(table: T){
         .select()
         .single();
       if (error) return null;
-      return data as Row;
+      return data as T;
     }
 
     protected async count(){
@@ -108,85 +112,7 @@ export default function TableManager<T extends tableNames>(table: T){
 
       return data ?? 0;
     }
-  
-    protected getQueryWithJoin(select: string = '*') {
-      return supabase.from(this.table).select(select);
-    }
-
-    public async findWithJoin<R = Record<string, unknown>>(
-      selectClause: string,
-      config: QueryConfig<T> = {}
-    ): Promise<R[] | null> {
-  
-      let query = this.getQueryWithJoin(selectClause)
-      
-      if (config.where) {
-        query = query.match(config.where);
-      }
-      
-      if (config.eq) {
-        Object.entries(config.eq).forEach(([key, value]) => {
-          query = query.eq(key, value);
-        });
-      }
-      
-      if (config.gt) {
-        Object.entries(config.gt).forEach(([key, value]) => {
-          query = query.gt(key, value);
-        });
-      }
-      
-      if (config.order) {
-        query = query.order(config.order.column, { ascending: config.order.ascending ?? true });
-      }
-      
-      if (config.limit) {
-        query = query.limit(config.limit);
-      }
-
-      const {data, error} = await query
-
-      if (error) return null;
-
-      return data as R[];
-    }
-
-    public async findOneWithJoin<R = Record<string, unknown>>(
-      selectClause: string,
-      config: QueryConfig<T> = {}
-    ): Promise<R | null> {
-      let query = this.getQueryWithJoin(selectClause)
-      
-      if (config.where) {
-        query = query.match(config.where);
-      }
-      
-      if (config.eq) {
-        Object.entries(config.eq).forEach(([key, value]) => {
-          query = query.eq(key, value);
-        });
-      }
-      
-      if (config.gt) {
-        Object.entries(config.gt).forEach(([key, value]) => {
-          query = query.gt(key, value);
-        });
-      }
-      
-      if (config.order) {
-        query = query.order(config.order.column, { ascending: config.order.ascending ?? true });
-      }
-      
-      if (config.limit) {
-        query = query.limit(config.limit);
-      }
-
-      const {data, error} = await query.single()
-      if (error) return null;
-      return data as R;
-    }
   }
 
-
-  return TableManager;
+  return TableManager<T>;
 }

@@ -1,6 +1,6 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { InterventionModel } from '$lib/models/interventionModel.js';
-import { supabase } from '$lib/types/supabase.js';
+import { supabase } from '$lib/types/client.js';
 
 // create mock of the supabase client so tests never directly interact with the database
 vi.mock('$lib/types/client', () => {
@@ -25,8 +25,7 @@ describe('InterventionModel', () => {
         last_updated: '2025-04-01T00:00:00Z',
         status: 'Neutral',
         remarks: 'Remarks',
-        child_id: 'uuid-child-id',
-        type: 'education'
+        child_id: 'uuid-child-id'
     };
 
 
@@ -43,8 +42,7 @@ describe('InterventionModel', () => {
             'string',
             'Remarks',
             2,
-            'Neutral',
-            'education',
+            'Neutral'
         );
         expect(result).toEqual(sampleIntervention);
     });
@@ -58,8 +56,7 @@ describe('InterventionModel', () => {
             'string',
             'Remarks',
             2,
-            'Neutral',
-            'education',
+            'Neutral'
         );
         expect(result).toBeNull();
     });
@@ -153,32 +150,9 @@ describe('InterventionModel', () => {
         expect(result).toBeNull();
     });
 
-    // findByInterventionType
-    it('findByInterventionType should return matching records when found', async () => {
-        const mockFindMany = vi.fn().mockResolvedValue([sampleIntervention]);
-        (InterventionModel.instance as any).findMany = mockFindMany;
-
-        const result = await InterventionModel.instance.findByInterventionType('education');
-        expect(result).toEqual([sampleIntervention]);
-    });
-
-    it('findByInterventionType should return empty array when no record is found', async () => {
-        const mockFindMany = vi.fn().mockResolvedValue([]);
-        (InterventionModel.instance as any).findMany = mockFindMany;
-
-        const result = await InterventionModel.instance.findByInterventionType('education');
-        expect(result).toEqual([]);
-    });
-
-    it('findByInterventionType should return null on error', async () => {
-        const mockFindMany = vi.fn().mockResolvedValue(null);
-        (InterventionModel.instance as any).findMany = mockFindMany;
-
-        const result = await InterventionModel.instance.findByInterventionType('education');
-        expect(result).toBeNull();
-    });
 
 
+    
     // Update methods
 
     // updateRemarks
@@ -195,23 +169,6 @@ describe('InterventionModel', () => {
         (InterventionModel.instance as any).updateOne = mockUpdate;
 
         const result = await InterventionModel.instance.updateRemarks('uuid-intervention-id', 'New Remark');
-        expect(result).toBe(false);
-    });
-
-    // updateInterventionType
-    it('updateInterventionType should return true if successful', async () => {
-        const mockUpdate = vi.fn().mockResolvedValue(true);
-        (InterventionModel.instance as any).updateOne = mockUpdate;
-
-        const result = await InterventionModel.instance.updateInterventionType('uuid-intervention-id', 'social');
-        expect(result).toBe(true);
-    });
-
-    it('updateInterventionType should return false if update fails', async () => {
-        const mockUpdate = vi.fn().mockResolvedValue(false);
-        (InterventionModel.instance as any).updateOne = mockUpdate;
-
-        const result = await InterventionModel.instance.updateInterventionType('uuid-intervention-id', 'social');
         expect(result).toBe(false);
     });
 

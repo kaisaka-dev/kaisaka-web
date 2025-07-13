@@ -61,7 +61,7 @@ export class CaregiversModel extends TableManager<"caregivers">('caregivers') {
   }
 
   /**
-   * Finds caregivers by contact number
+   * Finds caregivers by contact number (returns multiple for duplicate checking)
    * @param contact_number the contact number to search for
    * @returns array of caregiver records or null
    */
@@ -70,12 +70,30 @@ export class CaregiversModel extends TableManager<"caregivers">('caregivers') {
   }
 
   /**
-   * Finds caregivers by email address
+   * Finds a single caregiver by contact number (for unique lookups)
+   * @param contact_number the contact number to search for
+   * @returns single caregiver record or null
+   */
+  async findOneByContactNumber(contact_number: string): Promise<CaregiverRow | null> {
+    return this.findOne({ contact_number });
+  }
+
+  /**
+   * Finds caregivers by email address (returns multiple for duplicate checking)
    * @param email the email address to search for
    * @returns array of caregiver records or null
    */
   async findByEmail(email: string): Promise<CaregiverRow[] | null> {
     return this.findMany({ email });
+  }
+
+  /**
+   * Finds a single caregiver by email address (for unique lookups)
+   * @param email the email address to search for
+   * @returns single caregiver record or null
+   */
+  async findOneByEmail(email: string): Promise<CaregiverRow | null> {
+    return this.findOne({ email });
   }
 
   /**

@@ -33,6 +33,54 @@ This deals with every information under *barangay*.
 
 This for the T3AY2024-2025 Team Members.
 
+## List of Models
+- [activity](./activityModel.ts)
+- [addresses](./addressesModel.ts)
+- [annual_program](./annualProgramModel.ts)
+- [attendance_log](./attendanceLogModel.ts)
+- [barangays](./barangaysModel.ts)
+- [caregiver_groups](./caregiverGroupsModel.ts)
+- [caregivers](./caregiversModel.ts)
+- [children](./childrenModel.ts)
+- [cities](./citiesModel.ts)
+- [community_group_type](./communityGroupTypeModel.ts)
+- [disability_category](./disabilityCategoryModel.ts)
+- [education_status](./educationStatusModel.ts)
+- [employment_status](./employmentStatusModel.ts)
+- [families](./familiesModel.ts)
+- [family_members](./FamilyMembersModel.ts)
+- [income_type](./incomeTypeModel.ts)
+- [intervention](./interventionModel.ts)
+- [intervention_history](./interventionHistoryModel.ts)
+- [major_target_activity](./majorTargetActivityModel.ts)
+- [members](./membersModel.ts)
+- [membership_annual_renewal](./MemberShipAnnualRenewalModel.ts)
+- [membership_payment](./MembershipPaymentModel.ts)
+- [philhealth_ids](./philhealthIdsModel.ts)
+- [pwd_ids](./pwdIdsModel.ts)
+- [relationship_cc](./relationshipCCModel.ts)
+- [service_category](./serviceCategoryModel.ts)
+- [service_objective](./serviceObjectiveModel.ts)
+- [social_protection_status](./socialProtectionStatusModel.ts)
+- [streets](./streetsModel.ts)
+- users
+
+On June 29,
+The following were removed:
+- disabilities
+- disability_status
+
+The following were added:
+- activity
+- attendance_log
+- caregiver_groups
+- community_group_type
+- disability_category
+- income_type
+- major_target_activity
+- service_objective
+- users
+
 ### Developers
 
 @ImaginaryLogs already made it work, so if you want you can just replicate the existing barangay code (the thought pattern, so dont need to think too much).
@@ -51,3 +99,5 @@ For the api, if you need to retrieve any sort of information, ex: login page, if
 ### P.S
 
 @ImaginaryLogs: Session API soon
+
+

@@ -1,6 +1,6 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { CaregiversModel } from '$lib/models/caregiversModel.js';
-import { supabase } from '$lib/types/supabase.js';
+import { supabase } from '$lib/types/client.js';
 
 // create mock of the supabase client so tests never directly interact with the database
 vi.mock('$lib/types/client', () => ({
@@ -18,11 +18,12 @@ describe('caregiversModel', () => {
   const sampleCaregiver = {
     id: 'uuid-caregiver-id',
     member_id: 'uuid-member-id',
+    income_id: 123456789,
+    caregiver_group_id: 1,
     contact_number: '09123456789',
     facebook_link: 'https://facebook.com/test',
     email: 'test@gmail.com',
     occupation: 'Housewife',
-    remarks: 'I am remarking on this caregiver'
   };
 
   // insertCaregiver
@@ -37,11 +38,11 @@ describe('caregiversModel', () => {
 
     const result = await CaregiversModel.instance.insertCaregiver(
       sampleCaregiver.member_id,
+      sampleCaregiver.income_id,
       sampleCaregiver.contact_number,
       sampleCaregiver.facebook_link,
       sampleCaregiver.email,
       sampleCaregiver.occupation,
-      sampleCaregiver.remarks
     );
 
     expect(result).toEqual(sampleCaregiver);
@@ -56,7 +57,7 @@ describe('caregiversModel', () => {
       })
     });
 
-    const result = await CaregiversModel.instance.insertCaregiver(sampleCaregiver.member_id);
+    const result = await CaregiversModel.instance.insertCaregiver(sampleCaregiver.member_id, sampleCaregiver.income_id, sampleCaregiver.contact_number);
     expect(result).toBeNull();
   });
 
@@ -166,6 +167,24 @@ describe('caregiversModel', () => {
 
     const result = await CaregiversModel.instance.findByFacebookLink('non-existent-facebook-link');
     expect(result).toBeNull();
+  });
+
+  // findByIncomeId
+  it('findByIncomeId should return caregivers if found', async () => {
+    const mockFind = vi.fn().mockResolvedValue(sampleCaregiver);
+    (CaregiversModel.instance as any).findMany = mockFind;
+
+    const result = await CaregiversModel.instance.findByIncomeId(sampleCaregiver.income_id);
+    expect(mockFind).toHaveBeenCalledWith({ income_id: sampleCaregiver.income_id });
+    expect(result).toEqual(sampleCaregiver);
+  });
+
+  it('findByIncomeId should return empty array if not found', async () => {
+    const mockFind = vi.fn().mockResolvedValue([]);
+    (CaregiversModel.instance as any).findMany = mockFind;
+
+    const result = await CaregiversModel.instance.findByIncomeId(1);
+    expect(result).toEqual([]);
   });
 
   // getAll
@@ -363,6 +382,42 @@ describe('caregiversModel', () => {
       occupation: 'Nurse',
       remarks: 'Updated remarks again'
     });
+    expect(result).toBe(false);
+  });
+
+  // updateRemarks
+  it('updateRemarks should return true on success', async () => {
+    const mockUpdate = vi.fn().mockResolvedValue(true);
+    (CaregiversModel.instance as any).updateOne = mockUpdate;
+
+    const result = await CaregiversModel.instance.updateRemarks(sampleCaregiver.id, 'Updated remarks');
+    expect(mockUpdate).toHaveBeenCalledWith({ id: sampleCaregiver.id }, { remarks: 'Updated remarks' });
+    expect(result).toBe(true);
+  });
+
+  it('updateRemarks should return false on failure', async () => {
+    const mockUpdate = vi.fn().mockResolvedValue(false);
+    (CaregiversModel.instance as any).updateOne = mockUpdate;
+
+    const result = await CaregiversModel.instance.updateRemarks(sampleCaregiver.id, 'Updated remarks');
+    expect(result).toBe(false);
+  });
+
+  // updateIncomeId
+  it('updateIncomeId should return true on success', async () => {
+    const mockUpdate = vi.fn().mockResolvedValue(true);
+    (CaregiversModel.instance as any).updateOne = mockUpdate;
+
+    const result = await CaregiversModel.instance.updateIncomeId(sampleCaregiver.id, 123456788);
+    expect(mockUpdate).toHaveBeenCalledWith({ id: sampleCaregiver.id }, { income_id: 123456788 });
+    expect(result).toBe(true);
+  });
+
+  it('updateIncomeId should return false on failure', async () => {
+    const mockUpdate = vi.fn().mockResolvedValue(false);
+    (CaregiversModel.instance as any).updateOne = mockUpdate;
+
+    const result = await CaregiversModel.instance.updateIncomeId(sampleCaregiver.id, -1);
     expect(result).toBe(false);
   });
 

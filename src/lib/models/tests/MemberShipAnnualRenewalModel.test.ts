@@ -1,6 +1,6 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { MembershipAnnualRenewalModel } from '$lib/models/MemberShipAnnualRenewalModel.js';
-import { supabase } from '$lib/types/supabase.js';
+import { supabase } from '$lib/types/client.js';
 
 // create mock of the supabase client so tests never directly interact with the database
 vi.mock('$lib/types/client', () => ({
@@ -224,7 +224,7 @@ describe('MembershipAnnualRenewalModel', () => {
             })
         });
 
-        const result = await MembershipAnnualRenewalModel.instance.updateAmountDue(1, 999);
+        const result = await MembershipAnnualRenewalModel.instance.updateTotalAmountDue(1, 999);
         expect(result).toBe(true);
     });
 
@@ -237,7 +237,7 @@ describe('MembershipAnnualRenewalModel', () => {
             })
         });
 
-        const result = await MembershipAnnualRenewalModel.instance.updateAmountDue(1, 999);
+        const result = await MembershipAnnualRenewalModel.instance.updateTotalAmountDue(1, 999);
         expect(result).toBe(false);
     });
 

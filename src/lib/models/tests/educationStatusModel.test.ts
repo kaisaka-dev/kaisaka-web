@@ -1,6 +1,6 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { educationStatusModel } from '$lib/models/educationStatusModel.js';
-import { supabase } from '$lib/types/supabase.js';
+import { supabase } from '$lib/types/client.js';
 
 // create mock of the supabase client so tests never directly interact with the database
 vi.mock('$lib/types/client', () => {
@@ -189,7 +189,7 @@ describe('educationStatusModel', () => {
         const mockUpdate = vi.fn().mockResolvedValue(true);
         (educationStatusModel.instance as any).updateOne = mockUpdate;
 
-        const result = await educationStatusModel.instance.updateGradeLevel(1, 11);
+        const result = await educationStatusModel.instance.updateGradeLevel(1, '11');
         expect(result).toBe(true);
     });
 
@@ -197,7 +197,7 @@ describe('educationStatusModel', () => {
         const mockUpdate = vi.fn().mockResolvedValue(false);
         (educationStatusModel.instance as any).updateOne = mockUpdate;
 
-        const result = await educationStatusModel.instance.updateGradeLevel(0, 11);
+        const result = await educationStatusModel.instance.updateGradeLevel(0, '11');
         expect(result).toBe(false);
     });
 

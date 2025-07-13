@@ -1,6 +1,6 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { pwdIdsModel } from '$lib/models/pwdIdsModel.js';
-import { supabase } from '$lib/types/supabase.js';
+import { supabase } from '$lib/types/client.js';
 
 // create mock of the supabase client so tests never directly interact with the database
 vi.mock('$lib/types/client', () => ({
@@ -31,18 +31,37 @@ describe('pwdIdsModel', () => {
 
     // findById
     it('findById should return a record when found', async () => {
-        mockFindMany({ data: [samplePwd], error: null });
+        const mockFindOne = vi.fn().mockResolvedValue(samplePwd);
+        (pwdIdsModel.instance as any).findOne = mockFindOne;
 
         const result = await pwdIdsModel.instance.findById('PWD-12345');
-        expect(result).toEqual([samplePwd]);
+        expect(result).toEqual(samplePwd);
     });
 
     it('findById should return null when not found', async () => {
-        mockFindMany({ data: null, error: null });
+        const mockFindOne = vi.fn().mockResolvedValue(null);
+        (pwdIdsModel.instance as any).findOne = mockFindOne;
 
         const result = await pwdIdsModel.instance.findById('PWD-12345');
         expect(result).toBeNull();
     });
+
+    // findByPwdId
+    it('findByPwdId should return a record when found', async () => {
+        const mockFindOne = vi.fn().mockResolvedValue(samplePwd);
+        (pwdIdsModel.instance as any).findOne = mockFindOne;
+
+        const result = await pwdIdsModel.instance.findByPwdId('PWD-12345');
+        expect(result).toEqual(samplePwd);
+    });
+
+    it('findByPwdId should return null when not found', async () => {
+        const mockFindOne = vi.fn().mockResolvedValue(null);
+        (pwdIdsModel.instance as any).findOne = mockFindOne;
+
+        const result = await pwdIdsModel.instance.findByPwdId('PWD-12345');
+        expect(result).toBeNull();
+    })
 
     // findByExpiryDate
     it('findByExpiryDate should return records when found', async () => {

@@ -1,6 +1,6 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { socialProtectionStatusModel } from '$lib/models/socialProtectionStatusModel.js';
-import { supabase } from '$lib/types/supabase.js';
+import { supabase } from '$lib/types/client.js';
 
 // create mock of the supabase client so tests never directly interact with the database
 vi.mock('$lib/types/client', () => ({
@@ -17,10 +17,13 @@ describe('socialProtectionStatusModel', () => {
 
     const sampleStatus = {
         id: 1,
-        year_accessed: 2024,
+        fam_year_accessed: 2024,
         date_created: '2024-01-01T00:00:00.000Z',
         last_updated: '2024-01-01T00:00:00.000Z',
-        child_id: 'uuid-child-id'
+        child_id: 'uuid-child-id',
+        participates_family_life: true,
+        participates_community_club: true,
+        comm_year_accessed: 2025
     };
 
     // findByChildId
@@ -40,21 +43,72 @@ describe('socialProtectionStatusModel', () => {
         expect(result).toBeNull();
     });
 
-    // findByYearAccessed
-    it('findByYearAccessed should return matching records when found', async () => {
+    // findByFamYearAccessed
+    it('findByFamYearAccessed should return matching records when found', async () => {
         const mockFindMany = vi.fn().mockResolvedValue([sampleStatus]);
         (socialProtectionStatusModel.instance as any).findMany = mockFindMany;
 
-        const result = await socialProtectionStatusModel.instance.findByYearAccessed(2024);
+        const result = await socialProtectionStatusModel.instance.findByFamYearAccessed(2024);
         expect(result).toEqual([sampleStatus]);
     });
 
-    it('findByYearAccessed should return null when no records found', async () => {
-        const mockFindMany = vi.fn().mockResolvedValue(null);
+    it('findByFamYearAccessed should return empty array when no records found', async () => {
+        const mockFindMany = vi.fn().mockResolvedValue([]);
         (socialProtectionStatusModel.instance as any).findMany = mockFindMany;
 
-        const result = await socialProtectionStatusModel.instance.findByYearAccessed(2024);
-        expect(result).toBeNull();
+        const result = await socialProtectionStatusModel.instance.findByFamYearAccessed(2000);
+        expect(result).toEqual([]);
+    });
+
+    // findByCommYearAccessed
+    it('findByCommYearAccessed should return matching records when found', async () => {
+        const mockFindMany = vi.fn().mockResolvedValue([sampleStatus]);
+        (socialProtectionStatusModel.instance as any).findMany = mockFindMany;
+
+        const result = await socialProtectionStatusModel.instance.findByCommYearAccessed(2000);
+        expect(result).toEqual([sampleStatus]);
+    });
+
+    it('findByCommYearAccessed should return empty array when no records found', async () => {
+        const mockFindMany = vi.fn().mockResolvedValue([]);
+        (socialProtectionStatusModel.instance as any).findMany = mockFindMany;
+
+        const result = await socialProtectionStatusModel.instance.findByCommYearAccessed(2024);
+        expect(result).toEqual([]);
+    });
+
+    // findByParticipatesCommunityClub
+    it('findByParticipatesCommunityClub should return matching records when found', async () => {
+        const mockFindMany = vi.fn().mockResolvedValue([sampleStatus]);
+        (socialProtectionStatusModel.instance as any).findMany = mockFindMany;
+
+        const result = await socialProtectionStatusModel.instance.findByParticipatesCommunityClub(true);
+        expect(result).toEqual([sampleStatus]);
+    });
+
+    it('findByParticipatesCommunityClub should return empty array when no records found', async () => {
+        const mockFindMany = vi.fn().mockResolvedValue([]);
+        (socialProtectionStatusModel.instance as any).findMany = mockFindMany;
+
+        const result = await socialProtectionStatusModel.instance.findByParticipatesFamilyLife(true);
+        expect(result).toEqual([]);
+    });
+
+    // findByParticipatesFamilyLife
+    it('findByParticipatesFamilyLife should return matching records when found', async () => {
+        const mockFindMany = vi.fn().mockResolvedValue([sampleStatus]);
+        (socialProtectionStatusModel.instance as any).findMany = mockFindMany;
+
+        const result = await socialProtectionStatusModel.instance.findByParticipatesFamilyLife(true);
+        expect(result).toEqual([sampleStatus]);
+    });
+
+    it('findByParticipatesFamilyLife should return empty array when no records found', async () => {
+        const mockFindMany = vi.fn().mockResolvedValue([]);
+        (socialProtectionStatusModel.instance as any).findMany = mockFindMany;
+
+        const result = await socialProtectionStatusModel.instance.findByParticipatesFamilyLife(true);
+        expect(result).toEqual([]);
     });
 
     // insertStatus
@@ -63,8 +117,7 @@ describe('socialProtectionStatusModel', () => {
         (socialProtectionStatusModel.instance as any).insertOne = mockInsert;
 
         const result = await socialProtectionStatusModel.instance.insertStatus({
-            year_accessed: 2024,
-            child_id: 'uuid-child-id'
+            child_id: 'uuid-child-id',
         });
         expect(result).toEqual(sampleStatus);
     });
@@ -74,19 +127,36 @@ describe('socialProtectionStatusModel', () => {
         (socialProtectionStatusModel.instance as any).insertOne = mockInsert;
 
         const result = await socialProtectionStatusModel.instance.insertStatus({
-            year_accessed: 2024,
-            child_id: 'uuid-child-id'
+            child_id: 'uuid-child-id',
         });
         expect(result).toBeNull();
     });
 
-    // updateYearAccessed
+    // updateFamYearAccessed
+    it('updateFamYearAccessed should return true on success', async () => {
+        const mockUpdate = vi.fn().mockResolvedValue(true);
+        (socialProtectionStatusModel.instance as any).updateOne = mockUpdate;
+
+        const result = await socialProtectionStatusModel.instance.updateFamYearAccessed(1, 2024);
+        expect(mockUpdate).toHaveBeenCalledWith({ id: 1 }, expect.objectContaining({ fam_year_accessed: 2024 }));
+        expect(result).toBe(true);
+    });
+
+    it('updateFamYearAccessed should return false on failure', async () => {
+        const mockUpdate = vi.fn().mockResolvedValue(false);
+        (socialProtectionStatusModel.instance as any).updateOne = mockUpdate;
+
+        const result = await socialProtectionStatusModel.instance.updateFamYearAccessed(1, 2024);
+        expect(result).toBe(false);
+    });
+
+    // updateYearAccessed - NOTE: Updates comm_year_accessed
     it('updateYearAccessed should return true on success', async () => {
         const mockUpdate = vi.fn().mockResolvedValue(true);
         (socialProtectionStatusModel.instance as any).updateOne = mockUpdate;
 
         const result = await socialProtectionStatusModel.instance.updateYearAccessed(1, 2024);
-        expect(mockUpdate).toHaveBeenCalledWith({ id: 1 }, expect.objectContaining({ year_accessed: 2024 }));
+        expect(mockUpdate).toHaveBeenCalledWith({ id: 1 }, expect.objectContaining({ comm_year_accessed: 2024 }));
         expect(result).toBe(true);
     });
 
@@ -123,14 +193,16 @@ describe('socialProtectionStatusModel', () => {
 
         const result = await socialProtectionStatusModel.instance.updateStatus(1, {
             child_id: 'uuid-child-id',
-            year_accessed: 2025
+            fam_year_accessed: 2025,
+            comm_year_accessed: 2024
         });
 
         expect(mockUpdate).toHaveBeenCalledWith(
             { id: 1 },
             expect.objectContaining({
                 child_id: 'uuid-child-id',
-                year_accessed: 2025
+                fam_year_accessed: 2025,
+                comm_year_accessed: 2024
             })
         );
         expect(result).toBe(true);
@@ -142,7 +214,8 @@ describe('socialProtectionStatusModel', () => {
 
         const result = await socialProtectionStatusModel.instance.updateStatus(1, {
             child_id: 'uuid-child-id',
-            year_accessed: 2025
+            fam_year_accessed: 2025,
+            comm_year_accessed: 2024
         });
         expect(result).toBe(false);
     });
