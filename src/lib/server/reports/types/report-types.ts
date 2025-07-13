@@ -1,3 +1,5 @@
+import type { FillPatterns } from "exceljs";
+
 export interface ReportMetadata {
   generatedAt: Date;
   generatedBy: string;
@@ -84,7 +86,7 @@ export interface CellStyle {
   fill?: {
     fgColor?: string;
     bgColor?: string;
-    pattern?: string;
+    pattern?: FillPatterns;
   };
   border?: {
     top?: BorderStyle;
@@ -111,4 +113,17 @@ export interface ReportPreview {
   totalCount: number,
   columns: ExcelColumn[],
   createdAt: string,
+}
+
+export interface ReportMergeConfig {
+  sectionGap?: number;
+  topBottomPadding?: number;
+  leftRightPadding?: number;
+  includeDividers?: boolean;
+  dividerStyle?: CellStyle;
+}
+
+export interface AddressPair {
+  row: number,
+  col: number
 }

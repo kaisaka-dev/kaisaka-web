@@ -1,6 +1,7 @@
 // src/lib/reports/ExcelGenerator.ts
 import ExcelJS from 'exceljs';
-import type { CellStyle, ExcelReportData, MergedCell, PositionedCell, ReportMetadata } from './report-types.js';
+import type { AddressPair as cellAddressPair, ExcelReportData, MergedCell, PositionedCell, ReportMetadata } from './report-types.js';
+import { reportConversion } from './report-conversion.js'
 
 export class ExcelGenerator {
   /**
@@ -15,35 +16,28 @@ export class ExcelGenerator {
     
     // Calculate starting row for data (after merged cells and floating cells)
     const dataStartRow = this.calculateDataStartRow(reportData);
-    
-    // Apply merged cells first
-    if (reportData.mergedCells) {
+
+    if (reportData.mergedCells) 
       this.applyMergedCells(worksheet, reportData.mergedCells);
-    }
-    
-    // Add headers and data
+
     this.addDataToWorksheet(worksheet, reportData, dataStartRow);
-    
-    // Apply formatting
     this.applyAdvancedFormatting(worksheet, reportData, dataStartRow);
     
-    // Apply floating cells AFTER data is added to avoid overwriting
-    if (reportData.floatingCells) {
-      this.applyFloatingCells(worksheet, reportData.floatingCells);
-    }
-    
-    // Auto-fit columns
-    this.autoFitColumns(worksheet, reportData);
-    
-    // Auto-fit row heights
-    this.autoFitRowHeights(worksheet, reportData, dataStartRow);
-    
-    // Add metadata sheet
-    const metadataSheet = this.createMetadataSheet(workbook, reportData.metadata);
 
-    workbook.addWorksheet(workbook, metadataSheet );
+    if (reportData.floatingCells) 
+      this.applyFloatingCells(worksheet, reportData.floatingCells);
+    
+    this.autoFitColumns(worksheet, reportData);
+    this.autoFitRowHeights(worksheet, reportData, dataStartRow);
+    this.createMetadataSheet(workbook, reportData.metadata);
 
     return await workbook.xlsx.writeBuffer();
+  }
+
+  static async writeReportToWorksheet(worksheet: Worksheet, report: ExcelReportData, startAddress: cellAddressPair){
+    let currentRow = startAddress.row;
+
+    
   }
   
   /**
@@ -83,62 +77,6 @@ export class ExcelGenerator {
       worksheet.getRow(dataStartRow + 1 + rowIndex).values = rowData;
     });
   }
-  
-  /**
-   * Convert internal CellStyle to ExcelJS style
-   */
-  private static convertCellStyle(style: CellStyle): Partial<ExcelJS.Style> {
-    const excelStyle: Partial<ExcelJS.Style> = {};
-    
-    if (style.font) {
-      excelStyle.font = {
-        bold: style.font.bold,
-        italic: style.font.italic,
-        underline: style.font.underline,
-        size: style.font.size,
-        color: style.font.color ? { argb: style.font.color.replace('#', '') } : { argb: '000000' },
-        name: style.font.name
-      };
-    }
-    
-    if (style.fill) {
-      excelStyle.fill = {
-        type: 'pattern',
-        pattern: style.fill.pattern || 'solid',
-        fgColor: { argb: style.fill.fgColor?.replace('#', '') || 'FFFFFF' },
-        bgColor: { argb: style.fill.bgColor?.replace('#', '') || 'FFFFFF' }
-      };
-    }
-    
-    if (style.border) {
-      excelStyle.border = {};
-      ['top', 'bottom', 'left', 'right'].forEach(side => {
-        const borderSide = style.border![side as keyof typeof style.border];
-        if (borderSide) {
-          excelStyle.border![side as keyof ExcelJS.Borders] = {
-            style: borderSide.style as ExcelJS.BorderStyle,
-            color: { argb: borderSide.color?.replace('#', '') || '000000' }
-          };
-        }
-      });
-    }
-    
-    if (style.alignment) {
-      excelStyle.alignment = {
-        horizontal: style.alignment.horizontal as ExcelJS.Alignment['horizontal'],
-        vertical: style.alignment.vertical as ExcelJS.Alignment['vertical'],
-        wrapText: style.alignment.wrapText,
-        textRotation: style.alignment.textRotation
-      };
-    }
-    
-    if (style.numberFormat) {
-      excelStyle.numFmt = style.numberFormat;
-    }
-    
-    return excelStyle;
-  }
-  
   /**
    * Apply floating cells to worksheet
    */
@@ -148,7 +86,7 @@ export class ExcelGenerator {
       excelCell.value = cell.value;
       
       if (cell.style) {
-        const style = this.convertCellStyle(cell.style);
+        const style = reportConversion.convertCellStyle(cell.style);
         Object.assign(excelCell, style);
       }
     });
@@ -170,7 +108,7 @@ export class ExcelGenerator {
       
       // Apply style to merged cell
       if (mergedCell.style) {
-        const style = this.convertCellStyle(mergedCell.style);
+        const style = reportConversion.convertCellStyle(mergedCell.style);
         Object.assign(range, style);
       }
     });
@@ -183,7 +121,7 @@ export class ExcelGenerator {
     if (!reportData.headerStyle) return;
     
     const headerRow = worksheet.getRow(dataStartRow);
-    const style = this.convertCellStyle(reportData.headerStyle);
+    const style = reportConversion.convertCellStyle(reportData.headerStyle);
     
     reportData.columns.forEach((_, colIndex) => {
       const cell = headerRow.getCell(colIndex + 1);
@@ -197,7 +135,7 @@ export class ExcelGenerator {
   private static applyDataFormatting(worksheet: ExcelJS.Worksheet, reportData: ExcelReportData, dataStartRow: number): void {
     if (!reportData.dataStyle) return;
     
-    const style = this.convertCellStyle(reportData.dataStyle);
+    const style = reportConversion.convertCellStyle(reportData.dataStyle);
     
     reportData.data.forEach((_, rowIndex) => {
       const row = worksheet.getRow(dataStartRow + 1 + rowIndex);
@@ -422,4 +360,5 @@ export class ExcelGenerator {
     
     return totalLines * 15;
   }
+
 }
