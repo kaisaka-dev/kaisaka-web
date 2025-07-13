@@ -56,7 +56,7 @@ import LoginModal from '../components/LoginModal.svelte'
     {/snippet}
     
       <LoginError data = { data.error }/>
-    
+      
       <LoginInputLabel labelText="EMAIL:" forType="email" inputName="email" placeholder="Type email ..."/>
     
       <LoginInputLabel labelText="PASSWORD:" forType="password" inputName="password" placeholder="Type password ..."/>
