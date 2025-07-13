@@ -23,6 +23,7 @@ export class LogSidecar {
       logLevel:                   options.logLevel                || 'info',
       compressionEnabled:         options.compressionEnabled      ?? true,
       sizeCheckInterval:          options.sizeCheckInterval       ?? 5 * 60 * 1000,
+      enableMetaData:             options.enableMetaData          ?? false,
     };
 
 
