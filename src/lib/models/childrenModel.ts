@@ -247,6 +247,32 @@ export class ChildrenModel extends TableManager<"children">('children') {
    */
   async findThroughJoin_Caregivers(id: string = ''){
     const joinStatement = `*, relationship_cc!inner(relationship, caregivers!inner( id, contact_number, facebook_link, email, occupation, member_id, income_id))`;
-    this.findWithJoin(joinStatement, {eq: {id: id}})
+    return this.findWithJoin(joinStatement, {eq: {id: id}})
+  }
+  
+  async childrenList(id: string = ''){
+  const joinStatement = `*, members!inner(
+    id,
+    first_name,
+    middle_name,
+    last_name,
+    birthday,
+    sex,
+    admission_date
+  ),
+  disability_category!inner(
+    id,
+    name
+  ),
+  education_status!inner(
+    id,
+    education_type,
+    year_start,
+    year_end,
+    grade_level,
+    last_updated,
+    student_status_enum
+  )`;
+    return this.findWithJoin(joinStatement, {eq: {id: id}})
   }
 }
