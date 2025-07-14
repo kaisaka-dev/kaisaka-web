@@ -1,16 +1,31 @@
 import { ChildrenModel } from "$lib/models/childrenModel.js";
+import { parseJoinParams } from "$lib/types/joining.js";
 import { error, json, type RequestHandler } from "@sveltejs/kit";
 
-export const GET: RequestHandler = async ({ params }) => {
+export const GET: RequestHandler = async ({ params, url}) => {
     const id = params.id;
+    const joinParams = parseJoinParams(url)
+    
 
-    if(!id){
+    if (!id)
         throw error(400, 'Missing ID');
-    }
+    
 
     try{
-        const child = await ChildrenModel.instance.findById(id);
-
+        let child;
+        
+        if (!joinParams.hasParams)
+            child = await ChildrenModel.instance.findById(id)
+        else {
+            switch (joinParams.select) {
+                case 'caregivers': 
+                    child = await ChildrenModel.instance.findThroughJoin_Caregivers(id)
+                    break;
+                default:
+                    throw error(404, 'Select statement not found')       
+            }
+        }
+            
         if(!child){
             throw error(404, 'Child not found')
         }

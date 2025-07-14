@@ -9,7 +9,7 @@ const registrationFormValidator = z.object({
       required_error: "Username is required", 
       invalid_type_error: "Username is not a string"
     }).min(8, { message: "Username must be more than 8 characters in length"})
-    .regex(/[A-Za-z_0-9]/),
+    .regex(/[A-Za-z_0-9]/, { message: "Username may only contain letters, numbers, and underscores" }),
   email: z.string()
     .email({ message: "Email is invalid"}),
   password: z.string({ 
@@ -30,16 +30,19 @@ export const actions = {
   register: async (event): Promise<ActionData> => {
     const formData = await event.request.formData()
     const formDataObject = {
-      username: formData.get('username'),
-      email: formData.get('email'),
-      password: formData.get('password'),
-      confirmPassword: formData.get('confirmPassword')
+      username: String(formData.get('username') ?? ''),
+      email: String(formData.get('email') ?? ''),
+      password: String(formData.get('password') ?? ''),
+      confirmPassword: String(formData.get('confirmPassword') ?? '')
     }
 
     const registrationResult = await registrationFormValidator.safeParseAsync(formDataObject)
 
     if (!registrationResult.success) {
-      return redirect(303, `/sign-up?error=${encodeURIComponent(registrationResult.error.message)}`)
+      const errorMessages = registrationResult.error.errors
+        .map(e => `${e.path[0]}: ${e.message}`)
+        .join(', ')
+      return redirect(303, `/sign-up?error=${encodeURIComponent(errorMessages)}`)
     }
 
     const response = await event.fetch('/auth/register', {

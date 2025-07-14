@@ -1,6 +1,7 @@
-import type {family} from './family.js'
-import type { EventType } from './event.js'
-import type { interventionType } from './intervention.js'
+import type {family} from './family.ts'
+import type { EventType } from './event.ts'
+import type { interventionType } from './intervention.ts'
+import type { SocialSecurity } from './SocialSecurity.ts'
 
 export type child = {
     firstName: string,
@@ -25,6 +26,7 @@ export type child = {
     PhilHealth: boolean,
     medCert: boolean,
     birthCert: boolean,
-    barangayCert: boolean
-    interventionHistory: interventionType[]
+    barangayCert: boolean,
+    interventionHistory: interventionType[],
+    socialSecurity: SocialSecurity
 }

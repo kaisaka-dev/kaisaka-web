@@ -98,14 +98,39 @@
         modalIsOpen = false;
     }
 
+    async function downloadExcel() {
+    try {
+      const response = await fetch('/api/reports/target_cwds', {
+        method: 'POST'
+      });
+
+      if (!response.ok) {
+        throw new Error(`Failed to generate report: ${response.status}`);
+      }
+
+      const blob = await response.blob();
+
+      const url = URL.createObjectURL(blob);
+
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = 'sales_report.xlsx';
+      document.body.appendChild(a);
+      a.click();
+
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+    } catch (err) {
+      console.error(err);
+      alert('Error generating report.');
+    }
+  }
 </script>
 
 <Header category="reports" page="annual" />
 
 <section>
     <h2>List of Annual Programs
-
-
     </h2>
     <Modal buttonText="Add New Annual Program" width="50%" isOpen={modalIsOpen}>
         <div slot="modal">
@@ -131,6 +156,7 @@
 </section>
 
 
+
 <section>
     <table>
         <thead>
@@ -146,7 +172,7 @@
                 <td>{row.Start}</td>
                 <td>{row.End}</td>
                 <td>
-                    <button class="green">Export</button>
+                    <button class="green" onclick={downloadExcel}>Export</button>
                 </td>
             </tr>
         {/each}
