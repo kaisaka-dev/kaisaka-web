@@ -10,6 +10,7 @@
     import { childFormData } from '../../../../lib/stores/childForm.js';
     import { goto } from '$app/navigation';
 
+
     let firstName = "";
     let middleName = "";
     let lastName = "";
@@ -44,19 +45,13 @@
     let ayEnd = new Date().getFullYear() + 1;
     let admissionDate = new Date().toISOString().slice(0, 7);
 
-    const options_disCategory = [
-        "Deaf/Hard of Hearing",
-        "Intellectual Disability",
-        "Learning Disability",
-        "Mental Disability",
-        "Physical Disability",
-        "Psychosocial Disability",
-        "Speech and Language Impairment",
-        "Visual Disability",
-        "Cancer",
-        "Rare Disease (RA10747)",
-        "Multiple Disability"
-    ];  // from KAISAKA's 2024-jan-nov-list-of-children
+    let options_disCategory = $state();
+
+    async function getOptionsDisCategory() {
+        const response = await fetch('/api/disability_category');
+        options_disCategory = await response.json();
+    }
+
     const options_disNature = [
         "ADHD",
         "Autism Spectrum Disorder",

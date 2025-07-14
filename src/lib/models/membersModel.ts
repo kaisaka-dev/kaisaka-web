@@ -91,4 +91,13 @@ export class membersModel extends TableManager<"members">('members') {
     const data = await this.updateOne(references, updates);
     return data;
   }
+
+  /**
+   * Finds a member by ID
+   * @param id member ID (UUID)
+   * @returns member record or null
+   */
+  async findById(id: string): Promise<MembersRow | null> {
+    return this.findOne({ id });
+  }
 }
