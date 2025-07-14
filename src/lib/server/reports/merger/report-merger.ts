@@ -81,6 +81,8 @@ export class ExcelMerger {
 
     const transferContentsToDest = (rowDatum: rowDatum) => this.transferRow(rowDatum, dstStartRow, dstWorksheet)
 
+    await this.copySheetImages(dstWorksheet, srcWorksheet, dstStartRow, srcData.lowestNumber);
+
     srcWorksheet.eachRow(copyAndStoreSrcData);
 
     srcData.rowData.forEach(transferContentsToDest);
@@ -98,6 +100,8 @@ export class ExcelMerger {
     });
 
     await this.copyMergedCells(srcWorksheet, dstWorksheet, dstStartRow, srcData.lowestNumber + 2);
+
+    
 
     logger.info(`[Report Merger] Copied ${srcData.lowestNumber} rows from ${srcWorksheet.name}`)
 
@@ -173,6 +177,50 @@ export class ExcelMerger {
       row: parseInt(match[2], 10)
     };
   }
+
+  static copySheetImages(dstWorksheet: Worksheet, srcWorksheet: Worksheet, dstStartRow: number, copiedRowCount: number){
+    const logger = getLogSidecar()
+    try {
+    const srcImages = srcWorksheet.getImages?.() || [];
+
+    for (const { imageId, range } of srcImages) {
+      logger.info(`[Image] Found image at rows ${range.tl.row}-${range.br.row}`);
+
+      // skip if outside the copied rows
+      if (range.tl.row > copiedRowCount && range.br.row > copiedRowCount) continue;
+
+      const srcWorkbook = srcWorksheet.workbook;
+      const dstWorkbook = dstWorksheet.workbook;
+
+      const image = srcWorkbook.getImage(Number(imageId));
+
+      const newImageId = dstWorkbook.addImage(image);
+
+      // adjust only the row part of the anchors
+      const newRange: ExcelJS.ImageRange = {
+        tl: {
+          ...range.tl,
+          row: range.tl.row + dstStartRow,
+          nativeRow: range.tl.nativeRow + dstStartRow,
+        },
+        br: {
+          ...range.br,
+          row: range.br.row + dstStartRow,
+          nativeRow: range.br.nativeRow + dstStartRow,
+        },
+      } as ExcelJS.ImageRange;
+
+      dstWorksheet.addImage(newImageId, newRange);
+
+      logger.info(`[Image] Copied image to rows ${newRange.tl.row}-${newRange.br.row}`);
+    }
+
+    logger.info(`[Report Merger] Images copied`);
+  } catch (error) {
+    logger.warn(`[Report Merger] Error copying images: ${error}`);
+  }
+  }
+
 
   static columnNumberToLetter(columnNumber: number): string {
     let columnLetter = '';
