@@ -4,89 +4,83 @@ import FilterSearch from "../../../../components/styled-buttons/FilterSearch.sve
 import Table from "../../../../components/text/Table.svelte";
 import InputText from '../../../../components/input/InputText.svelte';
 import Select from '../../../../components/input/Select.svelte';
+import type { PageData } from './$types';
+
+const { data } = $props<{ data: PageData }>();
+
+// load the data
+
+let childrenData = $state(data.children || []);
+let filteredData = $state(childrenData);
+let isLoading = $state(false);
+let error = $state(data.error || null);
+
+console.log(data)
+
+// const childrenList: ChildrenList[] = [
+//     {
+//         firstName: "Roan",
+//         lastName: "Campo",
+//         birthday: "2005-05-25",
+//         category: "Learning Disability",
+//         nature: "Autism Spectrum Disorder",
+//         age: 18,
+//         sex: "Male",
+//         school: "Special (Exclusive school, blind / deaf)",
+//         educationLevel: "Grade 10",
+//         link: "/dashboard/members/children/profile"
+//     },
+//     {
+//         firstName: "Paolo",
+//         lastName: "Rivera",
+//         birthday: "2005-05-25",
+//         category: "Psychosocial Disability",
+//         nature: "Epilepsy",
+//         age: 18,
+//         sex: "Male",
+//         school: "Integrated / SPED classes",
+//         educationLevel: "Grade 11",
+//         link: "/dashboard/members/children/profile"
+//     },
+//     {
+//         firstName: "Mariella Jeans",
+//         lastName: "Dellosa",
+//         birthday: "2005-05-25",
+//         category: "Speech/Language Impairment",
+//         nature: "Cleft Palate",
+//         age: 18,
+//         sex: "Female",
+//         school: "Inclusive / General education",
+//         educationLevel: "Grade 12",
+//         link: "/dashboard/members/children/profile"
+//     },
+//     {
+//         firstName: "Bea Antoinette",
+//         lastName: "Uy",
+//         birthday: "2005-05-25",
+//         category: "Deaf/Hard of Hearing",
+//         nature: "Deaf",
+//         age: 18,
+//         sex: "Female",
+//         school: "Non-formal",
+//         educationLevel: "Vocational",
+//         link: "/dashboard/members/children/profile"
+//     },
+//     {
+//         firstName: "Gideon",
+//         lastName: "Chua",
+//         birthday: "2005-05-25",
+//         category: "Intellectual Disability",
+//         nature: "Intellectual",
+//         age: 18,
+//         sex: "Male",
+//         school: "Home program",
+//         educationLevel: "Basic Skills",
+//         link: "/dashboard/members/children/profile"
+//     },
+// ];
 
 
-
-// test data
-
-type ChildrenList = {
-    firstName: string;
-    lastName: string;
-    birthday: string;
-    category: string;
-    nature: string;
-    age: number;
-    sex: string;
-    school: string;
-    educationLevel: string;
-    link: string;
-};
-
-const childrenList: ChildrenList[] = [
-    {
-        firstName: "Roan",
-        lastName: "Campo",
-        birthday: "2005-05-25",
-        category: "Learning Disability",
-        nature: "Autism Spectrum Disorder",
-        age: 18,
-        sex: "Male",
-        school: "Special (Exclusive school, blind / deaf)",
-        educationLevel: "Grade 10",
-        link: "/dashboard/members/children/profile"
-    },
-    {
-        firstName: "Paolo",
-        lastName: "Rivera",
-        birthday: "2005-05-25",
-        category: "Psychosocial Disability",
-        nature: "Epilepsy",
-        age: 18,
-        sex: "Male",
-        school: "Integrated / SPED classes",
-        educationLevel: "Grade 11",
-        link: "/dashboard/members/children/profile"
-    },
-    {
-        firstName: "Mariella Jeans",
-        lastName: "Dellosa",
-        birthday: "2005-05-25",
-        category: "Speech/Language Impairment",
-        nature: "Cleft Palate",
-        age: 18,
-        sex: "Female",
-        school: "Inclusive / General education",
-        educationLevel: "Grade 12",
-        link: "/dashboard/members/children/profile"
-    },
-    {
-        firstName: "Bea Antoinette",
-        lastName: "Uy",
-        birthday: "2005-05-25",
-        category: "Deaf/Hard of Hearing",
-        nature: "Deaf",
-        age: 18,
-        sex: "Female",
-        school: "Non-formal",
-        educationLevel: "Vocational",
-        link: "/dashboard/members/children/profile"
-    },
-    {
-        firstName: "Gideon",
-        lastName: "Chua",
-        birthday: "2005-05-25",
-        category: "Intellectual Disability",
-        nature: "Intellectual",
-        age: 18,
-        sex: "Male",
-        school: "Home program",
-        educationLevel: "Basic Skills",
-        link: "/dashboard/members/children/profile"
-    },
-];
-
-
-let filteredData = $state(childrenList);
 
 let filter = $state({
     main: "",
@@ -150,12 +144,11 @@ const options_school = ["Home program", "Non-formal", "Special (Exclusive school
 $effect(() => applyFilter())
 
 function applyFilter() {
-    console.log($inspect(filter));
     const search = filter.main?.toLowerCase();
 
-    filteredData = childrenList.filter(child => {
-        const matchesMain =
-          !search || Object.values(child).some(val =>
+    filteredData = childrenData.filter(child => {
+        const matchesMain = !search ||
+          Object.values(child).some(val =>
             String(val).toLowerCase().includes(search)
           );
 
@@ -163,12 +156,12 @@ function applyFilter() {
           (!filter.firstName || child.firstName.toLowerCase().includes(filter.firstName.toLowerCase())) &&
           (!filter.lastName || child.lastName.toLowerCase().includes(filter.lastName.toLowerCase())) &&
           (!filter.birthday || child.birthday.includes(filter.birthday)) &&
-          (!filter.age || child.age?.toString().includes(filter.age)) &&
+          (!filter.age || child.age.toString().includes(filter.age)) &&
           (!filter.sex || child.sex === filter.sex) &&
           (!filter.disCategory || child.category === filter.disCategory) &&
           (!filter.disNature || child.nature === filter.disNature) &&
-          (!filter.school || child.school === filter.school) &&
-          (!filter.educationLevel || child.educationLevel?.toLowerCase().includes(filter.educationLevel.toLowerCase()));
+          (!filter.school || child.educType === filter.school) &&  // Changed from school to educType
+          (!filter.educationLevel || child.gradeLevel?.toLowerCase().includes(filter.educationLevel.toLowerCase()));
 
         return matchesMain && matchesSpecific;
     });
@@ -186,7 +179,7 @@ function resetFilters() {
         school: "",
         educationLevel: ""
     }
-    filteredData = childrenList;
+    filteredData = childrenData;
 }
 </script>
 
