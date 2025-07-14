@@ -271,15 +271,25 @@
     <h2>List of Annual Programs
     </h2>
 
-    <FilterSearch bind:searchedValue={filter.main}>
-        <div slot="modal">
-            <InputRange type="number" label="Year" id="year" bind:valueFrom={filter.yrStart} bind:valueTo={filter.yrEnd} margin={false} />
+    <div class="flex flex-row gap-4">
+        <FilterSearch bind:searchedValue={filter.main}>
+            <div slot="modal">
+                <InputRange type="number" label="Year" id="year" bind:valueFrom={filter.yrStart} bind:valueTo={filter.yrEnd} margin={false} />
 
-            <div id="reset" class="flex justify-end">
-                <button onclick={resetFilters}>Reset Filters</button>
+                <div id="reset" class="flex justify-end">
+                    <button onclick={resetFilters}>Reset Filters</button>
+                </div>
             </div>
+        </FilterSearch>
+        <!-- for adding a new annual program -->
+        <div class=" flex-start">
+            <AnnualProgramModal bind:modalIsOpen={addModalIsOpen} title="Add Another Annual Program">
+                <div slot="footer"><button class="green" onclick={handleSubmit}>Submit</button></div>
+            </AnnualProgramModal>
         </div>
-    </FilterSearch>
+
+    </div>
+
 
 
     <br>
