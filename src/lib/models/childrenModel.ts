@@ -250,23 +250,47 @@ export class ChildrenModel extends TableManager<"children">('children') {
     return this.findWithJoin(joinStatement, {eq: {id: id}})
   }
   
-  async childrenList(id: string = ''){
-  const joinStatement = `*, members!inner(
-    id,
-    first_name,
-    last_name,
-    birthday,
-    disability_category!inner(
-      name
-    ),
-    sex,
-    admission_date
-  ),
-  education_status!inner(
-    education_type,
-    grade_level,
-    last_updated
-  )`;
+  async getChildrenList(id: string = ''){
+    const joinStatement = `
+      members!inner(
+        id,
+        first_name,
+        last_name,
+        birthday,
+        sex
+      ),
+      disability_category!inner(
+        name
+      ),
+      disability_nature,
+      education_status!inner(
+        education_type,
+        grade_level,
+        last_updated
+      )`;
     return this.findWithJoin(joinStatement, {eq: {id: id}})
   }
+
+    /**
+     * gets pending documents
+     * @param id of the children
+     * @returns all pending documents (not really)
+     */
+  async getPendingDocuments(id: string = ''){
+    const joinStatement = `
+      members!inner(
+        id,
+        first_name,
+        last_name,
+      ),
+      has_medical_cert,
+      has_birth_cert,
+      has_barangay_cert,
+      intervention!inner(
+        intervention
+      )
+    `;
+    return this.findWithJoin(joinStatement, {eq: {id: id}})
+  }
+
 }

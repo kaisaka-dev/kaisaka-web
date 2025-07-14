@@ -96,4 +96,8 @@ export class annualProgramModel extends TableManager<"annual_program">('annual_p
     const references: Partial<AnnualProgramRow> = { id };
     return this.updateOne(references, updates);
   }
+
+  async getAll(filter?: Partial<AnnualProgramRow>): Promise<AnnualProgramRow[] | null> {
+    return this.findMany(filter)
+  }
 }

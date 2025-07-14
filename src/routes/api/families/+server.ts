@@ -1,6 +1,17 @@
 import { FamiliesModel } from "$lib/models/familiesModel.js";
 import { error, json, type RequestHandler } from "@sveltejs/kit";
 
+export const GET: RequestHandler = async ({ url }) => {
+  const id = url.searchParams.get('id') || '';
+  const result = await FamiliesModel.instance.getSurname(id);
+  
+  if (!result) {
+    throw error(500, 'Failed to fetch family surnames');
+  }
+  
+  return json({ data: result });
+};
+
 export const POST: RequestHandler = async ({ request }) => {
   const inserted = await FamiliesModel.instance.createFamily();
 

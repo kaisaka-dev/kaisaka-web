@@ -21,6 +21,9 @@ export const GET: RequestHandler = async ({ params, url}) => {
                 case 'caregivers': 
                     child = await ChildrenModel.instance.findThroughJoin_Caregivers(id)
                     break;
+                case 'pending-documents':
+                    child = await ChildrenModel.instance.getPendingDocuments(id)
+                    break;
                 default:
                     throw error(404, 'Select statement not found')       
             }

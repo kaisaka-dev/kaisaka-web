@@ -1,6 +1,17 @@
 import { CaregiversModel } from "$lib/models/caregiversModel.js";
 import { error, json, type RequestHandler } from "@sveltejs/kit";
 
+export const GET: RequestHandler = async ({ url }) => {
+  const id = url.searchParams.get('id') || '';
+  const result = await CaregiversModel.instance.getCaregiverList(id);
+  
+  if (!result) {
+    throw error(500, 'Failed to fetch caregiver list');
+  }
+  
+  return json({ data: result });
+};
+
 export const POST: RequestHandler = async({request}) => {
   
   let body: any = {}
