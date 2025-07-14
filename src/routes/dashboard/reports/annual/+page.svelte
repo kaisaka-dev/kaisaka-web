@@ -292,11 +292,6 @@
 
 
 
-    <br>
-    <!-- for adding a new annual program -->
-    <AnnualProgramModal bind:modalIsOpen={addModalIsOpen} title="Add Another Annual Program">
-        <div slot="footer"><button class="green" onclick={handleSubmit}>Submit</button></div>
-    </AnnualProgramModal>
 
     <!-- for editing existing annual program -->
     <AnnualProgramModal bind:modalIsOpen={editModalIsOpen} title="Edit Annual Program" button_title="" bind:formData={filteredData[formIdx]}>
