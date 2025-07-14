@@ -2,6 +2,23 @@
 import { membersModel } from "$lib/models/membersModel.js";
 import { error, json, type RequestHandler } from "@sveltejs/kit";
 
+// READ - Get member by ID
+export const GET: RequestHandler = async ({ url }) => {
+  const id = url.searchParams.get('id');
+  
+  if (!id) {
+    throw error(400, 'Missing required parameter: id');
+  }
+
+  const member = await membersModel.instance.findById(id);
+
+  if (!member) {
+    throw error(404, 'Member not found');
+  }
+
+  return json({ data: member });
+};
+
 // CREATE - Add new member
 export const POST: RequestHandler = async ({ request }) => {
   let body: any = {}
