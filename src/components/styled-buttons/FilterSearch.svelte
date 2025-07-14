@@ -19,33 +19,35 @@
 
 </script>
 
-<div style="display:flex; flex-direction: row;">
-    <div style="display: flex; flex-direction: row; background-color: lightgray; border-radius: 5px;
+<div class="flex flex-col">
+    <div style="display:flex; flex-direction: row;">
+        <div style="display: flex; flex-direction: row; background-color: lightgray; border-radius: 5px;
         width: fit-content;">
 
-        <button onclick={filter}>Filter</button>
+            <button onclick={filter}>Filter</button>
 
-        <input
-          type="text"
-          id="search"
-          class="input"
-          bind:value={searchedValue}
-          style="height: auto; width: 30rem;"
-        />
-        <i class="fa fa-search" style="color: var(--background); margin-top: 1rem; margin-right: 1rem"></i>
+            <input
+              type="text"
+              id="search"
+              class="input"
+              bind:value={searchedValue}
+              style="height: auto; width: 30rem;"
+            />
+            <i class="fa fa-search" style="color: var(--background); margin-top: 1rem; margin-right: 1rem"></i>
 
+        </div>
+
+        {#if addLink !== ""}
+            <button onclick={() => location.href=addLink} style="margin-left: 1rem">Add</button>
+        {/if}
     </div>
 
-    {#if addLink !== ""}
-        <button onclick={() => location.href=addLink} style="margin-left: 1rem">Add</button>
+    {#if showModal}
+        <div style="height: fit-content; width: fit-content; box-shadow: 0 4px 4px rgba(0,0,0,0.2); border-radius:16px; padding: 1.8rem; ">
+            <slot name="modal" />
+        </div>
     {/if}
 </div>
-
-{#if showModal}
-    <div style="height: fit-content; width: fit-content; box-shadow: 0 4px 4px rgba(0,0,0,0.2); border-radius:16px; padding: 1.8rem; ">
-        <slot name="modal" />
-    </div>
-{/if}
 
 <style>
     input:focus {
