@@ -124,7 +124,7 @@ export const appendLogMetadata = (meta: metaData) => {
 export const consoleFormat = winston.format.combine(
   winston.format.timestamp({ format: 'HH:mm:ss' }),
   winston.format.printf((info: TransformableInfo) => {
-    const { timestamp, level, method , url, status, responseTime } = info;
+    const { timestamp, level, method , url, status, responseTime, message } = info;
     
     const methodHTTP = method as HttpMethod
 
@@ -137,7 +137,8 @@ export const consoleFormat = winston.format.combine(
     logMessage += url           ? ` '${colors.url(url)}'` : ``;
     
     logMessage += responseTime  ? ` ${colors.time(`${responseTime}ms`)}` : ``;
-    
+
+    logMessage += ` ${message}`;
     //logMessage += ` ${message} Client: ${appendLogMetadata(meta)}`;
     
     return logMessage;
