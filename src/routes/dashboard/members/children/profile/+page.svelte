@@ -8,7 +8,7 @@
 
     export let data;   
 
-    console.log(data.family);
+    console.log(data.childRecord);
 
     //below are sample data declarations for the page to work, will delete when the relevant APIs are made
     let user: child = {
@@ -119,13 +119,13 @@
                 {#if user.education == null}
                 <div class = "mt-3"> <Input value = "N/A" disabled/> </div>
                 {:else}
-                <div class = "mt-3"> <Input value = {data.education.education_type} disabled/> </div>
+                <div class = "mt-3"> <Input value = {data.childRecord.education_status[0].education_type} disabled/> </div>
                 {/if}            
             </div>
 
             <div class = "flex flex-row">
                 <div class = "ml-4 mt-3 w-40"> Education Status </div>
-                <div class = "mt-5"> <Input value = {data.education.student_status_type} disabled/> </div>
+                <div class = "mt-5"> <Input value = {data.childRecord.education_status[0].student_status_type} disabled/> </div>
             </div>
 
             <div class = "flex flex-row">
@@ -145,7 +145,7 @@
 
             <div class = "flex flex-row">
                 <div class = "ml-4 mt-3 w-40"> Address</div>
-                <div class = "mt-3"> <Input disabled value = {data.address.address}/> </div>
+                <div class = "mt-3"> <Input disabled value = {data.member.addresses.address}/> </div>
             </div>
 
             <div class = "flex flex-row">
@@ -153,26 +153,22 @@
                 <div class = "mt-3"> <Input disabled value = {data.barangay.name}/> </div>
             </div>
 
-            {#if today.getFullYear() - new Date(data.member.birthday).getFullYear() > 18}
+            {#if data.member.employment_status.able_to_work}
             <div class = "flex flex-row">
                 <div class = "ml-4 mt-3 w-40"> Employment Status </div>
-                {#if data.employment.able_to_work == false}
-                <div class = "mt-7"> <Input value = "Unable to Work" disabled /> </div>
-                {:else}
-                <div class = "mt-7"> <Input value = {data.employment.employment_type} disabled /> </div>
-                {/if}
+                <div class = "mt-7"> <Input value = {data.member.employment_status.employment_type} disabled /> </div>
             </div>
             {/if}
 
 
             <div class = "flex flex-row mt-10">
                 <div class = "ml-4 mt-3 w-73"> Category of Disability</div>
-                <div class = "mt-4"> <Input value = {data.disabilityCategory.name} disabled/> </div>
+                <div class = "mt-4"> <Input value = {data.childRecord.disability_category.name} disabled/> </div>
             </div>
 
             <div class = "flex flex-row">
                 <div class = "ml-4 mt-3 w-73"> Nature of Disability</div>
-                <div class = "mt-4"> <Input value = {data.member.children[0].disability_nature} disabled/> </div>
+                <div class = "mt-4"> <Input value = {data.childRecord.disability_nature} disabled/> </div>
             </div>
 
             <div class = "flex flex-row mt-10">
@@ -189,7 +185,7 @@
         
         
         <div class = "flex flex-col ml-3"> 
-            <div class = "-ml-45"> <TextArea disabled value = {data.member.children[0].remarks} label = "Remarks" rows = 10/> </div>
+            <div class = "-ml-45"> <TextArea disabled value = {data.childRecord.remarks} label = "Remarks" rows = 10/> </div>
         </div>
     </div>
 </div>
@@ -298,31 +294,33 @@
 <div class = "flex flex-row border-[var(--border)] border-4 ml-55 mr-10 p-6 w-250 min-w-250">
     <div class = "flex flex-col !font-bold"> 
        <div>
-            <Check label = "PWD ID" bind:checked = {data.member.children[0].pwd_id} disabled/>
+            <Check label = "PWD ID" bind:checked = {data.childRecord.pwd_id} disabled/>
        </div>
-       {#if data.member.children[0].pwd_id} 
+       {#if data.childRecord.pwd_id} 
        <div class = "w-150">
-            <Input type = "text" disabled label = "ID #" value = {data.member.children[0].pwd_id} />
+            <Input type = "text" disabled label = "ID #" value = {data.childRecord.pwd_id} />
        </div>
        <div class = "w-150">
-            <Input type = "text" disabled  label = "Expiry Date"/>
+            <Input type = "text" disabled  label = "Expiry Date" value = {data.pwdID.expiry_date}/>
        </div>
        {/if}
 
        <div>
-            <Check disabled label = "Social Security" bind:checked = {data.socialProtection}/>
+            <Check disabled label = "Social Security" bind:checked = {data.childRecord.social_protection_status}/>
        </div>
-       {#if data.socialProtection} 
+       {#if data.childRecord.social_protection_status} 
        <div class = "w-150">
-            {#if data.socialProtection.participates_family_life == false}
-            <Input type = "text" disabled label = "Type of Access" value = "Participation in Community Life/Clubs"  />
+            {#if data.childRecord.social_protection_status.participates_community_club}
+            <Check checked disabled label = "Participation in Community Life" />
             <div class = "w-150">
-            <Input disabled type = "text" label = "Year Accessed" value = {data.socialProtection.comm_year_accessed}/>
+            <Input disabled type = "text" label = "Year of Community Access" value = {data.childRecord.social_protection_status.comm_year_accessed}/>
             </div>
-            {:else if data.socialProtection.participates_community_club == false}
-            <Input type = "text" disabled label = "Type of Access" value = "Participation in Family Life"  />
+            {/if}
+
+            {#if data.childRecord.social_protection_status.participates_family_life}
+            <Check checked disabled label = "Participation in Family Life" />
             <div class = "w-150">
-            <Input disabled type = "text" label = "Year Accessed" value = {data.socialProtection.fam_year_accessed}/>
+            <Input disabled type = "text" label = "Year of Family Access" value = {data.childRecord.social_protection_status.fam_year_accessed}/>
             </div>
             {/if} 
        </div>
@@ -330,25 +328,25 @@
 
 
        <div class = "mt-5">
-            <Check label = "PhilHealth" bind:checked = {data.member.children[0].has_philhealth} disabled/>
+            <Check label = "PhilHealth" bind:checked = {data.childRecord.has_philhealth} disabled/>
        </div>
 
        <div class = "mt-5">
-            <Check label = "National ID" bind:checked = {data.member.children[0].has_nat_id} disabled/>
+            <Check label = "National ID" bind:checked = {data.childRecord.has_nat_id} disabled/>
        </div>
     </div>
     <div class = "flex flex-col !font-bold ml-10">
         <div>
-            <Check label = "Medical Certificate" bind:checked = {data.member.children[0].has_medical_cert} disabled/>
+            <Check label = "Medical Certificate" bind:checked = {data.childRecord.has_medical_cert} disabled/>
        </div>
         <div>
-            <Check label = "Birth Certificate" bind:checked = {data.member.children[0].birth} disabled/>
+            <Check label = "Birth Certificate" bind:checked = {data.childRecord.birth} disabled/>
        </div>
         <div>
-            <Check label = "Barangay Certificate" bind:checked = {data.member.children[0].has_barangay_cert} disabled/>
+            <Check label = "Barangay Certificate" bind:checked = {data.childRecord.has_barangay_cert} disabled/>
        </div>
         <div>
-            <Check label = "Voter ID" bind:checked = {data.member.children[0].has_vote} disabled/>
+            <Check label = "Voter ID" bind:checked = {data.childRecord.has_vote} disabled/>
        </div>
     </div>
 </div>
