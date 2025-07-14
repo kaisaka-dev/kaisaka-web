@@ -254,24 +254,18 @@ export class ChildrenModel extends TableManager<"children">('children') {
   const joinStatement = `*, members!inner(
     id,
     first_name,
-    middle_name,
     last_name,
     birthday,
+    disability_category!inner(
+      name
+    ),
     sex,
     admission_date
   ),
-  disability_category!inner(
-    id,
-    name
-  ),
   education_status!inner(
-    id,
     education_type,
-    year_start,
-    year_end,
     grade_level,
-    last_updated,
-    student_status_enum
+    last_updated
   )`;
     return this.findWithJoin(joinStatement, {eq: {id: id}})
   }
