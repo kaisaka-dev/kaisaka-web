@@ -8,8 +8,6 @@
 
     export let data;   
 
-    console.log(data.childRecord);
-
     //below are sample data declarations for the page to work, will delete when the relevant APIs are made
     let user: child = {
         firstName: "Juan", lastName: "De La Cruz", educationStatus: "Dropped Out", birthday: new Date(2011,2,3), sex: "M", address: "Sample Address",

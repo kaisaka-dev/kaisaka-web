@@ -9,6 +9,8 @@
     import Textinput from '../../../../../components/input/InputText.svelte'
 	import InputText from '../../../../../components/input/InputText.svelte';
 
+    export let data 
+    console.log(JSON.stringify(data.family,null,2))
     //below are sample data declarations just to test if the page works, will delete when relevant APIs are complete
     let sampleFamily1: family = {
         members: [{firstName: "Juan", lastName: "De La Cruz", role: "Grandparent"},
@@ -46,11 +48,11 @@
 
 
 //below are essential functions for the page to work
-    function familyName(family:family): string {
+    function familyName(family:object): string {
         let lastnames: string[] = []
 
-        for(const mem of family.members){
-            lastnames.push(mem.lastName)
+        for(const mem of family){
+            lastnames.push(mem.members.last_name)
         }
 
         let familyname = [...new Set(lastnames)]
@@ -89,7 +91,7 @@
 <Header/>
 <section>
     <h1>
-        {sample.firstName} {sample.lastName}'s Profile 
+        {data.member.first_name} {data.member.last_name}'s Profile 
     </h1>
 </section>
 <!--End of Page Headers-->
@@ -127,59 +129,47 @@
                 <div class = "flex flex-col">
                     <div class ="information">
                         <div class = "min-w-30"> First Name</div>
-                        <div> <Textinput disabled value = {sample.firstName}/></div>
+                        <div> <Textinput disabled value = {data.member.first_name}/></div>
                     </div>
                      <div class ="information">
                         <div class = "min-w-30"> Last Name</div>
-                        <div> <Textinput disabled value = {sample.lastName}/></div>
+                        <div> <Textinput disabled value = {data.member.last_name}/></div>
                     </div>
                     <div class ="information !mt-10">
                         <div class = "min-w-35"> Contact No.</div>
-                        <div class = "ml-5"> <Textinput disabled value = {sample.contactNo}/></div>
+                        <div class = "ml-5"> <Textinput disabled value = {data.member.caregivers[0].contact_number}/></div>
                     </div>
+                    {#if data.member.caregivers[0].facebook_link }
                     <div class ="information">
                         <div class = "min-w-40"> Facebook Link</div>
-                        {#if sample.fblink == null}
-                        <div> <Textinput disabled value = "N/A"/></div>
-                        {:else}
-                        <div> <Textinput disabled value = {sample.fblink}/></div>
-                        {/if}
+                        <div> <Textinput disabled value = {data.member.caregivers[0].facebook_link}/></div>
                     </div> 
+                    {/if}
+                    {#if data.member.caregivers[0].email }
                     <div class ="information">
                         <div class = "min-w-40"> Email</div>
-                        {#if sample.email == null}
-                        <div> <Textinput disabled value = "N/A"/></div>
-                        {:else}
-                        <div> <Textinput disabled value = {sample.email}/></div>
-                        {/if}
+                        <div> <Textinput disabled value = {data.member.caregivers[0].email}/></div>
                     </div>
+                    {/if}
                     <div class ="information !mt-10">
                         <div class = "w-30 min-w-30"> Address</div>
-                        <div> <Textinput disabled value = {sample.address}/></div>
+                        <div> <Textinput disabled value = {data.member.addresses.address}/></div>
                     </div>
                     <div class ="information">
                         <div class = "w-30 min-w-30"> Barangay</div>
-                        <div> <Textinput disabled value = {sample.barangay}/></div>
+                        <div> <Textinput disabled value = {data.barangay.name}/></div>
                     </div>
                     <div class ="information !mt-10">
                         <div class = "min-w-50"> Date of Admission</div>
-                        <div class = "ml-5"> <InputText type = "date" value = {sample.dateAdmission.toISOString().split('T')[0]} label = "" disabled/></div>
+                        <div class = "ml-5"> <InputText type = "date" value = {new Date(data.member.admission_date).toISOString().split('T')[0]} label = "" disabled/></div>
                     </div>
-                     {#if sample.dateTermination!=null}
+                    {#if sample.dateTermination!=null}
                     <div class ="information">
                         <div class = "min-w-50"> Date of Termination</div>
                         <div class = "ml-5"> <InputText type = "date" disabled label = ""value ={sample.dateTermination.toISOString().split('T')[0]}  /></div>
                     </div>
                     {/if}
                     
-                </div>
-                <div class = "!flex !flex-col ml-20"> 
-                    <div>Remarks </div>
-                    {#if sample.remarks != null}
-                    <div class = "-ml-10 -mt-5"> <Textarea value = {sample.remarks} rows=10 disabled label = ""/></div>
-                    {:else}
-                    <div class = "-ml-10 -mt-5"> <Textarea value = "N/A" rows=10 disabled label = ""/></div>
-                    {/if}
                 </div>
             </div>
         </div>
@@ -189,22 +179,18 @@
             <div id = "Family Info">
                 <h1 class = "!text-[var(--green)] font-[JSans]"> Families </h1>
                 <div class = "grid grid-cols-2 gap-5 mt-2" >
-                {#each sample.family as family}
+                {#each data.family as family}
                     <div class = "flex flex-col min-w-100 w-105">
                        <span class = "!bg-[var(--green)] p-2 w-105 min-w-105 !text-white">  {familyName(family)} </span>
                        <div class = "border-4 border-[var(--border)]">
-                        {#each family.members as member}
+                        {#each family as member}
                             <div class = "information"> 
-                                {#if member.role == "Caregiver"}
-                                <div class ="!bg-[var(--pink)] w-35 p-2 rounded-full text-center !font-bold !text-white"> {member.role}</div>
-                                {:else if member.role == "Grandparent"}
-                                <div class ="!bg-[var(--pink)] w-35 p-2 rounded-full text-center !font-bold !text-white"> {member.role}</div>
-                                {:else if member.role == "Parent"}
-                                <div class ="!bg-[var(--pink)] w-35 p-2 rounded-full text-center !font-bold !text-white"> {member.role}</div>
-                                {:else if member.role == "Child"}
-                                <div class ="!bg-[var(--green)] w-35 p-2 rounded-full text-center !font-bold !text-white"> {member.role}</div>
+                                {#if member.is_child == false}
+                                <div class ="!bg-[var(--pink)] w-35 p-2 rounded-full text-center !font-bold !text-white"> {member.relationship_type}</div>
+                                {:else}
+                                <div class ="!bg-[var(--green)] w-35 p-2 rounded-full text-center !font-bold !text-white"> {member.relationship_type}</div>
                                 {/if}
-                                <div class = "mt-2 ml-10"> {member.firstName} {member.lastName}</div>
+                                <div class = "mt-2 ml-10"> {member.members.first_name} {member.members.last_name}</div>
                             </div>
                         {/each}
                         </div>
