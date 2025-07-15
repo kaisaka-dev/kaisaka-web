@@ -47,19 +47,59 @@ export default function TableManager<T extends tableNames>(table: T){
       return supabase.from(this.table).update(object);
     }
 
-    protected async findOne(match: Partial<Row>): Promise<Row | null> {
-      const {data, error} = await this.getQuery()
+    protected async findOne(match: Partial<Row>, config: Omit<QueryConfig<T>, 'where' | 'limit'> = {}): Promise<Row | null> {
+      let query = this.getQuery()
         .match(match)
-        .single();
+        
+
+      if (config.eq) {
+        Object.entries(config.eq).forEach(([key, value]) => {
+          query = query.eq(key, value);
+        });
+      }
+      
+      if (config.gt) {
+        Object.entries(config.gt).forEach(([key, value]) => {
+          query = query.gt(key, value);
+        });
+      }
+      
+      if (config.order) {
+        query = query.order(config.order.column, { ascending: config.order.ascending ?? true });
+      }
+      
+      const {data, error} = await query.single();
 
       if (error) return null;
 
       return data as Row;
     }
 
-    protected async findMany(match: Partial<Row> = {}): Promise<Row[]|null>{
-      const {data, error} = await this.getQuery()
+    protected async findMany(match: Partial<Row> = {}, config: Omit<QueryConfig<T>, 'where'> = {}): Promise<Row[]|null>{
+      let query = this.getQuery()
         .match(match);
+      
+      if (config.eq) {
+        Object.entries(config.eq).forEach(([key, value]) => {
+          query = query.eq(key, value);
+        });
+      }
+      
+      if (config.gt) {
+        Object.entries(config.gt).forEach(([key, value]) => {
+          query = query.gt(key, value);
+        });
+      }
+      
+      if (config.order) {
+        query = query.order(config.order.column, { ascending: config.order.ascending ?? true });
+      }
+      
+      if (config.limit) {
+        query = query.limit(config.limit);
+      }
+
+      const {data, error} = await query
 
       if (error) return null;
 
