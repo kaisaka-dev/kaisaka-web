@@ -91,18 +91,19 @@
 
     /* special fields */
     let age = "";
-    $: if (birthday) {
-        const birthDate = new Date(birthday);
-        const today = new Date();
-        let calculatedAge = today.getFullYear() - birthDate.getFullYear();
-        const hasHadBirthdayThisYear =
-          today.getMonth() > birthDate.getMonth() ||
-          (today.getMonth() === birthDate.getMonth() && today.getDate() >= birthDate.getDate());
-        if (!hasHadBirthdayThisYear) {
-            calculatedAge -= 1;
-        }
-        age = calculatedAge.toString();
-    }
+    $effect (() => {
+          const birthDate = new Date(birthday);
+          const today = new Date();
+          let calculatedAge = today.getFullYear() - birthDate.getFullYear();
+          const hasHadBirthdayThisYear =
+            today.getMonth() > birthDate.getMonth() ||
+            (today.getMonth() === birthDate.getMonth() && today.getDate() >= birthDate.getDate());
+          if (!hasHadBirthdayThisYear) {
+              calculatedAge -= 1;
+          }
+          age = calculatedAge.toString();
+      }
+    )
 
 
     let errors = {

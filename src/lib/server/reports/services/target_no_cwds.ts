@@ -21,7 +21,7 @@ export const AccomplishmentReport: ExcelReportData = {
     { age: '6–11 years old with Down Syndrome', totalEnrolled: 25, withIntervention: 13, improved: 17, transition: 8, boys: 13, girls: 12 },
     { age: '12–17 years old with Down Syndrome', totalEnrolled: 7, withIntervention: 1, improved: 3, transition: 5, boys: 4, girls: 3 },
     { age: '18–25 years old with Down Syndrome', totalEnrolled: 1, withIntervention: 1, improved: 1, transition: 1, boys: 1, girls: 0 },
-    { age: 'TOTAL BOYS AND GIRLS ALL DISABILITY', totalEnrolled: 87, withIntervention: 38, improved: 52, transition: 29, boys: 45, girls: 42 },
+    { age: 'TOTAL BOYS AND GIRLS ALL DISABILITY', totalEnrolled: 88, withIntervention: 38, improved: 52, transition: 29, boys: 45, girls: 42 },
     { age: 'TOTAL BOYS AND GIRLS OTHER DISABILITIES EXCEPT DOWN SYNDROME', totalEnrolled: 85, withIntervention: 36, improved: 50, transition: 27, boys: 43, girls: 42 },
     { age: 'Total (children and youth with DS)', totalEnrolled: 2, withIntervention: 2, improved: 2, transition: 2, boys: 2, girls: 0 },
   ],
