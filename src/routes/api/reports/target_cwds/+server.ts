@@ -1,4 +1,4 @@
-import { getLogSidecar } from '$lib/server/logging/log-sidecar.js';
+
 import { ExcelMerger } from '$lib/server/reports/merger/report-merger.js';
 import ExcelJS from 'exceljs';
 import path from 'path';
@@ -9,7 +9,7 @@ const __dirname = path.dirname(__filename);
 
 export async function POST() {
   // const buffer = await ExcelGenerator.generateExcelfromReportArray([AccomplishmentReport, AccomplishmentReport, AccomplishmentReport]);
-  const templateDir = path.resolve(__dirname, '../../../../lib/server/reports/template/');
+  const templateDir = path.resolve(__dirname, '../../../../lib/server/reports/templates/');
   const fileName: string[] = [
     'TEMPLATE_A1-InTheProgram.xlsx',
     'TEMPLATE_A2-Health.xlsx',

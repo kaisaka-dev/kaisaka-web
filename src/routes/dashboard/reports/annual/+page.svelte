@@ -3,30 +3,19 @@
     import FilterSearch from '../../../../components/styled-buttons/FilterSearch.svelte';
     import InputRange from '../../../../components/input/InputRange.svelte';
     import AnnualProgramModal from './AnnualProgramModal.svelte';
+    import AnnualProgramTable from './AnnualProgramTable.svelte';
+    import type { AnnualProgram } from './+page.server.js';
+    import type { Errors } from './+page.server.js';
 
-    let addModalIsOpen = $state(false);
-    let editModalIsOpen = $state(false);
-    let formIdx = $state(0);
-
-    type AnnualProgram = {
-        id: number;
-        startYYYY: number;
-        startMM?: number;
-        startDD?: number;
-        endYYYY: number;
-        endMM?: number;
-        endDD?: number;
-        total_target_CWDS?: number;
-        new_target_CWDS?: number;
-        old_target_CWDS?: number;
-        total_actual_CWDS?: number;
-        new_actual_CWDS?: number;
-        old_actual_CWDS?: number;
-        general_reflection?: string;
-        lessons_learned?: string;
-    }
-
-
+    let errors: Errors = $state({
+        startYYYY: "",
+        startMM: "",
+        startDD: "",
+        endYYYY: "",
+        endMM: "",
+        endDD: "",
+        new_target_CWDS: ""
+    })
 
     const annualPrograms: AnnualProgram[] = [
         {
@@ -146,7 +135,25 @@
         }
     ];
 
+    let addModalIsOpen = $state(false);
 
+    let newProgram = {
+        id: null,
+        startYYYY: null,
+        startMM: null,
+        startDD: null,
+        endYYYY: null,
+        endMM: null,
+        endDD: null,
+        total_target_CWDS: null,
+        new_target_CWDS: null,
+        old_target_CWDS: null,
+        total_actual_CWDS: null,
+        new_actual_CWDS: null,
+        old_actual_CWDS: null,
+        general_reflection: "",
+        lessons_learned: ""
+    }
 
     const tableData = annualPrograms.map(program => ({
         id: program.id,
@@ -177,41 +184,39 @@
 
 
 
+    function validateForm(): boolean {
+        errors = {
+            startYYYY: newProgram.startYYYY ? "" : "Start Year is required",
+            startMM: errors.startMM,
+            startDD: errors.startDD,
+            endYYYY: newProgram.endYYYY ? "" : "End Year is required",
+            endMM: errors.endMM,
+            endDD: errors.endDD,
+            new_target_CWDS: newProgram.new_target_CWDS && newProgram.new_target_CWDS < 0
+              ? "Cannot be negative" : ""
+        }
+        let sum = (newProgram.endYYYY - newProgram.startYYYY) * 10000 +
+          (newProgram.endMM - newProgram.startMM) * 100 +
+          (newProgram.endDD - newProgram.startDD)
 
+        errors.endYYYY = sum > 0 ? "" : "End Dates must be greater than Start Dates"
+
+
+        for (const error of Object.values(errors)) {
+            if (error) {
+                console.log("error found: ", error)
+                return false;
+            }
+        }
+
+        return true;
+    }
     function handleSubmit() {
-        addModalIsOpen = false;
-    }
-    function handleSave() {
-        editModalIsOpen = false;
+        if(validateForm()) addModalIsOpen = false;
     }
 
-    async function downloadExcel() {
-    try {
-      const response = await fetch('/api/reports/target_cwds', {
-        method: 'POST'
-      });
 
-      if (!response.ok) {
-        throw new Error(`Failed to generate report: ${response.status}`);
-      }
 
-      const blob = await response.blob();
-
-      const url = URL.createObjectURL(blob);
-
-      const a = document.createElement('a');
-      a.href = url;
-      a.download = 'sales_report.xlsx';
-      document.body.appendChild(a);
-      a.click();
-
-      document.body.removeChild(a);
-      URL.revokeObjectURL(url);
-    } catch (err) {
-      console.error(err);
-      alert('Error generating report.');
-    }
-  }
 
     let filteredData = $state(tableData);
     let filter = $state({
@@ -258,11 +263,7 @@
         filteredData = tableData;
     }
 
-    function editModalOpen(idx: number) {
-        editModalIsOpen = true
-        formIdx = idx
-        console.log(formIdx)
-    }
+
 </script>
 
 <Header category="reports" page="annual" />
@@ -283,7 +284,7 @@
         </FilterSearch>
         <!-- for adding a new annual program -->
         <div class=" flex-start">
-            <AnnualProgramModal bind:modalIsOpen={addModalIsOpen} title="Add Another Annual Program">
+            <AnnualProgramModal bind:modalIsOpen={addModalIsOpen} title="Add Another Annual Program" errors={errors} formData={newProgram}>
                 <div slot="footer"><button class="green" onclick={handleSubmit}>Submit</button></div>
             </AnnualProgramModal>
         </div>
@@ -293,53 +294,13 @@
 
 
 
-    <!-- for editing existing annual program -->
-    <AnnualProgramModal bind:modalIsOpen={editModalIsOpen} title="Edit Annual Program" button_title="" bind:formData={filteredData[formIdx]}>
-        <div slot="footer">
-            <button onclick={() => editModalIsOpen = false}>Cancel</button>
-            <button class="green" onclick={handleSave}>Save</button></div>
-    </AnnualProgramModal>
+
 
 </section>
 
 
-
 <section>
-    <table>
-        <thead>
-        <tr>
-            <th>Start</th>
-            <th>End</th>
-            <th>Total Target CWDS</th>
-            <th>New Target CWDS</th>
-            <th>Old Target CWDS</th>
-            <th>Total Actual CWDS</th>
-            <th>New Actual CWDS</th>
-            <th>Old Actual CWDS</th>
-            <th>Edit</th>
-            <th>Export</th>
-        </tr>
-        </thead>
-        <tbody>
-        {#each filteredData as row, index}
-            <tr>
-                <td>{row.Start}</td>
-                <td>{row.End}</td>
-                <td>{row.total_target_CWDS}</td>
-                <td>{row.new_target_CWDS}</td>
-                <td>{row.old_target_CWDS}</td>
-                <td>{row.total_actual_CWDS}</td>
-                <td>{row.new_actual_CWDS}</td>
-                <td>{row.old_target_CWDS}</td>
-                <td>
-                    <button onclick={() => editModalOpen(index)}>Edit</button>
-                </td>
-                <td>
-                    <button class="green" onclick={downloadExcel}>Export</button>
-                </td>
-            </tr>
-        {/each}
-        </tbody>
-    </table>
-
+    <AnnualProgramTable data={filteredData} headers={[
+  "Start", "End", "Total Target CWDS", "New Target CWDS", "Old Target CWDS", "Total Actual CWDS", "New Actual CWDS", "Old Actual CWDS"]}
+                        includedKeys={['Start', 'End', 'total_target_CWDS', 'new_target_CWDS', 'old_target_CWDS', 'total_actual_CWDS', 'new_actual_CWDS', 'old_actual_CWDS']} hasLink={true}/>
 </section>
