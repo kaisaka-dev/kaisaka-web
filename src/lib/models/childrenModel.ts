@@ -278,19 +278,19 @@ export class ChildrenModel extends TableManager<"children">('children') {
      */
   async getPendingDocuments(id: string = ''){
     const joinStatement = `
-      members!inner(
-        id,
-        first_name,
-        last_name,
-      ),
-      has_medical_cert,
-      has_birth_cert,
-      has_barangay_cert,
-      intervention!inner(
-        intervention
-      )
+          members!inner(
+            id,
+            first_name,
+            last_name
+          ),
+          has_medical_cert,
+          has_birth_cert,
+          has_barangay_cert,
+          intervention(
+            intervention
+          )
     `;
-    return this.findWithJoin(joinStatement, {eq: {id: id}})
+    return this.findWithJoin(joinStatement, id ? {eq: {id: id}} : {})
   }
 
 }
