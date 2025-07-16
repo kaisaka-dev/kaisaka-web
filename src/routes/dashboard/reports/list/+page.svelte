@@ -237,7 +237,7 @@
                 </div>
             </div>
         </FilterSearch>
-        <!-- for adding a new annual period -->
+        <!-- for adding a new report period -->
         <div class=" flex-start">
             <ReportPeriodModal bind:modalIsOpen={addModalIsOpen} title="Add Another Report Period"
                                formData={newPeriod} />

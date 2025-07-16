@@ -5,18 +5,16 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="12237686-5a37-4f4c-b35a-ebe8cb09a864" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/.idea/codeStyles/Project.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/codeStyles/codeStyleConfig.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/httpRequests/http-requests-log.http" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/inspectionProfiles/Project_Default.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/prettier.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/vcs.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/routes/api/test/pkmnlist/+server.ts" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/routes/api/test/types/+server.ts" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/routes/dashboard/test/+page.svelte" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/routes/dashboard/members/children/+page.svelte" beforeDir="false" afterPath="$PROJECT_DIR$/src/routes/dashboard/members/children/+page.svelte" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/routes/dashboard/registration/child/+page.svelte" beforeDir="false" afterPath="$PROJECT_DIR$/src/routes/dashboard/registration/child/+page.svelte" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/components/Header.svelte" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/Header.svelte" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/lib/models/MemberShipAnnualRenewalModel.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/lib/models/MemberShipAnnualRenewalModel.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/lib/models/MembershipPaymentModel.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/lib/models/MembershipPaymentModel.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/lib/models/annualProgramModel.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/lib/models/annualProgramModel.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/lib/models/serviceObjectiveModel.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/lib/models/serviceObjectiveModel.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/routes/dashboard/reports/annual/+page.server.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/routes/dashboard/reports/list/+page.server.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/routes/dashboard/reports/annual/+page.svelte" beforeDir="false" afterPath="$PROJECT_DIR$/src/routes/dashboard/reports/list/+page.svelte" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/routes/dashboard/reports/annual/ReportPeriodModal.svelte" beforeDir="false" afterPath="$PROJECT_DIR$/src/routes/dashboard/reports/list/ReportPeriodModal.svelte" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/routes/dashboard/reports/annual/ReportPeriodTable.svelte" beforeDir="false" afterPath="$PROJECT_DIR$/src/routes/dashboard/reports/list/ReportPeriodTable.svelte" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -43,22 +41,22 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent"><![CDATA[{
-  "keyToString": {
-    "ModuleVcsDetector.initialDetectionPerformed": "true",
-    "RunOnceActivity.ShowReadmeOnStart": "true",
-    "RunOnceActivity.git.unshallow": "true",
-    "git-widget-placeholder": "frontend/ref/api/childrenList",
-    "node.js.detected.package.eslint": "true",
-    "node.js.detected.package.tslint": "true",
-    "node.js.selected.package.eslint": "(autodetect)",
-    "node.js.selected.package.tslint": "(autodetect)",
-    "nodejs_package_manager_path": "npm",
-    "prettierjs.PrettierConfiguration.Package": "C:\\Users\\beaan\\Downloads\\CSSWENG\\kaisaka-web\\node_modules\\prettier",
-    "ts.external.directory.path": "C:\\Users\\beaan\\Downloads\\CSSWENG\\kaisaka-web\\node_modules\\typescript\\lib",
-    "vue.rearranger.settings.migration": "true"
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;ModuleVcsDetector.initialDetectionPerformed&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;frontend/main&quot;,
+    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
+    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
+    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
+    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
+    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
+    &quot;prettierjs.PrettierConfiguration.Package&quot;: &quot;C:\\Users\\beaan\\Downloads\\CSSWENG\\kaisaka-web\\node_modules\\prettier&quot;,
+    &quot;ts.external.directory.path&quot;: &quot;C:\\Users\\beaan\\Downloads\\CSSWENG\\kaisaka-web\\node_modules\\typescript\\lib&quot;,
+    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
   }
-}]]></component>
+}</component>
   <component name="SharedIndexes">
     <attachedChunks>
       <set>
