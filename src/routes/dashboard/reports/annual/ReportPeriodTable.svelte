@@ -1,14 +1,14 @@
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
 
 <script lang="ts">
-	import AnnualProgramModal from './AnnualProgramModal.svelte';
-	import type { AnnualProgram } from './+page.server.js';
+	import ReportPeriodModal from './ReportPeriodModal.svelte';
+	import type { ReportPeriod } from './+page.server.js';
 
 
 	/**
 	 * an array of object, where object is a row of data
 	 */
-	export let data: AnnualProgram[];
+	export let data: ReportPeriod[];
 
 	/**
 	 * an array of column keys (strings) to be INCLUDED in the table view
@@ -108,9 +108,9 @@
 </script>
 
 
-<!-- for editing existing annual program -->
-<AnnualProgramModal bind:modalIsOpen={editModalIsOpen} title="Edit Annual Program" button_title=""
-										formData={data[formIdx]} />
+<!-- for editing existing report period -->
+<ReportPeriodModal bind:modalIsOpen={editModalIsOpen} title="Edit Report Period" button_title=""
+									 formData={data[formIdx]} />
 
 {#if data.length > 0}
 	<table>
