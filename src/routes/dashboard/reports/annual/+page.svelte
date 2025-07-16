@@ -2,12 +2,12 @@
     import Header from "../../../../components/Header.svelte";
     import FilterSearch from '../../../../components/styled-buttons/FilterSearch.svelte';
     import InputRange from '../../../../components/input/InputRange.svelte';
-    import AnnualProgramModal from './AnnualProgramModal.svelte';
-    import AnnualProgramTable from './AnnualProgramTable.svelte';
-    import type { AnnualProgram } from './+page.server.js';
+    import ReportPeriodModal from './ReportPeriodModal.svelte';
+    import ReportPeriodTable from './ReportPeriodTable.svelte';
+    import type { ReportPeriod } from './+page.server.js';
 
 
-    const annualPrograms: AnnualProgram[] = [
+    const reportPeriods: ReportPeriod[] = [
         {
             id: 2023,
             startYYYY: 2023,
@@ -126,7 +126,7 @@
     ];
 
 
-    let newProgram = {
+    let newPeriod = {
         id: null,
         startYYYY: null,
         startMM: null,
@@ -144,24 +144,24 @@
         lessons_learned: ""
     }
 
-    const tableData = annualPrograms.map(program => ({
-        id: program.id,
-        Start: formatDate(program.startYYYY, program.startMM, program.startDD),
-        End: formatDate(program.endYYYY, program.endMM, program.endDD),
-        startYYYY: program.startYYYY,
-        startMM: program.startMM,
-        startDD: program.startDD,
-        endYYYY: program.endYYYY,
-        endMM: program.endMM,
-        endDD: program.endDD,
-        total_target_CWDS: program.total_target_CWDS,
-        new_target_CWDS: program.new_target_CWDS,
-        old_target_CWDS: program.old_target_CWDS,
-        total_actual_CWDS: program.total_actual_CWDS,
-        new_actual_CWDS: program.new_actual_CWDS,
-        old_actual_CWDS: program.old_actual_CWDS,
-        general_reflection: program.general_reflection,
-        lessons_learned: program.lessons_learned
+    const tableData = reportPeriods.map(period => ({
+        id: period.id,
+        Start: formatDate(period.startYYYY, period.startMM, period.startDD),
+        End: formatDate(period.endYYYY, period.endMM, period.endDD),
+        startYYYY: period.startYYYY,
+        startMM: period.startMM,
+        startDD: period.startDD,
+        endYYYY: period.endYYYY,
+        endMM: period.endMM,
+        endDD: period.endDD,
+        total_target_CWDS: period.total_target_CWDS,
+        new_target_CWDS: period.new_target_CWDS,
+        old_target_CWDS: period.old_target_CWDS,
+        total_actual_CWDS: period.total_actual_CWDS,
+        new_actual_CWDS: period.new_actual_CWDS,
+        old_actual_CWDS: period.old_actual_CWDS,
+        general_reflection: period.general_reflection,
+        lessons_learned: period.lessons_learned
     }));
 
     function formatDate(yyyy?: number, mm?: number, dd?: number): string {
@@ -187,8 +187,8 @@
         // Apply main search filter
         if (filter.main) {
             const searchTerm = filter.main.toLowerCase();
-            result = result.filter(program =>
-              Object.values(program).some(value =>
+            result = result.filter(period =>
+              Object.values(period).some(value =>
                 String(value).toLowerCase().includes(searchTerm)
               )
             );
@@ -199,10 +199,10 @@
             const startYear = filter.yrStart ? parseInt(filter.yrStart) : 0;
             const endYear = filter.yrEnd ? parseInt(filter.yrEnd) : Infinity;
 
-            result = result.filter(program => {
-                const programStartYear = program.Start.split('/')[0];
-                const programYear = parseInt(programStartYear);
-                return programYear >= startYear && programYear <= endYear;
+            result = result.filter(period => {
+                const periodStartYear = period.Start.split('/')[0];
+                const periodYear = parseInt(periodStartYear);
+                return periodYear >= startYear && periodYear <= endYear;
             });
         }
 
@@ -224,7 +224,7 @@
 <Header category="reports" page="annual" />
 
 <section>
-    <h2>List of Annual Programs
+    <h2>List of Report Periods
     </h2>
 
     <div class="flex flex-row gap-4">
@@ -237,10 +237,10 @@
                 </div>
             </div>
         </FilterSearch>
-        <!-- for adding a new annual program -->
+        <!-- for adding a new annual period -->
         <div class=" flex-start">
-            <AnnualProgramModal bind:modalIsOpen={addModalIsOpen} title="Add Another Annual Program"
-                                formData={newProgram} />
+            <ReportPeriodModal bind:modalIsOpen={addModalIsOpen} title="Add Another Report Period"
+                               formData={newPeriod} />
         </div>
 
     </div>
@@ -254,7 +254,7 @@
 
 
 <section>
-    <AnnualProgramTable data={filteredData} headers={[
+    <ReportPeriodTable data={filteredData} headers={[
   "Start", "End", "Total Target CWDS", "New Target CWDS", "Old Target CWDS", "Total Actual CWDS", "New Actual CWDS", "Old Actual CWDS"]}
-                        includedKeys={['Start', 'End', 'total_target_CWDS', 'new_target_CWDS', 'old_target_CWDS', 'total_actual_CWDS', 'new_actual_CWDS', 'old_actual_CWDS']} hasLink={true}/>
+                       includedKeys={['Start', 'End', 'total_target_CWDS', 'new_target_CWDS', 'old_target_CWDS', 'total_actual_CWDS', 'new_actual_CWDS', 'old_actual_CWDS']} hasLink={true}/>
 </section>

@@ -2,12 +2,12 @@
 import InputText from '../../../../components/input/InputText.svelte';
 import Modal from '../../../../components/Modal.svelte';
 import Textarea from '../../../../components/input/InputTextarea.svelte';
-import type { AnnualProgram, Errors } from './+page.server.js';
+import type { ReportPeriod, Errors } from './+page.server.js';
 
 export let modalIsOpen = false;
 export let title = "";
 export let button_title = title;
-export let formData: AnnualProgram = {
+export let formData: ReportPeriod = {
 	id: null,
 	startYYYY: null,
 	startMM: null,

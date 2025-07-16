@@ -9,7 +9,8 @@ export type Errors = {
 	old_target_CWDS: string
 }
 
-export type AnnualProgram = {
+// it's called annual program in the database, but officially we've changed it to Report Period as it's more flexible
+export type ReportPeriod = {
 	id: number | null;
 	startYYYY: number | null;
 	startMM?: number | null;
