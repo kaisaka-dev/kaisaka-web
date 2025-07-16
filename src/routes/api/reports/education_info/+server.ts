@@ -32,10 +32,6 @@ async function insertTypeOfEducValues(worksheet: ExcelJS.Worksheet) {
 
   console.log("All Data: ", allData)
   // Map for Excel cell positions
-  /**
-   * "Home Program", "Nonformal", "Integrated/SNED","Inclusive/Gen. Ed."
-   * , ,, , 
-   */
   const allCellMap: Record<string, string> = {
     "0-5 yrs old|Male|Inclusive": "E23",
     "0-5 yrs old|Female|Inclusive": "F23",
@@ -59,8 +55,8 @@ async function insertTypeOfEducValues(worksheet: ExcelJS.Worksheet) {
     "12-17 yrs old|Female|Inclusive": "F27",
     "12-17 yrs old|Male|Integrated": "G27",
     "12-17 yrs old|Female|Integrated": "H27",
-    "12-17 yrs old|Male|Home Program": "I27",
-    "12-17 yrs old|Female|Home Program": "K27",
+    "12-17 yrs old|Male|Special": "I27",
+    "12-17 yrs old|Female|Special": "K27",
     "12-17 yrs old|Male|Nonformal": "M27",
     "12-17 yrs old|Female|Nonformal": "N27",
 
@@ -84,30 +80,30 @@ async function insertTypeOfEducValues(worksheet: ExcelJS.Worksheet) {
   };
 
   const dsCellMap: Record<string, string> = {
-    "0-5 yrs old|Male|Inclusive/Gen. Ed.": "E24",
-    "0-5 yrs old|Female|Inclusive/Gen. Ed.": "F24",
-    "0-5 yrs old|Male|Integrated/SNED": "G24",
-    "0-5 yrs old|Female|Integrated/SNED": "H24",
-    "0-5 yrs old|Male|Home Program": "I24",
-    "0-5 yrs old|Female|Home Program": "K24",
+    "0-5 yrs old|Male|Inclusive": "E24",
+    "0-5 yrs old|Female|Inclusive": "F24",
+    "0-5 yrs old|Male|Integrated": "G24",
+    "0-5 yrs old|Female|Integrated": "H24",
+    "0-5 yrs old|Male|Special": "I24",
+    "0-5 yrs old|Female|Special": "K24",
     "0-5 yrs old|Male|Nonformal": "M24",
     "0-5 yrs old|Female|Nonformal": "N24",
 
-    "6-11 yrs old|Male|Inclusive/Gen. Ed.": "E26",
-    "6-11 yrs old|Female|Inclusive/Gen. Ed.": "F26",
-    "6-11 yrs old|Male|Integrated/SNED": "G26",
-    "6-11 yrs old|Female|Integrated/SNED": "H26",
-    "6-11 yrs old|Male|Home Program": "I26",
-    "6-11 yrs old|Female|Home Program": "K26",
+    "6-11 yrs old|Male|Inclusive": "E26",
+    "6-11 yrs old|Female|Inclusive": "F26",
+    "6-11 yrs old|Male|Integrated": "G26",
+    "6-11 yrs old|Female|Integrated": "H26",
+    "6-11 yrs old|Male|Special": "I26",
+    "6-11 yrs old|Female|Special": "K26",
     "6-11 yrs old|Male|Nonformal": "M26",
     "6-11 yrs old|Female|Nonformal": "N26",
 
-    "12-17 yrs old|Male|Inclusive/Gen. Ed.": "E28",
-    "12-17 yrs old|Female|Inclusive/Gen. Ed.": "F28",
-    "12-17 yrs old|Male|Integrated/SNED": "G28",
-    "12-17 yrs old|Female|Integrated/SNED": "H28",
-    "12-17 yrs old|Male|Home Program": "I28",
-    "12-17 yrs old|Female|Home Program": "K28",
+    "12-17 yrs old|Male|Inclusive": "E28",
+    "12-17 yrs old|Female|Inclusive": "F28",
+    "12-17 yrs old|Male|Integrated": "G28",
+    "12-17 yrs old|Female|Integrated": "H28",
+    "12-17 yrs old|Male|Special": "I28",
+    "12-17 yrs old|Female|Special": "K28",
     "12-17 yrs old|Male|Nonformal": "M28",
     "12-17 yrs old|Female|Nonformal": "N28",
 
@@ -115,8 +111,8 @@ async function insertTypeOfEducValues(worksheet: ExcelJS.Worksheet) {
     "18-25 yrs old|Female|Inclusive": "F30",
     "18-25 yrs old|Male|Integrated": "G30",
     "18-25 yrs old|Female|Integrated": "H30",
-    "18-25 yrs old|Male|Home Program": "I30",
-    "18-25 yrs old|Female|Home Program": "K30",
+    "18-25 yrs old|Male|Special": "I30",
+    "18-25 yrs old|Female|Special": "K30",
     "18-25 yrs old|Male|Nonformal": "M30",
     "18-25 yrs old|Female|Nonformal": "N30",
 
@@ -124,8 +120,8 @@ async function insertTypeOfEducValues(worksheet: ExcelJS.Worksheet) {
     "26 and older|Female|Inclusive": "F32",
     "26 and older|Male|Integrated": "G32",
     "26 and older|Female|Integrated": "H32",
-    "26 and older|Male|Home Program": "I32",
-    "26 and older|Female|Home Program": "K32",
+    "26 and older|Male|Special": "I32",
+    "26 and older|Female|Special": "K32",
     "26 and older|Male|Nonformal": "M32",
     "26 and older|Female|Nonformal": "N32",
   };
