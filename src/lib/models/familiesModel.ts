@@ -50,4 +50,50 @@ export class FamiliesModel extends TableManager<"families">('families') {
     const result = await this.deleteOne({ id });
     return result !== null;
     }
+
+    
+    /**
+     * gets Surnames
+     * @param id the unique id of the family in the DB
+     * @returns all surnames of yes
+     */
+    async getSurname(id: string = ''){
+        const joinStatement = `id,
+            family_members!inner(
+                family_id,
+                is_child,
+                members!inner(
+                    last_name
+                )
+            ),
+            membership_annual_renewal(
+                last_updated
+            )
+        `
+        return this.findWithJoin(joinStatement, {eq: {id: id}})
+    }
+
+    /**
+     * Gets complete family data including surnames, caregivers, children, and membership info
+     * @param id the unique id of the family in the DB (optional - if not provided, gets all families)
+     * @returns families with complete information
+     */
+    async getFamilyData(id: string = ''){
+        const joinStatement = `
+            id,
+            family_members(
+                family_id,
+                is_child,
+                members(
+                    id,
+                    first_name,
+                    last_name
+                )
+            ),
+            membership_annual_renewal(
+                last_updated
+            )
+        `
+        return this.findWithJoin(joinStatement, id ? {eq: {id: id}} : {})
+    }
 }
