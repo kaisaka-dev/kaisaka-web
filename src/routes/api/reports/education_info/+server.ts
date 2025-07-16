@@ -13,7 +13,6 @@ async function insertAccessToEducValues(worksheet: ExcelJS.Worksheet){
 }
 
 async function insertTypeOfEducValues(worksheet: ExcelJS.Worksheet) {
-
     console.log('Using worksheet:', worksheet.name);
 
   // Fetch all records
@@ -158,6 +157,7 @@ async function insertTypeOfEducValues(worksheet: ExcelJS.Worksheet) {
 
     if (col === 'J' || col === 'L') continue; // Skip columns J and L
 
+    //use rows in the MERGED sheet rather than the template.
     const oddRows = [128, 130, 132, 134, 136].map(r => `${col}${r}`).join(',');
     const evenRows = [129, 131, 133, 135, 137].map(r => `${col}${r}`).join(',');
 
