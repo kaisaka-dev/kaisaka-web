@@ -457,10 +457,10 @@ export type Database = {
             | null
           grade_level: string | null
           id: number
-          last_updated: string
           student_status_type:
             | Database["public"]["Enums"]["student_status_enum"]
             | null
+          updated_at: string
           year_end: number | null
           year_start: number
         }
@@ -472,10 +472,10 @@ export type Database = {
             | null
           grade_level?: string | null
           id?: number
-          last_updated: string
           student_status_type?:
             | Database["public"]["Enums"]["student_status_enum"]
             | null
+          updated_at: string
           year_end?: number | null
           year_start: number
         }
@@ -487,10 +487,10 @@ export type Database = {
             | null
           grade_level?: string | null
           id?: number
-          last_updated?: string
           student_status_type?:
             | Database["public"]["Enums"]["student_status_enum"]
             | null
+          updated_at?: string
           year_end?: number | null
           year_start?: number
         }
@@ -1182,6 +1182,19 @@ export type Database = {
       }
     }
     Views: {
+      education_access_summary: {
+        Row: {
+          age_group: string | null
+          disability_nature: string | null
+          sex: Database["public"]["Enums"]["sex_enum"] | null
+          student_status_type:
+            | Database["public"]["Enums"]["student_status_enum"]
+            | null
+          total: number | null
+          year_start: number | null
+        }
+        Relationships: []
+      }
       education_type_summary: {
         Row: {
           age_group: string | null
@@ -1254,7 +1267,7 @@ export type Database = {
       sex_enum: "Male" | "Female" | "Other"
       student_status_enum:
         | "past_student"
-        | "new_student"
+        | "enrolled"
         | "dropped_out"
         | "completed"
     }
@@ -1439,7 +1452,7 @@ export const Constants = {
       sex_enum: ["Male", "Female", "Other"],
       student_status_enum: [
         "past_student",
-        "new_student",
+        "enrolled",
         "dropped_out",
         "completed",
       ],
