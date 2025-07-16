@@ -172,7 +172,7 @@ async function insertTypeOfEducValues(worksheet: ExcelJS.Worksheet) {
 };
 
   updateCells(allData, allCellMap);
-  //updateCells(downSyndromeData, dsCellMap);
+  updateCells(downSyndromeData, dsCellMap);
   addFormulas();
   return true;
 }
