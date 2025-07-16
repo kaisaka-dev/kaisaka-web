@@ -5,17 +5,7 @@
     import AnnualProgramModal from './AnnualProgramModal.svelte';
     import AnnualProgramTable from './AnnualProgramTable.svelte';
     import type { AnnualProgram } from './+page.server.js';
-    import type { Errors } from './+page.server.js';
 
-    let errors: Errors = $state({
-        startYYYY: "",
-        startMM: "",
-        startDD: "",
-        endYYYY: "",
-        endMM: "",
-        endDD: "",
-        new_target_CWDS: ""
-    })
 
     const annualPrograms: AnnualProgram[] = [
         {
@@ -135,7 +125,6 @@
         }
     ];
 
-    let addModalIsOpen = $state(false);
 
     let newProgram = {
         id: null,
@@ -183,41 +172,7 @@
     }
 
 
-
-    function validateForm(): boolean {
-        errors = {
-            startYYYY: newProgram.startYYYY ? "" : "Start Year is required",
-            startMM: errors.startMM,
-            startDD: errors.startDD,
-            endYYYY: newProgram.endYYYY ? "" : "End Year is required",
-            endMM: errors.endMM,
-            endDD: errors.endDD,
-            new_target_CWDS: newProgram.new_target_CWDS && newProgram.new_target_CWDS < 0
-              ? "Cannot be negative" : ""
-        }
-        let sum = (newProgram.endYYYY - newProgram.startYYYY) * 10000 +
-          (newProgram.endMM - newProgram.startMM) * 100 +
-          (newProgram.endDD - newProgram.startDD)
-
-        errors.endYYYY = sum > 0 ? "" : "End Dates must be greater than Start Dates"
-
-
-        for (const error of Object.values(errors)) {
-            if (error) {
-                console.log("error found: ", error)
-                return false;
-            }
-        }
-
-        return true;
-    }
-    function handleSubmit() {
-        if(validateForm()) addModalIsOpen = false;
-    }
-
-
-
-
+    let addModalIsOpen = $state(false);
     let filteredData = $state(tableData);
     let filter = $state({
         main: "",
@@ -284,9 +239,8 @@
         </FilterSearch>
         <!-- for adding a new annual program -->
         <div class=" flex-start">
-            <AnnualProgramModal bind:modalIsOpen={addModalIsOpen} title="Add Another Annual Program" errors={errors} formData={newProgram}>
-                <div slot="footer"><button class="green" onclick={handleSubmit}>Submit</button></div>
-            </AnnualProgramModal>
+            <AnnualProgramModal bind:modalIsOpen={addModalIsOpen} title="Add Another Annual Program"
+                                formData={newProgram} />
         </div>
 
     </div>

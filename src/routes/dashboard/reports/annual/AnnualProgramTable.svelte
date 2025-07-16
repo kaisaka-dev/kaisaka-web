@@ -2,13 +2,13 @@
 
 <script lang="ts">
 	import AnnualProgramModal from './AnnualProgramModal.svelte';
-	import type {AnnualProgram} from './+page.server.js';
-	import type { Errors } from './+page.server.js';
+	import type { AnnualProgram } from './+page.server.js';
+
 
 	/**
 	 * an array of object, where object is a row of data
 	 */
-	export let data: AnnualProgram;
+	export let data: AnnualProgram[];
 
 	/**
 	 * an array of column keys (strings) to be INCLUDED in the table view
@@ -39,16 +39,6 @@
 	let formIdx = -1;
 	let sortKey: string = '';
 	let sortAsc: boolean = true;
-
-	let errors: Errors = {
-		startYYYY: "",
-		startMM: "",
-		startDD: "",
-		endYYYY: "",
-		endMM: "",
-		endDD: "",
-		new_target_CWDS: ""
-	}
 
 
 	function editModalOpen(idx: number) {
@@ -115,47 +105,12 @@
 		}
 	}
 
-	// same code as the annual page
-	function validateForm(): boolean {
-		console.log(data[formIdx])
-		errors = {
-			startYYYY: data[formIdx].startYYYY ? "" : "Start Year is required",
-			startMM: errors.startMM,
-			startDD: errors.startDD,
-			endYYYY: data[formIdx].endYYYY ? "" : "End Year is required",
-			endMM: errors.endMM,
-			endDD: errors.endDD,
-			new_target_CWDS: data[formIdx].new_target_CWDS && data[formIdx].new_target_CWDS < 0
-				? "Cannot be negative" : ""
-		}
-		let sum = (data[formIdx].endYYYY - data[formIdx].startYYYY) * 10000 +
-			(data[formIdx].endMM - data[formIdx].startMM) * 100 +
-			(data[formIdx].endDD - data[formIdx].startDD)
-
-		errors.endYYYY = sum > 0 ? "" : "End Dates must be greater than Start Dates"
-
-
-		for (const error of Object.values(errors)) {
-			if (error) {
-				console.log("error found: ", error)
-				return false;
-			}
-		}
-
-		return true;
-	}
-	function handleSubmit() {
-		if(validateForm()) editModalIsOpen = false;
-	}
 </script>
 
 
 <!-- for editing existing annual program -->
-<AnnualProgramModal bind:modalIsOpen={editModalIsOpen} title="Edit Annual Program" button_title="" formData={data[formIdx]} errors={errors}>
-	<div slot="footer">
-		<button onclick={() => editModalIsOpen = false}>Cancel</button>
-		<button class="green" onclick={handleSubmit}>Save</button></div>
-</AnnualProgramModal>
+<AnnualProgramModal bind:modalIsOpen={editModalIsOpen} title="Edit Annual Program" button_title=""
+										formData={data[formIdx]} />
 
 {#if data.length > 0}
 	<table>

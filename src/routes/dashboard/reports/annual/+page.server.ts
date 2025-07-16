@@ -5,7 +5,8 @@ export type Errors = {
 	endYYYY: string,
 	endMM: string,
 	endDD: string,
-	new_target_CWDS: string
+	new_target_CWDS: string,
+	old_target_CWDS: string
 }
 
 export type AnnualProgram = {

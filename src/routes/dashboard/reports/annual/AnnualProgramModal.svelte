@@ -2,14 +2,13 @@
 import InputText from '../../../../components/input/InputText.svelte';
 import Modal from '../../../../components/Modal.svelte';
 import Textarea from '../../../../components/input/InputTextarea.svelte';
-import type { Errors } from './+page.server.js';
+import type { AnnualProgram, Errors } from './+page.server.js';
 
 export let modalIsOpen = false;
 export let title = "";
 export let button_title = title;
-export let errors: Errors;
-export let formData = {						// data to be loaded (if edit), default is none (for creating new)
-	id: "",
+export let formData: AnnualProgram = {
+	id: null,
 	startYYYY: null,
 	startMM: null,
 	startDD: null,
@@ -17,14 +16,68 @@ export let formData = {						// data to be loaded (if edit), default is none (fo
 	endMM: null,
 	endDD: null,
 	total_target_CWDS: null,
-	new_target_CWDS: "",
-	old_target_CWDS: "",
-	total_actual_CWDS: "",
-	new_actual_CWDS: "",
-	old_actual_CWDS: "",
+	new_target_CWDS: null,
+	old_target_CWDS: null,
+	total_actual_CWDS: null,
+	new_actual_CWDS: null,
+	old_actual_CWDS: null,
 	general_reflection: "",
 	lessons_learned: ""
 };
+
+let errors: Errors = {
+	startYYYY: "",
+	startMM: "",
+	startDD: "",
+	endYYYY: "",
+	endMM: "",
+	endDD: "",
+	new_target_CWDS: "",
+	old_target_CWDS: ""
+}
+/**
+ * validates the form before submission
+ */
+function validateForm(): boolean {
+	console.log(formData)
+	errors = {
+		startYYYY: formData.startYYYY ? "" : "Start Year is required",
+		startMM: errors.startMM,
+		startDD: errors.startDD,
+		endYYYY: formData.endYYYY ? "" : "End Year is required",
+		endMM: errors.endMM,
+		endDD: errors.endDD,
+		new_target_CWDS: formData.new_target_CWDS && formData.new_target_CWDS < 0 || formData.new_target_CWDS === null
+			? "Invalid" : "",
+		old_target_CWDS: formData.old_target_CWDS && formData.old_target_CWDS < 0 || formData.old_target_CWDS === null
+			? "Invalid" : ""
+	}
+	if (formData.endYYYY !== null && formData.startYYYY !== null) {
+		// setting nulls and undefined to 0, to avoid my IDE from screaming at me
+		let endMM = formData.endMM === null || formData.endMM === undefined ? 0 : formData.endMM;
+		let startMM = formData.startMM === null || formData.startMM === undefined ? 0 : formData.startMM;
+		let endDD = formData.endDD === null || formData.endDD === undefined ? 0 : formData.endDD;
+		let startDD = formData.startDD === null || formData.startDD === undefined ? 0 : formData.startDD;
+
+		// converting the dates into integer for easier comparison
+		let sum = (formData.endYYYY - formData.startYYYY) * 10000 +
+			(endMM - startMM) * 100 +
+			(endDD - startDD)
+		errors.endYYYY = sum >= 0 ? "" : "End Dates must be greater than Start Dates"
+	}
+
+	for (const error of Object.values(errors)) {
+		if (error) {
+			console.log("error found: ", error)
+			return false;
+		}
+	}
+
+	return true;
+}
+function handleSubmit() {
+	if(validateForm()) modalIsOpen = false;
+}
 
 // error checks
 $: if (formData.startMM >= 1 && formData.startMM <= 12 || formData.startMM == null) errors.startMM = ""
@@ -41,19 +94,21 @@ $: if (formData.endDD >= 1 && formData.endDD <= 31 || formData.endDD == null) er
 <Modal buttonText="{button_title}" width="50%" bind:isOpen={modalIsOpen}>
 	<div slot="modal">
 		<h2>{title}</h2>
+		<form on:submit|preventDefault={handleSubmit}>
+			<InputText type="number" label="Start Year" id="startYYYY" bind:value={formData.startYYYY} msg={errors.startYYYY} required />
+			<InputText type="number" label="Start Month" id="startMM" bind:value={formData.startMM} msg={errors.startMM} />
+			<InputText type="number" label="Start Date" id="startDD" bind:value={formData.startDD} msg={errors.startDD} />
+			<InputText type="number" label="End Year" id="endYYYY" bind:value={formData.endYYYY} msg={errors.endYYYY} required />
+			<InputText type="number" label="End Month" id="endMM" bind:value={formData.endMM} msg={errors.endMM} />
+			<InputText type="number" label="End Date" id="endDD" bind:value={formData.endDD} msg={errors.endDD} />
 
-		<InputText type="number" label="Start Year" id="startYYYY" bind:value={formData.startYYYY} msg={errors.startYYYY} required/>
-		<InputText type="number" label="Start Month" id="startMM" bind:value={formData.startMM} msg={errors.startMM} />
-		<InputText type="number" label="Start Date" id="startDD" bind:value={formData.startDD} msg={errors.startDD} />
-		<InputText type="number" label="End Year" id="endYYYY" bind:value={formData.endYYYY} msg={errors.endYYYY} required/>
-		<InputText type="number" label="End Month" id="endMM" bind:value={formData.endMM} msg={errors.endMM} />
-		<InputText type="number" label="End Date" id="endDD" bind:value={formData.endDD} msg={errors.endDD} />
+			<InputText type="number" label="Target New CWDs" id="targetNewCWDs" bind:value={formData.new_target_CWDS} msg={errors.new_target_CWDS} required />
+			<InputText type="number" label="Target Old CWDs" id="targetOldCWDs" bind:value={formData.old_target_CWDS} msg={errors.old_target_CWDS} required />
+			<Textarea label="General Reflection" id="reflection" bind:value={formData.general_reflection} />
+			<Textarea label="Lessons Learned" id="lessons" bind:value={formData.lessons_learned} />
 
-		<InputText type="number" label="Target New CWDs" id="targetCWDs" bind:value={formData.new_target_CWDS} msg={errors.new_target_CWDS} />
-		<Textarea label="General Reflection" id="reflection" bind:value={formData.general_reflection} />
-		<Textarea label="Lessons Learned" id="lessons" bind:value={formData.lessons_learned} />
-
-		<slot name="footer" />
-
+			<button on:click={() => modalIsOpen = false}>Cancel</button>
+			<button class="green" type="submit">Submit</button>
+		</form>
 	</div>
 </Modal>
