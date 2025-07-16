@@ -245,4 +245,18 @@ export class CaregiversModel extends TableManager<"caregivers">('caregivers') {
     const result = await this.deleteOne({member_id});
     return result !== null;
   }
+
+
+  async getCaregiverList(id: string = ''){
+      const joinStatement = `
+        id,
+        members!inner(
+          last_updated,
+          first_name,
+          last_name
+        ),
+        contact_number
+      `
+      return this.findWithJoin(joinStatement, {eq: {id: id}})
+    }
 }

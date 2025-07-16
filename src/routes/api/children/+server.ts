@@ -1,16 +1,45 @@
 import { ChildrenModel } from "$lib/models/childrenModel.js";
 import { error, json, type RequestHandler } from "@sveltejs/kit";
 
-export const GET: RequestHandler = async () => {
+export const GET: RequestHandler = async ({ url }) => {
   try {
-    const children = await ChildrenModel.instance.getAll();
-
-    if (!children) {
-      throw error(500, 'Failed to fetch children');
+    const type = url.searchParams.get('type');
+    const id = url.searchParams.get('id');
+    
+    console.log('API received - type:', type, 'id:', id, 'full URL:', url.toString());
+    
+    let children;
+    
+    if (type === 'pending-documents') {
+      // Get children with pending documents data
+      console.log('Fetching pending documents...');
+      try {
+        children = await ChildrenModel.instance.getPendingDocuments(id || '');
+        console.log('Pending documents result:', children ? children.length : 'null', 'items');
+      } catch (dbError) {
+        console.error('Database error in getPendingDocuments:', dbError);
+        throw error(500, 'Database query failed');
+      }
+    } else {
+      // Default behavior - get all children
+      console.log('Fetching all children...');
+      try {
+        children = await ChildrenModel.instance.getAll();
+        console.log('All children result:', children ? children.length : 'null', 'items');
+      } catch (dbError) {
+        console.error('Database error in getAll:', dbError);
+        throw error(500, 'Database query failed');
+      }
     }
 
-    return json(children);
-  } catch {
+    if (!children) {
+      console.log('No children found, returning empty array');
+      return json({ data: [] });
+    }
+
+    return json({ data: children });
+  } catch (err) {
+    console.error('API error:', err);
     throw error(500, 'Failed to fetch children');
   }
 };
