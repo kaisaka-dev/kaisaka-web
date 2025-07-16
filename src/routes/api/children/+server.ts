@@ -1,15 +1,49 @@
 import { ChildrenModel } from "$lib/models/childrenModel.js";
 import { error, json, type RequestHandler } from "@sveltejs/kit";
 
-export const GET: RequestHandler = async () => {
+export const GET: RequestHandler = async ({ url }) => {
   try {
-    const children = await ChildrenModel.instance.getAll();
+    const type = url.searchParams.get('type');
+    const id = url.searchParams.get('id');
+    
+    console.log('API received - type:', type, 'id:', id, 'full URL:', url.toString());
+    
+    let children;
+    
+    if (type === 'pending-documents') {
+      // Get children with pending documents data
+      if (id) {
+        children = await ChildrenModel.instance.getPendingDocuments(id);
+      } else {
+        // Get all children with pending documents info
+        console.log('Fetching pending documents for all children...');
+        children = await ChildrenModel.instance.findWithJoin(`
+          members!inner(
+            id,
+            first_name,
+            last_name
+          ),
+          has_medical_cert,
+          has_birth_cert,
+          has_barangay_cert,
+          intervention(
+            intervention
+          )
+        `);
+        console.log('Pending documents result:', children ? children.length : 'null', 'items');
+      }
+    } else {
+      // Default behavior - get all children
+      console.log('Fetching all children...');
+      children = await ChildrenModel.instance.getAll();
+      console.log('All children result:', children ? children.length : 'null', 'items');
+    }
 
     if (!children) {
       throw error(500, 'Failed to fetch children');
     }
 
-    return json(children);
+    return json({ data: children });
   } catch {
     throw error(500, 'Failed to fetch children');
   }
