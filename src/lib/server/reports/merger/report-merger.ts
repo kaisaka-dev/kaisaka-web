@@ -134,7 +134,7 @@ export class ExcelMerger {
       }
 
       for (const srcRange of mergedCells) {
-        logger.info(`[Merger] ==> ${srcRange}`)
+        //logger.info(`[Merger] ==> ${srcRange}`)
         if (typeof srcRange !== 'string') continue;
 
         const rangeParts = srcRange.split(':');
@@ -155,7 +155,7 @@ export class ExcelMerger {
         const dstRange = `${dstStartCell}:${dstEndCell}`;
 
         // Merge cells in destination worksheet
-        logger.info(`[Merger] <== ${dstRange}`)
+        //logger.info(`[Merger] <== ${dstRange}`)
         await dstWorksheet.mergeCells(dstRange);
       }
       

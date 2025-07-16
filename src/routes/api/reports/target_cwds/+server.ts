@@ -1,5 +1,6 @@
 
 import { ExcelMerger } from '$lib/server/reports/merger/report-merger.js';
+import type { RequestEvent } from '@sveltejs/kit';
 import ExcelJS from 'exceljs';
 import path from 'path';
 import { fileURLToPath } from 'url';
@@ -7,7 +8,7 @@ import { fileURLToPath } from 'url';
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-export async function POST() {
+export async function POST(event: RequestEvent) {
   // const buffer = await ExcelGenerator.generateExcelfromReportArray([AccomplishmentReport, AccomplishmentReport, AccomplishmentReport]);
   const templateDir = path.resolve(__dirname, '../../../../lib/server/reports/templates/');
   const fileName: string[] = [
@@ -25,11 +26,26 @@ export async function POST() {
   
   const workbookArray: ExcelJS.Workbook[] = []
   for (const fileLocation of fileName) {
-    const workbook = new ExcelJS.Workbook();  
-    const readWorkbook = await workbook.xlsx.readFile(path.join(templateDir, fileLocation));
-    workbookArray.push(readWorkbook)
+    if (fileLocation === 'TEMPLATE_B2-EduInfo.xlsx') {
+      const educInfoRes = await event.fetch('/api/reports/education_info', {
+        method: 'POST'
+      });
+
+      if (!educInfoRes.ok) throw new Error('Failed to fetch education_info workbook');
+
+      const arrayBuffer = await educInfoRes.arrayBuffer();
+
+      const educWorkbook = new ExcelJS.Workbook();
+      await educWorkbook.xlsx.load(arrayBuffer);
+
+      workbookArray.push(educWorkbook);
+    } else {
+      const workbook = new ExcelJS.Workbook();  
+      const readWorkbook = await workbook.xlsx.readFile(path.join(templateDir, fileLocation));
+      workbookArray.push(readWorkbook)
+    }
   }
-  
+
   const buffer = await ExcelMerger.mergeWorkbooks(workbookArray);
   return new Response(new Uint8Array(buffer), {
     headers: {
