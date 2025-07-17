@@ -13,7 +13,7 @@ export const GET: RequestHandler = async ({ url }) => {
     result = await CaregiversModel.instance.findWithJoin(`
       id,
       members!inner(
-        last_updated,
+        updated_at,
         first_name,
         last_name
       ),

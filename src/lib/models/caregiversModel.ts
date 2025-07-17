@@ -251,7 +251,7 @@ export class CaregiversModel extends TableManager<"caregivers">('caregivers') {
       const joinStatement = `
         id,
         members!inner(
-          last_updated,
+          updated_at,
           first_name,
           last_name
         ),
