@@ -252,6 +252,8 @@ export class ChildrenModel extends TableManager<"children">('children') {
   
   async getChildrenList(id: string = ''){
     const joinStatement = `
+      id,
+      disability_nature,
       members!inner(
         id,
         first_name,
@@ -259,16 +261,19 @@ export class ChildrenModel extends TableManager<"children">('children') {
         birthday,
         sex
       ),
-      disability_category!inner(
+      disability_category!left(
         name
       ),
-      disability_nature,
-      education_status!inner(
+      education_status!left(
         education_type,
         grade_level,
-        last_updated
+        updated_at
       )`;
-    return this.findWithJoin(joinStatement, {eq: {id: id}})
+    if (id) {
+      return this.findWithJoin(joinStatement, {eq: {id: id}})
+    } else {
+      return this.findWithJoin(joinStatement)
+    }
   }
 
     /**

@@ -20,6 +20,16 @@ export const GET: RequestHandler = async ({ url }) => {
         console.error('Database error in getPendingDocuments:', dbError);
         throw error(500, 'Database query failed');
       }
+    } else if (type === 'list' || type === 'joined') {
+      // Get children list with joined data
+      console.log('Fetching children list with joined data...');
+      try {
+        children = await ChildrenModel.instance.getChildrenList(id || '');
+        console.log('Children list result:', children ? children.length : 'null', 'items');
+      } catch (dbError) {
+        console.error('Database error in getChildrenList:', dbError);
+        throw error(500, 'Database query failed');
+      }
     } else {
       // Default behavior - get all children
       console.log('Fetching all children...');

@@ -42,69 +42,34 @@ export const load: PageLoad = async ({ fetch }) => {
 	};
 
 	try {
-		// Fetch all required data in parallel
-		const [childrenRes, membersRes, disabilityRes, educationRes] = await Promise.all([
-			fetch('/api/children'),
-			fetch('/api/members'),
-			fetch('/api/disability_category'),
-			fetch('/api/education_status')
-		]);
+		// Use the new getChildrenList method that returns joined data
+		const childrenRes = await fetch('/api/children?type=list');
 
-		if (!childrenRes.ok || !membersRes.ok || !disabilityRes.ok || !educationRes.ok) {
-			// throw new Error('Failed to fetch required data');
-			if (!childrenRes.ok) {
-				throw new Error('Failed to fetch childrenRes');
-			}
-			if (!membersRes.ok) {
-				throw new Error('Failed to fetch membersRes');
-			}
-			if (!disabilityRes.ok) {
-				throw new Error('Failed to fetch disabilityRes');
-			}
-			if (!educationRes.ok) {
-				throw new Error('Failed to fetch educationRes');
-			}
+		if (!childrenRes.ok) {
+			throw new Error('Failed to fetch children list');
 		}
 
-		const childrenData: ChildrenRow[] = await childrenRes.json();
-		const membersData: MembersRow[] = await membersRes.json();
-		const disabilityData: DisabilityCategoryRow[] = await disabilityRes.json();
-		const educationData: EducationStatusRow[] = await educationRes.json();
-		console.log(childrenData)
-		console.log(membersData)
-		console.log(disabilityData)
-		console.log(educationData)
+		const response = await childrenRes.json();
+		const childrenData = response.data;
 
-		// Create lookup maps for faster access
-		const membersMap = new Map<string, MembersRow>(membersData.map(m => [m.id, m]));
-		const disabilityMap = new Map<number, string>(
-			disabilityData.filter(d => d.name).map(d => [d.id, d.name as string])
-		);
-		const educationMap = new Map<string, EducationStatusRow[]>(
-			educationData.reduce((acc, curr) => {
-				if (!curr.child_id) return acc;
-				const existing = acc.get(curr.child_id) || [];
-				return acc.set(curr.child_id, [...existing, curr]);
-			}, new Map())
-		);
-
-		// Transform the data into the Children type
-		const children: Children[] = childrenData.map(child => {
-			const member = child.member_id ? membersMap.get(child.member_id) : null;
-			const latestEducation = child.id ? educationMap.get(child.id)?.[0] : null;
+		// Transform the joined data into the Children type
+		const children: Children[] = childrenData.map((child: any) => {
+			const member = child.members;
+			const disability = child.disability_category;
+			const education = child.education_status;
 
 			return {
 				id: child.id,
 				firstName: [member?.first_name, member?.middle_name].filter(Boolean).join(' '),
 				lastName: member?.last_name || '',
 				birthday: member?.birthday || '',
-				category: child.disability_id ? disabilityMap.get(child.disability_id) || '' : '',
+				category: disability?.name || '',
 				nature: child.disability_nature || '',
 				age: calculateAge(member?.birthday || null),
 				sex: member?.sex || '',
-				educType: latestEducation?.education_type || '',
-				gradeLevel: latestEducation?.grade_level || '',
-				lastUpdated: formatDate(member?.last_updated || null),
+				educType: education?.education_type || '',
+				gradeLevel: education?.grade_level || '',
+				lastUpdated: formatDate(education?.updated_at || null),
 				link: `/dashboard/members/children/profile/${child.id}`
 			};
 		});
