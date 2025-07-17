@@ -123,7 +123,11 @@ export default function TableManager<T extends tableNames>(table: T){
     }
 
     protected async updateOne(match: Partial<Row>, updates: Partial<Row>) {
-      const { error } = await this.updateQuery(updates).match(match).limit(1);
+      const { error } = await this.updateQuery(updates).match(match);
+
+      if (error) {
+       console.error('updateOne error:', error);
+       }
 
       return !error
     }
