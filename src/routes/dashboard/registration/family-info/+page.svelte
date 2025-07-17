@@ -4,6 +4,7 @@
 	import CaregiverForm from './CaregiverForm.svelte';
 	import { childFormData } from '$lib/stores/childForm.js';
 	import { get } from 'svelte/store';
+	import { goto } from '$app/navigation';
 
 	const childRegData = get(childFormData)
 	console.log(childRegData);
@@ -203,6 +204,7 @@
 	async function handleSubmit() {
 		try {
 			if (!validateForm()) return;
+			goto('/dashboard');			// temporary fix for usability testing purposes
 			// Insert address
 			const addressData = await safeFetch('/api/addresses', childRegData.address);
 			console.log(addressData.message)
