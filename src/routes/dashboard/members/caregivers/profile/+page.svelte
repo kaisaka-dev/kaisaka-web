@@ -5,12 +5,13 @@
     import type { EventType } from '$lib/types/event.ts'
 
     import Header from '../../../../../components/Header.svelte'
-    import Textarea from '../../../../../components/input/InputTextarea.svelte'
     import Textinput from '../../../../../components/input/InputText.svelte'
 	import InputText from '../../../../../components/input/InputText.svelte';
 
     export let data 
-    console.log(JSON.stringify(data.family,null,2))
+
+    
+
     //below are sample data declarations just to test if the page works, will delete when relevant APIs are complete
     let sampleFamily1: family = {
         members: [{firstName: "Juan", lastName: "De La Cruz", role: "Grandparent"},
@@ -47,7 +48,8 @@
     let today = new Date()
 
 
-//below are essential functions for the page to work
+
+    //below are essential functions for the page to work
     function familyName(family:object): string {
         let lastnames: string[] = []
 
@@ -91,7 +93,7 @@
 <Header/>
 <section>
     <h1>
-        {data.member.first_name} {data.member.last_name}'s Profile 
+        {data.memberRecord.first_name} {data.memberRecord.last_name}'s Profile 
     </h1>
 </section>
 <!--End of Page Headers-->
@@ -129,31 +131,34 @@
                 <div class = "flex flex-col">
                     <div class ="information">
                         <div class = "min-w-30"> First Name</div>
-                        <div> <Textinput disabled value = {data.member.first_name}/></div>
+                        <div> <Textinput disabled value = {data.memberRecord.first_name}/></div>
                     </div>
                      <div class ="information">
                         <div class = "min-w-30"> Last Name</div>
-                        <div> <Textinput disabled value = {data.member.last_name}/></div>
+                        <div> <Textinput disabled value = {data.memberRecord.last_name}/></div>
                     </div>
                     <div class ="information !mt-10">
                         <div class = "min-w-35"> Contact No.</div>
-                        <div class = "ml-5"> <Textinput disabled value = {data.member.caregivers[0].contact_number}/></div>
+                        <div class = "ml-5"> <Textinput disabled value = {data.memberRecord.contact_number}/></div>
                     </div>
-                    {#if data.member.caregivers[0].facebook_link }
+                    {#if data.member.facebook_link }
                     <div class ="information">
                         <div class = "min-w-40"> Facebook Link</div>
-                        <div> <Textinput disabled value = {data.member.caregivers[0].facebook_link}/></div>
+                        <div> <Textinput disabled value = {data.member.facebook_link}/></div>
                     </div> 
                     {/if}
-                    {#if data.member.caregivers[0].email }
+                    {#if data.member.email }
                     <div class ="information">
                         <div class = "min-w-40"> Email</div>
-                        <div> <Textinput disabled value = {data.member.caregivers[0].email}/></div>
+                        <div> <Textinput disabled value = {data.member.email}/></div>
                     </div>
                     {/if}
-                    <div class ="information !mt-10">
+                    <div class ="information !mt-10"><picture>
+                        <source media="(min-width: )" srcset="">
+                        <img src="" alt="">
+                    </picture>
                         <div class = "w-30 min-w-30"> Address</div>
-                        <div> <Textinput disabled value = {data.member.addresses.address}/></div>
+                        <div> <Textinput disabled value = {data.memberRecord.addresses.address}/></div>
                     </div>
                     <div class ="information">
                         <div class = "w-30 min-w-30"> Barangay</div>
@@ -161,7 +166,7 @@
                     </div>
                     <div class ="information !mt-10">
                         <div class = "min-w-50"> Date of Admission</div>
-                        <div class = "ml-5"> <InputText type = "date" value = {new Date(data.member.admission_date).toISOString().split('T')[0]} label = "" disabled/></div>
+                        <div class = "ml-5"> <InputText type = "date" value = {new Date(data.memberRecord.admission_date).toISOString().split('T')[0]} label = "" disabled/></div>
                     </div>
                     {#if sample.dateTermination!=null}
                     <div class ="information">
