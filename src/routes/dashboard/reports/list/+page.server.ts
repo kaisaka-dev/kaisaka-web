@@ -6,7 +6,9 @@ export type Errors = {
 	endMM: string,
 	endDD: string,
 	new_target_CWDS: string,
-	old_target_CWDS: string
+	old_target_CWDS: string,
+	new_actual_CWDS: string,
+	old_actual_CWDS: string
 }
 
 // it's called list program in the database, but officially we've changed it to Report Period as it's more flexible
