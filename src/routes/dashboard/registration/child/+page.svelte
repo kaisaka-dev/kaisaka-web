@@ -14,20 +14,20 @@
     let firstName = "";
     let middleName = "";
     let lastName = "";
-    let birthday = "";
+    let birthday = $state("");
     let sex = "";
     let address = "";
     let barangay = "";
-    let educType = "";
+    let educType = $state("");
     let educStatus = "";
     let educLvl = "";
     let hasPhId = false;
     let hasVote = false;
     let hasNatId = false;
-    let hasPwdId = false;
+    let hasPwdId = $state(false);
     let pwdId = "";
     let pwdExpy = "";
-    let ableToWork = false;
+    let ableToWork = $state(false);
     let employmentType = "";
 
     let disCategory = "";
@@ -37,20 +37,21 @@
     let hasBrgyCert = false;
     let hasBrthCert = false;
     let remarks = "";
-    let partFamily = false;
-    let partCommunity = false;
+    let partFamily = $state(false);
+    let partCommunity = $state(false);
     let partFamilyYear = new Date().getFullYear();
     let partCommunityYear = new Date().getFullYear();
     let ayStart = new Date().getFullYear();
     let ayEnd = new Date().getFullYear() + 1;
     let admissionDate = new Date().toISOString().slice(0, 7);
 
-    let options_disCategory = $state();
-
-    async function getOptionsDisCategory() {
-        const response = await fetch('/api/disability_category');
-        options_disCategory = await response.json();
-    }
+    // let options_disCategory = $state();
+    //
+    // async function getOptionsDisCategory() {
+    //     const response = await fetch('/api/disability_category');
+    //     options_disCategory = await response.json();
+    // }
+    // getOptionsDisCategory()
 
     const options_disNature = [
         "ADHD",
@@ -81,16 +82,42 @@
         "Tb Spondylodiscitis of the Spine",
         "Visual Impairment"
     ]; // from KAISAKA's 2024-jan-nov-list-of-
+    const options_disCategory = [
+        "Deaf/Hard of Hearing",
+        "Intellectual Disability",
+        "Learning Disability",
+        "Mental Disability",
+        "Physical Disability",
+        "Psychosocial Disability",
+        "Speech and Language Impairment",
+        "Visual Disability",
+        "Cancer",
+        "Rare Disease (RA10747)",
+        "Multiple Disability"
+    ];  // from KAISAKA's 2024-jan-nov-list-of-children
     const options_educStatus = [
         "Past student",
         "New student",
         "Dropped",
         "Completed"
     ];
+    const options_educLevel = [
+      "Nursery", "Kinder", "SNED", "Grade 1", "Grade 2", "Grade 3", "Grade 4", "Grade 5", "Grade 6",
+      "High School", "Senior High School", "College", "ALS", "Home-based", "EIC"
+    ];
+    const options_educType = [
+      "Not enrolled", "Home program", "Non-formal", "Special (Exclusive school, blind/deaf)", "Integrated / SPED classes", "Inclusive / General education"
+    ];
+    const options_laborMarketStatus = [
+        "Wage-emplyed",
+        "Self-employed",
+        "Sheltered workshop",
+        "None of the above"
+    ]
 
 
     /* special fields */
-    let age = "";
+    let age = $state("");
     $effect (() => {
           const birthDate = new Date(birthday);
           const today = new Date();
@@ -106,27 +133,29 @@
     )
 
 
-    let errors = {
-        overall: "",
-        firstName: "",
-        lastName: "",
-        birthday: "",
-        sex: "",
-        address: "",
-        barangay: "",
-        disCategory: "",
-        disNature: "",
-        educType: "",
-        educLvl: "",
-        educStatus: "",
-        pwdId: "",
-        pwdExpy: "",
-        admissionDate: "",
-        partFamilyYear: "",
-        ayStart: "",
-        ayEnd: "",
-        partCommunityYear: ""
-    };
+    let errors = $state(
+      {
+          overall: "",
+          firstName: "",
+          lastName: "",
+          birthday: "",
+          sex: "",
+          address: "",
+          barangay: "",
+          disCategory: "",
+          disNature: "",
+          educType: "",
+          educLvl: "",
+          educStatus: "",
+          pwdId: "",
+          pwdExpy: "",
+          admissionDate: "",
+          partFamilyYear: "",
+          ayStart: "",
+          ayEnd: "",
+          partCommunityYear: ""
+      }
+    );
 
     function validateForm() {
         errors.overall = "";        // resets it
@@ -140,8 +169,7 @@
         errors.disCategory = disCategory.trim() === "" ? "disability category: field is required" : "";
         errors.disNature = disNature.trim() === "" ? "disability nature: field is required" : "";
         errors.educType = educType.trim() === "" ? "education type: field is required" : "";
-        errors.educLvl = educLvl.trim() === "" ? "education level: field is required" : "";
-        errors.educStatus = educStatus.trim() === "" ? "education status: field is required" : "";
+
         // errors.admissionDate = admissionDate.trim() === "" ? "admission date: field is required" : "";
 
         // only check if the child has pwd id
@@ -163,6 +191,15 @@
             errors.partCommunityYear = partCommunityYear.toString().trim() === "" ? "year: field is required" : "";
         } else {
             errors.partCommunityYear = "";
+        }
+
+        // only check if the child has education
+        if (educType !== "" && educType !== "Not enrolled") {
+            errors.educLvl = educLvl.trim() === "" ? "education level: field is required" : "";
+            errors.educStatus = educStatus.trim() === "" ? "education status: field is required" : "";
+        } else {
+            errors.educLvl = "";
+            errors.educStatus = "";
         }
 
         for (const error of Object.values(errors)) {
@@ -250,28 +287,26 @@
     <InputText label="Address" id="address" bind:value={address} required msg={errors.address}/>
     <InputText label="Barangay" id="barangay" bind:value={barangay} required msg={errors.barangay}/>
     <Select label="Disability Category" id="dis-category" options={options_disCategory} bind:value={disCategory} required msg={errors.disCategory}/>
-    <Textarea label="Disability Nature" id="dis-nature" bind:value={disNature} required />
+    <Textarea label="Disability Nature" id="dis-nature" bind:value={disNature} required msg={errors.disNature}/>
 
     <Textarea label="Remarks" id="remarks" bind:value={remarks}/>
 
 
 </section>
 
-<section>
+<section id="education-info">
     <h1>Education Information</h1>
-    <Select label="Education" id="educ-type" options={[
-        { label: "Home Program", value: "Home Program" },
-        { label: "Non-formal", value: "Nonformal" },
-        { label: "Integrated / SPED classes", value: "Integrated/SPED" },
-        { label: "Inclusive / General education", value: "Inclusive/Gen. Ed." }]} required bind:value={educType} msg="{errors.educType}"/>
-    <InputText label="Education Level" id="educ-lvl" required msg="{errors.educLvl}" bind:value={educLvl} />
-    <Select label="Education Status" id="educ-status" options={options_educStatus} required bind:value={educStatus} msg="{errors.educStatus}"/>
-    <InputText label="School Year Start" id="ay-start" bind:value={ayStart} type="number" required msg={errors.ayStart} />
-    <InputText label="School Year End" id="ay-end" bind:value={ayEnd} type="number" required msg={errors.ayEnd} />
+    <Select label="Education" id="educ-type" options={options_educType} required bind:value={educType} msg={errors.educType}/>
+    {#if educType !== "Not enrolled" && educType !== ""}
+        <Select label="Education Level" id="educ-lvl" options={options_educLevel} required msg={errors.educLvl} bind:value={educLvl} />
+        <Select label="Education Status" id="educ-status" options={options_educStatus} required bind:value={educStatus} msg={errors.educStatus}/>
+        <InputText label="School Year Start" id="ay-start" bind:value={ayStart} type="number" required msg={errors.ayStart} />
+        <InputText label="School Year End" id="ay-end" bind:value={ayEnd} type="number" required msg={errors.ayEnd} />
+    {/if}
 
 </section>
 
-<section>
+<section id="documents">
     <h1>Documents</h1>
     <Checkbox label="PWD ID" id="pwd" bind:checked={hasPwdId}/>
         {#if hasPwdId}
@@ -307,7 +342,7 @@
     <Checkbox label="Able to work" id="able-to-work" bind:checked={ableToWork}/>
     {#if ableToWork}
         <div style="margin-left: 35px">
-            <Select label="Employment Type" id="employment" options={["Wage-employed", "Self-employed", "Sheltered workshop"]} bind:value={employmentType} />
+            <Select label="Employment Type" id="employment" options={options_laborMarketStatus} bind:value={employmentType} />
         </div>
     {/if}
 </section>
