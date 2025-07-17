@@ -1,15 +1,29 @@
 import TableManager from '$lib/types/manager.js';
 
-export async function load() {
+export async function load( {url} ) {
 //gets record in the member table
-const members = TableManager('members');
-const memberDB = new members();
-const memberInfo = await memberDB.findOneWithJoin('*, caregivers(*),addresses(*)', {
-    eq: {first_name: "mom" }
+const caregivers = TableManager('caregivers')
+const caregiverDB = new caregivers()
+const members = TableManager('members')
+const memberDB = new members()
+
+
+if(!url.searchParams.get('id')) {
+    throw new Error("Missing id")
+}
+
+const memberInfo = await caregiverDB.findOneWithJoin('*, members(*)', {
+    eq: {id: url.searchParams.get('id')}
 });
 
+
+
+const memberRecord = await memberDB.findOneWithJoin('*,addresses(*)', {
+    eq:{id: memberInfo.members.id}
+})
+
 //gets record in barangay table
-const barangayID = memberInfo.addresses.barangay_id;
+const barangayID = memberRecord.addresses.barangay_id;
 const barangay = TableManager('barangays');
 const barangayDB = new barangay();
 const barangayInfo = await barangayDB.findOneWithJoin('*', {
@@ -22,7 +36,7 @@ const family = TableManager('family_members');
 const familyDB = new family();
 
 const familyInfo = await familyDB.findWithJoin('*, families(*)', { //returns every record in the family table with this parent's id
-    eq:{member_id: memberInfo.id }
+    eq:{member_id: memberInfo.members.id }
 });
 
 let familyArray = [];
@@ -39,6 +53,7 @@ for(let i in familyInfo) { //loop over every record, query the db for every fami
 
 return {
     member: memberInfo,
+    memberRecord: memberRecord,
     barangay: barangayInfo,
     family: familyArray,
   };
