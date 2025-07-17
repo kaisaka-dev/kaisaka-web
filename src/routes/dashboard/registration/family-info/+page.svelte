@@ -25,6 +25,7 @@
 		occupation: string;
 		relationship: string;
 		communityGrp_id: number;
+		communityYr: number;
 	};
 
 	/**
@@ -82,7 +83,8 @@
 			brgy: '',
 			occupation: '',
 			relationship: '',
-			communityGrp_id: -1
+			communityGrp_id: -1,
+			communityYr: new Date().getFullYear()
 		}
 	]); // initialize variable so that the page will have at least one caregiver
 
@@ -117,7 +119,8 @@
 				brgy: '',
 				occupation: '',
 				relationship: '',
-				communityGrp_id: -1
+				communityGrp_id: -1,
+				communityYr: new Date().getFullYear()
 			}
 		];
 

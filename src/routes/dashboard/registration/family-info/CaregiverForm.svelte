@@ -115,7 +115,8 @@
 				address: '',
 				brgy: '',
 				occupation: '',
-				relationship: ''
+				relationship: '',
+				communityYr: new Date().getFullYear()
 			};
 			errors = {
 				firstName: '',
@@ -127,9 +128,6 @@
 			};
 		}
 	}
-
-
-
 
 </script>
 
@@ -162,6 +160,9 @@
 								{ label: "Others", value: 4 }
 							]} bind:value={formData.communityGrp_id} />
 			<Select label="Income Generation" id={`income-${index}`} options={["Home-based", "Self-employed"]} bind:value={formData.income} />
+			{#if formData.communityGrp_id !== -1 && formData.communityGrp_id !== null && formData.communityGrp_id !== ""}
+				<InputText label="Year Joined (Community Group)" id={`community-grp-yr-${index}`} bind:value={formData.communityYr} required msg={errors.communityYr} />
+			{/if}
 
 
 		{:else if caregivertype === "linked" }
