@@ -12,10 +12,6 @@ import Header from '$components/Header.svelte';
 </section>
 
 <style>
-    #guide ol {
-        list-style-type: decimal;
-        padding-left: 1.5rem;
-    }
 		a {
 				text-decoration: underline;
         color: var(--pink);

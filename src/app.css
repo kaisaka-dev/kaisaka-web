@@ -153,3 +153,12 @@ th {
     border: 3px solid var(--green);
     padding: 0.5rem;
 }
+
+ul {
+    list-style-type: circle;
+    padding-left: 1.5rem;
+}
+ol {
+    list-style-type: decimal;
+    padding-left: 1.5rem;
+}
