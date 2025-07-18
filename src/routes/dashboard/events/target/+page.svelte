@@ -1,5 +1,5 @@
 <script>
-import Header from "../../../../components/Header.svelte";
+import Header from "$components/Header.svelte";
 </script>
 
 <Header category="events" page="target" />

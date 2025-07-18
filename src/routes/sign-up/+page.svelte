@@ -2,9 +2,9 @@
 	import { redirect } from "@sveltejs/kit";
     import type { PageProps } from "../$types.js"
     import type { ActionData } from "./+page.server.js";
-	import SignUpinputLabel from "../../components/login/SignUpInputLabel.svelte";
-	import LoginError from "../../components/login/LoginError.svelte";
-	import SignUpSuccess from "../../components/login/SignUpSuccess.svelte";
+	import SignUpinputLabel from "$components/login/SignUpInputLabel.svelte";
+	import LoginError from "$components/login/LoginError.svelte";
+	import SignUpSuccess from "$components/login/SignUpSuccess.svelte";
 	import { success } from "zod/v4";
 	import { onMount } from "svelte";
     

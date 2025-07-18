@@ -1,6 +1,6 @@
 <script lang="ts">
 
-	import Header from '../../../../components/Header.svelte';
+	import Header from '$components/Header.svelte';
 	import CaregiverForm from './CaregiverForm.svelte';
 	import { childFormData } from '$lib/stores/childForm.js';
 	import { get } from 'svelte/store';

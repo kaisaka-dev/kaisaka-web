@@ -1,9 +1,9 @@
 <script lang="ts">
-    import Header from "../../../../components/Header.svelte";
-    import FilterSearch from "../../../../components/styled-buttons/FilterSearch.svelte";
-    import Table from "../../../../components/text/Table.svelte";
-    import InputText from '../../../../components/input/InputText.svelte';
-    import Select from '../../../../components/input/Select.svelte';
+    import Header from "$components/Header.svelte";
+    import FilterSearch from "$components/styled-buttons/FilterSearch.svelte";
+    import Table from "$components/text/Table.svelte";
+    import InputText from '$components/input/InputText.svelte';
+    import Select from '$components/input/Select.svelte';
     import { onMount } from 'svelte';
 
     type CaregiverListItem = {

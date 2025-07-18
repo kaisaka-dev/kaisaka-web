@@ -1,6 +1,6 @@
 <script lang="ts">
-    import Input from '../../../components/input/InputText.svelte'
-    import Header from '../../../components/Header.svelte'
+    import Input from '$components/input/InputText.svelte'
+    import Header from '$components/Header.svelte'
     import type { staff } from '$lib/types/staff.js'
 
     //below are test data needed for the page to work, this will be deleted once the relevant APIs are completed

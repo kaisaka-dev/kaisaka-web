@@ -1,9 +1,9 @@
 <script lang="ts">
-	import Radio from '../../../../components/input/Radio.svelte';
-	import InputText from '../../../../components/input/InputText.svelte';
-	import Select from '../../../../components/input/Select.svelte';
-	import SearchBtn from '../../../../components/styled-buttons/SearchBtn.svelte';
-	import Validation from '../../../../components/text/Validation.svelte';
+	import Radio from '$components/input/Radio.svelte';
+	import InputText from '$components/input/InputText.svelte';
+	import Select from '$components/input/Select.svelte';
+	import SearchBtn from '$components/styled-buttons/SearchBtn.svelte';
+	import Validation from '$components/text/Validation.svelte';
 
 	export let formData;
 	export let errors;

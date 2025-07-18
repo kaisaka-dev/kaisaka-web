@@ -1,7 +1,7 @@
 <script lang="ts">
-    import Header from "../../../../components/Header.svelte";
-    import FilterSearch from '../../../../components/styled-buttons/FilterSearch.svelte';
-    import InputRange from '../../../../components/input/InputRange.svelte';
+    import Header from "$components/Header.svelte";
+    import FilterSearch from '$components/styled-buttons/FilterSearch.svelte';
+    import InputRange from '$components/input/InputRange.svelte';
     import ReportPeriodModal from './ReportPeriodModal.svelte';
     import ReportPeriodTable from './ReportPeriodTable.svelte';
     import type { ReportPeriod } from './+page.server.js';

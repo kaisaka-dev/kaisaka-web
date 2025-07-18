@@ -1,8 +1,8 @@
 <script lang="ts">
-	import Header from "../../../../components/Header.svelte";
-	import FilterSearch from "../../../../components/styled-buttons/FilterSearch.svelte";
-	import InputText from '../../../../components/input/InputText.svelte';
-	import InputRange from '../../../../components/input/InputRange.svelte';
+	import Header from "$components/Header.svelte";
+	import FilterSearch from "$components/styled-buttons/FilterSearch.svelte";
+	import InputText from '$components/input/InputText.svelte';
+	import InputRange from '$components/input/InputRange.svelte';
 	import { onMount } from 'svelte';
 
 	const thisYear = new Date().getFullYear();

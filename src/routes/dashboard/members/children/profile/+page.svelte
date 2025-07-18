@@ -1,11 +1,11 @@
 <script lang="ts">
     import type { child } from '$lib/types/child.js'
-    import Header from '../../../../../components/Header.svelte'
-    import Input from '../../../../../components/input/InputText.svelte'
-    import TextArea from '../../../../../components/input/InputTextarea.svelte'
-    import Check from '../../../../../components/input/Checkbox.svelte'
-	import InputText from '../../../../../components/input/InputText.svelte';
-    import Select from '../../../../../components/input/Select.svelte'
+    import Header from '$components/Header.svelte'
+    import Input from '$components/input/InputText.svelte'
+    import TextArea from '$components/input/InputTextarea.svelte'
+    import Check from '$components/input/Checkbox.svelte'
+	import InputText from '$components/input/InputText.svelte';
+    import Select from '$components/input/Select.svelte'
 
 
     export let data;

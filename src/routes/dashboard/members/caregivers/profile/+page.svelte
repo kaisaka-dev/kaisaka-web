@@ -4,9 +4,9 @@
     import type { membershipFee } from '$lib/types/membershipFee.ts'
     import type { EventType } from '$lib/types/event.ts'
 
-    import Header from '../../../../../components/Header.svelte'
-    import Textinput from '../../../../../components/input/InputText.svelte'
-	import InputText from '../../../../../components/input/InputText.svelte';
+    import Header from '$components/Header.svelte'
+    import Textinput from '$components/input/InputText.svelte'
+	import InputText from '$components/input/InputText.svelte';
 
     export let data 
 

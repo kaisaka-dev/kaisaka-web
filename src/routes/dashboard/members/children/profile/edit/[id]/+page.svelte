@@ -6,12 +6,12 @@
     import type { interventionStatus } from '$lib/types/interventionStatus.js'
 
 
-    import Header from '../../../../../../../components/Header.svelte'
-    import Input from '../../../../../../../components/input/InputText.svelte'
-    import TextArea from '../../../../../../../components/input/InputTextarea.svelte'
-    import Check from '../../../../../../../components/input/Checkbox.svelte'
-    import Select from '../../../../../../../components/input/Select.svelte'
-    import Modal from '../../../../../../../components/Modal.svelte'
+    import Header from '$components/Header.svelte'
+    import Input from '$components/input/InputText.svelte'
+    import TextArea from '$components/input/InputTextarea.svelte'
+    import Check from '$components/input/Checkbox.svelte'
+    import Select from '$components/input/Select.svelte'
+    import Modal from '$components/Modal.svelte'
 
     
     

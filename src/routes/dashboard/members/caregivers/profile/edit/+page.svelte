@@ -4,11 +4,11 @@
     import type { membershipFee } from '$lib/types/membershipFee.js'
     import type { EventType } from '$lib/types/event.js'
 
-    import Select from '../../../../../../components/input/Select.svelte'
-    import Header from '../../../../../../components/Header.svelte'
-    import Textarea from '../../../../../../components/input/InputTextarea.svelte'
-    import Textinput from '../../../../../../components/input/InputText.svelte'
-	import InputText from '../../../../../../components/input/InputText.svelte';
+    import Select from '$components/input/Select.svelte'
+    import Header from '$components/Header.svelte'
+    import Textarea from '$components/input/InputTextarea.svelte'
+    import Textinput from '$components/input/InputText.svelte'
+	import InputText from '$components/input/InputText.svelte';
     
 
     //below are sample data declarations just to test if the page works, will delete when relevant APIs are complete

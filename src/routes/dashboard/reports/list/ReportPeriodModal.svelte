@@ -1,8 +1,8 @@
 <script lang="ts">
-import InputText from '../../../../components/input/InputText.svelte';
-import InputRange from '../../../../components/input/InputRange.svelte';
-import Modal from '../../../../components/Modal.svelte';
-import Textarea from '../../../../components/input/InputTextarea.svelte';
+import InputText from '$components/input/InputText.svelte';
+import InputRange from '$components/input/InputRange.svelte';
+import Modal from '$components/Modal.svelte';
+import Textarea from '$components/input/InputTextarea.svelte';
 import type { ReportPeriod, Errors } from './+page.server.js';
 
 export let modalIsOpen = false;

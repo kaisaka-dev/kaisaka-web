@@ -1,7 +1,7 @@
 <script lang="ts">
-    import Input from '../../../../components/input/InputText.svelte'
-    import Header from '../../../../components/Header.svelte'
-    import Select from '../../../../components/input/Select.svelte'
+    import Input from '$components/input/InputText.svelte'
+    import Header from '$components/Header.svelte'
+    import Select from '$components/input/Select.svelte'
     import type { staff } from '$lib/types/staff.js'
 	import { userEvent } from '@storybook/test';
 
