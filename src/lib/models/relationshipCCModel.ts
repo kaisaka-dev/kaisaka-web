@@ -17,7 +17,7 @@ export class relationshipCCModel extends TableManager<"relationship_cc">('relati
    * @param caregiver Caregiver's UUID
    * @returns relationship record or null
    */
-  async findByCaregiver(caregiver: string): Promise<RelationshipCCRow | null> {
+  async findByCaregiver(caregiver: string) {
     return this.findOne({ caregiver });
   }
 
@@ -26,7 +26,7 @@ export class relationshipCCModel extends TableManager<"relationship_cc">('relati
    * @param child Child's UUID
    * @returns array of relationship records or null
    */
-  async findByChild(child: string): Promise<RelationshipCCRow[] | null> {
+  async findByChild(child: string) {
     return this.findMany({ child });
   }
 
@@ -35,7 +35,7 @@ export class relationshipCCModel extends TableManager<"relationship_cc">('relati
    * @param relationship Relationship type (varchar)
    * @returns array of relationship records or null
    */
-  async findByRelationship(relationship: string): Promise<RelationshipCCRow[] | null> {
+  async findByRelationship(relationship: string) {
     return this.findMany({ relationship });
   }
 
@@ -44,7 +44,7 @@ export class relationshipCCModel extends TableManager<"relationship_cc">('relati
    * @param relationshipData Complete relationship data
    * @returns created relationship record or null
    */
-  async insertRelationship(relationshipData: Omit<RelationshipCCRow, 'caregiver'> & { caregiver: string }): Promise<RelationshipCCRow | null> {
+  async insertRelationship(relationshipData: Omit<RelationshipCCRow, 'caregiver'> & { caregiver: string }) {
     return this.insertOne(relationshipData);
   }
 
@@ -54,7 +54,7 @@ export class relationshipCCModel extends TableManager<"relationship_cc">('relati
    * @param newRelationship New relationship type
    * @returns boolean success indicator
    */
-  async updateRelationshipType(caregiver: string, newRelationship: string): Promise<boolean> {
+  async updateRelationshipType(caregiver: string, newRelationship: string) {
     const references: Partial<RelationshipCCRow> = { caregiver };
     const updates: Partial<RelationshipCCRow> = { relationship: newRelationship };
     return this.updateOne(references, updates);
@@ -66,7 +66,7 @@ export class relationshipCCModel extends TableManager<"relationship_cc">('relati
    * @param newChild New child UUID
    * @returns boolean success indicator
    */
-  async updateChildForCaregiver(caregiver: string, newChild: string): Promise<boolean> {
+  async updateChildForCaregiver(caregiver: string, newChild: string) {
     const references: Partial<RelationshipCCRow> = { caregiver };
     const updates: Partial<RelationshipCCRow> = { child: newChild };
     return this.updateOne(references, updates);
@@ -77,7 +77,7 @@ export class relationshipCCModel extends TableManager<"relationship_cc">('relati
    * @param caregiver Caregiver's UUID
    * @returns boolean success indicator
    */
-  async deleteRelationship(caregiver: string): Promise<boolean> {
+  async deleteRelationship(caregiver: string) {
     const references: Partial<RelationshipCCRow> = { caregiver };
     const result = await this.deleteOne(references);
     return result !== null;

@@ -12,8 +12,7 @@ export interface LogSidecarOptions {
   logDir?: string;
   logLevel?: string;
   compressionEnabled?: boolean;
-  sizeCheckInterval?: number;// 5 minutes
-  enableMetaData: boolean;
+  sizeCheckInterval?: number// 5 minutes
 }
 
 // Entry Logs 
@@ -124,21 +123,21 @@ export const appendLogMetadata = (meta: metaData) => {
 export const consoleFormat = winston.format.combine(
   winston.format.timestamp({ format: 'HH:mm:ss' }),
   winston.format.printf((info: TransformableInfo) => {
-    const { timestamp, level, method , url, status, responseTime } = info;
+    const { timestamp, level, message, method , url, status, responseTime, ...meta } = info;
     
     const methodHTTP = method as HttpMethod
 
-    let logMessage = `${colors.time(timestamp)}   [${level.toUpperCase()}]`;
+    let logMessage = `${colors.time(timestamp)} [${level.toUpperCase()}]`;
     
     logMessage += (method && colors[methodHTTP]) ? ` ${colors[methodHTTP](method)}` : ``;
     
-    logMessage += status        ? ` ${getStatusColor(Number(status))(status)}` : ` ---`;
-
     logMessage += url           ? ` '${colors.url(url)}'` : ``;
+    
+    logMessage += status        ? ` ${getStatusColor(Number(status))(status)}` : ` ---`;
     
     logMessage += responseTime  ? ` ${colors.time(`${responseTime}ms`)}` : ``;
     
-    //logMessage += ` ${message} Client: ${appendLogMetadata(meta)}`;
+    logMessage += ` ${message} ${appendLogMetadata(meta)}`;
     
     return logMessage;
   })

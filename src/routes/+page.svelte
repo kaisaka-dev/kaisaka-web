@@ -8,7 +8,8 @@ import LoginModal from '../components/LoginModal.svelte'
   import SignUpinputLabel from "../components/login/SignUpInputLabel.svelte"
 	import type { ActionData } from './+page.js';
 
-  
+  //var controls if the modal is on screen
+  let showModal = $state(false)
 
   //function that closes the modal
   const handleClose = () => showModal = false
@@ -23,9 +24,6 @@ import LoginModal from '../components/LoginModal.svelte'
     window.location.href='/';
   }
   let { data }: { data: ActionData } = $props()
-
-  //var controls if the modal is on screen
-  let showModal = $state(data.error ?? false)
 </script>
 
 <!-- Below is the code that formats the main login screen-->
@@ -46,7 +44,7 @@ import LoginModal from '../components/LoginModal.svelte'
 
 <!--Below is the login modal code-->
 {#if !data.session}
- <form method="POST" action="?/login">
+<!--  <form method="POST" action="?/login" >-->
   <LoginModal bind:showModal>
     
     {#snippet header()}
@@ -56,7 +54,7 @@ import LoginModal from '../components/LoginModal.svelte'
     {/snippet}
     
       <LoginError data = { data.error }/>
-      
+    
       <LoginInputLabel labelText="EMAIL:" forType="email" inputName="email" placeholder="Type email ..."/>
     
       <LoginInputLabel labelText="PASSWORD:" forType="password" inputName="password" placeholder="Type password ..."/>
@@ -70,7 +68,7 @@ import LoginModal from '../components/LoginModal.svelte'
     <!--BODY ENDS HERE-->
     
   </LoginModal>
-</form>
+<!--</form>-->
 {/if}
 
 

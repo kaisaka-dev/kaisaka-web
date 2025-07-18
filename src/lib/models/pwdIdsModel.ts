@@ -14,21 +14,12 @@ export class pwdIdsModel extends TableManager<"pwd_ids">('pwd_ids'){
   public static instance: pwdIdsModel = new pwdIdsModel();
  
   /**
-   * Finds a pwd_id entry by its primary key id
-   * @param id the primary key id
-   * @returns single pwd_id record or null
+   * Finds a pwd_id entry by its pwd_id (veyr confusing)
+   * @param pwd_id the pwd id 
+   * @returns 
    */
-  async findById(id: string): Promise<PwdIdsRow | null> {
-    return this.findOne( { id } )
-  }
-
-  /**
-   * Finds a pwd_id entry by its pwd_id field
-   * @param pwd_id the pwd id field
-   * @returns single pwd_id record or null (pwd_id should be unique)
-   */
-  async findByPwdId(pwd_id: string): Promise<PwdIdsRow | null> {
-    return this.findOne( { pwd_id } )
+  async findById(pwd_id: string): Promise<PwdIdsRow[] | null> {
+    return this.findMany( { pwd_id } )
   }
 
   /**

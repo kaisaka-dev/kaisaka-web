@@ -21,7 +21,7 @@ export class educationStatusModel extends TableManager<"education_status">('educ
    * @param child_id Child's UUID
    * @returns array of education records or null
    */
-  async findByChildId(child_id: string): Promise<EducationStatusRow[] | null> {
+  async findByChildId(child_id: string) {
     return this.findMany({ child_id });
   }
 
@@ -30,7 +30,7 @@ export class educationStatusModel extends TableManager<"education_status">('educ
    * @param education_type Education type enum
    * @returns array of education records or null
    */
-  async findByEducationType(education_type: EducationType): Promise<EducationStatusRow[] | null> {
+  async findByEducationType(education_type: EducationType) {
     return this.findMany({ education_type });
   }
 
@@ -39,7 +39,7 @@ export class educationStatusModel extends TableManager<"education_status">('educ
    * @param student_status_type Student status type enum
    * @returns array of education records or null
    */
-  async findByStudentStatusType(student_status_type: StudentStatusType): Promise<EducationStatusRow[] | null> {
+  async findByStudentStatusType(student_status_type: StudentStatusType) {
     return this.findMany({ student_status_type });
   }
 
@@ -49,7 +49,7 @@ export class educationStatusModel extends TableManager<"education_status">('educ
    * @param year_end Ending year (optional)
    * @returns array of education records or null
    */
-  async findByYearRange(year_start: number, year_end?: number): Promise<EducationStatusRow[] | null> {
+  async findByYearRange(year_start: number, year_end?: number) {
     let query = this.getQuery().gte('year_start', year_start);
     if (year_end !== undefined) {
       query = query.lte('year_end', year_end);
@@ -65,7 +65,7 @@ export class educationStatusModel extends TableManager<"education_status">('educ
    */
   async insertEducationStatus(
     educationData: Omit<EducationStatusRow, 'id' | 'date_created' | 'last_updated'>
-  ): Promise<EducationStatusRow | null> {
+  ) {
     const now = new Date().toISOString();
     const fullData: Partial<EducationStatusRow> = {
       ...educationData,
