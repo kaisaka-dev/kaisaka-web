@@ -39,6 +39,10 @@ export const load: PageLoad = async ({ fetch }) => {
 		// Use the new getChildrenList method that returns joined data
 		const childrenRes = await fetch('/api/children?type=list');
 
+		if (childrenRes.status === 401){
+            throw new Error('401 Not Authorized.');
+        }
+
 		if (!childrenRes.ok) {
 			throw new Error('Failed to fetch children list');
 		}

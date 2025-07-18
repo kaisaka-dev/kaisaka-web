@@ -4,8 +4,13 @@ import { error } from "@sveltejs/kit";
 
 const logger = getLogSidecar();
 
-export async function POST(){
+export async function POST({ locals }){
   try {
+    const { session, user } = await locals.safeGetSession();
+      if (!session) {
+        return new Response('Unauthorized', { status: 401 });
+      }
+
     const buffer = await ReportGeneratorEducationInfo.generateReport()
 
     return new Response(buffer, { headers: {'Content-Type': 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'}})

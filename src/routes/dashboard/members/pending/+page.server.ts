@@ -16,9 +16,13 @@ export const load: PageLoad = async ({ fetch }) => {
 		console.log('Fetching: /api/children?type=pending-documents');
 		const response = await fetch('/api/children?type=pending-documents');
 
+		if (response.status === 401){
+            throw new Error('401 Not Authorized.');
+        }
+            
 		if (!response.ok) {
 			throw new Error('Failed to fetch pending documents');
-		}
+		}		
 
 		const result = await response.json();
 

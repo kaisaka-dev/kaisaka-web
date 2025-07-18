@@ -2,7 +2,12 @@ import { ChildrenModel } from "$lib/models/childrenModel.js";
 import { parseJoinParams } from "$lib/types/joining.js";
 import { error, json, type RequestHandler } from "@sveltejs/kit";
 
-export const GET: RequestHandler = async ({ params, url}) => {
+export const GET: RequestHandler = async ({ params, url, locals }) => {
+  const { session, user } = await locals.safeGetSession();
+
+  if (!session) {
+    return new Response('Unauthorized', { status: 401 });
+  }
     const id = params.id;
     const joinParams = parseJoinParams(url)
     console.log("SELECT: ", joinParams.select)
@@ -43,7 +48,12 @@ export const GET: RequestHandler = async ({ params, url}) => {
     }
 };
 
-export const DELETE: RequestHandler = async({ params }) => {
+export const DELETE: RequestHandler = async({ params, locals }) => {
+    const { session, user } = await locals.safeGetSession();
+
+    if (!session) {
+        return new Response('Unauthorized', { status: 401 });
+    }
     const id = params.id;
 
     if(!id){
