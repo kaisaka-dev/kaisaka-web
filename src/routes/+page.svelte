@@ -1,11 +1,11 @@
 <script lang="ts">
   import Button from '$lib/components/example/Button/Button.svelte';
 	import { redirect } from '@sveltejs/kit';
-import LoginModal from '../components/LoginModal.svelte'
-	import LoginError from '../components/login/LoginError.svelte';
-	import LoginInputLabel from '../components/login/LoginInputLabel.svelte';
-	import LoginOption from '../components/login/LoginOption.svelte';
-  import SignUpinputLabel from "../components/login/SignUpInputLabel.svelte"
+import LoginModal from '$components/LoginModal.svelte'
+	import LoginError from '$components/login/LoginError.svelte';
+	import LoginInputLabel from '$components/login/LoginInputLabel.svelte';
+	import LoginOption from '$components/login/LoginOption.svelte';
+  import SignUpinputLabel from "$components/login/SignUpInputLabel.svelte"
 	import type { ActionData } from './+page.js';
 
   
@@ -13,7 +13,7 @@ import LoginModal from '../components/LoginModal.svelte'
   //function that closes the modal
   const handleClose = () => showModal = false
   const handleOpen = () => showModal = true
-  const gotoChildRegister = () => location.href = '/dashboard/registration/child'
+  const gotoChildRegister = () => location.href = '/registration/child'
   const handleLogout = async () => {
     const formData = new FormData()
     await fetch('/auth/logout', {
