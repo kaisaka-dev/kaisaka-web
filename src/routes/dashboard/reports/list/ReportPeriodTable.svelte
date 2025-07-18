@@ -88,6 +88,8 @@
 				body: JSON.stringify(row)
 			});
 
+			if(response.status === 401)
+				  throw new Error('401 Not Authorized.');
 			if (!response.ok) {
 				throw new Error(`Failed to generate report: ${response.status}`);
 			}
