@@ -1,7 +1,12 @@
 import { AttendanceLogModel } from "$lib/models/attendanceLogModel.js";
 import { error, json, type RequestHandler } from "@sveltejs/kit";
 
-export const POST: RequestHandler = async({request}) => {
+export const POST: RequestHandler = async({request, locals }) => {
+  const { session, user } = await locals.safeGetSession();
+
+  if (!session) {
+    return new Response('Unauthorized', { status: 401 });
+  }
   
   let body: any = {}
   try {
@@ -31,7 +36,12 @@ export const POST: RequestHandler = async({request}) => {
   return json({ message: 'Inserted', data: inserted})
 }
 
-export const PUT: RequestHandler = async({request}) => {
+export const PUT: RequestHandler = async({request, locals }) => {
+  const { session, user } = await locals.safeGetSession();
+
+  if (!session) {
+    return new Response('Unauthorized', { status: 401 });
+  }
   
   let body: any = {}
   try {

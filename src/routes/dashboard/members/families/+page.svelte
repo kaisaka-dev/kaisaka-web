@@ -42,6 +42,10 @@
 		try {
 			loading = true;
 			const response = await fetch('/api/families');
+
+			if (response.status === 401){
+                throw new Error('401 Not Authorized.');
+            }
 			
 			if (!response.ok) {
 				throw new Error('Failed to fetch families');

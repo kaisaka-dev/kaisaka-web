@@ -1,7 +1,12 @@
 import { HealthReportService } from '$lib/server/reports/services/reportObjectives.js';
 import { error } from '@sveltejs/kit';
 
-export async function POST() {
+export async function POST({ locals }) {
+  const { session, user } = await locals.safeGetSession();
+
+  if (!session) {
+    return new Response('Unauthorized', { status: 401 });
+  }
   try {
     // Generate the health report by merging templates
     const buffer = await HealthReportService.generate();

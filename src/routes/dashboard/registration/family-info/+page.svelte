@@ -255,6 +255,9 @@
 			body: JSON.stringify(payload),
 			headers: { 'Content-Type': 'application/json' }
 		});
+		if (res.status === 401){
+                throw new Error('401 Not Authorized.');
+            }
 		if (!res.ok) {
 			const error = await res.text();
 			throw new Error(`Failed to POST ${url}: ${error}`);
