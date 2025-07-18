@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="AutoImportSettings">
+    <option name="autoReloadType" value="SELECTIVE" />
+  </component>
+  <component name="ChangeListManager">
+    <list default="true" id="12237686-5a37-4f4c-b35a-ebe8cb09a864" name="Changes" comment="">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/components/Header.svelte" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/Header.svelte" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/lib/models/MemberShipAnnualRenewalModel.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/lib/models/MemberShipAnnualRenewalModel.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/lib/models/MembershipPaymentModel.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/lib/models/MembershipPaymentModel.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/lib/models/annualProgramModel.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/lib/models/annualProgramModel.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/lib/models/serviceObjectiveModel.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/lib/models/serviceObjectiveModel.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/routes/dashboard/reports/annual/+page.server.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/routes/dashboard/reports/list/+page.server.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/routes/dashboard/reports/annual/+page.svelte" beforeDir="false" afterPath="$PROJECT_DIR$/src/routes/dashboard/reports/list/+page.svelte" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/routes/dashboard/reports/annual/ReportPeriodModal.svelte" beforeDir="false" afterPath="$PROJECT_DIR$/src/routes/dashboard/reports/list/ReportPeriodModal.svelte" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/routes/dashboard/reports/annual/ReportPeriodTable.svelte" beforeDir="false" afterPath="$PROJECT_DIR$/src/routes/dashboard/reports/list/ReportPeriodTable.svelte" afterDir="false" />
+    </list>
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="FileTemplateManagerImpl">
+    <option name="RECENT_TEMPLATES">
+      <list>
+        <option value="InputRange" />
+        <option value="TypeScript File" />
+      </list>
+    </option>
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+  </component>
+  <component name="ProjectColorInfo">{
+  &quot;customColor&quot;: &quot;&quot;,
+  &quot;associatedIndex&quot;: 4
+}</component>
+  <component name="ProjectId" id="2zlZXmaOFgeK7sZ7dy9lHsAY3Bv" />
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;ModuleVcsDetector.initialDetectionPerformed&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;frontend/main&quot;,
+    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
+    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
+    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
+    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
+    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
+    &quot;prettierjs.PrettierConfiguration.Package&quot;: &quot;C:\\Users\\beaan\\Downloads\\CSSWENG\\kaisaka-web\\node_modules\\prettier&quot;,
+    &quot;ts.external.directory.path&quot;: &quot;C:\\Users\\beaan\\Downloads\\CSSWENG\\kaisaka-web\\node_modules\\typescript\\lib&quot;,
+    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
+  }
+}</component>
+  <component name="SharedIndexes">
+    <attachedChunks>
+      <set>
+        <option value="bundled-js-predefined-d6986cc7102b-f27c65a3e318-JavaScript-WS-251.23774.424" />
+      </set>
+    </attachedChunks>
+  </component>
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="12237686-5a37-4f4c-b35a-ebe8cb09a864" name="Changes" comment="" />
+      <created>1752307662598</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1752307662598</updated>
+      <workItem from="1752307664496" duration="13221000" />
+      <workItem from="1752413800965" duration="2000" />
+      <workItem from="1752475584327" duration="1464000" />
+    </task>
+    <servers />
+  </component>
+  <component name="TypeScriptGeneratedFilesManager">
+    <option name="version" value="3" />
+  </component>
+</project>
