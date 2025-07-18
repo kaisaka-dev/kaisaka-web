@@ -247,6 +247,55 @@ export class ChildrenModel extends TableManager<"children">('children') {
    */
   async findThroughJoin_Caregivers(id: string = ''){
     const joinStatement = `*, relationship_cc!inner(relationship, caregivers!inner( id, contact_number, facebook_link, email, occupation, member_id, income_id))`;
-    this.findWithJoin(joinStatement, {eq: {id: id}})
+    return this.findWithJoin(joinStatement, {eq: {id: id}})
   }
+  
+  async getChildrenList(id: string = ''){
+    const joinStatement = `
+      id,
+      disability_nature,
+      members!inner(
+        id,
+        first_name,
+        last_name,
+        birthday,
+        sex
+      ),
+      disability_category!left(
+        name
+      ),
+      education_status!left(
+        education_type,
+        grade_level,
+        updated_at
+      )`;
+    if (id) {
+      return this.findWithJoin(joinStatement, {eq: {id: id}})
+    } else {
+      return this.findWithJoin(joinStatement)
+    }
+  }
+
+    /**
+     * gets pending documents
+     * @param id of the children
+     * @returns all pending documents (not really)
+     */
+  async getPendingDocuments(id: string = ''){
+    const joinStatement = `
+          members!inner(
+            id,
+            first_name,
+            last_name
+          ),
+          has_medical_cert,
+          has_birth_cert,
+          has_barangay_cert,
+          intervention(
+            intervention
+          )
+    `;
+    return this.findWithJoin(joinStatement, id ? {eq: {id: id}} : {})
+  }
+
 }

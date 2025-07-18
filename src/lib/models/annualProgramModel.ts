@@ -39,6 +39,16 @@ export class annualProgramModel extends TableManager<"annual_program">('annual_p
     return this.findMany({ target_new_cwds });
   }
 
+  async findPreviousWorkYear(currentId: number) {
+    const current = await this.findOne({ currentId })
+    
+    if (!current) throw new Error(`AnnualProgram ${currentId} not found`)
+
+
+
+    return this.findOne({},{lt: {end_year: current.start_year}, order: {column: "end_year", ascending: false}})
+  }
+
   /**
    * Inserts a new annual program
    * @param programData 
@@ -95,5 +105,9 @@ export class annualProgramModel extends TableManager<"annual_program">('annual_p
   ): Promise<boolean> {
     const references: Partial<AnnualProgramRow> = { id };
     return this.updateOne(references, updates);
+  }
+
+  async getAll(filter?: Partial<AnnualProgramRow>): Promise<AnnualProgramRow[] | null> {
+    return this.findMany(filter)
   }
 }

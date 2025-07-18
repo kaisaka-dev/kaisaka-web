@@ -10,7 +10,7 @@
     <img src = {logoimg} alt = "logo" id = "logo">
     <a href="/dashboard" id="home"> Home</a>
 
-    <div class="dropdown dropdown-hover">
+    <div class="dropdown dropdown-hover ">
         <div class="navlink" role="button" tabindex="-1">Members</div>
         <ul tabindex="-1" class="dropdown-content menu rounded-box z-1 w-52 p-2 shadow-sm !bg-[var(--header-color)]">
             <li><a href="/dashboard/members/children">Children</a></li>
@@ -20,18 +20,18 @@
         </ul>
     </div>
 
-    <div class="dropdown dropdown-hover">
-        <div class="navlink" role="button" tabindex="-1">Events</div>
-        <ul tabindex="-1" class="dropdown-content menu rounded-box z-1 w-52 p-2 shadow-sm !bg-[var(--header-color)]">
-            <li><a href="/dashboard/events/target">Target Events</a></li>
-            <li><a href="/dashboard/events/actual">Actual Events</a></li>
-        </ul>
-    </div>
+<!--    <div class="dropdown dropdown-hover">-->
+<!--        <div class="navlink" role="button" tabindex="-1">Events</div>-->
+<!--        <ul tabindex="-1" class="dropdown-content menu rounded-box z-1 w-52 p-2 shadow-sm !bg-[var(&#45;&#45;header-color)]">-->
+<!--            <li><a href="/dashboard/events/target">Target Events</a></li>-->
+<!--            <li><a href="/dashboard/events/actual">Actual Events</a></li>-->
+<!--        </ul>-->
+<!--    </div>-->
 
     <div class="dropdown dropdown-hover">
         <div class="navlink" role="button" tabindex="-1">Reports</div>
         <ul tabindex="-1" class="dropdown-content menu rounded-box z-1 w-52 p-2 shadow-sm !bg-[var(--header-color)]">
-            <li><a href="/dashboard/reports/annual">Annual Report</a></li>
+            <li><a href="/dashboard/reports/list">Report Periods</a></li>
         </ul>
     </div>
 

@@ -1,6 +1,33 @@
 import { CaregiversModel } from "$lib/models/caregiversModel.js";
 import { error, json, type RequestHandler } from "@sveltejs/kit";
 
+export const GET: RequestHandler = async ({ url }) => {
+  const id = url.searchParams.get('id');
+  
+  let result;
+  if (id) {
+    // Get specific caregiver by ID
+    result = await CaregiversModel.instance.getCaregiverList(id);
+  } else {
+    // Get all caregivers
+    result = await CaregiversModel.instance.findWithJoin(`
+      id,
+      members!inner(
+        updated_at,
+        first_name,
+        last_name
+      ),
+      contact_number
+    `);
+  }
+  
+  if (!result) {
+    throw error(500, 'Failed to fetch caregiver list');
+  }
+  
+  return json({ data: result });
+};
+
 export const POST: RequestHandler = async({request}) => {
   
   let body: any = {}

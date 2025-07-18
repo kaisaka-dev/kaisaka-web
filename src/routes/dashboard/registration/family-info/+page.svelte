@@ -4,6 +4,7 @@
 	import CaregiverForm from './CaregiverForm.svelte';
 	import { childFormData } from '$lib/stores/childForm.js';
 	import { get } from 'svelte/store';
+	import { goto } from '$app/navigation';
 
 	const childRegData = get(childFormData)
 	console.log(childRegData);
@@ -25,6 +26,7 @@
 		occupation: string;
 		relationship: string;
 		communityGrp_id: number;
+		communityYr: number;
 	};
 
 	/**
@@ -82,7 +84,8 @@
 			brgy: '',
 			occupation: '',
 			relationship: '',
-			communityGrp_id: -1
+			communityGrp_id: -1,
+			communityYr: new Date().getFullYear()
 		}
 	]); // initialize variable so that the page will have at least one caregiver
 
@@ -117,7 +120,8 @@
 				brgy: '',
 				occupation: '',
 				relationship: '',
-				communityGrp_id: -1
+				communityGrp_id: -1,
+				communityYr: new Date().getFullYear()
 			}
 		];
 
@@ -200,6 +204,7 @@
 	async function handleSubmit() {
 		try {
 			if (!validateForm()) return;
+			goto('/dashboard');			// temporary fix for usability testing purposes
 			// Insert address
 			const addressData = await safeFetch('/api/addresses', childRegData.address);
 			console.log(addressData.message)

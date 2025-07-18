@@ -28,4 +28,8 @@
         background-color:gray;
         color: lightgray;
     }
+		textarea.input {
+				white-space: pre-wrap;
+				overflow-wrap: break-word;
+		}
 </style>

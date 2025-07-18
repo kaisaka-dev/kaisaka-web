@@ -1,58 +1,28 @@
 import TableManager from '$lib/types/manager.js';
-import type { L } from 'vitest/dist/chunks/reporters.d.C-cu31ET.js';
-import Table from '../../../../../components/text/Table.svelte';
 
 export async function load() {
 //gets record in the member table
 const members = TableManager('members');
 const memberDB = new members();
-const memberInfo = await memberDB.findOneWithJoin('*, children(*)', {
+const memberInfo = await memberDB.findOneWithJoin('*, addresses(*), children(*),employment_status(*)', {
     eq: {first_name: "Mika" }
   });
 
-const childID = memberInfo.children[0].id;
-const addressID = memberInfo.address_id;
 
- 
-//gets record in the education table
-const educ = TableManager('education_status');
-const educDB = new educ();
-const educInfo = await educDB.findOneWithJoin('*', {
-    eq: {child_id: childID  }
-}
-);
-
-//gets record in the address table
-const addresses = TableManager('addresses');
-
-const addressDB = new addresses();
-const addressInfo = await addressDB.findOneWithJoin('*', {
-    eq:{id: addressID}
+const children = TableManager('children');
+const childrenDB = new children();
+const childRecord = await childrenDB.findOneWithJoin('*, education_status(*),disability_category(*), social_protection_status(*), pwd_ids(*)' , {
+    eq:{member_id: memberInfo.id}
 });
-
-const barangayID = addressInfo.barangay_id;
-
+ 
 //gets record in barangay table
+const barangayID = memberInfo.addresses.barangay_id;
 const barangay = TableManager('barangays');
 const barangayDB = new barangay();
 const barangayInfo = await barangayDB.findOneWithJoin('*', {
     eq:{id: barangayID}
 })
 
-//gets record in employment table
-const employment = TableManager('employment_status');
-const employmentDB = new employment();
-const employmentInfo = await employmentDB.findOneWithJoin('*', {
-    eq: {member_id: memberInfo.id }
-})
-
-//gets record in disability category table
-const categoryDisability = TableManager('disability_category')
-const categoryDisabilityDB = new categoryDisability();
-const categoryDisabilityInfo = await categoryDisabilityDB.findOneWithJoin('*',{
-    eq: {id: memberInfo.children[0].disability_id}
-}
-)
 
 //finds the family id of the record with the given member_id in the family table
 const family = TableManager('family_members');
@@ -68,22 +38,10 @@ const entireFamily = await familyDB.findWithJoin('*, members(*)', {
     eq: {family_id: familyID}
 });
 
-//gets social protection record
-const spStatus = TableManager('social_protection_status');
-const spDB = new spStatus();
-
-const spInfo = await spDB.findOneWithJoin('*' , {
-    eq:{child_id: childID}
-});
-
 return {
     member: memberInfo,
-    education: educInfo,
-    address: addressInfo,
+    childRecord: childRecord,
     barangay: barangayInfo,
-    employment: employmentInfo,
-    disabilityCategory: categoryDisabilityInfo,
     family: entireFamily,
-    socialProtection: spInfo
   };
 }
