@@ -5,80 +5,32 @@
     import TextArea from '../../../../../components/input/InputTextarea.svelte'
     import Check from '../../../../../components/input/Checkbox.svelte'
 	import InputText from '../../../../../components/input/InputText.svelte';
-
-    export let data;   
-
-    //below are sample data declarations for the page to work, will delete when the relevant APIs are made
-    let user: child = {
-        firstName: "Juan", lastName: "De La Cruz", educationStatus: "Dropped Out", birthday: new Date(2011,2,3), sex: "M", address: "Sample Address",
-        barangay: "Barangay 721", employmentStatus: "Sheltered Workshop", disabilityCategory: "sampleCategory", disabilityNature: "sampleNature", dateAdmission: new Date(2012, 9,11), education: "Home Program",
-
-        family: {id: 1, members:[{role: "Parent", firstName:"Paolo", lastName: "Rivera"}, {role: "Child" , firstName: "Juan" , lastName:"De La Cruz"},  {role: "Child" , firstName: "John" , lastName:"De La Cruz"}],
-                 dateCreated: new Date(2023,9,24), payments: [{amount: 200, date: new Date(2024,3,2)}, {amount:200, date: new Date(2025,4,2)}]
-                },
-    
-        eventAttendance:[{id: 1231, name: "Health event", type: "Health", date: new Date(2022,2,12).toISOString().split('T')[0]},
-                        {id: 12345, name: "Social event", type: "Social", date: new Date(2023,5, 16).toISOString().split('T')[0]}],
-
-        PWD: true,
-        PhilHealth: true,
-        medCert: true,
-        birthCert: false,
-        barangayCert: true,
-        voterID: true,
-        natID: true,
-        socialSecurity: {
-            access: true,
-            type: "Participation in family life",
-            yearAccessed:2023
-        },
-        
-        interventionHistory: [
-        {id:1321123, name: "Learning Intervention" , type: "Education", 
-            status: [{status: "REGRESSED", date:new Date(2012,5, 16).toISOString().split('T')[0] }, {status: "IMPROVED" , date: new Date(2012,8, 25).toISOString().split('T')[0]} , {status: "REGRESSED" , date: new Date(2012,9, 25).toISOString().split('T')[0] }]
-        },
-
-        {id:1232132, name: "Livelihood Intervention" , type: "Livelihood", status:
-            [{status: "REGRESSED", date:new Date(2012,5, 16).toISOString().split('T')[0] }, {status: "REGRESSED" , date: new Date(2012,8, 25).toISOString().split('T')[0]}]
-        }
-        ]
-    }
-    let today = new Date();
-    let yearCounter: number[] = [];
-    let paymentYears: number[] = []
+    import Select from '../../../../../components/input/Select.svelte'
 
 
+    export let data;
+    let today = new Date()
     //below are functions needed for the page
 
-    for(let i = user.family.dateCreated.getFullYear(); i <= today.getFullYear(); i++) {
-        yearCounter.push(i)
-    }
-
-    for(let i = 0; i < user.family.payments.length; i++) {
-       paymentYears.push(user.family.payments[i].date.getFullYear())
-    }
-
-
+    let selected
 
 
 </script>
+
 <Header/>
 
 <section>
     <h1>
-       {data.member.first_name} {data.member.last_name}'s Profile 
+       {data.child?.firstName ?? "First Name Missing!"} {data.child?.lastName ?? "Last Name Missing!"}'s Profile 
     </h1>
 </section>
 <div class = "flex flex-row ml-10 m-4 sticky top-20 z-1">
     <div class = "flex flex-col !font-[JSans]">
         <div class = "hover:!text-[var(--green)]">
-            <a class = "hover:!text-[var(--green)]" href = "#Personal Info">Information </a>
+            <a class = "hover:!text-[var(--green)]" href = "#top">Information </a>
         </div>
         <div class = "hover:!text-[var(--green)]">
             <a class = "hover:!text-[var(--green)]" href = "#Family Info">Family </a>
-        </div>
-        <div class = "hover:!text-[var(--green)]">
-            <a class = "hover:!text-[var(--green)]" href = "#Event Info">Attendance </a>
         </div>
         <div class = "hover:!text-[var(--green)]">
             <a class = "hover:!text-[var(--green)]" href = "#Documentation Info">Documents </a>
@@ -104,92 +56,73 @@
         <div class = "flex flex-col">
             <div class = "flex flex-row">
                 <div class = "ml-4 mt-3 w-40"> First Name</div>
-                <div class = "mt-4"> <Input disabled value = {data.member.first_name}/> </div>
+                <div class = "mt-4"> <Input disabled value = {data.child?.firstName ?? "N/A"}/> </div>
             </div>
 
             <div class = "flex flex-row">
                 <div class = "ml-4 mt-3 w-40"> Last Name</div>
-                <div class = "mt-4"> <Input  disabled value = {data.member.last_name}/> </div>
-            </div>
-
-            <div class = "flex flex-row">
-                <div class = "ml-4 mt-3 w-40"> Education </div>
-                {#if user.education == null}
-                <div class = "mt-3"> <Input value = "N/A" disabled/> </div>
-                {:else}
-                <div class = "mt-3"> <Input value = {data.childRecord.education_status[0].education_type} disabled/> </div>
-                {/if}            
-            </div>
-
-            <div class = "flex flex-row">
-                <div class = "ml-4 mt-3 w-40"> Education Status </div>
-                <div class = "mt-5"> <Input value = {data.childRecord.education_status[0].student_status_type} disabled/> </div>
+                <div class = "mt-4"> <Input  disabled value = {data.child?.lastName || "N/A"}/> </div>
             </div>
 
             <div class = "flex flex-row">
                 <div class = "ml-4 mt-3 w-40"> Birthday</div>
-                <div class = "mr-50 mt-3"> <Input disabled value = {data.member.birthday} label = ""/> </div>
+                <div class = "mr-50 mt-3"> <Input disabled value = {data.child?.birthday || "N/A"} label = ""/> </div>
             </div>
 
             <div class = "flex flex-row">
                 <div class = "ml-4 mt-3 w-40"> Age</div>
-                <div class = "mt-4"> <Input disabled value = {today.getFullYear() - new Date(data.member.birthday).getFullYear()}/> </div>
+                <div class = "mt-4"> <Input disabled value = {today.getFullYear() - new Date(data.child.birthday).getFullYear()}/> </div>
             </div>
 
             <div class = "flex flex-row">
                 <div class = "ml-4 mt-3 w-40"> Sex</div>
-                <div class = "mt-3"> <Input disabled value = {data.member.sex}/> </div>
+                <div class = "mt-3"> <Input disabled value = {data.child?.sex || "N/A"}/> </div>
             </div>
 
             <div class = "flex flex-row">
                 <div class = "ml-4 mt-3 w-40"> Address</div>
-                <div class = "mt-3"> <Input disabled value = {data.member.addresses.address}/> </div>
+                <div class = "mt-3"> <Input disabled value = {data.child?.address || "N/A"}/> </div>
             </div>
 
             <div class = "flex flex-row">
                 <div class = "ml-4 mt-3 w-40"> Barangay</div>
-                <div class = "mt-3"> <Input disabled value = {data.barangay.name}/> </div>
+                <div class = "mt-3"> <Input disabled value = {data.child?.barangay || "N/A"}/> </div>
             </div>
 
-            {#if data.member.employment_status.able_to_work}
+            {#if data.child?.canWork || false}
             <div class = "flex flex-row">
                 <div class = "ml-4 mt-3 w-40"> Employment Status </div>
-                <div class = "mt-7"> <Input value = {data.member.employment_status.employment_type} disabled /> </div>
+                <div class = "mt-7"> <Input value = {data.child.employmentType || "N/A"} disabled /> </div>
             </div>
             {/if}
 
 
             <div class = "flex flex-row mt-10">
                 <div class = "ml-4 mt-3 w-73"> Category of Disability</div>
-                <div class = "mt-4"> <Input value = {data.childRecord.disability_category.name} disabled/> </div>
+                <div class = "mt-4"> <Input value = {data.child?.disabilityCategory || "N/A"} disabled/> </div>
             </div>
 
             <div class = "flex flex-row">
                 <div class = "ml-4 mt-3 w-73"> Nature of Disability</div>
-                <div class = "mt-4"> <Input value = {data.childRecord.disability_nature} disabled/> </div>
+                <div class = "mt-4"> <Input value = {data.child?.disabilityNature || "N/A"} disabled/> </div>
             </div>
 
             <div class = "flex flex-row mt-10">
                 <div class = "ml-4 mt-3 w-70"> Date of Admission</div>
-                <div class = "mt-3"> <Input disabled label = "" value = {new Date(data.member.admission_date).toISOString().split('T')[0]}/> </div>
+                <div class = "mt-3"> <Input disabled label = "" value = {data.child?.admissionDate || "N/A"}/> </div>
             </div>
-            {#if user.dateTermination != null}
-            <div class = "flex flex-row">
-                <div class = "ml-4 mt-3 w-70"> Date of Termination</div>
-                <div class = "mt-3"> <InputText type = "date" label = "" value = {user.dateTermination.toISOString().split('T')[0]}/> </div>
-            </div>
-            {/if}
         </div>
         
         
         <div class = "flex flex-col ml-3"> 
-            <div class = "-ml-45"> <TextArea disabled value = {data.childRecord.remarks} label = "Remarks" rows = 10/> </div>
+            <div class = "-ml-45"> <TextArea disabled value = {data.child?.remarks || "N/A"} label = "Remarks" rows = 10/> </div>
         </div>
     </div>
 </div>
 <!-- PERSONAL INFORMATION SECTION END-->
 
-<!--CONTAINER FOR FAMILY AND MEMBERSHIP LABELS-->
+
+<!--CONTAINER FOR FAMILY AND MEMBERSHIP INFORMATION-->
 <div id ="Family Info" class = "mb-15"></div>
 <div class = "flex flex-row">
     <div class = "mr-64">
@@ -197,23 +130,16 @@
         Family
         </h1>
     </div>
-
-    <div>
-        <h1 class = "!text-[var(--green)] font-[JSans] ml-55 mt-5 -mb-5">
-        Membership
-        </h1>
-    </div>
 </div>
-
-<!--CONTAINER FOR FAMILY AND MEMBERSHIP INFORMATION-->
 <div class = "flex flex-row mt-10">
-    <div class = "flex flex-col border-[var(--border)] border-4 ml-55 mr-10 p-6 w-125">
+    <div class = "flex flex-col border-[var(--border)] border-4 ml-55 mr-10 p-6 w-170 min-w-150">
+        {#if Object.keys(data.family).length > 0}
         {#each data.family as fammember}
         <div class = "flex flex-row mb-5">
-            {#if fammember.is_child == false}
+            {#if fammember?.is_child == false}
             <div class = "!bg-[var(--pink)] p-2 w-45 rounded-full text-center !font-bold !text-[var(--background)] mr-20" > {fammember.relationship_type} </div>
-            {:else if fammember.is_child == true}
-                {#if fammember.members.first_name === data.member.first_name}
+            {:else if fammember?.is_child == true}
+                {#if fammember.members.first_name === data.child.firstName}
                 <div class = "!bg-[var(--green)] p-2 w-45 rounded-full text-center !font-bold !text-[var(--background)] mr-20" > Child </div>
                 {:else}
                 <div class = "!bg-[var(--green)] p-2 w-45 rounded-full text-center !font-bold !text-[var(--background)] mr-20" > Sibling </div>
@@ -222,67 +148,38 @@
             <div class = "!font-[JSans] mt-2"> {fammember.members.first_name} {fammember.members.last_name}</div>
         </div>
         {/each}
-    </div>
-
-    <div class = "border-[var(--border)] border-4 p-4 flex flex-col" id ="Membership Info">
-        {#each yearCounter as year}
-        <div class = "flex flex-row mb-5">
-            <div class = 'mr-25 font-bold'> {year} </div>
-            {#if paymentYears.includes(year)}
-            <div class = " mb-5">  P{user.family.payments[paymentYears.indexOf(year)].amount} paid on {user.family.payments[paymentYears.indexOf(year)].date.toISOString().split('T')[0]}  </div>
-            {:else}
-            <div class = "!text-red-500 mb-5"> Payment Pending!</div>
-            {/if}
-        </div>
-        {/each}
+        {:else}
+            <div> Child is not part of any family </div>
+        {/if}
     </div>
 </div>
 <!--END OF FAMILY AND MEMBERSHIP INFORMATION-->
 
-<!--EVENT AND ATTENDANCE STARTS HERE-->
-<div id ="Event Info" class = "mb-15"></div>
-<h1 class = "!text-[var(--green)] font-[JSans] ml-55 mt-5 mb-2">
-        Event and Attendance
-</h1>
 
-<div class = "flex flex-col border-[var(--border)] border-4 ml-55 mr-10 p-6 w-238">
-    <div class = "flex flex-col">
-        <div class = "!bg-[var(--green)] p-3 flex flex-row">
-           <div class = "!text-[var(--background)] !font-bold">Event Name </div>
-           <div class = "!text-[var(--background)] !font-bold ml-90">Event Type </div>
-           <div class = "!text-[var(--background)] !font-bold ml-35">Date Attended </div>
-        </div>
-
-        <div class = "border-[var(--border)] border-4 flex flex-col p-3 ">
-            {#each user.eventAttendance as event}
-            <div class = "flex flex-row mb-5">
-                <div class = "mt-2 w-40 min-w-40">
-                    {event.name}
-                </div>
-
-                <div class = "ml-73">
-                    {#if event.type === "Social"}
-                    <div class = "!bg-[var(--green)] p-2 w-45 rounded-full text-center !font-bold !text-[var(--background)]" > {event.type} </div>
-                    {:else if event.type === "Education"}
-                    <div class = "!bg-[var(--pink)] p-2 w-45 rounded-full text-center !font-bold !text-[var(--background)]" > {event.type} </div>
-                    {:else if event.type === "Health"}
-                    <div class = "!bg-[var(--error-color)] p-2 w-45 rounded-full text-center !font-bold !text-[var(--background)]" > {event.type} </div>
-                    {:else if event.type === "Livelihood"}
-                    <div class = "!bg-[var(--border)] p-2 w-45 rounded-full text-center !font-bold !text-[var(--background)]" > {event.type} </div>  
-                    {/if}                  
-                </div>
-
-                <div class = "ml-25 mt-2">
-                    {event.date}
-                </div>
-            </div>
-            {/each}
-        </div>
+<!--CONTAINER FOR EDUCATION HISTORY-->
+<div id ="Family Info" class = "mb-15"></div>
+<div class = "flex flex-row">
+    <div class = "mr-64">
+        <h1 class = "!text-[var(--green)] font-[JSans] ml-55 -mb-5">
+        Education History
+        </h1>
     </div>
 </div>
-
-<!--END OF EVENT AND ATTENDANCE-->
-
+<div class = "flex flex-row mt-10">
+    <div class = "flex flex-col border-[var(--border)] border-4 ml-55 mr-10 p-6 w-170 min-w-150">
+        {#if data.child?.schoolYearArray?.length > 0}
+        <div class = "z-1000"> <Select label = "Please select a school year" bind:value = {selected} options = {data.child?.schoolYearArray} /></div>
+        <div class = "mt-3 ml-8"> Education Type: {data.child?.educationHistory[data.child.schoolYearArray?.indexOf(selected)]?.education_type || "N/A"}</div>
+        <div class = "mt-3 ml-8"> Education Level:  {data.child?.educationHistory[data.child.schoolYearArray?.indexOf(selected)]?.grade_level || "N/A"}</div>
+        <div class = "mt-3 ml-8"> Education Status: </div>
+        <div class = "mt-3 ml-8"> School Year Start: </div>
+        <div class = "mt-3 ml-8"> School Year End: </div>
+        {:else}
+        This child has no education history
+        {/if}
+    </div>
+</div>
+<!--END OF EDUCATION HISTORY -->
 
 <!--BEGINNING OF DOCUMENTS LISTING-->
 <div id ="Documentation Info" class = "mb-15"></div>
@@ -292,126 +189,62 @@
 <div class = "flex flex-row border-[var(--border)] border-4 ml-55 mr-10 p-6 w-250 min-w-250">
     <div class = "flex flex-col !font-bold"> 
        <div>
-            <Check label = "PWD ID" bind:checked = {data.childRecord.pwd_id} disabled/>
+            <Check label = "PWD ID" checked = {data.child?.pwd?.has} disabled/>
        </div>
-       {#if data.childRecord.pwd_id} 
+       {#if data.child?.pwd?.has} 
        <div class = "w-150">
-            <Input type = "text" disabled label = "ID #" value = {data.childRecord.pwd_id} />
+            <Input type = "text" disabled label = "ID #" value = {data.child?.pwd.id} />
        </div>
        <div class = "w-150">
-            <Input type = "text" disabled  label = "Expiry Date" value = {data.pwdID.expiry_date}/>
+            <Input type = "text" disabled  label = "Expiry Date" value = {data.child.pwd.expiry}/>
        </div>
        {/if}
 
        <div>
-            <Check disabled label = "Social Security" bind:checked = {data.childRecord.social_protection_status}/>
+            <Check disabled label = "Social Security" checked = {data.child?.socialProtection?.has}/>
        </div>
-       {#if data.childRecord.social_protection_status} 
+       {#if data.child?.socialProtection?.has} 
        <div class = "w-150">
-            {#if data.childRecord.social_protection_status.participates_community_club}
+            {#if data.child?.socialProtection?.community_club}
             <Check checked disabled label = "Participation in Community Life" />
             <div class = "w-150">
-            <Input disabled type = "text" label = "Year of Community Access" value = {data.childRecord.social_protection_status.comm_year_accessed}/>
+            <Input disabled type = "text" label = "Year of Community Access" value = {data.child.socialProtection.community_year}/>
             </div>
             {/if}
 
-            {#if data.childRecord.social_protection_status.participates_family_life}
+            {#if data.child?.socialProtection?.fam_life}
             <Check checked disabled label = "Participation in Family Life" />
             <div class = "w-150">
-            <Input disabled type = "text" label = "Year of Family Access" value = {data.childRecord.social_protection_status.fam_year_accessed}/>
+            <Input disabled type = "text" label = "Year of Family Access" value = {data.child.socialProtection.family_year}/>
             </div>
             {/if} 
        </div>
        {/if}
 
 
+
+
        <div class = "mt-5">
-            <Check label = "PhilHealth" bind:checked = {data.childRecord.has_philhealth} disabled/>
+            <Check label = "PhilHealth" checked = {data.child?.philHealth} disabled/>
        </div>
 
        <div class = "mt-5">
-            <Check label = "National ID" bind:checked = {data.childRecord.has_nat_id} disabled/>
+            <Check label = "National ID" checked = {data.child?.national_id} disabled/>
        </div>
     </div>
     <div class = "flex flex-col !font-bold ml-10">
         <div>
-            <Check label = "Medical Certificate" bind:checked = {data.childRecord.has_medical_cert} disabled/>
+            <Check label = "Medical Certificate" checked = {data.child?.med_cert} disabled/>
        </div>
         <div>
-            <Check label = "Birth Certificate" bind:checked = {data.childRecord.birth} disabled/>
+            <Check label = "Birth Certificate" checked = {data.child?.birth_cert} disabled/>
        </div>
         <div>
-            <Check label = "Barangay Certificate" bind:checked = {data.childRecord.has_barangay_cert} disabled/>
+            <Check label = "Barangay Certificate" checked = {data.child?.barangay_cert} disabled/>
        </div>
         <div>
-            <Check label = "Voter ID" bind:checked = {data.childRecord.has_vote} disabled/>
+            <Check label = "Voter ID" checked = {data.child?.voter_id} disabled/>
        </div>
     </div>
 </div>
 <!--END OF DOCUMENTS LISTING-->
-
-<!--INTERVENTIONS LIST BEGINS HERE-->
-<h1 class = "!text-[var(--green)] font-[JSans] ml-55 mt-5 mb-2">
-        Interventions
-</h1>
-
-<div class = "flex flex-col border-[var(--border)] border-4 ml-55 mr-10 p-6 w-275" id ="Intervention Info">
-    <div class = "flex flex-col">
-        <div class = "!bg-[var(--green)] p-3 flex flex-row">
-           <div class = "!text-[var(--background)] !font-bold ml-65">Intervention Name </div>
-           <div class = "!text-[var(--background)] !font-bold ml-35">Status History </div>
-        </div>
-
-        <div class = "border-[var(--border)] border-4 flex flex-col p-3 ">
-        {#each user.interventionHistory as intervention}
-            <div class = "flex flex-row">
-                <div>
-                    {#if intervention.type === "Social"}
-                     <div class = "!bg-[var(--green)] mt-4 p-2 w-45 rounded-full text-center !font-bold !text-[var(--background)]" > SOCIAL </div>
-                    {:else if intervention.type === "Livelihood"}
-                     <div class = "!bg-[var(--border)] mt-4 p-2 w-45 rounded-full text-center !font-bold !text-[var(--background)]" > LIVELIHOOD </div>
-                    {:else if intervention.type === "Health"}
-                     <div class = "!bg-[var(--error-color)] mt-4 p-2 w-45 rounded-full text-center !font-bold !text-[var(--background)]" > HEALTH </div>
-                    {:else if intervention.type === "Education"}
-                     <div class = "!bg-[var(--pink)] mt-4 p-2 w-45 rounded-full text-center !font-bold !text-[var(--background)]" > EDUCATION </div>
-                    {/if}
-                </div>
-
-                <div class = "ml-16 mt-5 w-150">
-                   {intervention.name}
-                </div>
-
-                <div class =  "collapse">
-                    <input type="checkbox" />
-                    <div class = "collapse-title flex flex-row">
-                        {#if intervention.status[0].status === "REGRESSED"}
-                        <div class = "!bg-[var(--pink)] p-2 w-45 rounded-full text-center !font-bold !text-[var(--background)]" > REGRESSED </div> 
-                        {:else if intervention.status[0].status === "NEUTRAL"}
-                        <div class = "!bg-[var(--border)] p-2 w-45 rounded-full text-center !font-bold !text-[var(--background)]" > NEUTRAL </div>
-                        {:else} 
-                        <div class = "!bg-[var(--green)] p-2 w-45 rounded-full text-center !font-bold !text-[var(--background)]" > IMPROVED </div>
-                        {/if}
-                        <div class = "ml-10 mt-2"> {intervention.status[0].date}</div>
-                    </div>
-                    <div class = "collapse-content flex flex-col">
-                        {#each intervention.status.splice(1) as status}
-                        <div class= "flex flex-row mb-5">
-                            {#if status.status === "REGRESSED"}
-                            <div class = "!bg-[var(--pink)] p-2 w-45 rounded-full text-center !font-bold !text-[var(--background)]" > REGRESSED </div> 
-                            {:else if status.status === "NEUTRAL"}
-                            <div class = "!bg-[var(--border)] p-2 w-45 rounded-full text-center !font-bold !text-[var(--background)]" > NEUTRAL </div>
-                            {:else} 
-                            <div class = "!bg-[var(--green)] p-2 w-45 rounded-full text-center !font-bold !text-[var(--background)]" > IMPROVED </div>
-                            {/if}
-                        <div class = "ml-10 mt-2"> {status.date}</div>
-                        </div>
-                        {/each}
-                    </div>
-                </div>
-            </div>
-        {/each}
-        </div>
-    </div>
-</div>
-
-<!--END OF INTERVENTIONS-->
