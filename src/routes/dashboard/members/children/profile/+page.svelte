@@ -171,9 +171,9 @@
         <div class = "z-1000"> <Select label = "Please select a school year" bind:value = {selected} options = {data.child?.schoolYearArray} /></div>
         <div class = "mt-3 ml-8"> Education Type: {data.child?.educationHistory[data.child.schoolYearArray?.indexOf(selected)]?.education_type || "N/A"}</div>
         <div class = "mt-3 ml-8"> Education Level:  {data.child?.educationHistory[data.child.schoolYearArray?.indexOf(selected)]?.grade_level || "N/A"}</div>
-        <div class = "mt-3 ml-8"> Education Status: </div>
-        <div class = "mt-3 ml-8"> School Year Start: </div>
-        <div class = "mt-3 ml-8"> School Year End: </div>
+        <div class = "mt-3 ml-8"> Education Status: {data.child?.educationHistory[data.child.schoolYearArray?.indexOf(selected)]?.student_status_type || "N/A"} </div>
+        <div class = "mt-3 ml-8"> School Year Start:  {data.child?.educationHistory[data.child.schoolYearArray?.indexOf(selected)]?.year_start || "N/A"} </div>
+        <div class = "mt-3 ml-8"> School Year End: {data.child?.educationHistory[data.child.schoolYearArray?.indexOf(selected)]?.year_end || "N/A"} </div>
         {:else}
         This child has no education history
         {/if}
