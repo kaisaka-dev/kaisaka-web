@@ -1,21 +1,18 @@
 <script lang="ts">
-    import type { child } from '$lib/types/child.js'
     import Header from '$components/Header.svelte'
     import Input from '$components/input/InputText.svelte'
     import TextArea from '$components/input/InputTextarea.svelte'
     import Check from '$components/input/Checkbox.svelte'
-	import InputText from '$components/input/InputText.svelte';
     import Select from '$components/input/Select.svelte'
 
 
     export let data;
-    let today = new Date()
     //below are functions needed for the page
-
     let selected
 
-
+    console.log(data.interventioninfo[0].history)
 </script>
+
 
 <Header/>
 
@@ -24,7 +21,7 @@
        {data.child?.firstName ?? "First Name Missing!"} {data.child?.lastName ?? "Last Name Missing!"}'s Profile 
     </h1>
 </section>
-<div class = "flex flex-row ml-10 m-4 sticky top-20 z-1">
+<div class = "flex flex-row ml-10 m-4 sticky top-20">
     <div class = "flex flex-col !font-[JSans]">
         <div class = "hover:!text-[var(--green)]">
             <a class = "hover:!text-[var(--green)]" href = "#top">Information </a>
@@ -71,7 +68,7 @@
 
             <div class = "flex flex-row">
                 <div class = "ml-4 mt-3 w-40"> Age</div>
-                <div class = "mt-4"> <Input disabled value = {today.getFullYear() - new Date(data.child.birthday).getFullYear()}/> </div>
+                <div class = "mt-4"> <Input disabled value = "test"/> </div>
             </div>
 
             <div class = "flex flex-row">
@@ -133,7 +130,7 @@
 </div>
 <div class = "flex flex-row mt-10">
     <div class = "flex flex-col border-[var(--border)] border-4 ml-55 mr-10 p-6 w-170 min-w-150">
-        {#if Object.keys(data.family).length > 0}
+        {#if data.family?.length > 0}
         {#each data.family as fammember}
         <div class = "flex flex-row mb-5">
             {#if fammember?.is_child == false}
@@ -168,7 +165,7 @@
 <div class = "flex flex-row mt-10">
     <div class = "flex flex-col border-[var(--border)] border-4 ml-55 mr-10 p-6 w-170 min-w-150">
         {#if data.child?.schoolYearArray?.length > 0}
-        <div class = "z-1000"> <Select label = "Please select a school year" bind:value = {selected} options = {data.child?.schoolYearArray} /></div>
+        <div> <Select label = "Please select a school year" bind:value = {selected} options = {data.child?.schoolYearArray} /></div>
         <div class = "mt-3 ml-8"> Education Type: {data.child?.educationHistory[data.child.schoolYearArray?.indexOf(selected)]?.education_type || "N/A"}</div>
         <div class = "mt-3 ml-8"> Education Level:  {data.child?.educationHistory[data.child.schoolYearArray?.indexOf(selected)]?.grade_level || "N/A"}</div>
         <div class = "mt-3 ml-8"> Education Status: {data.child?.educationHistory[data.child.schoolYearArray?.indexOf(selected)]?.student_status_type || "N/A"} </div>
@@ -248,3 +245,69 @@
     </div>
 </div>
 <!--END OF DOCUMENTS LISTING-->
+
+<!--INTERVENTIONS LIST BEGINS HERE-->
+<h1 class = "!text-[var(--green)] font-[JSans] ml-55 mt-5 mb-2">
+        Interventions
+</h1>
+
+<div class = "flex flex-col border-[var(--border)] border-4 ml-55 mr-10 p-6 w-275" id ="Intervention Info">
+    <div class = "flex flex-col">
+        <div class = "!bg-[var(--green)] p-3 flex flex-row">
+           <div class = "!text-[var(--background)] !font-bold ml-65">Intervention Name </div>
+           <div class = "!text-[var(--background)] !font-bold ml-35">Status History </div>
+        </div>
+
+        <div class = "border-[var(--border)] border-4 flex flex-col p-3 ">
+        {#each data.interventioninfo as intervention}
+            <div class = "flex flex-row">
+                <div>
+                    {#if intervention.service_category.name === "Social"}
+                     <div class = "!bg-[var(--green)] mt-4 p-2 w-45 rounded-full text-center !font-bold !text-[var(--background)]" > SOCIAL </div>
+                    {:else if intervention.service_category.name === "Livelihood"}
+                     <div class = "!bg-[var(--border)] mt-4 p-2 w-45 rounded-full text-center !font-bold !text-[var(--background)]" > LIVELIHOOD </div>
+                    {:else if intervention.service_category.name === "Health"}
+                     <div class = "!bg-[var(--error-color)] mt-4 p-2 w-45 rounded-full text-center !font-bold !text-[var(--background)]" > HEALTH </div>
+                    {:else if intervention.service_category.name === "Education"}
+                     <div class = "!bg-[var(--pink)] mt-4 p-2 w-45 rounded-full text-center !font-bold !text-[var(--background)]" > EDUCATION </div>
+                    {/if}
+                </div>
+
+                <div class = "ml-16 mt-5 w-150">
+                   {intervention.intervention}
+                </div>
+                <div class =  "collapse">
+                    <input type="checkbox" />
+                    <div class = "collapse-title flex flex-row">
+                        {#if intervention.status === "regressed"}
+                        <div class = "!bg-[var(--pink)] p-2 w-45 rounded-full text-center !font-bold !text-[var(--background)]" > Regressed </div> 
+                        {:else if intervention.status === "neutral"}
+                        <div class = "!bg-[var(--border)] p-2 w-45 rounded-full text-center !font-bold !text-[var(--background)]" > Neutral </div>
+                        {:else} 
+                        <div class = "!bg-[var(--green)] p-2 w-45 rounded-full text-center !font-bold !text-[var(--background)]" > Improved </div>
+                        {/if}
+                        <div class = "ml-10 mt-2"> {intervention.date_created.split('T')[0]}</div>
+                    </div>
+                    <div class = "collapse-content flex flex-col">
+                        {#each intervention.history as status}
+                        <div class= "flex flex-row mb-5">
+                            {#if status.status === "regressed"}
+                            <div class = "!bg-[var(--pink)] p-2 w-45 rounded-full text-center !font-bold !text-[var(--background)]" > Regressed </div> 
+                            {:else if status.status === "neutral"}
+                            <div class = "!bg-[var(--border)] p-2 w-45 rounded-full text-center !font-bold !text-[var(--background)]" > Neutral </div>
+                            {:else} 
+                            <div class = "!bg-[var(--green)] p-2 w-45 rounded-full text-center !font-bold !text-[var(--background)]" > Improved </div>
+                            {/if}
+                        <div class = "ml-10 mt-2"> {status.date_checked}</div>
+                        </div>
+                        {/each}
+                    </div>
+                </div>
+
+            </div>
+        {/each}
+        </div>
+    </div>
+</div>
+
+<!--END OF INTERVENTIONS-->
