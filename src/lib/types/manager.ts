@@ -16,13 +16,21 @@ export type tableUpdate<T extends tableNames>
 = Database['public']['Tables'][T]['Update']
 
 // Database query type for Table T
-interface QueryConfig<T extends tableNames> {
-  where?: Partial<tableRow<T>>;
-  eq?: Record<string, string | number>;
+export interface QueryConfig{
+  where?: Partial<tableRow<tableNames>>;
+  eq?: Record<string, string | number | boolean>;
+  neq?: Record<string, string | number | boolean>;
   gt?: Record<string, number>;
+  gte?: Record<string, number>;
   lt?: Record<string, number>;
-  order?: { column: string; ascending?: boolean };
+  lte?: Record<string, number>;
+  like?: Record<string, string>;
+  ilike?: Record<string, string>;
+  in?: Record<string, (string | number)[]>;
+  is?: Record<string, boolean | null>;
+  order?: { column: string; ascending?: boolean }[];
   limit?: number;
+  offset?: number;
 }
 
 /**
@@ -47,26 +55,11 @@ export default function TableManager<T extends tableNames>(table: T){
       return supabase.from(this.table).update(object);
     }
 
-    protected async findOne(match: Partial<Row>, config: Omit<QueryConfig<T>, 'where' | 'limit'> = {}): Promise<Row | null> {
+    protected async findOne(match: Partial<Row>, config: Omit<QueryConfig, 'where' | 'limit'> = {}): Promise<Row | null> {
       let query = this.getQuery()
         .match(match)
         
-
-      if (config.eq) {
-        Object.entries(config.eq).forEach(([key, value]) => {
-          query = query.eq(key, value);
-        });
-      }
-      
-      if (config.gt) {
-        Object.entries(config.gt).forEach(([key, value]) => {
-          query = query.gt(key, value);
-        });
-      }
-      
-      if (config.order) {
-        query = query.order(config.order.column, { ascending: config.order.ascending ?? true });
-      }
+      query = this.applyFilters(query, config);
       
       const {data, error} = await query.single();
 
@@ -75,29 +68,12 @@ export default function TableManager<T extends tableNames>(table: T){
       return data as Row;
     }
 
-    protected async findMany(match: Partial<Row> = {}, config: Omit<QueryConfig<T>, 'where'> = {}): Promise<Row[]|null>{
+    protected async findMany(match: Partial<Row> = {}, config: Omit<QueryConfig, 'where'> = {}): Promise<Row[]|null>{
       let query = this.getQuery()
         .match(match);
       
-      if (config.eq) {
-        Object.entries(config.eq).forEach(([key, value]) => {
-          query = query.eq(key, value);
-        });
-      }
-      
-      if (config.gt) {
-        Object.entries(config.gt).forEach(([key, value]) => {
-          query = query.gt(key, value);
-        });
-      }
-      
-      if (config.order) {
-        query = query.order(config.order.column, { ascending: config.order.ascending ?? true });
-      }
-      
-      if (config.limit) {
-        query = query.limit(config.limit);
-      }
+        query = this.applyFilters(query, config);
+
 
       const {data, error} = await query
 
@@ -159,34 +135,12 @@ export default function TableManager<T extends tableNames>(table: T){
 
     public async findWithJoin<R = Record<string, unknown>>(
       selectClause: string,
-      config: QueryConfig<T> = {}
+      config: QueryConfig = {}
     ): Promise<R[] | null> {
   
       let query = this.getQueryWithJoin(selectClause)
       
-      if (config.where) {
-        query = query.match(config.where);
-      }
-      
-      if (config.eq) {
-        Object.entries(config.eq).forEach(([key, value]) => {
-          query = query.eq(key, value);
-        });
-      }
-      
-      if (config.gt) {
-        Object.entries(config.gt).forEach(([key, value]) => {
-          query = query.gt(key, value);
-        });
-      }
-      
-      if (config.order) {
-        query = query.order(config.order.column, { ascending: config.order.ascending ?? true });
-      }
-      
-      if (config.limit) {
-        query = query.limit(config.limit);
-      }
+      query = this.applyFilters(query, config);
 
       const {data, error} = await query
 
@@ -197,10 +151,19 @@ export default function TableManager<T extends tableNames>(table: T){
 
     public async findOneWithJoin<R = Record<string, unknown>>(
       selectClause: string,
-      config: QueryConfig<T> = {}
+      config: QueryConfig = {}
     ): Promise<R | null> {
       let query = this.getQueryWithJoin(selectClause)
       
+      query = this.applyFilters(query, config);
+
+      const {data, error} = await query.single()
+      if (error) return null;
+      return data as R;
+    }
+    
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    private applyFilters(query: any, config: QueryConfig) {
       if (config.where) {
         query = query.match(config.where);
       }
@@ -211,25 +174,97 @@ export default function TableManager<T extends tableNames>(table: T){
         });
       }
       
+      if (config.neq) {
+        Object.entries(config.neq).forEach(([key, value]) => {
+          query = query.neq(key, value);
+        });
+      }
+      
       if (config.gt) {
         Object.entries(config.gt).forEach(([key, value]) => {
           query = query.gt(key, value);
         });
       }
       
+      if (config.gte) {
+        Object.entries(config.gte).forEach(([key, value]) => {
+          query = query.gte(key, value);
+        });
+      }
+      
+      if (config.lt) {
+        Object.entries(config.lt).forEach(([key, value]) => {
+          query = query.lt(key, value);
+        });
+      }
+      
+      if (config.lte) {
+        Object.entries(config.lte).forEach(([key, value]) => {
+          query = query.lte(key, value);
+        });
+      }
+      
+      if (config.like) {
+        Object.entries(config.like).forEach(([key, value]) => {
+          query = query.like(key, value);
+        });
+      }
+      
+      if (config.ilike) {
+        Object.entries(config.ilike).forEach(([key, value]) => {
+          query = query.ilike(key, value);
+        });
+      }
+      
+      if (config.in) {
+        Object.entries(config.in).forEach(([key, value]) => {
+          query = query.in(key, value);
+        });
+      }
+      
+      if (config.is) {
+        Object.entries(config.is).forEach(([key, value]) => {
+          query = query.is(key, value);
+        });
+      }
+
+
+      
       if (config.order) {
-        query = query.order(config.order.column, { ascending: config.order.ascending ?? true });
+        config.order.forEach(orderConfig => {
+          query = query.order(orderConfig.column, { ascending: orderConfig.ascending ?? true });
+        });
       }
       
       if (config.limit) {
         query = query.limit(config.limit);
       }
-
-      const {data, error} = await query.single()
-      if (error) return null;
-      return data as R;
+      
+      if (config.offset) {
+        query = query.range(config.offset, config.offset + (config.limit || 1000) - 1);
+      }
+      
+      return query;
     }
+
+    public async findWithJoinAndCount<R = Record<string, unknown>>(
+      selectClause: string,
+      config: QueryConfig = {}
+    ): Promise<{ data: R[] | null; count: number }> {
+      let query = supabase.from(this.table).select(selectClause, { count: 'exact' });
+
+      query = this.applyFilters(query, config);
+
+      const {data, error, count} = await query;
+      if (error) {
+        console.error('Join with count query error:', error);
+        return { data: null, count: 0 };
+      }
+      return { data: data as R[], count: count || 0 };
+    }
+  
   }
+
 
   return TableManager;
 }

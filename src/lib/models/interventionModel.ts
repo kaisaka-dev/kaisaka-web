@@ -1,9 +1,25 @@
-import TableManager, { type tableRow } from '../types/manager.js';
+import TableManager, { type ReportQueryConfig, type tableRow } from '../types/manager.js';
 import type { Database } from '../types/supabase-types.ts';
 
 type status_enum = Database['public']['Enums']['improvement_status_enum'];
 type InterventionRow = tableRow<"intervention">
-
+interface InterventionWithJoins {
+  id: string;
+  intervention: string;
+  status: string;
+  children: {
+    id: string;
+    disability_nature?: string;
+    members: {
+      first_name: string;
+      last_name: string;
+      sex: string;
+    };
+    disability_category?: {
+      name: string;
+    };
+    }
+}
 /**
  * A model concerning about CRUD operations on *intervention information*. 
  * 
@@ -123,5 +139,10 @@ export class InterventionModel extends TableManager<"intervention">('interventio
 
     async getMultipleJoin(select: string, filters: Record<string, string | number>): Promise<InterventionRow[] | null> {
         return await this.findWithJoin(select, filters );
+    }
+    async findByJoin_InTheProgramReport(config: ReportQueryConfig) {
+        const joinStatement =`*, children!inner(id, birthday, members(first_name, last_name, sex), disability_category(name))`;
+
+        return this.countByJoinConfig(joinStatement, config)
     }
 }
