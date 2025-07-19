@@ -191,6 +191,8 @@
 			</div>
 		</div>
 	{:else}
+		<span style="color:var(--green)">Results: {filteredData.length}</span>
+
 		{#each filteredData as family}
 			<div style="border: 3px solid var(--border); max-width: 70rem; padding: 1rem; border-radius: 8px; margin-bottom: 1rem;">
 				<div style="display: flex; flex-direction: row; justify-content: space-between">

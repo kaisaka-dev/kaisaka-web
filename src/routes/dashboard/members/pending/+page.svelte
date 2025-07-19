@@ -161,6 +161,8 @@
             </div>
         </div>
     {:else}
+        <span style="color:var(--green)">Results: {filteredData.length}</span>
+
         <Table
           data={filteredData}
           includedKeys={['firstName', 'lastName', 'medCert', 'birthCert', 'brgyCert', 'interventionPlan']}

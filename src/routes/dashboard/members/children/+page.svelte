@@ -200,6 +200,8 @@ function resetFilters() {
     </FilterSearch>
 
     <br>
+    <span style="color:var(--green)">Results: {filteredData.length}</span>
+
     <Table data={filteredData} headers={['First Name', 'Last Name', 'Birthday', 'Disability Category', 'Disability Nature']}
            includedKeys={['firstName', 'lastName', 'birthday', 'category', 'nature']} hasLink={true}/>
 </section>
