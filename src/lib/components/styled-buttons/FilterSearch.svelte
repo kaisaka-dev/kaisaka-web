@@ -7,10 +7,6 @@
      */
     export let searchedValue: string
 
-    /**
-     * string containing the link for the add button
-     */
-    export let addLink = "";
     let showModal = false;
 
     function filter() {
@@ -36,10 +32,9 @@
             <i class="fa fa-search" style="color: var(--background); margin-top: 1rem; margin-right: 1rem"></i>
 
         </div>
-
-        {#if addLink !== ""}
-            <button onclick={() => location.href=addLink} style="margin-left: 1rem">Add</button>
-        {/if}
+        <div  class="!ml-[1rem]">
+            <slot name="button-list" />
+        </div>
     </div>
 
     {#if showModal}
