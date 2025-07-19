@@ -1,4 +1,5 @@
 import TableManager from '$lib/types/manager.js';
+import { fa } from 'zod/v4/locales';
 
 //declarations for the different tables we'll be querying
 const members = TableManager('members');
@@ -23,6 +24,11 @@ const socsecDB = new socialSecurity();
 const educationStatus = TableManager('education_status');
 const educationDB = new educationStatus();
 
+const intervention = TableManager('intervention');
+const interventionDB = new intervention();
+
+const interventionHistory = TableManager('intervention_history');
+const interventionHistoryDB = new interventionHistory();
 
 //will be used to make data more acceptable for front end modules
 export type childInformation =  {
@@ -116,17 +122,16 @@ type familyquery = {
 
 
 let entireFamily
-
-
 let pwdHas:boolean
 let pwdID:string
 let pwdExpiry:string
-
 let socsecHas: boolean
 let socsecFamLife: boolean
 let socsecFamYear: number
 let socsecComLife: boolean
 let socsecComYear: number
+
+
 
 export async function load( { url }  ) {
     
@@ -136,12 +141,11 @@ try{
     eq:{id: url.searchParams.get('')}
     }) as ChildRecord;
 
+    console.log(childRecord)
     if(!childRecord) { //null check for if the kid doesn't exist
         throw new Error('Failed to get Child!')
     }
 
-
-    console.log(childRecord)
     //gets record in the member table
     const memberRecord = await memberDB.findOneWithJoin('*, addresses(*), employment_status(*)', {
     eq: {id : childRecord.member_id}
@@ -165,24 +169,22 @@ try{
         const pwdRecord = await pwdDB.findOneWithJoin("*", {
             eq:{id: childRecord.pwd_id}
         })
-
         pwdHas = true;
         pwdID = pwdRecord[0].pwd_id
-        pwdExpiry = pwdRecord[0].expiry_date    
+        pwdExpiry = pwdRecord[0]?.expiry_date    
     }
 
     //gets record in social protection table
     const socsecRecord = await socsecDB.findOneWithJoin('*',{
         eq:{child_id: childRecord.id}
     }) as socsecRecord
-    if(!socsecRecord){
-        socsecHas = false
-        socsecComLife 
-        socsecComYear 
-        socsecFamLife 
-        socsecFamYear
 
-        console.log("no record!")
+    if(!socsecRecord){
+        socsecHas = false;
+        socsecComLife = false;
+        socsecComYear = 0;
+        socsecFamLife = false;
+        socsecFamYear = 0;
     }
 
     else{
@@ -191,7 +193,6 @@ try{
         socsecComYear = socsecRecord.comm_year_accessed
         socsecFamLife = socsecRecord.participates_family_life
         socsecFamYear = socsecRecord.fam_year_accessed
-        console.log(socsecRecord)
     }
 
     let educationArray = []
@@ -202,7 +203,6 @@ try{
     })
 
     if(educationHistory){
-        console.log(educationHistory)
         for(let i = 0; i < educationHistory.length;i++) {
             educationArray.push(educationHistory[i])
             yearArray.push(String(educationHistory[i].year_start))
@@ -240,12 +240,12 @@ try{
             community_year: socsecComYear
         },
 
+        voter_id: childRecord.has_voter_id || false,
+        national_id: childRecord.has_national_id || false,
         educationHistory: educationArray,
         schoolYearArray: yearArray
     }
 
-
-    
 
     const familyInfo = await familyDB.findOneWithJoin('*, families(*)', {
     eq:{member_id: childRecord.member_id}
@@ -265,15 +265,37 @@ try{
         
     }
 
+
+    const interventioninfo = await interventionDB.findWithJoin('*, service_category(*)' , {
+        eq:{child_id: childRecord.id}
+    });
+
+    if(interventioninfo){
+        for(let i = 0; i < interventioninfo.length;i++){
+           const interventionhistoryinfo = await interventionHistoryDB.findWithJoin('*',{
+            eq: {intervention_id: interventioninfo[i].id}
+            })
+
+            interventioninfo[i]['history'] = interventionhistoryinfo
+        }
+    }
+
+
+
+   
+
+
     return{
         child: child,
         error: null,
-        family: entireFamily as Object
+        family: entireFamily,
+        member: memberRecord,
+        interventioninfo: interventioninfo || ''
     } 
 }
     catch(error){
         return {
-            error: error instanceof Error ? error.message : 'Failed to load children data'
+            error: error instanceof Error ? error.message : 'Failed to load children data',
         }
     }
 }
