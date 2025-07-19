@@ -94,6 +94,8 @@
 <Header category="members" page="caregivers" />
 
 <section id="main">
+    <h2 class="!px-0 !text-[var(--pink)]">List of Caregivers</h2>
+
     <FilterSearch bind:searchedValue={filter.main}>
         <div slot="modal">
             <InputText label="First name" id="first-name" bind:value={filter.firstName} margin={false} />

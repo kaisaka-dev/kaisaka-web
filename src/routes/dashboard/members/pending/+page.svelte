@@ -109,6 +109,8 @@
 <Header category="members" page="pending" />
 
 <section id="main">
+    <h2 class="!px-0 !text-[var(--pink)]">List of Children with Pending Verification</h2>
+
     <FilterSearch bind:searchedValue={filter.main}>
         <div slot="modal" class="pending-filters">
             <InputText label="First name" id="first-name" bind:value={filter.firstName} margin={false} />

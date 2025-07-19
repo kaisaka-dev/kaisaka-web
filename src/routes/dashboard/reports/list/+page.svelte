@@ -223,33 +223,29 @@
 
 <Header category="reports" page="annual" />
 
-<section>
-    <h2>List of Report Periods
-    </h2>
+<section id="main">
+    <h2 class="!px-0 !text-[var(--pink)]">List of Report Periods</h2>
 
-    <div class="flex flex-row gap-4">
-        <FilterSearch bind:searchedValue={filter.main}>
-            <div slot="modal">
-                <InputRange type="number" label="Year" id="year" bind:valueFrom={filter.yrStart} bind:valueTo={filter.yrEnd} margin={false} />
-
-                <div id="reset" class="flex justify-end">
-                    <button onclick={resetFilters}>Reset Filters</button>
-                </div>
-            </div>
-        </FilterSearch>
-        <!-- for adding a new report period -->
-        <div class=" flex-start">
+    <FilterSearch bind:searchedValue={filter.main}>
+        <div slot="button-list">
+            <!-- for adding a new report period -->
             <ReportPeriodModal bind:modalIsOpen={addModalIsOpen} title="Add Another Report Period"
                                formData={newPeriod} />
         </div>
+        <div slot="modal">
+            <InputRange type="number" label="Year" id="year" bind:valueFrom={filter.yrStart} bind:valueTo={filter.yrEnd} margin={false} />
 
-    </div>
+            <div id="reset" class="flex justify-end">
+                <button onclick={resetFilters}>Reset Filters</button>
+            </div>
+        </div>
+    </FilterSearch>
 </section>
 
 
 <section>
     <span style="color:var(--green)">Results: {filteredData.length}</span>
-    
+
     <ReportPeriodTable data={filteredData} headers={[
   "Start", "End", "Total Target CWDS", "New Target CWDS", "Old Target CWDS", "Total Actual CWDS", "New Actual CWDS", "Old Actual CWDS"]}
                        includedKeys={['Start', 'End', 'total_target_CWDS', 'new_target_CWDS', 'old_target_CWDS', 'total_actual_CWDS', 'new_actual_CWDS', 'old_actual_CWDS']} hasLink={true}/>

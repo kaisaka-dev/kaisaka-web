@@ -38,8 +38,7 @@ import Header from "$components/Header.svelte";
 
     <!-- the notification column -->
     <div id="notif-column" class="flex flex-col gap-[0.5rem]" style="margin-left:auto;">
-        <a class="notif-head" href="/dashboard/members/pending">Notifications</a>
-        <a href="/dashboard/members/pending" class="!text-[var(--green)] !ml-[0.8rem]">Pending review</a>
+        <a class="notif-head" href="/dashboard/members/pending"><i class="bi bi-bell-fill mr-[0.5rem]" style="color: var(--background);"></i> Pending review </a>
         <ul class="!ml-[2rem]">
             <li><a href="/dashboard/members/caregivers/profile?id=a0b2b9a7-2b3f-4421-8fa4-e8422b044ec8">Mom Amon</a></li>
             <li><a href="/dashboard/members/caregivers/profile?id=a0b2b9a7-2b3f-4421-8fa4-e8422b044ec8">Mariella Jeans</a></li>

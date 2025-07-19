@@ -182,8 +182,14 @@ function resetFilters() {
 <Header category="members" page="children" />
 
 <section id="main">
-    <FilterSearch bind:searchedValue={filter.main} addLink="/dashboard/registration/child">
+    <h2 class="!px-0 !text-[var(--pink)]">List of Children</h2>
+
+    <FilterSearch bind:searchedValue={filter.main}>
         <!-- to be rendered inside the Filter Search component-->
+        <div slot="button-list">
+            <button onclick={() => location.href="/dashboard/registration/child"}>Register</button>
+            <button onclick={() => console.log("Export")}  class="green">Export</button>
+        </div>
         <div slot="modal">
             <InputText label="First name" id="first-name" bind:value={filter.firstName} margin={false}/>
             <InputText label="Last name" id="last-name" bind:value={filter.lastName} margin={false}/>
