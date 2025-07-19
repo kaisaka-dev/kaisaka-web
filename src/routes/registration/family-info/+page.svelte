@@ -214,7 +214,10 @@
 
 	async function handleSubmit() {
 		try {
-			if (!validateForm()) return;
+			if (!validateForm()) {
+				goto('#family-info');    // scrolls to top
+				return;
+			}
 			goto('/dashboard');			// temporary fix for usability testing purposes
 			// Insert address
 			const addressData = await safeFetch('/api/addresses', childRegData.address);
@@ -267,7 +270,7 @@
 {#if staffView}
 	<Header category="members" page="children" />
 {/if}
-<section>
+<section id="family-info">
 	<h1>Family Information</h1>
 
 	{#each caregivers as caregiver, index (index + caregiver.firstName + caregiver.lastName + caregiver.contactNo + caregiver.type)}

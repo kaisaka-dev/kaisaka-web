@@ -13,6 +13,7 @@
     import { page } from '$app/state';
     import { childFormData } from '$lib/stores/childForm.js';
     import { goto } from '$app/navigation';
+    import InputRange from '$components/input/InputRange.svelte';
 
     /**
      * note: /dashboard/registration and /registration is just the same, the constant is to hide
@@ -112,11 +113,11 @@
         "Completed"
     ];
     const options_educLevel = [
-        "Nursery", "Kinder", "SNED", "Grade 1", "Grade 2", "Grade 3", "Grade 4", "Grade 5", "Grade 6",
-        "High School", "Senior High School", "College", "ALS", "Home-based", "EIC"
+      "Nursery", "Kinder", "SNED", "Grade 1", "Grade 2", "Grade 3", "Grade 4", "Grade 5", "Grade 6",
+      "High School", "Senior High School", "College", "ALS", "Home-based", "EIC"
     ];
     const options_educType = [
-        "Not enrolled", "Home program", "Non-formal", "Special (Exclusive school, blind/deaf)", "Integrated / SPED classes", "Inclusive / General education"
+      "Not enrolled", "Home program", "Non-formal", "Special (Exclusive school, blind/deaf)", "Integrated / SPED classes", "Inclusive / General education"
     ];
     const options_laborMarketStatus = [
         "Wage-emplyed",
@@ -170,22 +171,22 @@
     function validateForm() {
         errors.overall = "";        // resets it
 
-        errors.firstName = firstName.trim() === "" ? "first name: field is required" : "";
-        errors.lastName = lastName.trim() === "" ? "last name: field is required" : "";
-        errors.birthday = birthday.trim() === "" ? "birthday: field is required" : "";
-        errors.sex = sex.trim() === "" ? "sex: field is required" : "";
-        errors.address = address.trim() === "" ? "address: field is required" : "";
-        errors.barangay = barangay === "" ? "barangay: field is required" : "";
-        errors.disCategory = disCategory.trim() === "" ? "disability category: field is required" : "";
-        errors.disNature = disNature.trim() === "" ? "disability nature: field is required" : "";
-        errors.educType = educType.trim() === "" ? "education type: field is required" : "";
+        errors.firstName = firstName.trim() === "" ? "Required" : "";
+        errors.lastName = lastName.trim() === "" ? "Required" : "";
+        errors.birthday = birthday.trim() === "" ? "Required" : "";
+        errors.sex = sex.trim() === "" ? "Required" : "";
+        errors.address = address.trim() === "" ? "Required" : "";
+        errors.barangay = barangay === "" ? "Required" : "";
+        errors.disCategory = disCategory.trim() === "" ? "Required" : "";
+        errors.disNature = disNature.trim() === "" ? "Required" : "";
+        errors.educType = educType.trim() === "" ? "Required" : "";
 
-        // errors.admissionDate = admissionDate.trim() === "" ? "admission date: field is required" : "";
+        errors.admissionDate = admissionDate.trim() === "" ? "Required" : "";
 
         // only check if the child has pwd id
         if (hasPwdId) {
-            errors.pwdId = pwdId.trim() === "" ? "pwdId: field is required" : "";
-            errors.pwdExpy = pwdExpy.trim() === "" ? "pwdExpy: field is required" : "";
+            errors.pwdId = pwdId.trim() === "" ? "Required" : "";
+            errors.pwdExpy = pwdExpy.trim() === "" ? "Required" : "";
         } else {
             errors.pwdId = "";
             errors.pwdExpy = "";
@@ -193,29 +194,35 @@
 
         // only check if the child has participation
         if (partFamily) {
-            errors.partFamilyYear = partFamilyYear.toString().trim() === "" ? "year: field is required" : "";
+            errors.partFamilyYear = partFamilyYear.toString().trim() === "" ? "Required" : "";
         } else {
             errors.partFamilyYear = "";
         }
         if (partCommunity) {
-            errors.partCommunityYear = partCommunityYear.toString().trim() === "" ? "year: field is required" : "";
+            errors.partCommunityYear = partCommunityYear.toString().trim() === "" ? "Required" : "";
         } else {
             errors.partCommunityYear = "";
         }
 
         // only check if the child has education
         if (educType !== "" && educType !== "Not enrolled") {
-            errors.educLvl = educLvl.trim() === "" ? "education level: field is required" : "";
-            errors.educStatus = educStatus.trim() === "" ? "education status: field is required" : "";
+            errors.educLvl = educLvl.trim() === "" ? "Required" : "";
+            errors.educStatus = educStatus.trim() === "" ? "Required" : "";
+            errors.ayStart = ayStart === null || ayStart < 1900 || ayStart > 20000
+                || ayEnd === null || ayEnd < 1900 || ayEnd > 20000 ||  ayEnd < ayStart
+                ? "Invalid" : "";
         } else {
             errors.educLvl = "";
             errors.educStatus = "";
+            errors.ayStart = "";
+            errors.ayEnd = "";
         }
 
         for (const error of Object.values(errors)) {
             if (error) {
                 console.log("error found: ", error)
                 errors.overall = "Please fill out the required fields";
+                goto('#child-info');    // scrolls to top
                 return false;
             }
         }
@@ -234,7 +241,7 @@
                 },
                 member: {
                     first_name: firstName,
-                    last_name: lastName,
+                    last_name: lastName, 
                     birthday: birthday,
                     sex: sex
                 },
@@ -264,28 +271,28 @@
                 },
                 //only if theres pwdId
                 ...(hasPwdId && pwdId
-                  ? {
-                      pwd_id: {
-                          pwd_id: pwdId,
-                          expiry_date: pwdExpy
-                      }
-                  }
-                  : {})
+				? {
+						pwd_id: {
+							pwd_id: pwdId,
+							expiry_date: pwdExpy
+						}
+				  }
+				: {})
             }));
 
             goto('family-info');
             console.log("Form submitted")
         }
     }
-
+    
 
 
 </script>
 {#if staffView}
-    <Header category="members" page="children" />
+<Header category="members" page="children" />
 {/if}
 
-<section>
+<section id="child-info">
     <h1>Child Registration</h1>
 
 
@@ -310,10 +317,9 @@
     <h1>Education Information</h1>
     <Select label="Education" id="educ-type" options={options_educType} required bind:value={educType} msg={errors.educType}/>
     {#if educType !== "Not enrolled" && educType !== ""}
-        <Select label="Education Level" id="educ-lvl" options={options_educLevel} required msg={errors.educLvl} bind:value={educLvl} />
+        <Select label="Education Level" id="educ-lvl" options={options_educLevel} bind:value={educLvl} required msg={errors.educLvl}  />
         <Select label="Education Status" id="educ-status" options={options_educStatus} required bind:value={educStatus} msg={errors.educStatus}/>
-        <InputText label="School Year Start" id="ay-start" bind:value={ayStart} type="number" required msg={errors.ayStart} />
-        <InputText label="School Year End" id="ay-end" bind:value={ayEnd} type="number" required msg={errors.ayEnd} />
+        <InputRange label="School Year" id="ay-range" bind:valueFrom={ayStart} bind:valueTo={ayEnd} type="number" required msg={errors.ayStart + " " + errors.ayEnd} />
     {/if}
 
 </section>
@@ -321,12 +327,12 @@
 <section id="documents">
     <h1>Documents</h1>
     <Checkbox label="PWD ID" id="pwd" bind:checked={hasPwdId}/>
-    {#if hasPwdId}
-        <div style="margin-left: 35px">
-            <InputText label="ID #" required msg="{errors.pwdId}" bind:value={pwdId}/>
-            <InputText label="Expiry Date" type="date" required msg="{errors.pwdExpy}" bind:value={pwdExpy}/>
-        </div>
-    {/if}
+        {#if hasPwdId}
+            <div style="margin-left: 35px">
+                <InputText label="ID #" required msg="{errors.pwdId}" bind:value={pwdId}/>
+                <InputText label="Expiry Date" type="date" required msg="{errors.pwdExpy}" bind:value={pwdExpy}/>
+            </div>
+        {/if}
     <Checkbox label="PhilHealth" id="ph-id" bind:checked={hasPhId}/>
     <Checkbox label="Voters Registration" id="vote-id" bind:checked={hasVote}/>
     <Checkbox label="National ID" id="nat-id" bind:checked={hasNatId}/>
@@ -336,17 +342,17 @@
 <section id="social-protection-status">
     <h1 style="margin-bottom: 0.5rem;">Social Protection Status</h1>
     <Checkbox label="Participation in family life" style="width:30rem" id="participation-family" bind:checked={partFamily}/>
-    {#if partFamily}
-        <div style="margin-left: 35px">
+        {#if partFamily}
+            <div style="margin-left: 35px">
             <InputText label="Year accessed" id="part-family-accessed" bind:value={partFamilyYear} type="number" required msg={errors.partFamilyYear} />
-        </div>
-    {/if}
+            </div>
+        {/if}
     <Checkbox label="Participation in community life / clubs" style="width:30rem" id="participation-community" bind:checked={partCommunity}/>
-    {#if partCommunity}
-        <div style="margin-left: 35px">
+        {#if partCommunity}
+            <div style="margin-left: 35px">
             <InputText label="Year accessed" id="part-family-accessed" bind:value={partCommunityYear} type="number" required msg={errors.partCommunityYear} />
-        </div>
-    {/if}
+            </div>
+        {/if}
 </section>
 
 <section id="labour-market-status">
@@ -362,21 +368,21 @@
 <!-- hide this if user is not signed in, show: please prepare the following documents to show the officer physically on your scheduled visit
 you may contact them here xxxxx -->
 {#if staffView}
-    <section id="certificate-verification">
-        <h1 style="margin-bottom: 0.5rem;">Certificate Verification</h1>
-        <Validation msg="Let the officer-in-charge verify the portion below" style="color:var(--text-color); margin-bottom: 25px; padding: 0 35px;"/>
-        <Checkbox label="Medical Certificate" id="med-cert" bind:checked={hasMedCert}/>
-        <Checkbox label="Birth Certificate" id="birth-cert" bind:checked={hasBrthCert}/>
-        <Checkbox label="Barangay Certificate" id="brgy-cert" bind:checked={hasBrgyCert}/>
-    </section>
+<section id="certificate-verification">
+    <h1 style="margin-bottom: 0.5rem;">Certificate Verification</h1>
+    <Validation msg="Let the officer-in-charge verify the portion below" style="color:var(--text-color); margin-bottom: 25px; padding: 0 35px;"/>
+    <Checkbox label="Medical Certificate" id="med-cert" bind:checked={hasMedCert}/>
+    <Checkbox label="Birth Certificate" id="birth-cert" bind:checked={hasBrthCert}/>
+    <Checkbox label="Barangay Certificate" id="brgy-cert" bind:checked={hasBrgyCert}/>
+</section>
 
-    <!-- also hide this if not signed in -->
-    <section id="staff-only">
-        <h1 style="margin-bottom: 0.5rem;">Other Information</h1>
-        <Validation msg="Let the officer-in-charge verify the portion below" style="color:var(--text-color); margin-bottom: 25px; padding: 0 35px;"/>
-        <InputText type="month" label="Admission Date" id="admission" bind:value={admissionDate} />
+<!-- also hide this if not signed in -->
+<section id="staff-only">
+    <h1 style="margin-bottom: 0.5rem;">Other Information</h1>
+    <Validation msg="Let the officer-in-charge verify the portion below" style="color:var(--text-color); margin-bottom: 25px; padding: 0 35px;"/>
+    <InputText type="month" label="Admission Date" id="admission" bind:value={admissionDate} msg={errors.admissionDate} />
 
-    </section>
+</section>
 {:else}
     <section id="certificate-verification">
         <h1 style="margin-bottom: 0.5rem;">Certificate Verification</h1>
