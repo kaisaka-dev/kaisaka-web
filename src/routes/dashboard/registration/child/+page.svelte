@@ -13,6 +13,7 @@
     import { page } from '$app/state';
     import { childFormData } from '$lib/stores/childForm.js';
     import { goto } from '$app/navigation';
+    import InputRange from '$components/input/InputRange.svelte';
 
     /**
      * note: /dashboard/registration and /registration is just the same, the constant is to hide
@@ -170,22 +171,22 @@
     function validateForm() {
         errors.overall = "";        // resets it
 
-        errors.firstName = firstName.trim() === "" ? "first name: field is required" : "";
-        errors.lastName = lastName.trim() === "" ? "last name: field is required" : "";
-        errors.birthday = birthday.trim() === "" ? "birthday: field is required" : "";
-        errors.sex = sex.trim() === "" ? "sex: field is required" : "";
-        errors.address = address.trim() === "" ? "address: field is required" : "";
-        errors.barangay = barangay === "" ? "barangay: field is required" : "";
-        errors.disCategory = disCategory.trim() === "" ? "disability category: field is required" : "";
-        errors.disNature = disNature.trim() === "" ? "disability nature: field is required" : "";
-        errors.educType = educType.trim() === "" ? "education type: field is required" : "";
+        errors.firstName = firstName.trim() === "" ? "Required" : "";
+        errors.lastName = lastName.trim() === "" ? "Required" : "";
+        errors.birthday = birthday.trim() === "" ? "Required" : "";
+        errors.sex = sex.trim() === "" ? "Required" : "";
+        errors.address = address.trim() === "" ? "Required" : "";
+        errors.barangay = barangay === "" ? "Required" : "";
+        errors.disCategory = disCategory.trim() === "" ? "Required" : "";
+        errors.disNature = disNature.trim() === "" ? "Required" : "";
+        errors.educType = educType.trim() === "" ? "Required" : "";
 
-        // errors.admissionDate = admissionDate.trim() === "" ? "admission date: field is required" : "";
+        errors.admissionDate = admissionDate.trim() === "" ? "Required" : "";
 
         // only check if the child has pwd id
         if (hasPwdId) {
-            errors.pwdId = pwdId.trim() === "" ? "pwdId: field is required" : "";
-            errors.pwdExpy = pwdExpy.trim() === "" ? "pwdExpy: field is required" : "";
+            errors.pwdId = pwdId.trim() === "" ? "Required" : "";
+            errors.pwdExpy = pwdExpy.trim() === "" ? "Required" : "";
         } else {
             errors.pwdId = "";
             errors.pwdExpy = "";
@@ -193,29 +194,35 @@
 
         // only check if the child has participation
         if (partFamily) {
-            errors.partFamilyYear = partFamilyYear.toString().trim() === "" ? "year: field is required" : "";
+            errors.partFamilyYear = partFamilyYear.toString().trim() === "" ? "Required" : "";
         } else {
             errors.partFamilyYear = "";
         }
         if (partCommunity) {
-            errors.partCommunityYear = partCommunityYear.toString().trim() === "" ? "year: field is required" : "";
+            errors.partCommunityYear = partCommunityYear.toString().trim() === "" ? "Required" : "";
         } else {
             errors.partCommunityYear = "";
         }
 
         // only check if the child has education
         if (educType !== "" && educType !== "Not enrolled") {
-            errors.educLvl = educLvl.trim() === "" ? "education level: field is required" : "";
-            errors.educStatus = educStatus.trim() === "" ? "education status: field is required" : "";
+            errors.educLvl = educLvl.trim() === "" ? "Required" : "";
+            errors.educStatus = educStatus.trim() === "" ? "Required" : "";
+            errors.ayStart = ayStart === null || ayStart < 1900 || ayStart > 20000
+                || ayEnd === null || ayEnd < 1900 || ayEnd > 20000 ||  ayEnd < ayStart
+                ? "Invalid" : "";
         } else {
             errors.educLvl = "";
             errors.educStatus = "";
+            errors.ayStart = "";
+            errors.ayEnd = "";
         }
 
         for (const error of Object.values(errors)) {
             if (error) {
                 console.log("error found: ", error)
                 errors.overall = "Please fill out the required fields";
+                goto('#child-info');    // scrolls to top
                 return false;
             }
         }
@@ -285,7 +292,7 @@
 <Header category="members" page="children" />
 {/if}
 
-<section>
+<section id="child-info">
     <h1>Child Registration</h1>
 
 
@@ -310,10 +317,9 @@
     <h1>Education Information</h1>
     <Select label="Education" id="educ-type" options={options_educType} required bind:value={educType} msg={errors.educType}/>
     {#if educType !== "Not enrolled" && educType !== ""}
-        <Select label="Education Level" id="educ-lvl" options={options_educLevel} required msg={errors.educLvl} bind:value={educLvl} />
+        <Select label="Education Level" id="educ-lvl" options={options_educLevel} bind:value={educLvl} required msg={errors.educLvl}  />
         <Select label="Education Status" id="educ-status" options={options_educStatus} required bind:value={educStatus} msg={errors.educStatus}/>
-        <InputText label="School Year Start" id="ay-start" bind:value={ayStart} type="number" required msg={errors.ayStart} />
-        <InputText label="School Year End" id="ay-end" bind:value={ayEnd} type="number" required msg={errors.ayEnd} />
+        <InputRange label="School Year" id="ay-range" bind:valueFrom={ayStart} bind:valueTo={ayEnd} type="number" required msg={errors.ayStart + " " + errors.ayEnd} />
     {/if}
 
 </section>
@@ -374,7 +380,7 @@ you may contact them here xxxxx -->
 <section id="staff-only">
     <h1 style="margin-bottom: 0.5rem;">Other Information</h1>
     <Validation msg="Let the officer-in-charge verify the portion below" style="color:var(--text-color); margin-bottom: 25px; padding: 0 35px;"/>
-    <InputText type="month" label="Admission Date" id="admission" bind:value={admissionDate} />
+    <InputText type="month" label="Admission Date" id="admission" bind:value={admissionDate} msg={errors.admissionDate} />
 
 </section>
 {:else}
