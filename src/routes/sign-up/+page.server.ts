@@ -9,7 +9,8 @@ const registrationFormValidator = z.object({
       required_error: "Username is required", 
       invalid_type_error: "Username is not a string"
     }).min(8, { message: "Username must be more than 8 characters in length"})
-    .regex(/[A-Za-z_0-9]/, { message: "Username may only contain letters, numbers, and underscores" }),
+    .regex(/^[A-Za-z0-9_]+$/, {
+    message: "Username may only contain letters, numbers, and underscores"}),
   email: z.string()
     .email({ message: "Email is invalid"}),
   password: z.string({ 
