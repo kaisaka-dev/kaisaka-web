@@ -158,75 +158,26 @@
 </div>
 <div class = "border-[var(--border)] border-4 ml-55 mr-10 !font-bold w-250 min-w-225" >
     <div class = "!flex !flex-row !justify-start mt-2">
-        <div class = "flex flex-col">
-            <div class = "flex flex-row">
-                <div class = "ml-4 mt-3 w-40"> First Name</div>
-                <div class = "mt-4"> <Input id = "first_name" name = "first_name" bind:value = {firstName}/> </div>
-            </div>
-
-            <div class = "flex flex-row">
-                <div class = "ml-4 mt-3 w-40"> Last Name</div>
-                <div class = "mt-4"> <Input id="last_name" name = "last_name"  bind:value = {lastName}/> </div>
-            </div>
-
-            <div class = "flex flex-row">
-                <div class = "ml-4 mt-3 w-40"> Birthday</div>
-                <div class = "mr-50 mt-3"> <Input type = "date" id = "birthday" name = "birthday" bind:value = {birthday} label = ""/> </div>
-            </div>
-
-            <div class = "flex flex-row">
-                <div class = "ml-4 mt-3 w-40"> Age</div>
-                <div class = "mt-4"> <Input name = "age" id = "age" disabled value = {new Date().getFullYear() - new Date(birthday).getFullYear() || "Please Specify Birthday!"}/> </div>
-            </div>
-
-            <div class = "flex flex-row">
-                <div class = "ml-4 mt-3 w-40"> Sex</div>
-                <div class = "ml-3 -mt-1"> <Select name = "Sex" id ="Sex" bind:value = {sex} options = {['Male','Female','Other']} /> </div>
-            </div>
-
-            <div class = "flex flex-row">
-                <div class = "ml-4 mt-3 w-40"> Address</div>
-                <div class = "mt-3"> <Input  id = "address" name = "address" bind:value = {address}/> </div>
-            </div>
-
-            <div class = "flex flex-row">
-                <div class = "ml-4 mt-3 w-40"> Barangay</div>
-                <div class = "mt-3"> <Input  id = "barangay" name = "barangay" bind:value = {barangay}/> </div>
-            </div>
-
-            <div class = "flex flex-row">
-                <div class = "ml-4 mt-3 w-40"> Able to Work</div>
-                <div class = "mt-5 -ml-8 z-2000"> <Check label = "" bind:checked={canwork}/> </div>
-            </div>
-
-            {#if canwork}
-            <div class = "flex flex-row">
-                <div class = "ml-4 mt-3 w-40"> Employment Status </div>
-                <div class = "mt-7 ml-2.5"> <Select name = "employment_type" id = "employment_type" bind:value = {employmentType} options = {['Wage Employed', "Self-Employed", "Sheltered Workshop"]} /> </div>
-            </div>
-            {/if}
-
-
-            <div class = "flex flex-row mt-10">
-                <div class = "ml-4 mt-3 w-75"> Category of Disability</div>
-                <div class = "ml-19"> <Select name = "disabilityCategory" id = "disabilityCategory" bind:value = {disabilityCategory} options = {options_disNature}/> </div>
-            </div>
-
-            <div class = "flex flex-row">
-                <div class = "ml-4 mt-3 w-73"> Nature of Disability</div>
-                <div class = "mt-4"> <Input id = "disabilityNature" name = "disabilityNature" bind:value = {disabilityNature}/> </div>
-            </div>
-
-            <div class = "flex flex-row mt-10">
-                <div class = "ml-4 mt-3 w-70"> Date of Admission</div>
-                <div class = "mt-3"> <Input type = "date" label = "" bind:value = {admissionDate}/> </div>
-            </div>
+        <div class = "flex flex-col ml-4 mt-2 w-[1200px]">
+          <Input label="First Name" id="first_name"  bind:value = {firstName} margin={false} />
+          <Input label="Last Name" id="last_name"   bind:value = {lastName} margin={false} />
+          <Input label="Birthday" type="date" id="birthday" bind:value = {birthday}  margin={false} />
+          <Input label="Age" id ="age" disabled value = {new Date().getFullYear() - new Date(birthday).getFullYear() || "Please Specify Birthday!"} margin={false} />
+          <Select label="Sex" id="sex" bind:value = {sex} options = {['Male','Female','Other']}  margin={false} />
+          <Input  label="Address" id="address"  bind:value = {address} margin={false} />
+          <Input  label="Barangay" id="barangay"  bind:value = {barangay} margin={false} />
+          <br>
+          <Select label="Disability Category" id="disabilityCategory" bind:value = {disabilityCategory} options = {options_disNature} margin={false} />
+          <Input  label="Disability Nature" id="disabilityNature"  bind:value = {disabilityNature} margin={false} />
+          <br>
+          <Check  label="Able to work" bind:checked={canwork} margin={false} />
+          <Select label="Employment Type" id="employment_type" bind:value = {employmentType} options = {['Wage Employed', "Self-Employed", "Sheltered Workshop"]} margin={false}  />
+          <br>
+          <Input label="Admission Date" type="date"  bind:value = {admissionDate} margin={false} />
         </div>
-        
-        
-        <div class = "flex flex-col ml-3"> 
-            <div class = "-ml-45"> <TextArea disabled value = {data.child?.remarks || "N/A"} label = "Remarks" rows = 10/> </div>
-        </div>
+      <div style="height: fit-content">
+        <TextArea value = {data.child?.remarks || "N/A"} label="Remarks" rows={10}  margin={false} /></div>
+
     </div>
 </div>
 <!-- PERSONAL INFORMATION SECTION END-->
@@ -278,7 +229,7 @@
 <div class = "flex flex-row mt-10">
     <div class = "flex flex-col border-[var(--border)] border-4 ml-55 mr-10 p-6 w-170 min-w-150">
         {#if data.child?.schoolYearArray?.length > 0}
-        <div> <Select label = "Please select a school year" bind:value = {selected} options = {data.child?.schoolYearArray} /></div>
+        <div> <Select label="Please select a school year" bind:value = {selected} options = {data.child?.schoolYearArray} /></div>
         <div class = "mt-3 ml-8"> Education Type: {data.child?.educationHistory[data.child.schoolYearArray?.indexOf(selected)]?.education_type || "N/A"}</div>
         <div class = "mt-3 ml-8"> Education Level:  {data.child?.educationHistory[data.child.schoolYearArray?.indexOf(selected)]?.grade_level || "N/A"}</div>
         <div class = "mt-3 ml-8"> Education Status: {data.child?.educationHistory[data.child.schoolYearArray?.indexOf(selected)]?.student_status_type || "N/A"} </div>
@@ -299,33 +250,33 @@
 <div class = "flex flex-row border-[var(--border)] border-4 ml-55 mr-10 p-6 w-250 min-w-250">
     <div class = "flex flex-col !font-bold"> 
        <div>
-            <Check label = "PWD ID" checked = {data.child?.pwd?.has} disabled/>
+            <Check label="PWD ID" checked = {data.child?.pwd?.has} disabled/>
        </div>
        {#if data.child?.pwd?.has} 
        <div class = "w-150">
-            <Input type = "text" disabled label = "ID #" value = {data.child?.pwd.id} />
+            <Input type = "text" disabled label="ID #" value = {data.child?.pwd.id} />
        </div>
        <div class = "w-150">
-            <Input type = "text" disabled  label = "Expiry Date" value = {data.child.pwd.expiry}/>
+            <Input type = "text" disabled  label="Expiry Date" value = {data.child.pwd.expiry}/>
        </div>
        {/if}
 
        <div>
-            <Check disabled label = "Social Security" checked = {data.child?.socialProtection?.has}/>
+            <Check disabled label="Social Security" checked = {data.child?.socialProtection?.has}/>
        </div>
        {#if data.child?.socialProtection?.has} 
        <div class = "w-150">
             {#if data.child?.socialProtection?.community_club}
-            <Check checked disabled label = "Participation in Community Life" />
+            <Check checked disabled label="Participation in Community Life" />
             <div class = "w-150">
-            <Input disabled type = "text" label = "Year of Community Access" value = {data.child.socialProtection.community_year}/>
+            <Input disabled type = "text" label="Year of Community Access" value = {data.child.socialProtection.community_year}/>
             </div>
             {/if}
 
             {#if data.child?.socialProtection?.fam_life}
-            <Check checked disabled label = "Participation in Family Life" />
+            <Check checked disabled label="Participation in Family Life" />
             <div class = "w-150">
-            <Input disabled type = "text" label = "Year of Family Access" value = {data.child.socialProtection.family_year}/>
+            <Input disabled type = "text" label="Year of Family Access" value = {data.child.socialProtection.family_year}/>
             </div>
             {/if} 
        </div>
