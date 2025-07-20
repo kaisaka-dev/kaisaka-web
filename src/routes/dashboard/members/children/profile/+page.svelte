@@ -10,6 +10,22 @@
     export let data;
     //below are functions needed for the page
     let selected
+
+    // age is computed
+    let age = "";
+    function calculateAge() {
+        const birthDate = new Date(data.child.birthday);
+        const today = new Date();
+        let calculatedAge = today.getFullYear() - birthDate.getFullYear();
+        const hasHadBirthdayThisYear =
+          today.getMonth() > birthDate.getMonth() ||
+          (today.getMonth() === birthDate.getMonth() && today.getDate() >= birthDate.getDate());
+        if (!hasHadBirthdayThisYear) {
+          calculatedAge -= 1;
+        }
+        age = calculatedAge.toString();
+      }
+    calculateAge()
 </script>
 
 
@@ -74,7 +90,7 @@
 
             <div class = "flex flex-row">
                 <div class = "ml-4 mt-3 w-40"> Age</div>
-                <div class = "mt-4"> <Input disabled value = "test"/> </div>
+                <div class = "mt-4"> <Input disabled value ={age}/> </div>
             </div>
 
             <div class = "flex flex-row">
