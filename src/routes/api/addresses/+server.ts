@@ -1,6 +1,22 @@
 import { AddressesModel } from "$lib/models/addressesModel.js"
 import { error, json, type RequestHandler } from "@sveltejs/kit";
 
+export const GET: RequestHandler = async ({ url }) => {
+  const id = url.searchParams.get('id');
+  
+  if (!id) {
+    throw error(400, 'Missing required parameter: id');
+  }
+
+  const address = await AddressesModel.instance.findById(id);
+
+  if (!address) {
+    throw error(404, 'Address not found');
+  }
+
+  return json(address);
+};
+
 export const POST: RequestHandler = async({request}) => {
 
   let body: any = {}
