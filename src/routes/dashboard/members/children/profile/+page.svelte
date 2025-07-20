@@ -5,12 +5,11 @@
     import Check from '$components/input/Checkbox.svelte'
     import Select from '$components/input/Select.svelte'
 
+    import { goto } from '$app/navigation'
 
     export let data;
     //below are functions needed for the page
     let selected
-
-    //console.log(data.interventioninfo[0].history)
 </script>
 
 
@@ -30,13 +29,20 @@
             <a class = "hover:!text-[var(--green)]" href = "#Family Info">Family </a>
         </div>
         <div class = "hover:!text-[var(--green)]">
+            <a class = "hover:!text-[var(--green)]" href = "#Education Info">Education </a>
+        </div>
+        <div class = "hover:!text-[var(--green)]">
             <a class = "hover:!text-[var(--green)]" href = "#Documentation Info">Documents </a>
         </div>
+        
         <div>
             <a class = "hover:!text-[var(--green)]" href = "#Intervention Info">Interventions </a>
         </div>
+
+
+
         <div>
-            <button class="w-40 -ml-5 mt-10" onclick={() => location.href='profile/edit/' + data.member.id}>Edit Profile</button>
+            <button class="w-40 -ml-5 mt-10" on:click={() => goto(`/dashboard/members/children/profile/edit?id=${data.child.id}`)}>Edit Profile</button>
         </div>
     </div> 
     <div class = "!bg-[var(--green)] w-[4px] l-[100px] rounded-full ml-5"></div>
@@ -86,10 +92,10 @@
                 <div class = "mt-3"> <Input disabled value = {data.child?.barangay || "N/A"}/> </div>
             </div>
 
-            {#if data.child?.canWork || false}
+            {#if data.child?.canWork}
             <div class = "flex flex-row">
                 <div class = "ml-4 mt-3 w-40"> Employment Status </div>
-                <div class = "mt-7"> <Input value = {data.child.employmentType || "N/A"} disabled /> </div>
+                <div class = "mt-7"> <Input value = {data.child.employmentType} disabled /> </div>
             </div>
             {/if}
 
@@ -154,7 +160,7 @@
 
 
 <!--CONTAINER FOR EDUCATION HISTORY-->
-<div id ="Family Info" class = "mb-15"></div>
+<div id ="Education Info" class = "mb-15"></div>
 <div class = "flex flex-row">
     <div class = "mr-64">
         <h1 class = "!text-[var(--green)] font-[JSans] ml-55 -mb-5">
@@ -279,9 +285,9 @@
                 <div class =  "collapse">
                     <input type="checkbox" />
                     <div class = "collapse-title flex flex-row">
-                        {#if intervention.status === "regressed"}
+                        {#if intervention.status === "Regressed"}
                         <div class = "!bg-[var(--pink)] p-2 w-45 rounded-full text-center !font-bold !text-[var(--background)]" > Regressed </div> 
-                        {:else if intervention.status === "neutral"}
+                        {:else if intervention.status === "Neutral"}
                         <div class = "!bg-[var(--border)] p-2 w-45 rounded-full text-center !font-bold !text-[var(--background)]" > Neutral </div>
                         {:else} 
                         <div class = "!bg-[var(--green)] p-2 w-45 rounded-full text-center !font-bold !text-[var(--background)]" > Improved </div>
@@ -291,9 +297,9 @@
                     <div class = "collapse-content flex flex-col">
                         {#each intervention.history as status}
                         <div class= "flex flex-row mb-5">
-                            {#if status.status === "regressed"}
+                            {#if status.status === "Regressed"}
                             <div class = "!bg-[var(--pink)] p-2 w-45 rounded-full text-center !font-bold !text-[var(--background)]" > Regressed </div> 
-                            {:else if status.status === "neutral"}
+                            {:else if status.status === "Neutral"}
                             <div class = "!bg-[var(--border)] p-2 w-45 rounded-full text-center !font-bold !text-[var(--background)]" > Neutral </div>
                             {:else} 
                             <div class = "!bg-[var(--green)] p-2 w-45 rounded-full text-center !font-bold !text-[var(--background)]" > Improved </div>

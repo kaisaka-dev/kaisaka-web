@@ -1,5 +1,6 @@
 //will be used to make data more acceptable for front end modules
 export type childInformation =  {
+    id: string,
     firstName: string,
     lastName: string,
     birthday: string,
@@ -195,6 +196,7 @@ try{
     }
 
     const child: childInformation = {
+        id: childRecord.id,
         firstName: memberRecord.first_name || "",
         lastName: memberRecord.last_name  || "",
         birthday: memberRecord.birthday || "",
