@@ -158,11 +158,11 @@
                         <img src="" alt="">
                     </picture>
                         <div class = "w-30 min-w-30"> Address</div>
-                        <div> <Textinput disabled value = {data.memberRecord.addresses.address}/></div>
+                        <Textinput disabled value={data.memberRecord.addresses?.address ?? 'N/A'} />
                     </div>
                     <div class ="information">
-                        <div class = "w-30 min-w-30"> Barangay</div>
-                        <div> <Textinput disabled value = {data.barangay.name}/></div>
+                        <div class = "w-30 min-w-30"> Barangay</div> 
+                        <Textinput disabled value={data.barangay.name ?? 'N/A'} />
                     </div>
                     <div class ="information !mt-10">
                         <div class = "min-w-50"> Date of Admission</div>

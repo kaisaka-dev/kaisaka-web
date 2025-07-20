@@ -19,17 +19,22 @@ export async function load( {url, fetch} ) {
     }
 
     const memberRecord = await memberRecRes.json()
+    console.log(memberRecord)
 
     //gets record in barangay table
-    const barangayID = memberRecord.addresses.barangay_id;
-    const barangayRes = await fetch(`/api/barangays?id=${barangayID}`)
+    let barangayInfo = {}
+    const barangayID = memberRecord?.addresses?.barangay_id;
 
-    if (!barangayRes.ok) {
-        throw new Error('Failed to fetch barangay info');
+    if(barangayID != null){
+        const barangayRes = await fetch(`/api/barangays?id=${barangayID}`)
+        if (!barangayRes.ok) {
+            throw new Error('Failed to fetch barangay info');
+            
+        }
+        else{
+            barangayInfo = await barangayRes.json();
+        }
     }
-
-    const barangayInfo = await barangayRes.json();
-    //console.log("Barangay Record:", barangayInfo)
 
     //finds the family id of the record with the given member_id in the family table
     const familyRes = await fetch(`/api/family_members?id=${memberInfo.members.id}&select=*,families(*)&type=memberid`)
