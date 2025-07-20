@@ -112,6 +112,7 @@ try{
         throw new Error('Failed to get Child!')
     }
     const childRecord : ChildRecord = await childRecRes.json()
+    //console.log('childRecord: ', childRecord)
 
     //gets record in the member table
     const memberRecRes = await fetch(`/api/members/${childRecord.member_id}?select=*, addresses(*), employment_status(*)`)
@@ -121,15 +122,23 @@ try{
     }
 
     const memberRecord : MemberRecord = await memberRecRes.json()
+    //console.log('memberRecord: ', memberRecord)
 
     //gets record in barangay table
-    const barangayID = memberRecord.addresses.barangay_id;
-    const barangayRes = await fetch(`/api/barangays?id=${barangayID}`)
-    if (!barangayRes.ok) {
-        throw new Error('Failed to fetch barangay info');
-    }
+    let barangayInfo = {}
+    const barangayID = memberRecord?.addresses?.barangay_id;
 
-    const barangayInfo : BarangayRecord = await barangayRes.json();
+    if(barangayID != null){
+        const barangayRes = await fetch(`/api/barangays?id=${barangayID}`)
+        if (!barangayRes.ok) {
+            throw new Error('Failed to fetch barangay info');
+            
+        }
+        else{
+            barangayInfo = await barangayRes.json();
+        }
+    }
+    //console.log('brgy info: ', barangayInfo)
     
     //gets record in pwd table
     if(!childRecord.pwd_id) {
@@ -153,6 +162,7 @@ try{
     const socsecRes = await fetch(`/api/social_protection_status?id=${childRecord.id}`)
 
     const socsecRecord = await socsecRes.json()
+    //console.log('social protection: ', socsecRecord)
 
     if(!socsecRecord){
         socsecHas = false;
