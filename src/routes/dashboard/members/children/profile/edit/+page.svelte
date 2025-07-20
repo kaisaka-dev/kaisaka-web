@@ -21,6 +21,36 @@
     let disabilityNature: string = data.child?.disabilityNature || ""
     let admissionDate: string = data.child?.admissionDate
 
+    let existingFamily: {
+        firstName: string,
+        lastName:string,
+        is_child: string,
+        relationship: string,
+        isNew: boolean, //determines if object needs to be added
+        isDeleted: boolean //determines what records need to be deleted
+    }[] = []
+
+    let count: number = data.family?.length || 0
+
+    for(let i = 0; i <count; i++) {
+        let iskid = "No"
+         if(data.family[i]?.is_child){
+                iskid ="Yes"
+        }
+
+
+        existingFamily.push({
+            firstName: data.family[i]?.members.first_name,
+            lastName: data.family[i]?.members.last_name,
+            is_child: iskid,
+            relationship: data.family[i]?.relationship_type,
+            isNew: false,
+            isDeleted: false
+        })
+
+        console.log(existingFamily[i])
+    }
+
     const options_disNature = [
     "Deaf/Hard of Hearing",
     "Intellectual Disability",
@@ -40,7 +70,8 @@
 
     //below are functions needed for the page
         async function editData(): Promise<void> {
-            //Personal Information edits begin here
+
+            //PERSONAL INFORMATION EDITS BEGIN HERE
             const memberres = await fetch('/api/members', {
             method: "PUT",
             body: JSON.stringify({
@@ -118,6 +149,41 @@
                     'Content-Type': 'application/json'
                 }
             })
+
+            //FAMILY EDITS BEGIN HERE
+            //checks each record for updates
+            for(let i = 0; i < existingFamily.length;i++)
+            {
+                    let ischild: boolean = false
+                    console.log(existingFamily[i])
+                    if(existingFamily[i].is_child === "Yes"){
+                        ischild = true
+                    }
+
+                    const updateFamMember = await fetch('/api/family_members', {
+                        method:'PUT',
+                        body: JSON.stringify({
+                            family_id: data.family[i]?.family_id,
+                            member_id: data.family[i]?.member_id,
+                            relationship_type: existingFamily[i].relationship,
+                            is_child: ischild
+                        }),
+                        headers:{
+                            'Content-Type': 'application/json'
+                        }
+                    })
+
+                    const updateMember = await fetch('/api/members' , {
+                        method: "PUT",
+                        body:JSON.stringify({
+                            id: data.family[i].members.id,
+                            first_name: existingFamily[i].firstName,
+                            last_name: existingFamily[i].lastName
+                        })
+                    })
+                    
+                    //TODO: implement POST, DELETE 
+            }
             
 
         goto(`/dashboard/members/children/profile?id=${data.child.id}`);
@@ -202,24 +268,32 @@
         Family
         </h1>
     </div>
+    
 </div>
+
 <div class = "flex flex-row mt-10">
-    <div class = "flex flex-col border-[var(--border)] border-4 ml-55 mr-10 p-6 w-170 min-w-150">
+    <div class = "flex flex-col border-[var(--border)] border-4 ml-55 mr-10 p-6 w-350 min-w-275">
         {#if data.family?.length > 0}
-        {#each data.family as fammember}
+        <div class = "!bg-[var(--green)] p-3 flex flex-row mb-10">
+           <div class = "!text-[var(--background)] !font-bold !ml-10">Are They a Child? </div>
+           <div class = "!text-[var(--background)] !font-bold ml-20">Relationship </div>
+           <div class = "!text-[var(--background)] !font-bold ml-30">Last Name </div>
+           <div class = "!text-[var(--background)] !font-bold ml-35">First Name </div>
+        </div>
+        {#each existingFamily as fammember}
         <div class = "flex flex-row mb-5">
-            {#if fammember?.is_child == false}
-            <div class = "!bg-[var(--pink)] p-2 w-45 rounded-full text-center !font-bold !text-[var(--background)] mr-20" > {fammember.relationship_type} </div>
-            {:else if fammember?.is_child == true}
-                {#if fammember.members?.first_name === data.child?.firstName}
-                <div class = "!bg-[var(--green)] p-2 w-45 rounded-full text-center !font-bold !text-[var(--background)] mr-20" > Child </div>
-                {:else}
-                <div class = "!bg-[var(--green)] p-2 w-45 rounded-full text-center !font-bold !text-[var(--background)] mr-20" > Sibling </div>
-                {/if}
-            {/if}
-            <div class = "!font-[JSans] mt-2"> {fammember.members?.first_name} {fammember.members?.last_name}</div>
+            <div class = "w-50 ml-5"> <Select bind:value = {fammember.is_child} options = {["Yes", "No"]}/> </div>
+            <div class = "mt-4 ml-10 w-50"> <Input type = "text" bind:value = {fammember.relationship}/> </div>
+            <div class = "w-50 mt-4 ml-10">  <Input type = "text" bind:value ={fammember.lastName}/> </div>
+            <div class = "w-50 mt-4 ml-10">  <Input type = "text" bind:value ={fammember.firstName}/> </div>
+            <div class = "mt-1">
+                <button  class = "!bg-white !text-red-500 hover:!text-red-400 hover:!shadow-[var(--background)]">
+                    x
+                </button> 
+            </div>
         </div>
         {/each}
+        <div class = "w-150"> <button> Add Member </button> <span class = "!text-red-500 ml-5 !text-xs"> Make sure member is already registered!</span> </div>
         {:else}
             <div> Child is not part of any family </div>
         {/if}

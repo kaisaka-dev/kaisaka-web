@@ -291,9 +291,6 @@ try{
         }
     }
 
-    console.log(child)
-
-   
 
 
     return{
