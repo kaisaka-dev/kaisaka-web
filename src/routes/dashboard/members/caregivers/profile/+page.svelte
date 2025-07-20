@@ -5,10 +5,13 @@
     import type { EventType } from '$lib/types/event.ts'
 
     import Header from '$components/Header.svelte'
-    import Textinput from '$components/input/InputText.svelte'
-	import InputText from '$components/input/InputText.svelte';
+    import InputText from '$components/input/InputText.svelte'
+    import Select from '$components/input/Select.svelte';
 
-    export let data 
+    export let data
+    let editing = false
+    let disabled = !editing;         // for the input component (restricts from editing if true)
+    let required = editing;        // false since this is view, but placing it here for easier copy pasting to the EDIT counterpart of this module
 
     
 
@@ -84,7 +87,6 @@
         margin-top: 15px;
         margin-left:10px;
     }
-
     #sidebar {
         align-self: flex-start;
     }
@@ -128,53 +130,27 @@
             </h1>
 
             <div class = "!flex !flex-row border-[var(--border)] border-4">
-                <div class = "flex flex-col">
-                    <div class ="information">
-                        <div class = "min-w-30"> First Name</div>
-                        <div> <Textinput disabled value = {data.memberRecord.first_name}/></div>
-                    </div>
-                     <div class ="information">
-                        <div class = "min-w-30"> Last Name</div>
-                        <div> <Textinput disabled value = {data.memberRecord.last_name}/></div>
-                    </div>
-                    <div class ="information !mt-10">
-                        <div class = "min-w-35"> Contact No.</div>
-                        <div class = "ml-5"> <Textinput disabled value = {data.memberRecord.contact_number}/></div>
-                    </div>
-                    {#if data.member.facebook_link }
-                    <div class ="information">
-                        <div class = "min-w-40"> Facebook Link</div>
-                        <div> <Textinput disabled value = {data.member.facebook_link}/></div>
-                    </div> 
+                <div class = "flex flex-col my-4">
+                    <!-- the disabled and required are variables for easier copy pasting from VIEW to EDIT of the page-->
+                    <InputText  {disabled} {required} label="First Name" id="first-name" value={data.memberRecord.first_name} />
+                    <InputText  {disabled} {required} label="Last Name" id="last-name" value={data.memberRecord.last_name} />
+                    <InputText  {disabled} label="Birthday" id="birthday" value={data.memberRecord.contact_number} />
+                    <Select     {disabled} {required} label="Sex" id="sex" value={data.memberRecord.sex} />
+                    <InputText  {disabled} {required} label="Contact No." id="contact-no" value={data.memberRecord.contact_number} />
+                    <InputText  {disabled} label="Facebook Link" id="fb-link" value={data.member.facebook_link}/>
+                    <InputText  {disabled} label="Email" id="email" value={data.member.email}/>
+                    <InputText  {disabled} {required} label="Address" id="address" value={data.memberRecord.addresses?.address ?? 'N/A'} />
+                    <InputText  {disabled} {required} label="Barangay" id="barangay" value={data.barangay.name ?? 'N/A'} />
+                    <InputText  {disabled} {required} label="Occupation" id="occupation" value="TEST-VALUE" />
+                    <Select     {disabled} {required} label="Community Group" id="community-group" value="TEST-VALUE" />
+                    <Select     {disabled} {required} label="Income Generation" id="income-generation" value="TEST-VALUE" />
+
+                    <br>
+                    <InputText {disabled} label="Date of Admission" type="date" id="admission" value={new Date(data.memberRecord.admission_date).toISOString().split('T')[0]} />
+                    {#if sample.dateTermination || editing}
+                        <InputText {disabled} label="Date of Termination" type="date" id="termination"
+                                   value={sample.dateTermination ? new Date(sample.dateTermination).toISOString().split('T')[0] : ''} />
                     {/if}
-                    {#if data.member.email }
-                    <div class ="information">
-                        <div class = "min-w-40"> Email</div>
-                        <div> <Textinput disabled value = {data.member.email}/></div>
-                    </div>
-                    {/if}
-                    <div class ="information !mt-10"><picture>
-                        <source media="(min-width: )" srcset="">
-                        <img src="" alt="">
-                    </picture>
-                        <div class = "w-30 min-w-30"> Address</div>
-                        <Textinput disabled value={data.memberRecord.addresses?.address ?? 'N/A'} />
-                    </div>
-                    <div class ="information">
-                        <div class = "w-30 min-w-30"> Barangay</div> 
-                        <Textinput disabled value={data.barangay.name ?? 'N/A'} />
-                    </div>
-                    <div class ="information !mt-10">
-                        <div class = "min-w-50"> Date of Admission</div>
-                        <div class = "ml-5"> <InputText type = "date" value = {new Date(data.memberRecord.admission_date).toISOString().split('T')[0]} label = "" disabled/></div>
-                    </div>
-                    {#if sample.dateTermination!=null}
-                    <div class ="information">
-                        <div class = "min-w-50"> Date of Termination</div>
-                        <div class = "ml-5"> <InputText type = "date" disabled label = ""value ={sample.dateTermination.toISOString().split('T')[0]}  /></div>
-                    </div>
-                    {/if}
-                    
                 </div>
             </div>
         </div>
