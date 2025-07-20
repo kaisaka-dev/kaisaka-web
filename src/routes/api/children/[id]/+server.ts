@@ -5,7 +5,7 @@ import { error, json, type RequestHandler } from "@sveltejs/kit";
 export const GET: RequestHandler = async ({ params, url}) => {
     const id = params.id;
     const joinParams = parseJoinParams(url)
-    
+    console.log("SELECT: ", joinParams.select)
     if (!id)
         throw error(400, 'Missing ID');
     
@@ -24,8 +24,9 @@ export const GET: RequestHandler = async ({ params, url}) => {
                 case 'full-profile':
                     child = await ChildrenModel.instance.getJoin(
                         '*, members(*), education_status(*), disability_category(*), social_protection_status(*), pwd_ids(*)',
-                        { member_id: id }
+                        { id: id }
                     );
+                    console.log(child)
                     break;
                 default:
                     throw error(404, 'Select statement not found')       

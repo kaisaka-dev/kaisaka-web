@@ -111,7 +111,7 @@
             })
             
 
-        goto(`/dashboard/members/children/profile?=${data.child.id}`);
+        goto(`/dashboard/members/children/profile?id=${data.child.id}`);
     }
 
 </script>
@@ -144,7 +144,7 @@
         </div>
         
         <div>
-            <button class="w-40 -ml-5 mt-5" on:click={() => goto(`/dashboard/members/children/profile?=${data.child.id}`)} >Back</button>
+            <button class="w-40 -ml-5 mt-5" on:click={() => goto(`/dashboard/members/children/profile?id=${data.child.id}`)} >Back</button>
         </div>
     </div> 
     <div class = "!bg-[var(--green)] w-[4px] l-[100px] rounded-full ml-5"></div>

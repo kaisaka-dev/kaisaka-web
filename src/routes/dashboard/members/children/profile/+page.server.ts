@@ -106,14 +106,13 @@ try{
     //gets record in the child table
     const childID = url.searchParams.get('id');
     if (!childID) throw new Error("Missing child ID in query params");
-    
-    const childRecRes = await fetch(`/api/children/${childID}`)
+    const childRecRes = await fetch(`/api/children/${childID}?select=full-profile`)
 
     if(!childRecRes.ok) { //null check for if the kid doesn't exist
         throw new Error('Failed to get Child!')
     }
     const childRecord : ChildRecord = await childRecRes.json()
-    //console.log('childRecord: ', childRecord)
+    console.log('childRecord: ', childRecord)
 
     //gets record in the member table
     const memberRecRes = await fetch(`/api/members/${childRecord.member_id}?select=*, addresses(*), employment_status(*)`)

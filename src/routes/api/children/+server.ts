@@ -6,8 +6,6 @@ export const GET: RequestHandler = async ({ url }) => {
     const type = url.searchParams.get('type');
     const id = url.searchParams.get('id');
     
-    console.log('API received - type:', type, 'id:', id, 'full URL:', url.toString());
-    
     let children;
     
     if (type === 'pending-documents') {
