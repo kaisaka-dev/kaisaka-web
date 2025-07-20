@@ -143,6 +143,6 @@ export class InterventionModel extends TableManager<"intervention">('interventio
     async findByJoin_InTheProgramReport(config: ReportQueryConfig) {
         const joinStatement =`*, children!inner(id, birthday, members(first_name, last_name, sex), disability_category(name))`;
 
-        return this.countByJoinConfig(joinStatement, config)
+        return this.findWithJoinAndCount(joinStatement, config)
     }
 }
