@@ -3,7 +3,6 @@
 	import { redirect } from '@sveltejs/kit';
 import LoginModal from '$components/LoginModal.svelte'
 	import LoginError from '$components/login/LoginError.svelte';
-	import LoginInputLabel from '$components/login/LoginInputLabel.svelte';
 	import LoginOption from '$components/login/LoginOption.svelte';
   import SignUpinputLabel from "$components/login/SignUpInputLabel.svelte"
 	import type { ActionData } from './+page.js';
@@ -57,9 +56,9 @@ import LoginModal from '$components/LoginModal.svelte'
     
       <LoginError data = { data.error }/>
       
-      <LoginInputLabel labelText="EMAIL:" forType="email" inputName="email" placeholder="Type email ..."/>
+      <SignUpinputLabel labelText="EMAIL:" forType="email" inputName="email" placeholder="Type email ..."/>
     
-      <LoginInputLabel labelText="PASSWORD:" forType="password" inputName="password" placeholder="Type password ..."/>
+      <SignUpinputLabel labelText="PASSWORD:" forType="password" inputName="password" placeholder="Type password ..."/>
 
       <div style="text-align:center;">
           <a href="/sign-up" style="color: cornflowerblue;" class="hover:cursor-pointer hover:underline">
