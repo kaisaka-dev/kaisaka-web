@@ -1,48 +1,55 @@
-import TableManager from '$lib/types/manager.js';
-
-const members = TableManager('members');
-const children = TableManager('children');
-const family = TableManager('family_members');
-const barangay = TableManager('barangays');
-
-
-
-export async function load({params}){
+export async function load({params, fetch}){
     const { id } = params;
-
-    const memberDB = new members();
-    const memberInfo = await memberDB.findOneWithJoin('*, addresses(*), children(*),employment_status(*)', {
-        eq: {id: id }
-      });
-
-
-
+    const memberRes = await fetch(`/api/members/${id}?select=*,addresses(*),children(*),employment_status(*)`);
     
-    const childrenDB = new children();
-    const childRecord = await childrenDB.findOneWithJoin('*, education_status(*),disability_category(*), social_protection_status(*), pwd_ids(*)' , {
-        eq:{member_id: memberInfo.id}
-    });
+    if (!memberRes.ok) {
+        throw new Error('Failed to fetch member info');
+    }
+
+    const memberInfo = await memberRes.json();
+
+    const childRes = await fetch(`/api/children/${id}?select=full-profile`)
+
+     if (!childRes.ok) {
+        throw new Error('Failed to fetch member info');
+    }
+
+    const childRecord = await childRes.json();
      
     //gets record in barangay table
     const barangayID = memberInfo.addresses.barangay_id;
-    const barangayDB = new barangay();
-    const barangayInfo = await barangayDB.findOneWithJoin('*', {
-        eq:{id: barangayID}
-    })
+
+    const barangayRes = await fetch(`/api/barangays?id=${barangayID}`)
+
+    if (!barangayRes.ok) {
+        throw new Error('Failed to fetch barangay info');
+    }
     
+    const barangayInfo = await barangayRes.json();
     
     //finds the family id of the record with the given member_id in the family table
-    const familyDB = new family();
     
-    const familyInfo = await familyDB.findOneWithJoin('*, families(*)', {
-        eq:{member_id: memberInfo.id }
-    });
+    const familyRes = await fetch(`/api/family_members?id=${memberInfo.id}&select=*,families(*)&type=memberid`)
+    if (!familyRes.ok) {
+        throw new Error('Failed to fetch family member info');
+    }
     
-    const familyID = familyInfo.family_id; //this is what we'll use to actually find all the members of  the kid's family
-    
-    const entireFamily = await familyDB.findWithJoin('*, members(*)', {
-        eq: {family_id: familyID}
-    });
+    const familyInfo = await familyRes.json()
+    //console.log("Fam info: ", familyInfo)
+    const familyID = familyInfo?.[0]?.family_id //this is what we'll use to actually find all the members of  the kid's family
+
+    const entireFamilyRes = await fetch(`/api/family_members?id=${familyID}&select=*,members(*)&type=familyid`)
+
+    if(!entireFamilyRes.ok){
+        throw new Error('Failed to fetch family members');
+    }
+
+    const entireFamily = await entireFamilyRes.json()
+
+    console.log("Member: ", memberInfo)
+    console.log("childRecord: ", childRecord)
+    console.log("barangay: ", barangayInfo)
+    console.log("family: ", entireFamily)
     
     return {
         member: memberInfo,

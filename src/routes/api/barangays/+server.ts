@@ -2,6 +2,23 @@
 import { BarangayModel } from "$lib/models/barangaysModel.js";
 import { error, json, type RequestHandler } from "@sveltejs/kit";
 
+// READ - Get barangay by ID
+export const GET: RequestHandler = async ({ url }) => {
+  const id = Number(url.searchParams.get('id'));
+    
+  if (!id) {
+    throw error(400, 'Missing required parameter: id');
+  }
+
+  const brgy = await BarangayModel.instance.findById(id);
+
+  if (!brgy) {
+    throw error(404, 'Barangay not found');
+  }
+
+  return json(brgy);
+};
+
 export const POST: RequestHandler = async({request}) => {
   
   let body: any = {}

@@ -1,5 +1,38 @@
 import { InterventionModel } from "$lib/models/interventionModel.js";
 import { error, json, type RequestHandler } from "@sveltejs/kit";
+import { parseJoinParams } from "$lib/types/joining.js";
+
+export const GET: RequestHandler = async ({ url }) => {
+  const id = url.searchParams.get('id');
+  const type = url.searchParams.get('type');
+  const joinParams = parseJoinParams(url);
+  
+  if (!id || !joinParams.select || !type) {
+    throw error(400, 'Missing id, type, or select query param');
+  }
+
+  let intervention;
+
+  try {
+    switch (type) {
+      case 'serviceCategory':
+        intervention = await InterventionModel.instance.getMultipleJoin(joinParams.select, { eq: {child_id: id} });
+        break;
+      default:
+        throw error(400, 'Invalid type parameter');
+    }
+
+    if (!intervention) {
+      throw error(404, 'Intervention not found');
+    }
+
+    return json(intervention);
+  } catch (err) {
+    console.error('Error fetching intervention:', err);
+    throw error(500, 'Internal Server Error');
+  }
+};
+
 
 export const POST: RequestHandler = async ({ request }) => {
   let body: any = {}

@@ -95,4 +95,8 @@ export class InterventionHistoryModel extends TableManager<"intervention_history
         const result = await this.deleteOne({ id });
         return result !== null;
     }
+
+    async getMultipleJoin(select: string, filters: Record<string, string | number>): Promise<InterventionHistoryRow[] | null> {
+        return await this.findWithJoin(select, filters );
+    }
 }

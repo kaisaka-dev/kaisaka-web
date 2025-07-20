@@ -298,4 +298,8 @@ export class ChildrenModel extends TableManager<"children">('children') {
     return this.findWithJoin(joinStatement, id ? {eq: {id: id}} : {})
   }
 
+  async getJoin(select: string, filters: Record<string, string | number>): Promise<ChildrenRow | null> {
+    return this.findOneWithJoin(select, { eq: filters });
+  }
+
 }

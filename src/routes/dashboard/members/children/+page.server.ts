@@ -70,7 +70,7 @@ export const load: PageLoad = async ({ fetch }) => {
 				educType: education?.education_type || '',
 				gradeLevel: education?.grade_level || '',
 				lastUpdated: formatDate(education?.updated_at || null),
-				link: `/dashboard/members/children/profile?=${child.id}`
+				link: `/dashboard/members/children/profile?id=${child.id}`
 			};
 		});
 

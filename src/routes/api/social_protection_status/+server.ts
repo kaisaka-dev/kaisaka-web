@@ -1,6 +1,23 @@
 import { socialProtectionStatusModel } from "$lib/models/socialProtectionStatusModel.js";
 import { error, json, type RequestHandler } from "@sveltejs/kit";
 
+
+export const GET: RequestHandler = async ({ url }) => {
+  const id = url.searchParams.get('id');
+  
+  if (!id) {
+    throw error(400, 'Missing required parameter: id');
+  }
+
+  const socProtStatus = await socialProtectionStatusModel.instance.findByChildId(id);
+
+  if (! socProtStatus) {
+    throw error(404, 'Social Protection Status not found');
+  }
+
+  return json({ data:  socProtStatus });
+};
+
 export const POST: RequestHandler = async ({ request }) => {
   let body: any = {}
   try {

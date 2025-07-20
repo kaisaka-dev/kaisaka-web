@@ -6,14 +6,11 @@ export const GET: RequestHandler = async ({ params, url}) => {
     const id = params.id;
     const joinParams = parseJoinParams(url)
     
-
     if (!id)
         throw error(400, 'Missing ID');
     
-
     try{
         let child;
-        
         if (!joinParams.hasParams)
             child = await ChildrenModel.instance.findById(id)
         else {
@@ -23,6 +20,12 @@ export const GET: RequestHandler = async ({ params, url}) => {
                     break;
                 case 'pending-documents':
                     child = await ChildrenModel.instance.getPendingDocuments(id)
+                    break;
+                case 'full-profile':
+                    child = await ChildrenModel.instance.getJoin(
+                        '*, members(*), education_status(*), disability_category(*), social_protection_status(*), pwd_ids(*)',
+                        { member_id: id }
+                    );
                     break;
                 default:
                     throw error(404, 'Select statement not found')       

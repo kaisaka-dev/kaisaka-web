@@ -169,4 +169,12 @@ export class FamilyMembersModel extends TableManager<"family_members">('family_m
     const result = await this.deleteOne(reference);
     return result !== null;
   }
+
+  async getOneJoin(select: string, filters: Record<string, string | number>): Promise<FamilyMembersRow | null> {
+    return await this.findOneWithJoin(select, filters );
+  }
+
+  async getMultipleJoin(select: string, filters: Record<string, string | number>): Promise<FamilyMembersRow[] | null> {
+    return await this.findWithJoin(select, filters );
+  }
 }

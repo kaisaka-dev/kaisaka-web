@@ -10,7 +10,7 @@
     //below are functions needed for the page
     let selected
 
-    console.log(data.interventioninfo[0].history)
+    //console.log(data.interventioninfo[0].history)
 </script>
 
 

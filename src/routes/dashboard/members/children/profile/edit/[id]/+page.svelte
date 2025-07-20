@@ -339,7 +339,7 @@
             <div class = "!font-[JSans] mt-2 w-50"> <Select value = "FALSE" options = {["TRUE", "FALSE"]}/> </div>
             {/if}
             <div class = "!font-[JSans] mt-5 ml-20"> <input class = "text" value = "{family.relationship_type}"/> </div>
-            <div class = "!font-[JSans] mt-5 ml-30"> <input class = "text" value = "{family.first_name} {family.members.last_name}"/> </div>
+            <div class = "!font-[JSans] mt-5 ml-30"> <input class = "text" value = "{family.members.first_name} {family.members.last_name}"/> </div>
             <div class = "!mt-2">
                     <button 
                         class = "!bg-[var(--background)] !text-red-500 hover:!text-red-400 hover:!shadow-[var(--background)]"

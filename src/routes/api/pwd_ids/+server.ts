@@ -1,6 +1,22 @@
 import { pwdIdsModel } from "$lib/models/pwdIdsModel.js";
 import { error, json, type RequestHandler } from "@sveltejs/kit";
 
+export const GET: RequestHandler = async ({ url }) => {
+  const id = url.searchParams.get('id');
+  
+  if (!id) {
+    throw error(400, 'Missing required parameter: id');
+  }
+
+  const pwdID = await pwdIdsModel.instance.findById(id);
+
+  if (!pwdID) {
+    throw error(404, 'PWD ID not found');
+  }
+
+  return json(pwdID);
+};
+
 export const POST: RequestHandler = async ({ request }) => {
   let body: any = {}
   try {

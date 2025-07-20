@@ -120,4 +120,8 @@ export class InterventionModel extends TableManager<"intervention">('interventio
         const result = await this.deleteOne({ id });
         return result !== null;
     }
+
+    async getMultipleJoin(select: string, filters: Record<string, string | number>): Promise<InterventionRow[] | null> {
+        return await this.findWithJoin(select, filters );
+    }
 }

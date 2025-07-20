@@ -1,5 +1,42 @@
 import { FamilyMembersModel } from "$lib/models/FamilyMembersModel.js";
+import { parseJoinParams } from "$lib/types/joining.js";
 import { error, json, type RequestHandler } from "@sveltejs/kit";
+
+export const GET: RequestHandler = async ({ url }) => {
+  const id = url.searchParams.get('id');
+  const type = url.searchParams.get('type');
+  const joinParams = parseJoinParams(url);
+  
+  if (!id || !joinParams.select || !type) {
+    throw error(400, 'Missing id, type, or select query param');
+  }
+
+  let family_member;
+
+  try {
+    switch (type) {
+      case 'memberid':
+        family_member = await FamilyMembersModel.instance.getMultipleJoin(joinParams.select, { eq: { member_id: id } });
+        break;
+      case 'familyid':
+        family_member = await FamilyMembersModel.instance.getMultipleJoin(joinParams.select, { eq: { family_id: id } });
+        break;
+      default:
+        throw error(400, 'Invalid type parameter');
+    }
+
+    console.log('in API: ', family_member)
+
+    if (!family_member) {
+      throw error(404, 'Family Member not found');
+    }
+
+    return json(family_member);
+  } catch (err) {
+    console.error('Error fetching family member:', err);
+    throw error(500, 'Internal Server Error');
+  }
+};
 
 export const POST: RequestHandler = async({request}) => {
   

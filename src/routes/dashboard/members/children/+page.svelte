@@ -18,7 +18,7 @@ let filteredData = $state(childrenData);
 let isLoading = $state(false);
 let error = $state(data.error || null);
 
-console.log(data)
+//console.log(data)
 
 // const childrenList: ChildrenList[] = [
 //     {

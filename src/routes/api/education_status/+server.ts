@@ -1,6 +1,22 @@
 import { educationStatusModel } from "$lib/models/educationStatusModel.js";
 import { error, json, type RequestHandler } from "@sveltejs/kit";
 
+export const GET: RequestHandler = async ({ url }) => {
+  const id = url.searchParams.get('id');
+  
+  if (!id) {
+    throw error(400, 'Missing required parameter: id');
+  }
+
+  const educStatus = await educationStatusModel.instance.findByChildId(id);
+
+  if (!educStatus) {
+    throw error(404, 'Education Status Not Found');
+  }
+
+  return json(educStatus);
+};
+
 export const POST: RequestHandler = async ({ request }) => {
   let body: any = {}
   try {

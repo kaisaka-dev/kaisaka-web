@@ -231,6 +231,5 @@ export default function TableManager<T extends tableNames>(table: T){
     }
   }
 
-
   return TableManager;
 }

@@ -98,6 +98,10 @@ export class membersModel extends TableManager<"members">('members') {
    * @returns member record or null
    */
   async findById(id: string): Promise<MembersRow | null> {
-    return this.findOne({ id });
+    return await this.findOne({ id });
+  }
+
+  async getJoin(select: string, filters: Record<string, string >): Promise<MembersRow | null> {
+    return await this.findOneWithJoin(select, filters);
   }
 }

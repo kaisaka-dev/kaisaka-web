@@ -1,6 +1,29 @@
 import { InterventionHistoryModel } from "$lib/models/interventionHistoryModel.js";
 import { error, json, type RequestHandler } from "@sveltejs/kit";
 
+export const GET: RequestHandler = async ({ url }) => {
+  const id = url.searchParams.get('id');
+  
+  if (!id) {
+    throw error(400, 'Missing id');
+  }
+
+  let interventionHistory;
+
+  try {
+    interventionHistory = await InterventionHistoryModel.instance.findByInterventionId(id)
+
+    if (!interventionHistory) {
+      throw error(404, 'Intervention history not found');
+    }
+
+    return json(interventionHistory);
+  } catch (err) {
+    console.error('Error fetching intervention history:', err);
+    throw error(500, 'Internal Server Error');
+  }
+};
+
 export const POST: RequestHandler = async ({ request }) => {
   let body: any = {}
   try {

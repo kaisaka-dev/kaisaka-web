@@ -1,35 +1,3 @@
-import TableManager from '$lib/types/manager.js';
-import { fa } from 'zod/v4/locales';
-
-//declarations for the different tables we'll be querying
-const members = TableManager('members');
-const memberDB = new members();
-
-const barangay = TableManager('barangays');
-const barangayDB = new barangay();
-
-
-const children = TableManager('children');
-const childrenDB = new children();
-
-const family = TableManager('family_members');
-const familyDB = new family();
-
-const pwd = TableManager('pwd_ids');
-const pwdDB = new pwd();
-
-const socialSecurity = TableManager('social_protection_status');
-const socsecDB = new socialSecurity();
-
-const educationStatus = TableManager('education_status');
-const educationDB = new educationStatus();
-
-const intervention = TableManager('intervention');
-const interventionDB = new intervention();
-
-const interventionHistory = TableManager('intervention_history');
-const interventionHistoryDB = new interventionHistory();
-
 //will be used to make data more acceptable for front end modules
 export type childInformation =  {
     firstName: string,
@@ -120,8 +88,7 @@ type familyquery = {
     family_id: string
 }
 
-
-let entireFamily
+let entireFamily = {}
 let pwdHas:boolean
 let pwdID:string
 let pwdExpiry:string
@@ -132,52 +99,60 @@ let socsecComLife: boolean
 let socsecComYear: number
 
 
-
-export async function load( { url }  ) {
+export async function load( { url, fetch}  ) {
     
 try{
     //gets record in the child table
-    const childRecord = await childrenDB.findOneWithJoin('*, members(*), education_status(*),disability_category(*), pwd_ids(*)' , {
-    eq:{id: url.searchParams.get('')}
-    }) as ChildRecord;
+    const childID = url.searchParams.get('id');
+    if (!childID) throw new Error("Missing child ID in query params");
+    
+    const childRecRes = await fetch(`/api/children/${childID}`)
 
-    console.log(childRecord)
-    if(!childRecord) { //null check for if the kid doesn't exist
+    if(!childRecRes.ok) { //null check for if the kid doesn't exist
         throw new Error('Failed to get Child!')
     }
+    const childRecord : ChildRecord = await childRecRes.json()
 
     //gets record in the member table
-    const memberRecord = await memberDB.findOneWithJoin('*, addresses(*), employment_status(*)', {
-    eq: {id : childRecord.member_id}
-    }) as MemberRecord;
+    const memberRecRes = await fetch(`/api/members/${childRecord.member_id}?select=*, addresses(*), employment_status(*)`)
 
-    if(!memberRecord ){ //null check for if the member record doesn't exist
+    if(!memberRecRes.ok ){ //null check for if the member record doesn't exist
         throw new Error('Member Info doesn\'t exist!')
     }
 
+    const memberRecord : MemberRecord = await memberRecRes.json()
+
     //gets record in barangay table
-    const barangayID = memberRecord.addresses?.barangay_id
-    const barangayInfo = await barangayDB.findOneWithJoin('*', {
-        eq:{id: barangayID}
-    }) as BarangayRecord;
+    const barangayID = memberRecord.addresses.barangay_id;
+    const barangayRes = await fetch(`/api/barangays?id=${barangayID}`)
+    if (!barangayRes.ok) {
+        throw new Error('Failed to fetch barangay info');
+    }
+
+    const barangayInfo : BarangayRecord = await barangayRes.json();
     
     //gets record in pwd table
     if(!childRecord.pwd_id) {
         pwdHas = false;
     }
     else {
-        const pwdRecord = await pwdDB.findOneWithJoin("*", {
-            eq:{id: childRecord.pwd_id}
-        })
+        const pwdRecRes = await fetch(`/api/pwd_ids?id=${childRecord.pwd_id}`)
+
+        if (!pwdRecRes.ok) {
+            throw new Error('Failed to fetch PWD ID record');
+        }
+        const pwdRecord = await pwdRecRes.json();
         pwdHas = true;
-        pwdID = pwdRecord[0].pwd_id
+        pwdID = pwdRecord.pwd_id
         pwdExpiry = pwdRecord[0]?.expiry_date    
+
+        console.log("pwd id: ", pwdRecord)
     }
 
     //gets record in social protection table
-    const socsecRecord = await socsecDB.findOneWithJoin('*',{
-        eq:{child_id: childRecord.id}
-    }) as socsecRecord
+    const socsecRes = await fetch(`/api/social_protection_status?id=${childRecord.id}`)
+
+    const socsecRecord = await socsecRes.json()
 
     if(!socsecRecord){
         socsecHas = false;
@@ -198,10 +173,10 @@ try{
     let educationArray = []
     let yearArray = []
 
-    const educationHistory = await educationDB.findWithJoin('*', {
-        eq:{child_id: childRecord.id}
-    })
-
+    const educationRes = await fetch(`/api/education_status?id=${childRecord.id}`)
+    
+    const educationHistory = await educationRes.json()
+    
     if(educationHistory){
         for(let i = 0; i < educationHistory.length;i++) {
             educationArray.push(educationHistory[i])
@@ -222,7 +197,7 @@ try{
         disabilityCategory: childRecord.disability_category?.name  || "",
         disabilityNature: childRecord.disability_nature || "",
         admissionDate: new Date(memberRecord.admission_date).toISOString().split('T')['0'] || "",
-        philHealth: childRecord.philHealth || false,
+        philHealth: childRecord.philhealth || false,
         med_cert: childRecord.med_cert || false,
         birth_cert: childRecord.has_birth_cert || false,
         barangay_cert: childRecord.has_barangay_cert || false,
@@ -246,44 +221,42 @@ try{
         schoolYearArray: yearArray
     }
 
-
-    const familyInfo = await familyDB.findOneWithJoin('*, families(*)', {
-    eq:{member_id: childRecord.member_id}
-    }) as familyquery;
-
-
-    if(!familyInfo) {
-           entireFamily = {
-        } 
+    const familyRes = await fetch(`/api/family_members?id=${childRecord.member_id}&select=*,families(*)&type=memberid`)
+    if (!familyRes.ok) {
+        throw new Error('Failed to fetch family member info');
     }
-    
-    else {
-        //finds the family id of the record with the given member_id in the family table
-        entireFamily = await familyDB.findWithJoin('*, members(*)', {
-        eq: {family_id: familyInfo.family_id }
-        })  
+    const familyInfo = await familyRes.json()
+
+    if (!familyInfo || familyInfo.length === 0 || !familyInfo[0]?.family_id) {
+        entireFamily = {}
+    } else {
+        const familyID = familyInfo[0].family_id
+        const entireFamilyRes = await fetch(`/api/family_members?id=${familyID}&select=*,members(*)&type=familyid`)
         
+        if (!entireFamilyRes.ok) {
+            throw new Error('Failed to fetch family members');
+        }
+
+        entireFamily = await entireFamilyRes.json()
     }
 
 
-    const interventioninfo = await interventionDB.findWithJoin('*, service_category(*)' , {
-        eq:{child_id: childRecord.id}
-    });
+    const interventionRes = await fetch(`/api/intervention?id=${childRecord.id}&select=*, service_category(*)&type=serviceCategory`)
+
+    const interventioninfo = await interventionRes.json()
 
     if(interventioninfo){
         for(let i = 0; i < interventioninfo.length;i++){
-           const interventionhistoryinfo = await interventionHistoryDB.findWithJoin('*',{
-            eq: {intervention_id: interventioninfo[i].id}
-            })
-
-            interventioninfo[i]['history'] = interventionhistoryinfo
+           const interventionhistoryinfo = await fetch(`/api/intervention_history?id=${interventioninfo[i].id}`)
+          
+           interventioninfo[i]['history'] = await interventionhistoryinfo.json()
         }
     }
 
-
-
-   
-
+    console.log("Child: ", child)
+    console.log("family: ", entireFamily)
+    console.log("member: ", memberRecord)
+    console.log("inteventioninfo: ", interventioninfo)
 
     return{
         child: child,

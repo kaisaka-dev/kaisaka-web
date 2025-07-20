@@ -1,60 +1,66 @@
-import TableManager from '$lib/types/manager.js';
+export async function load( {url, fetch} ) {
+    //gets record in the member table
+    const id = url.searchParams.get('id')
+    if(!id) {
+        throw new Error("Missing id")
+    }
+    const memberRes = await fetch(`/api/caregivers/${id}?select=*, members(*)`)
 
-export async function load( {url} ) {
-//gets record in the member table
-const caregivers = TableManager('caregivers')
-const caregiverDB = new caregivers()
-const members = TableManager('members')
-const memberDB = new members()
+    if(!memberRes.ok){
+        throw new Error('Failed to fetch member info');
+    }
+
+    const memberInfo = await memberRes.json()
+
+    const memberRecRes = await fetch(`/api/members/${memberInfo.members.id}?select=*,addresses(*)`);
+        
+    if(!memberRecRes.ok){
+        throw new Error('Failed to fetch member record info');
+    }
+
+    const memberRecord = await memberRecRes.json()
+
+    //gets record in barangay table
+    const barangayID = memberRecord.addresses.barangay_id;
+    const barangayRes = await fetch(`/api/barangays?id=${barangayID}`)
+
+    if (!barangayRes.ok) {
+        throw new Error('Failed to fetch barangay info');
+    }
+
+    const barangayInfo = await barangayRes.json();
+    //console.log("Barangay Record:", barangayInfo)
+
+    //finds the family id of the record with the given member_id in the family table
+    const familyRes = await fetch(`/api/family_members?id=${memberInfo.members.id}&select=*,families(*)&type=memberid`)
+    if (!familyRes.ok) {
+        throw new Error('Failed to fetch family member info');
+    }
+    
+    const familyInfo = await familyRes.json()
+    
+    //console.log("Family Info:", familyInfo)
+
+    let familyArray = [];
+
+    for(let i in familyInfo) { //loop over every record, query the db for every family with the id, and add the members to an array
+
+        let entireFamilyRes = await fetch(`/api/family_members?id=${familyInfo[i].family_id}&select=*,members(*)&type=familyid`)
+
+        if(!entireFamilyRes.ok){
+            throw new Error('Failed to fetch family members');
+        }
+
+        const entireFamily = await entireFamilyRes.json()
+
+        familyArray.push(entireFamily)
+    }
 
 
-if(!url.searchParams.get('id')) {
-    throw new Error("Missing id")
-}
-
-const memberInfo = await caregiverDB.findOneWithJoin('*, members(*)', {
-    eq: {id: url.searchParams.get('id')}
-});
-
-
-
-const memberRecord = await memberDB.findOneWithJoin('*,addresses(*)', {
-    eq:{id: memberInfo.members.id}
-})
-
-//gets record in barangay table
-const barangayID = memberRecord.addresses.barangay_id;
-const barangay = TableManager('barangays');
-const barangayDB = new barangay();
-const barangayInfo = await barangayDB.findOneWithJoin('*', {
-    eq:{id: barangayID}
-})
-
-
-//finds the family id of the record with the given member_id in the family table
-const family = TableManager('family_members');
-const familyDB = new family();
-
-const familyInfo = await familyDB.findWithJoin('*, families(*)', { //returns every record in the family table with this parent's id
-    eq:{member_id: memberInfo.members.id }
-});
-
-let familyArray = [];
-
-for(let i in familyInfo) { //loop over every record, query the db for every family with the id, and add the members to an array
-
-    let entireFamily = await familyDB.findWithJoin('*,members(*)', {
-    eq: {family_id: familyInfo[i].family_id}
-    });
-
-    familyArray.push(entireFamily)
-}
-
-
-return {
-    member: memberInfo,
-    memberRecord: memberRecord,
-    barangay: barangayInfo,
-    family: familyArray,
-  };
+    return {
+        member: memberInfo,
+        memberRecord: memberRecord,
+        barangay: barangayInfo,
+        family: familyArray,
+    };
 }
