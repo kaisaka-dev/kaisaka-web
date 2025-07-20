@@ -12,6 +12,7 @@ import { error, json, type RequestHandler } from "@sveltejs/kit";
  * - PUT /api/income_type - Update existing income type
  * - DELETE /api/income_type - Delete income type by id
  */
+
 export const GET: RequestHandler = async({ url }) => {
   const caregiver_id = url.searchParams.get('caregiver_id');
   const category = url.searchParams.get('category');
@@ -33,13 +34,7 @@ export const GET: RequestHandler = async({ url }) => {
   }
 }
 
-export const POST: RequestHandler = async({request, locals }) => {
-  const { session, user } = await locals.safeGetSession();
-
-  if (!session) {
-    return new Response('Unauthorized', { status: 401 });
-  }
-  
+export const POST: RequestHandler = async({request }) => {
   let body: any = {}
   try {
     body = await request.json();

@@ -2,7 +2,12 @@ import { socialProtectionStatusModel } from "$lib/models/socialProtectionStatusM
 import { error, json, type RequestHandler } from "@sveltejs/kit";
 
 
-export const GET: RequestHandler = async ({ url }) => {
+export const GET: RequestHandler = async ({ url , locals }) => {
+  const { session, user } = await locals.safeGetSession();
+
+  if (!session) {
+    return new Response('Unauthorized', { status: 401 });
+  }
   const id = url.searchParams.get('id');
   
   if (!id) {

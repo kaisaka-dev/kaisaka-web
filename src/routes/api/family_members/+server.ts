@@ -81,13 +81,7 @@ export const GET: RequestHandler = async ({ url }) => {
   }
 };
 
-export const POST: RequestHandler = async({request, locals }) => {
-  const { session, user } = await locals.safeGetSession();
-
-  if (!session) {
-    return new Response('Unauthorized', { status: 401 });
-  }
-  
+export const POST: RequestHandler = async({ request }) => {
   let body: any = {}
   try {
     body = await request.json();

@@ -16,7 +16,10 @@ export type Children = {
 	active: string;
 };
 
-export const load: PageLoad = async ({ fetch }) => {
+export const load: PageServerLoad = async ({ fetch, locals }) => {
+	 if (!locals.user) {
+        throw redirect(303, '/');
+    }
 	// Function which calculates age from birthday
 	const calculateAge = (birthDate: string | null): number => {
 		if (!birthDate) return 0;

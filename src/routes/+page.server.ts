@@ -19,7 +19,7 @@ export const actions: Actions = {
     
     const { data, error: authError } = await supabase.auth.signInWithPassword({ email: email, password: password })
     
-    console.log('Supabase', { data, authError })
+    console.log('Supabase', { authError })
   
     if (authError) {
       console.error(authError)
@@ -27,7 +27,7 @@ export const actions: Actions = {
     } else {
       console.log('✅ Login successful:', data.session ? 'Session created' : 'No session')
     
-      redirect(303, '/dashboard')
+      return redirect(303, '/dashboard')
     }
   }
 } satisfies Actions

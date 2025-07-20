@@ -1,5 +1,9 @@
+import { redirect } from "@sveltejs/kit";
 
-export async function load( {url, fetch} ) {
+export async function load( {url, fetch, locals}){
+    if (!locals.user) {
+        throw redirect(303, '/');
+    }
     //gets record in the member table
     const id = url.searchParams.get('id')
     if(!id) {
