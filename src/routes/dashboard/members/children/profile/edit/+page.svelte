@@ -21,6 +21,13 @@
     let disabilityNature: string = data.child?.disabilityNature || ""
     let admissionDate: string = data.child?.admissionDate
 
+    let educType: string = "N/A"
+    let educStatus: string = "N/A"
+    let educLevel: string = "N/A"
+    let studentStatus: string = "N/A"
+    let yearStart: number 
+    let yearEnd: number 
+
     let existingFamily: {
         firstName: string,
         lastName:string,
@@ -38,7 +45,6 @@
                 iskid ="Yes"
         }
 
-
         existingFamily.push({
             firstName: data.family[i]?.members.first_name,
             lastName: data.family[i]?.members.last_name,
@@ -48,9 +54,28 @@
             isDeleted: false
         })
 
-        console.log(existingFamily[i])
     }
 
+    let educHistory: {
+        Educationtype: string,
+        Educationlevel: string,
+        Educationstatus: string,
+        yearStart: number,
+        yearEnd: number
+    }[] = []
+
+    for(let i = 0; i < data.child?.educationHistory.length;i++){
+        educHistory.push({
+            Educationtype: data.child.educationHistory[i]?.education_type,
+            Educationlevel: data.child.educationHistory[i]?.grade_level,
+            Educationstatus: data.child.educationHistory[i]?.student_status_type,
+            yearStart: data.child?.educationHistory[i]?.year_start,
+            yearEnd: data.child?.educationHistory[i]?.year_end
+
+        })
+    }
+    
+    
     const options_disNature = [
     "Deaf/Hard of Hearing",
     "Intellectual Disability",
@@ -65,10 +90,29 @@
     "Multiple Disability",
     ];
 
+    const educ_options = [
+        'Inclusive',
+        'Special',
+        'Nonformal',
+        'Integrated'
+    ]
 
-
+    const student_options = [
+        'past_student',
+        'enrolled',
+        'dropped_out',
+        'completed'
+    ]
 
     //below are functions needed for the page
+
+    function updateField(index:number){
+        educType = educHistory[index].Educationtype
+        educLevel = educHistory[index].Educationlevel
+        educStatus = educHistory[index].Educationstatus
+        yearStart = educHistory[index].yearStart
+        yearEnd = educHistory[index].yearEnd
+    }
         async function editData(): Promise<void> {
 
             //PERSONAL INFORMATION EDITS BEGIN HERE
@@ -179,11 +223,28 @@
                             id: data.family[i].members.id,
                             first_name: existingFamily[i].firstName,
                             last_name: existingFamily[i].lastName
-                        })
+                        }),
+                         headers:{
+                            'Content-Type': 'application/json'
+                        }
                     })
                     
                     //TODO: implement POST, DELETE 
             }
+
+            console.log(data.child?.educationHistory)
+            //EDUCATION RECORD UPDATES BEGIN HERE
+            const updateEducRecord = await fetch('/api/education_status', {
+                method: "PUT",
+                body:JSON.stringify({
+                    id: data.child.educationHistory[data.child.schoolYearArray?.indexOf(selected)]?.id,
+                    education_type: educType,
+                    education_status: educStatus,
+                    grade_level: educLevel,
+                    year_start: yearStart,
+                    year_end:yearEnd
+                })
+            })
             
 
         goto(`/dashboard/members/children/profile?id=${data.child.id}`);
@@ -313,13 +374,16 @@
 </div>
 <div class = "flex flex-row mt-10">
     <div class = "flex flex-col border-[var(--border)] border-4 ml-55 mr-10 p-6 w-170 min-w-150">
-        {#if data.child?.schoolYearArray?.length > 0}
-        <div> <Select label="Please select a school year" bind:value = {selected} options = {data.child?.schoolYearArray} /></div>
-        <div class = "mt-3 ml-8"> Education Type: {data.child?.educationHistory[data.child.schoolYearArray?.indexOf(selected)]?.education_type || "N/A"}</div>
-        <div class = "mt-3 ml-8"> Education Level:  {data.child?.educationHistory[data.child.schoolYearArray?.indexOf(selected)]?.grade_level || "N/A"}</div>
-        <div class = "mt-3 ml-8"> Education Status: {data.child?.educationHistory[data.child.schoolYearArray?.indexOf(selected)]?.student_status_type || "N/A"} </div>
-        <div class = "mt-3 ml-8"> School Year Start:  {data.child?.educationHistory[data.child.schoolYearArray?.indexOf(selected)]?.year_start || "N/A"} </div>
-        <div class = "mt-3 ml-8"> School Year End: {data.child?.educationHistory[data.child.schoolYearArray?.indexOf(selected)]?.year_end || "N/A"} </div>
+        {#if educHistory.length > 0}
+        <div> <Select label="Please select a school year" bind:value = {selected} options = {data.child?.schoolYearArray}/></div>
+        {#if selected}
+        {updateField(data.child?.schoolYearArray?.indexOf(selected))}
+        <div class = "mt-3"> <Select label="Education Type:" bind:value = {educType} options = {educ_options} /></div>
+        <div class = "mt-3"> <Input label="Education Level:" bind:value = {educLevel}/></div>
+        <div class = "mt-3"> <Select label="Education Status:" bind:value = {educStatus} options = {student_options}/> </div>
+        <div class = "mt-3"> <Input label="School Year Start:" bind:value = {yearStart}/> </div>
+        <div class = "mt-3"> <Input label="School Year End:" bind:value = {yearEnd}/> </div>
+        {/if}
         {:else}
         This child has no education history
         {/if}
@@ -371,25 +435,25 @@
 
 
        <div class = "mt-5">
-            <Check label = "PhilHealth" checked = {data.child?.philHealth} disabled/>
+            <Check label = "PhilHealth" checked = {data.child?.philHealth} />
        </div>
 
        <div class = "mt-5">
-            <Check label = "National ID" checked = {data.child?.national_id} disabled/>
+            <Check label = "National ID" checked = {data.child?.national_id} />
        </div>
     </div>
     <div class = "flex flex-col !font-bold ml-10">
         <div>
-            <Check label = "Medical Certificate" checked = {data.child?.med_cert} disabled/>
+            <Check label = "Medical Certificate" checked = {data.child?.med_cert} />
        </div>
         <div>
-            <Check label = "Birth Certificate" checked = {data.child?.birth_cert} disabled/>
+            <Check label = "Birth Certificate" checked = {data.child?.birth_cert} />
        </div>
         <div>
-            <Check label = "Barangay Certificate" checked = {data.child?.barangay_cert} disabled/>
+            <Check label = "Barangay Certificate" checked = {data.child?.barangay_cert} />
        </div>
         <div>
-            <Check label = "Voter ID" checked = {data.child?.voter_id} disabled/>
+            <Check label = "Voter ID" checked = {data.child?.voter_id} />
        </div>
     </div>
 </div>
