@@ -1,3 +1,4 @@
+import { redirect } from "@sveltejs/kit";
 let entireFamily = []
 let pwdHas:boolean
 let pwdID:string
@@ -6,7 +7,10 @@ let pwdExpiry:string
 
 
 
-export async function load( { url, fetch}  ) {
+export async function load( { url, fetch, locals}){
+    if (!locals.user) {
+        throw redirect(303, '/');
+    }
     
 try{
     //gets record in the child table
