@@ -9,6 +9,7 @@ import { error, json, type RequestHandler } from "@sveltejs/kit";
  * - GET /api/income_type?caregiver_id=uuid - Get income types for specific caregiver
  * - GET /api/income_type?category=Home-based - Get income types by category (Home-based|Self-employed|Wage Earner)
  */
+
 export const GET: RequestHandler = async({ url }) => {
   const caregiver_id = url.searchParams.get('caregiver_id');
   const category = url.searchParams.get('category');
@@ -30,13 +31,7 @@ export const GET: RequestHandler = async({ url }) => {
   }
 }
 
-export const POST: RequestHandler = async({request, locals }) => {
-  const { session, user } = await locals.safeGetSession();
-
-  if (!session) {
-    return new Response('Unauthorized', { status: 401 });
-  }
-  
+export const POST: RequestHandler = async({request }) => {
   let body: any = {}
   try {
     body = await request.json();

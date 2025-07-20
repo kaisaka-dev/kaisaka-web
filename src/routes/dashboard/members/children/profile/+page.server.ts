@@ -1,3 +1,5 @@
+import { redirect } from "@sveltejs/kit";
+
 //will be used to make data more acceptable for front end modules
 export type childInformation =  {
     id: string,
@@ -101,7 +103,10 @@ let socsecComLife: boolean
 let socsecComYear: number
 
 
-export async function load( { url, fetch}  ) {
+export async function load( { url, fetch, locals}){
+    if (!locals.user) {
+        throw redirect(303, '/');
+    }
     
 try{
     //gets record in the child table
@@ -275,4 +280,3 @@ try{
         }
     }
 }
-

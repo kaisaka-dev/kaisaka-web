@@ -26,7 +26,12 @@ import { ServiceCategoryModel } from "$lib/models/serviceCategoryModel.js";
 import { error, json, type RequestHandler } from "@sveltejs/kit";
 import { parseJoinParams } from "$lib/types/joining.js";
 
-export const GET: RequestHandler = async ({ url }) => {
+export const GET: RequestHandler = async ({ url , locals }) => {
+  const { session, user } = await locals.safeGetSession();
+
+  if (!session) {
+    return new Response('Unauthorized', { status: 401 });
+  }
   const id = url.searchParams.get('id');
   const type = url.searchParams.get('type');
   const joinParams = parseJoinParams(url);

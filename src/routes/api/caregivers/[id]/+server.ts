@@ -3,7 +3,13 @@ import { parseJoinParams } from "$lib/types/joining.js";
 import { error, json, type RequestHandler } from "@sveltejs/kit";
 
 // READ - Get member by ID
-export async function GET({ params, url }) {
+export async function GET({ params, url , locals }) {
+  const { session, user } = await locals.safeGetSession();
+
+  if (!session) {
+    return new Response('Unauthorized', { status: 401 });
+  }
+  
   const id = params.id;
   const joinParams = parseJoinParams(url);
   let caregiver;
