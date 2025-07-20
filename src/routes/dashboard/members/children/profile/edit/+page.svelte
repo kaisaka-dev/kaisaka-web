@@ -86,7 +86,10 @@
                         able_to_work: canwork,
                         employment_type: employmentType,
                         member_id: data.member?.id
-                    })
+                    }),
+                     headers: {
+                    'Content-Type': 'application/json'
+                }
                 }))   
             }
 
@@ -98,7 +101,10 @@
                         member_id: data.member?.id,
                         able_to_work: canwork,
                         employment_type: employmentType
-                    })
+                    }),
+                     headers: {
+                    'Content-Type': 'application/json'
+                }
                 }))
             }
 
@@ -107,11 +113,14 @@
                 body:JSON.stringify({
                     id: data.child?.disabilitycatID,
                     name:disabilityCategory
-                })
+                }),
+                 headers: {
+                    'Content-Type': 'application/json'
+                }
             })
             
 
-        goto(`/dashboard/members/children/profile?=${data.child.id}`);
+        goto(`/dashboard/members/children/profile?id=${data.child.id}`);
     }
 
 </script>
@@ -171,8 +180,10 @@
           <Input  label="Disability Nature" id="disabilityNature"  bind:value = {disabilityNature} margin={false} />
           <br>
           <Check  label="Able to work" bind:checked={canwork} margin={false} />
+          {#if canwork}
           <Select label="Employment Type" id="employment_type" bind:value = {employmentType} options = {['Wage Employed', "Self-Employed", "Sheltered Workshop"]} margin={false}  />
           <br>
+          {/if}
           <Input label="Admission Date" type="date"  bind:value = {admissionDate} margin={false} />
         </div>
       <div style="height: fit-content">
