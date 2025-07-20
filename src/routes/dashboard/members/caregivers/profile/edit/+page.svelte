@@ -1,16 +1,17 @@
 <script lang="ts">
-    import type { caregiver } from '$lib/types/caregiver.js'
+    // import type { caregiver } from '$lib/types/caregiver.js'
     import type { family } from '$lib/types/family.js'
     import type { membershipFee } from '$lib/types/membershipFee.js'
     import type { EventType } from '$lib/types/event.js'
 
     import Select from '$components/input/Select.svelte'
     import Header from '$components/Header.svelte'
-    import Textarea from '$components/input/InputTextarea.svelte'
     import Textinput from '$components/input/InputText.svelte'
 	import InputText from '$components/input/InputText.svelte';
-    
 
+    let editing = true;
+    let disabled = !editing;         // for the input component (restricts from editing if true)
+    let required = editing;        // false since this is view, but placing it here for easier copy pasting to the EDIT counterpart of this module
     //below are sample data declarations just to test if the page works, will delete when relevant APIs are complete
     let sampleFamily1: family = {
         members: [{firstName: "Juan", lastName: "De La Cruz", role: "Parent"},
@@ -33,11 +34,67 @@
                   {firstName: "Another", lastName: "Caregiver!", role: "Caregiver"}
                 ]
     }
-    let sample: caregiver = {firstName: 'Paolo', lastName: 'Rivera', contactNo: '09171275268',
-                 address:'Hacienda Royale', barangay:'Barangay 218', dateAdmission:new Date(2023,5, 16), remarks: 'Nothing Remarkable',
-                 family: [sampleFamily1, sampleFamily2, sampleFamily3],
-                 paymentHistory: [{amount:200, date: new Date(2024,1,5)}, {amount:200, date: new Date(2023, 4,10)}]
+    let sample = {
+        first_name: "Paolo",
+        last_name: "Rivera",
+        birthday: "1990-06-22",
+        sex: "Male",
+        contact_number: "09171275268",
+        facebook_link: "https://facebook.com/paolo.rivera",
+        email: "paolo.rivera@example.com",
+        addresses: {
+            address: "123 Hacienda Royale"
+        },
+        barangay: {
+            name: "San Isidro"
+        },
+        occupation: "Community Health Worker",
+        community_group: "Health Volunteers",
+        income_generation: "Livelihood Program",
+        admission_date: new Date(2023, 5, 16), // June 16, 2023
+        date_termination: null,
+        remarks: "Active in community activities. Fluent in English and Tagalog.",
+        payment_history: [
+            {
+                amount: 500,
+                date: new Date(2023, 5, 20),
+                year: 2023
+            },
+            {
+                amount: 500,
+                date: new Date(2024, 0, 15),
+                year: 2024
             }
+        ],
+        family: [
+            {
+                id: 1,
+                members: [
+                    {
+                        firstName: "Maria",
+                        lastName: "Rivera",
+                        role: "Parent"
+                    },
+                    {
+                        firstName: "Juan",
+                        lastName: "Rivera",
+                        role: "Child"
+                    }
+                ]
+            },
+            {
+                id: 2,
+                members: [
+                    {
+                        firstName: "Carlos",
+                        lastName: "Santos",
+                        role: "Grandparent"
+                    }
+                ]
+            }
+        ]
+    };
+
 
     let events: EventType[] = [
         {id: 1231, name: "Health event", type: "Training", date: new Date(2022,2,12).toISOString().split('T')[0]},
@@ -74,7 +131,7 @@ function deleteEvent(name:string): void{
     }
 
     let yearsCounter: number[] = []
-    for(let i = sample.dateAdmission.getFullYear(); i <= today.getFullYear(); i++ ) {
+    for(let i = sample.admission_date.getFullYear(); i <= today.getFullYear(); i++ ) {
         yearsCounter.push(i);
     }
 
@@ -113,7 +170,7 @@ function deleteEvent(name:string): void{
 <Header/>
 <section>
     <h1>
-        {sample.firstName} {sample.lastName}'s Profile 
+        {sample.first_name} {sample.last_name}'s Profile
     </h1>
 </section>
 <!--End of Page Headers-->
@@ -150,66 +207,26 @@ function deleteEvent(name:string): void{
             </h1>
 
             <div class = "!flex !flex-row border-[var(--border)] border-4">
-                <div class = "flex flex-col">
-                    <div class ="information">
-                        <div class = "min-w-30"> First Name</div>
-                        <div class = "mt-1"> <Textinput required msg = "Required" value = {sample.firstName}/></div>
-                    </div>
-                     <div class ="information">
-                        <div class = "min-w-30"> Last Name</div>
-                        <div class = "mt-1"> <Textinput required msg = "Required" value = {sample.lastName}/></div>
-                    </div>
-                    <div class ="information !mt-6">
-                        <div class = "min-w-35"> Contact No.</div>
-                        <div class = "ml-5"> <Textinput required msg = "Required" value = {sample.contactNo}/></div>
-                    </div>
-                    <div class ="information">
-                        <div class = "min-w-40"> Facebook Link</div>
-                        {#if sample.fblink == null}
-                        <div> <Textinput value = "N/A"/></div>
-                        {:else}
-                        <div> <Textinput value = {sample.fblink}/></div>
-                        {/if}
-                    </div> 
-                    <div class ="information">
-                        <div class = "min-w-40"> Email</div>
-                        {#if sample.email == null}
-                        <div> <Textinput value = "N/A"/></div>
-                        {:else}
-                        <div> <Textinput value = {sample.email}/></div>
-                        {/if}
-                    </div>
-                    <div class ="information !mt-10">
-                        <div class = "min-w-30"> Address</div>
-                        <div class = "ml-8"> <Textinput required msg = "Required" value = {sample.address}/></div>
-                    </div>
-                    <div class ="information">
-                        <div class = "min-w-30"> Barangay</div>
-                        <div class = "-mt-4 ml-7.5"> <Select value = {sample.barangay} options = {["Whatever", "Works"]} /></div>
-                    </div>
-                    <div class ="information !mt-10">
-                        <div class = "min-w-50"> Date of Admission</div>
-                        <div class = "ml-5"> <InputText type = "date" msg = "Required"  value = {sample.dateAdmission.toISOString().split('T')[0]} label = ""/></div>
-                    </div>
-                     {#if sample.dateTermination!=null}
-                    <div class ="information">
-                        <div class = "min-w-50"> Date of Termination</div>
-                        <div class = "ml-5"> <InputText type = "date"  label = ""value ={sample.dateTermination.toISOString().split('T')[0]}  /></div>
-                    </div>
-                    {:else}
-                    <div class ="information">
-                        <div class = "min-w-50"> Date of Termination</div>
-                        <div class = "ml-5"> <InputText type = "date" label = ""/></div>
-                    </div>
-                    {/if}
-                    
-                </div>
-                <div class = "!flex !flex-col ml-20"> 
-                    <div>Remarks </div>
-                    {#if sample.remarks != null}
-                    <div class = "-ml-10 -mt-5"> <Textarea value = {sample.remarks} rows=10 label = ""/></div>
-                    {:else}
-                    <div class = "-ml-10 -mt-5"> <Textarea value = "N/A" rows=10 label = ""/></div>
+                <div class = "flex flex-col my-4">
+                    <!-- the disabled and required are variables for easier copy pasting from VIEW to EDIT of the page-->
+                    <InputText  {disabled} {required} label="First Name" id="first-name" value={sample.first_name} />
+                    <InputText  {disabled} {required} label="Last Name" id="last-name" value={sample.last_name} />
+                    <InputText  {disabled} label="Birthday" id="birthday" value={sample.contact_number} />
+                    <Select     {disabled} {required} label="Sex" id="sex" value={sample.sex} />
+                    <InputText  {disabled} {required} label="Contact No." id="contact-no" value={sample.contact_number} />
+                    <InputText  {disabled} label="Facebook Link" id="fb-link" value={sample.facebook_link}/>
+                    <InputText  {disabled} label="Email" id="email" value={sample.email}/>
+                    <InputText  {disabled} {required} label="Address" id="address" value={sample.addresses?.address ?? 'N/A'} />
+                    <InputText  {disabled} {required} label="Barangay" id="barangay" value={sample.barangay.name ?? 'N/A'} />
+                    <InputText  {disabled} {required} label="Occupation" id="occupation" value="TEST-VALUE" />
+                    <Select     {disabled} {required} label="Community Group" id="community-group" value="TEST-VALUE" />
+                    <Select     {disabled} {required} label="Income Generation" id="income-generation" value="TEST-VALUE" />
+
+                    <br>
+                    <InputText {disabled} label="Date of Admission" type="date" id="admission" value={new Date(sample.admission_date).toISOString().split('T')[0]} />
+                    {#if sample.date_termination || editing}
+                        <InputText {disabled} label="Date of Termination" type="date" id="termination"
+                                   value={sample.date_termination ? new Date(sample.date_termination).toISOString().split('T')[0] : ''} />
                     {/if}
                 </div>
             </div>
@@ -265,7 +282,7 @@ function deleteEvent(name:string): void{
                                 {/if}
                                 <div class = "mt-2 ml-12 w-100"> {member.firstName} {member.lastName}</div>
 
-                                {#if member.firstName !== sample.firstName }
+                                {#if member.firstName !== sample.first_name }
                                 <div class = "-mt-2">
                                     <button  class = "!bg-[var(--background)] !text-red-500 hover:!text-red-400 hover:!shadow-[var(--background)]"
                                             on:click = {()=>deleteMember(family.id, member.firstName)}>
@@ -278,23 +295,23 @@ function deleteEvent(name:string): void{
                             </div>
                         {/each}
                         </div>
-
-                        <div class = "flex flex-col border-4 border-[var(--border)]">
-                            {#each yearsCounter as year}
-                                <div class = "flex flex-row">
-                                 <div class = "ml-5"> {year} </div>
-                                {#if paymentYears(sample.paymentHistory).includes(year)}
-                                    <div class = "ml-10 mb-5">  P{sample.paymentHistory[paymentYears(sample.paymentHistory).indexOf(year)].amount} paid on {sample.paymentHistory[paymentYears(sample.paymentHistory).indexOf(year)].date.toISOString().split('T')[0]}  </div>
-                                    <div class= "mt-2"> <InputText type = "date" label = "" value = {sample.paymentHistory[paymentYears(sample.paymentHistory).indexOf(year)].date.toISOString().split('T')[0]} on:input = {e => sample.paymentHistory[paymentYears(sample.paymentHistory).indexOf(year)] = e.target.value}  /> </div>
-                                {:else}
-                                    <div class = "!text-red-500 mb-5 ml-21"> Payment Pending!</div>
-                                    <div class = "mb-10 mt-2">
-                                        <InputText type = "date" label = "" on:input = {e => bindedDate = e.target.value}/>
-                                    </div>
-                                {/if}
-                                </div>
-                            {/each}
-                        </div>
+<!--                        commenting out first since we're not working on this yet-->
+<!--                        <div class = "flex flex-col border-4 border-[var(&#45;&#45;border)]">-->
+<!--                            {#each yearsCounter as year}-->
+<!--                                <div class = "flex flex-row">-->
+<!--                                 <div class = "ml-5"> {year} </div>-->
+<!--                                {#if paymentYears(sample.paymentHistory).includes(year)}-->
+<!--                                    <div class = "ml-10 mb-5">  P{sample.paymentHistory[paymentYears(sample.paymentHistory).indexOf(year)].amount} paid on {sample.paymentHistory[paymentYears(sample.paymentHistory).indexOf(year)].date.toISOString().split('T')[0]}  </div>-->
+<!--                                    <div class= "mt-2"> <InputText type = "date" label = "" value = {sample.paymentHistory[paymentYears(sample.paymentHistory).indexOf(year)].date.toISOString().split('T')[0]} on:input = {e => sample.paymentHistory[paymentYears(sample.paymentHistory).indexOf(year)] = e.target.value}  /> </div>-->
+<!--                                {:else}-->
+<!--                                    <div class = "!text-red-500 mb-5 ml-21"> Payment Pending!</div>-->
+<!--                                    <div class = "mb-10 mt-2">-->
+<!--                                        <InputText type = "date" label = "" on:input = {e => bindedDate = e.target.value}/>-->
+<!--                                    </div>-->
+<!--                                {/if}-->
+<!--                                </div>-->
+<!--                            {/each}-->
+<!--                        </div>-->
                     </div>        
                 {/each}
                 </div>

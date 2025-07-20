@@ -1,6 +1,22 @@
 import { EmploymentStatusModel } from "$lib/models/employmentStatusModel.js"
 import { error, json, type RequestHandler } from "@sveltejs/kit";
 
+export const GET: RequestHandler = async ({ url }) => {
+  const id = url.searchParams.get('id');
+  
+  if (!id) {
+    throw error(400, 'Missing required parameter: id');
+  }
+
+  const employmentRec = await EmploymentStatusModel.instance.findByMemberId(id)
+
+  if (!employmentRec) {
+    throw error(404, 'Employment Status Record not found');
+  }
+
+  return json(employmentRec);
+};
+
 export const POST: RequestHandler = async({request}) => {
 
   let body: any = {}
@@ -24,7 +40,6 @@ export const POST: RequestHandler = async({request}) => {
 }
 
 export const PUT: RequestHandler = async({request}) => {
-  
   let body: any = {}
   try {
     body = await request.json();
@@ -36,11 +51,25 @@ export const PUT: RequestHandler = async({request}) => {
     throw error(400, 'Missing required field: id.')
   }
 
+  const employmentRec = await EmploymentStatusModel.instance.findByMemberId(body.id)
+
+  if(!employmentRec){
+    throw error(400, 'Member not found')
+  }
+
+  const id = employmentRec.id
+
+  // console.log('Updating employment:', {
+  //   id: id,
+  //   able_to_work: body.able_to_work,
+  //   employment_type: body.employment_type
+  // });
+
   let hasUpdates = false
 
   if (body.able_to_work !== undefined || body.employment_type !== undefined) {
     const updated = await EmploymentStatusModel.instance.updateEmploymentStatus(
-      body.id, 
+      id, 
       body.able_to_work, 
       body.employment_type
     )
