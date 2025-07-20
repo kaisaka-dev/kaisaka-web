@@ -3,14 +3,6 @@ import type { CellStyle } from './report-types.js';
 
 
 export class reportConversion {
-  public static columnLetterToNumber(letter: string): number{
-    let result = 0;
-    for (let i = 0; i < letter.length; i++) {
-      result = result * 26 + (letter.charCodeAt(i) - 64);
-    }
-    return result;
-  }
-
   public static parseAddress(address: string): { column: string; row: number } {
     const match = address.match(/^([A-Z]+)(\d+)$/);
     if (!match) {
@@ -41,34 +33,28 @@ export class reportConversion {
     
     const [, colStr, rowStr] = match;
     const row = parseInt(rowStr) + rowOffset;
-    const col = this.columnNameToNumber(colStr) + colOffset;
-    const newColStr = this.numberToColumnName(col);
+    const col = this.columnLetterToNumber(colStr) + colOffset;
+    const newColStr = this.columnNumberToLetter(col);
     
     return `${newColStr}${row}`;
   }
 
-  /**
-   * Convert Excel column name to number (A = 1, B = 2, etc.)
-   */
-  public static columnNameToNumber(colName: string): number {
-    let result = 0;
-    for (let i = 0; i < colName.length; i++) {
-      result = result * 26 + (colName.charCodeAt(i) - 64);
+  static columnNumberToLetter(columnNumber: number): string {
+    let columnLetter = '';
+    while (columnNumber > 0) {
+      const remainder = (columnNumber - 1) % 26;
+      columnLetter = String.fromCharCode(65 + remainder) + columnLetter;
+      columnNumber = Math.floor((columnNumber - 1) / 26);
     }
-    return result;
+    return columnLetter;
   }
 
-  /**
-   * Convert column number to Excel column name (1 = A, 2 = B, etc.)
-   */
-  public static numberToColumnName(num: number): string {
-    let result = '';
-    while (num > 0) {
-      num--;
-      result = String.fromCharCode(65 + (num % 26)) + result;
-      num = Math.floor(num / 26);
+  static columnLetterToNumber(columnLetter: string): number {
+    let columnNumber = 0;
+    for (let i = 0; i < columnLetter.length; i++) {
+      columnNumber = columnNumber * 26 + (columnLetter.charCodeAt(i) - 64);
     }
-    return result;
+    return columnNumber;
   }
 
 

@@ -3,6 +3,8 @@ import type { Database } from "./supabase-types.js";
 
 // All the names in the database
 export type tableNames = keyof Database['public']['Tables'] 
+export type enumNames = keyof Database['public']['Enums']
+
 
 
 // A generic row from Table T being object-like
@@ -16,18 +18,19 @@ export type tableUpdate<T extends tableNames>
 = Database['public']['Tables'][T]['Update']
 
 // Database query type for Table T
-export interface QueryConfig{
+export interface QueryConfigurationBuilder{
   where?: Partial<tableRow<tableNames>>;
   eq?: Record<string, string | number | boolean>;
   neq?: Record<string, string | number | boolean>;
-  gt?: Record<string, number>;
-  gte?: Record<string, number>;
-  lt?: Record<string, number>;
-  lte?: Record<string, number>;
+  gt?: Record<string, string | number>;
+  gte?: Record<string, string | number>;
+  lt?: Record<string, string | number>;
+  lte?: Record<string, string | number>;
   like?: Record<string, string>;
   ilike?: Record<string, string>;
   in?: Record<string, (string | number)[]>;
   is?: Record<string, boolean | null>;
+  isNot?: Record<string, boolean | null>;
   order?: { column: string; ascending?: boolean }[];
   limit?: number;
   offset?: number;
@@ -55,7 +58,7 @@ export default function TableManager<T extends tableNames>(table: T){
       return supabase.from(this.table).update(object);
     }
 
-    protected async findOne(match: Partial<Row>, config: Omit<QueryConfig, 'where' | 'limit'> = {}): Promise<Row | null> {
+    protected async findOne(match: Partial<Row>, config: Omit<QueryConfigurationBuilder, 'where' | 'limit'> = {}): Promise<Row | null> {
       let query = this.getQuery()
         .match(match)
         
@@ -68,7 +71,7 @@ export default function TableManager<T extends tableNames>(table: T){
       return data as Row;
     }
 
-    protected async findMany(match: Partial<Row> = {}, config: Omit<QueryConfig, 'where'> = {}): Promise<Row[]|null>{
+    protected async findMany(match: Partial<Row> = {}, config: Omit<QueryConfigurationBuilder, 'where'> = {}): Promise<Row[]|null>{
       let query = this.getQuery()
         .match(match);
       
@@ -135,7 +138,7 @@ export default function TableManager<T extends tableNames>(table: T){
 
     public async findWithJoin<R = Record<string, unknown>>(
       selectClause: string,
-      config: QueryConfig = {}
+      config: QueryConfigurationBuilder = {}
     ): Promise<R[] | null> {
   
       let query = this.getQueryWithJoin(selectClause)
@@ -151,7 +154,7 @@ export default function TableManager<T extends tableNames>(table: T){
 
     public async findOneWithJoin<R = Record<string, unknown>>(
       selectClause: string,
-      config: QueryConfig = {}
+      config: QueryConfigurationBuilder = {}
     ): Promise<R | null> {
       let query = this.getQueryWithJoin(selectClause)
       
@@ -163,7 +166,7 @@ export default function TableManager<T extends tableNames>(table: T){
     }
     
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    private applyFilters(query: any, config: QueryConfig) {
+    private applyFilters(query: any, config: QueryConfigurationBuilder) {
       if (config.where) {
         query = query.match(config.where);
       }
@@ -228,7 +231,11 @@ export default function TableManager<T extends tableNames>(table: T){
         });
       }
 
-
+      if (config.isNot) {
+        Object.entries(config.isNot).forEach(([key, value]) => {
+          query = query.is(key, value)
+        })
+      }
       
       if (config.order) {
         config.order.forEach(orderConfig => {
@@ -249,7 +256,7 @@ export default function TableManager<T extends tableNames>(table: T){
 
     public async findWithJoinAndCount<R = Record<string, unknown>>(
       selectClause: string,
-      config: QueryConfig = {}
+      config: QueryConfigurationBuilder = {}
     ): Promise<{ data: R[] | null; count: number }> {
       let query = supabase.from(this.table).select(selectClause, { count: 'exact' });
 

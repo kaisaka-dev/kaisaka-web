@@ -221,7 +221,7 @@ export function createLogSidecar(options?: LogSidecarOptions): LogSidecar {
   return logSidecar;
 }
 
-export function getLogSidecar(message = ""): LogSidecar {
+export function getLogSidecar(): LogSidecar {
   if (!logSidecar) {
     throw new Error('Log sidecar not initialized. Call createLogSidecar() first.');
   }

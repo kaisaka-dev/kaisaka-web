@@ -220,23 +220,8 @@ export class ExcelMerger {
     logger.warn(`[Report Merger] Error copying images: ${error}`);
   }
   }
+ 
 
-
-  static columnNumberToLetter(columnNumber: number): string {
-    let columnLetter = '';
-    while (columnNumber > 0) {
-      const remainder = (columnNumber - 1) % 26;
-      columnLetter = String.fromCharCode(65 + remainder) + columnLetter;
-      columnNumber = Math.floor((columnNumber - 1) / 26);
-    }
-    return columnLetter;
-  }
-
-  static columnLetterToNumber(columnLetter: string): number {
-    let columnNumber = 0;
-    for (let i = 0; i < columnLetter.length; i++) {
-      columnNumber = columnNumber * 26 + (columnLetter.charCodeAt(i) - 64);
-    }
-    return columnNumber;
-  }
+  
 }
+
