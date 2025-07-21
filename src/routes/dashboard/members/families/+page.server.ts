@@ -1,4 +1,5 @@
-import type { PageLoad } from '../../../../../.svelte-kit/types/src/routes/$types.js';
+import type { PageServerLoad } from '../../../../../.svelte-kit/types/src/routes/$types.js';
+import { redirect } from "@sveltejs/kit";
 
 /**
  * surnames: all unique surnames in a family, separated by comma
@@ -14,7 +15,10 @@ type FamiliesList = {
 	yrLastPaid: number;
 };
 
-export const load: PageLoad = async ({ fetch }) => {
+export const load: PageServerLoad = async ({ locals})=>{
+    if (!locals.user) {
+        throw redirect(303, '/');
+    }
 	try {
 		const response = await fetch('/api/families');
 

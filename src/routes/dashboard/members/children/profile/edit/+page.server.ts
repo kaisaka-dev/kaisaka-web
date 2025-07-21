@@ -1,4 +1,5 @@
 import TableManager from '$lib/types/manager.js';
+import { redirect } from '@sveltejs/kit';
 
 //declarations for the different tables we'll be querying
 const members = TableManager('members');
@@ -136,7 +137,10 @@ let socsecComYear: number
 
 
 
-export async function load( { url, fetch }  ) {
+export async function load( { url, fetch, locals }  ) {
+    if (!locals.user) {
+     throw redirect(303, '/');
+    }
     
 try{
     //gets record in the child table

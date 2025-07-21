@@ -1,5 +1,4 @@
 import { redirect } from "@sveltejs/kit";
-import type { staff } from '$lib/types/staff.js'
 
 export async function load( {locals}){
     if (!locals.user) {

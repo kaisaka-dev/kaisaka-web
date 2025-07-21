@@ -1,4 +1,5 @@
-import type { PageLoad } from '../../../../../.svelte-kit/types/src/routes/$types.js';
+import type { PageServerLoad} from '../../../../../.svelte-kit/types/src/routes/$types.js';
+import  {redirect} from '@sveltejs/kit'
 
 export type Children = {
 	id: string;
