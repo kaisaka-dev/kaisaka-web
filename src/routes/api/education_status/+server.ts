@@ -104,3 +104,28 @@ export const PUT: RequestHandler = async({request}) => {
 
   return json({ message: 'Updated successfully' })
 }
+
+export const DELETE: RequestHandler = async({ request }) => {
+    let body: any = {}
+
+    try {
+      body = await request.json();
+    } catch {
+      throw error(400, 'Invalid JSON body.')
+    }
+
+    if (!body.id) {
+      throw error(400, 'Missing required ID')
+    }
+
+    try{
+        const result = await educationStatusModel.instance.deleteById(body.id)
+
+        if(!result){
+          throw error(404, 'Failed to education status.')
+        }
+        return json({ success: true, data: result });
+    } catch {
+        throw error(500, 'Failed to delete education status')
+    }
+}

@@ -102,3 +102,29 @@ export const PUT: RequestHandler = async({request}) => {
 
   return json({ message: 'Updated successfully' })
 }
+
+
+export const DELETE: RequestHandler = async({ request }) => {
+    let body: any = {}
+    try {
+      body = await request.json();
+    } catch {
+      throw error(400, 'Invalid JSON body.')
+    }
+
+    if (!body.family_id || !body.member_id) {
+      throw error(400, 'Missing required fields: family_id and member_id for identification.')
+    }
+
+    try{
+        const result = await FamilyMembersModel.instance.removeFamilyMember(body.family_id, body.member_id)
+
+        if(!result){
+          throw error(404, 'Failed to delete family member.')
+        }
+
+        return json({ success: true, data: result });
+    } catch {
+        throw error(500, 'Failed to delete family member')
+    }
+}

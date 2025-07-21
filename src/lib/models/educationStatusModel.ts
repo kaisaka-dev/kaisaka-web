@@ -139,4 +139,9 @@ export class educationStatusModel extends TableManager<"education_status">('educ
     };
     return this.updateOne(references, updates);
   }
+
+  async deleteById(id: number): Promise<boolean>{
+    const result = await this.deleteOne({ id: id });
+    return result !== null;
+  }
 }

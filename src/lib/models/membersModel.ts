@@ -104,4 +104,10 @@ export class membersModel extends TableManager<"members">('members') {
   async getJoin(select: string, filters: Record<string, string >): Promise<MembersRow | null> {
     return await this.findOneWithJoin(select, filters);
   }
+
+  async findByFullName(first_name: string, last_name: string): Promise<MembersRow[] | null> {
+    const data = await this.findMany({ first_name: first_name, last_name: last_name })
+    //console.log(data)
+    return data
+  }
 }

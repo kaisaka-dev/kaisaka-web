@@ -5,12 +5,18 @@ import { error, json, type RequestHandler } from "@sveltejs/kit";
 // READ - Get member by ID
 export const GET: RequestHandler = async ({ url }) => {
   const id = url.searchParams.get('id');
+  const firstName = url.searchParams.get('firstName')
+  const lastName = url.searchParams.get('lastName')
+  let member
   
-  if (!id) {
-    throw error(400, 'Missing required parameter: id');
+  if (id) {
+    member = await membersModel.instance.findById(id);
+    
+  } else if ( firstName && lastName){
+    member = await membersModel.instance.findByFullName(firstName, lastName)
+  } else {
+    throw error(400, 'Missing ID or first name and last name.');
   }
-
-  const member = await membersModel.instance.findById(id);
 
   if (!member) {
     throw error(404, 'Member not found');
