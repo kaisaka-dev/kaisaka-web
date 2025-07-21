@@ -221,6 +221,22 @@ export class ChildrenModel extends TableManager<"children">('children') {
     return data
   }
 
+  async updateHasVote(id: string, has_vote: boolean): Promise<boolean>{
+    const reference: Partial<ChildrenRow> = { id: id }
+    const updates: Partial<ChildrenRow> = { has_vote: has_vote }
+    const data = await this.updateOne(reference, updates)
+
+    return data
+  }
+
+  async updateHasNatID(id: string, has_national_id: boolean): Promise<boolean>{
+    const reference: Partial<ChildrenRow> = { id: id }
+    const updates: Partial<ChildrenRow> = { has_national_id: has_national_id }
+    const data = await this.updateOne(reference, updates)
+
+    return data
+  }
+
   /**
    * Deletes a child record using their unique id
    * @param id unique id of the child in the DB
