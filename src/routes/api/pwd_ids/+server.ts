@@ -98,3 +98,53 @@ export const PUT: RequestHandler = async({request}) => {
 
   return json({ message: 'Updated successfully' })
 }
+
+
+export const DELETE: RequestHandler = async({ request, fetch }) => {
+    let body: any = {}
+    let result
+
+    try {
+      body = await request.json();
+    } catch {
+      throw error(400, 'Invalid JSON body.')
+    }
+    try{
+      if(body.childID !== undefined){
+        const childRes = await fetch(`/api/children/${body.childID}`);
+
+        if (!childRes.ok) {
+          throw error(400, 'Failed to fetch child');
+        }
+
+        const child = await childRes.json();
+
+        if (!child?.pwd_id) {
+          throw error(400, 'Child does not have a PWD ID');
+        }
+        const updateChild = await fetch('/api/children', {
+          method: 'PUT',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            id: child.id,
+            pwd_id: null
+          })
+        })
+        if(updateChild)
+          result = await pwdIdsModel.instance.deleteById(child.pwd_id)
+        else
+          throw error(400, 'failed to remove pwd id in child record')
+      }
+      else{
+        throw error(400, 'Missing required ID: childID')
+      }
+
+      if(!result)
+        throw error(404, 'Failed to delete PWD ID.')
+      return json({ success: true, data: result });
+    } catch {
+        throw error(500, 'Failed to delete PWD ID')
+    }
+}

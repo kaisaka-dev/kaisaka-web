@@ -151,6 +151,22 @@ export const PUT: RequestHandler = async({request}) => {
     hasUpdates = true
   }
 
+  if(body.has_vote !== undefined){
+    const updated = await ChildrenModel.instance.updateHasVote(body.id, body.has_vote)
+    if (!updated) {
+      throw error(500, 'Failed to update remarks')
+    }
+    hasUpdates = true
+  }
+
+  if(body.has_vote !== undefined){
+    const updated = await ChildrenModel.instance.updateHasNatID(body.id, body.has_national_id)
+    if (!updated) {
+      throw error(500, 'Failed to update remarks')
+    }
+    hasUpdates = true
+  }
+
   if (!hasUpdates) {
     throw error(400, 'No valid fields to update.')
   }

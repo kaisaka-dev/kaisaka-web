@@ -64,4 +64,10 @@ export class pwdIdsModel extends TableManager<"pwd_ids">('pwd_ids'){
 
     return data;
   }
+
+  async deleteById(id: string): Promise<boolean>{
+    console.log(id)
+    const result = await this.deleteOne({ id: id });
+    return result !== null;
+  }
 }
