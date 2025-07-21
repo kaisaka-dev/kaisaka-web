@@ -18,8 +18,12 @@ export class pwdIdsModel extends TableManager<"pwd_ids">('pwd_ids'){
    * @param pwd_id the pwd id 
    * @returns 
    */
-  async findById(pwd_id: string): Promise<PwdIdsRow[] | null> {
-    return this.findMany( { pwd_id } )
+  async findById(id: string): Promise<PwdIdsRow | null> {
+    return this.findOne( { id: id } )
+  }
+
+  async findByPWDid(pwd_id: string): Promise<PwdIdsRow[] | null> {
+    return this.findMany( { pwd_id: pwd_id } )
   }
 
   /**

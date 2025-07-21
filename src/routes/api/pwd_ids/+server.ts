@@ -1,21 +1,40 @@
 import { pwdIdsModel } from "$lib/models/pwdIdsModel.js";
 import { error, json, type RequestHandler } from "@sveltejs/kit";
 
-export const GET: RequestHandler = async ({ url }) => {
-  const id = url.searchParams.get('id');
-  
-  if (!id) {
-    throw error(400, 'Missing required parameter: id');
+export const GET: RequestHandler = async ({ url, fetch }) => {
+  const pwdID = url.searchParams.get('id');
+  const childID = url.searchParams.get('childID');
+  let pwdRec;
+
+  if (pwdID) {
+    pwdRec = await pwdIdsModel.instance.findByPWDid(pwdID);
+    console.log(pwdRec)
+  } else if (childID) {
+    const childRes = await fetch(`/api/children/${childID}`);
+    console.log('[Fetch childRes]:', childRes);
+
+    if (!childRes.ok) {
+      throw error(400, 'Failed to fetch child');
+    }
+
+    const child = await childRes.json();
+
+    if (!child?.pwd_id) {
+      throw error(400, 'Child does not have a PWD ID');
+    }
+
+    pwdRec = await pwdIdsModel.instance.findById(child.pwd_id);
+  } else {
+    throw error(400, 'Missing required parameter: id or childID');
   }
-
-  const pwdID = await pwdIdsModel.instance.findById(id);
-
-  if (!pwdID) {
+  
+  if (!pwdRec) {
     throw error(404, 'PWD ID not found');
   }
 
-  return json(pwdID);
+  return json(pwdRec);
 };
+
 
 export const POST: RequestHandler = async ({ request }) => {
   let body: any = {}
