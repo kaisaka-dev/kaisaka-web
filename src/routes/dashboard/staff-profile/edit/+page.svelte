@@ -5,19 +5,21 @@
     import type { staff } from '$lib/types/staff.js'
 	import { userEvent } from '@storybook/test';
 
+    export let data;
+
     //below are test data needed for the page to work, this will be deleted once the relevant APIs are completed
-    let sample:staff = {
-        accountName: "Shoufou",
-        role: "superadmin",
-        password: "wowie",
-        email: "riverap1231@gmail.com"
+    let user:staff = {
+        accountName: data.accountName,
+        role: data.role,
+        password: data.password,
+        email: data.email
     }
 
-    let confirmpass = sample.password
-    let testpass = sample.password
-    let testacc = sample.accountName
-    let testemail = sample.email
-    let testrole = sample.role
+    let confirmpass = user.password
+    let testpass = user.password
+    let testacc = user.accountName
+    let testemail = user.email
+    let testrole = user.role
     
 
     let passwordmismatch =false;
@@ -51,7 +53,7 @@
 </style>
  <Header/>
 <section>
-    <h1> {sample.accountName}'s Profile</h1>
+    <h1> {user.accountName}'s Profile</h1>
 </section>
 
 <form method = "GET">
@@ -73,7 +75,7 @@
             <div class = "ml-3"> <input class = "w-80 rounded-md" type = "password" bind:value = {confirmpass}/> </div>
         </div>
 
-        {#if sample.role === "superadmin"} <!--this is something that will render only if youre a superadmin because i think its wonky if a regular staff member can change their role lol-->
+        {#if user.role === "superadmin"} <!--this is something that will render only if youre a superadmin because i think its wonky if a regular staff member can change their role lol-->
         <div class = "information mt-5">
             <div class = "w-50"> Account Role: </div>
             <div class = "-ml-57"> <Select  label = "" bind:value = {testrole} options = {["superadmin","admin"]}/> </div>

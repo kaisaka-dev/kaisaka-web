@@ -110,7 +110,35 @@ const authGuard: Handle = async ({ event, resolve }) => {
   return resolve(event)
 }
 
-export const handle: Handle = sequence(supabase, authGuard)
+
+export const profileLoader: Handle = async ({ event, resolve }) => {
+  const session = event.locals.session;
+  
+  if (session?.user) {
+    const { data: profile, error } = await event.locals.supabase
+      .from('user_profiles')
+      .select('*')
+      .eq('user_id', session.user.id)
+      .single();
+    
+    if (!error) {
+      console.log(profile)
+      event.locals.profile = {
+        accountName: profile.username,
+        password: "password",
+        email: profile.email,
+        role: "superadmin"
+      };
+    } else {
+      console.error('[ProfileLoader] Failed to fetch profile', error);
+    }
+  }
+
+  return resolve(event);
+};
+
+
+export const handle: Handle = sequence(supabase, authGuard, profileLoader)
 
 process.on('SIGTERM', async () => {
   const logger = getLogSidecar();

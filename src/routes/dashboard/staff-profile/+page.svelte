@@ -2,13 +2,14 @@
     import Input from '$components/input/InputText.svelte'
     import Header from '$components/Header.svelte'
     import type { staff } from '$lib/types/staff.js'
+    export let data;
 
     //below are test data needed for the page to work, this will be deleted once the relevant APIs are completed
-    let sample:staff = {
-        accountName: "Shoufou",
-        role: "superadmin",
-        password: "wowie",
-        email: "riverap1231@gmail.com"
+    let user:staff = {
+        accountName: data.accountName,
+        role: data.role,
+        password: data.password,
+        email: data.email
     }
 </script>
 <style>
@@ -19,7 +20,7 @@
 </style>
  <Header/>
 <section>
-    <h1> {sample.accountName}'s Profile</h1>
+    <h1> {user.accountName}'s Profile</h1>
 </section>
 
 <!-- container for profile content-->
@@ -27,22 +28,22 @@
     <div class = "flex flex-col">
         <div class = "information">
             <div class = "w-50"> Account Name: </div>
-            <div class = "ml-3"> <Input  disabled label = "" value = {sample.accountName}/> </div>
+            <div class = "ml-3"> <Input  disabled label = "" value = {user.accountName}/> </div>
         </div>
 
         <div class = "information mt-5">
             <div class = "w-50"> Account Password: </div>
-            <div class = "ml-3"> <Input disabled label = "" value = {sample.password}/> </div>
+            <div class = "ml-3"> <Input disabled label = "" value = {user.password}/> </div>
         </div>
 
         <div class = "information mt-5">
             <div class = "w-50"> Account Role: </div>
-            <div class = "ml-3"> <Input disabled label = "" value = {sample.role}/> </div>
+            <div class = "ml-3"> <Input disabled label = "" value = {user.role}/> </div>
         </div>
 
         <div class = "information mt-5">
             <div class = "w-50"> Account Email: </div>
-            <div class = "ml-3"> <Input disabled label = "" value = {sample.email}/> </div>
+            <div class = "ml-3"> <Input disabled label = "" value = {user.email}/> </div>
         </div>
     </div>
 </div>
