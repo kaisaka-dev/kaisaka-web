@@ -1,10 +1,4 @@
-import type { Database} from '$lib/types/supabase-types.js';
 import type { PageLoad} from '../../../../../.svelte-kit/types/src/routes/$types.js';
-
-type ChildrenRow = Database['public']['Tables']['children']['Row'];
-type MembersRow = Database['public']['Tables']['members']['Row'];
-type DisabilityCategoryRow = Database['public']['Tables']['disability_category']['Row'];
-type EducationStatusRow = Database['public']['Tables']['education_status']['Row'];
 
 export type Children = {
 	id: string;
