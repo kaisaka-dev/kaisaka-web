@@ -260,7 +260,7 @@ export class CaregiversModel extends TableManager<"caregivers">('caregivers') {
       return this.findWithJoin(joinStatement, {eq: {id: id}})
     }
   
-  async getJoin(select: string, filters: Record<string, string >): Promise<CaregiverRows | null> {
+  async getJoin(select: string, filters: Record<string, string >): Promise<CaregiverRow | null> {
     return await this.findOneWithJoin(select, filters);
   }
 }
