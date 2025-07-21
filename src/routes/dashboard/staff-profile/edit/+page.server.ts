@@ -1,4 +1,5 @@
-import { redirect } from "@sveltejs/kit";
+import { fail, redirect } from '@sveltejs/kit';
+import type { Actions } from './$types';
 
 export async function load( {locals}){
     if (!locals.user) {
@@ -8,8 +9,6 @@ export async function load( {locals}){
 
     return {
         accountName: profile.accountName,
-        role: profile.role,
-        password: profile.password,
         email: profile.email
 	};
 }

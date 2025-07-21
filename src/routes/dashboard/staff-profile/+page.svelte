@@ -7,8 +7,6 @@
     //below are test data needed for the page to work, this will be deleted once the relevant APIs are completed
     let user:staff = {
         accountName: data.accountName,
-        role: data.role,
-        password: data.password,
         email: data.email
     }
 </script>
@@ -31,7 +29,7 @@
             <div class = "ml-3"> <Input  disabled label = "" value = {user.accountName}/> </div>
         </div>
 
-        <div class = "information mt-5">
+        <!-- <div class = "information mt-5">
             <div class = "w-50"> Account Password: </div>
             <div class = "ml-3"> <Input disabled label = "" value = {user.password}/> </div>
         </div>
@@ -39,7 +37,7 @@
         <div class = "information mt-5">
             <div class = "w-50"> Account Role: </div>
             <div class = "ml-3"> <Input disabled label = "" value = {user.role}/> </div>
-        </div>
+        </div> -->
 
         <div class = "information mt-5">
             <div class = "w-50"> Account Email: </div>
