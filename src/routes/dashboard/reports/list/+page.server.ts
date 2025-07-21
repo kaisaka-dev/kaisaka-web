@@ -1,3 +1,5 @@
+import type { PageLoad} from '../../../../../.svelte-kit/types/src/routes/$types.js';
+
 export type Errors = {
 	startYYYY: string,
 	startMM: string,
@@ -14,6 +16,7 @@ export type Errors = {
 // it's called list program in the database, but officially we've changed it to Report Period as it's more flexible
 export type ReportPeriod = {
 	id: number | null;
+	End: string;
 	startYYYY: number | null;
 	startMM?: number | null;
 	startDD?: number | null;
@@ -32,5 +35,46 @@ export type ReportPeriod = {
 
 
 
+	try {
+		}
+				endMM: period.end_month,
+				endDD: period.end_date,
+				total_target_CWDS: "",
+				new_target_CWDS: period.target_new_cwds,
+				old_target_CWDS: "",		// missing field in the database
+				total_actual_CWDS: "",	// missing field in the database
+				new_actual_CWDS: "",		// missing field in the database
+				old_actual_CWDS: "",		// missing field in the database
+				general_reflection: period.general_reflection || "",
+				lessons_learned: period.lessons_learned || ""
+			}
+		});
+		return { periodList, error: null };
+
+
+	} catch (err) {
+			return {
+				periodList: [],
+				error: err instanceof Error ? err.message : 'Failed to load report period data'
+			}
+	}
+}
+
+/**
+ * to format dates
+ * @param yyyy number representing the year to be formatted
+ * @param mm number representing the month to be formatted
+ * @param dd number representing the date to be formatted
+ */
+function formatDate(yyyy?: number, mm?: number, dd?: number): string {
+	if (!yyyy) return '';
+	// pad start is to add leading 0s, so that the data can be sorted quickly
+	const formattedMonth = mm ? String(mm).padStart(2, '0') : undefined;
+	const formattedDay = dd ? String(dd).padStart(2, '0') : undefined;
+
+	if (yyyy && mm && dd) return `${yyyy}/${formattedMonth}/${formattedDay}`;
+	if (yyyy && mm) return `${yyyy}/${formattedMonth}`;
+	return `${yyyy}`;
+}
 
 
