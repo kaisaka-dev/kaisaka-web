@@ -48,7 +48,7 @@ export const POST: RequestHandler = async ({ request }) => {
     address_id: body.address_id !== undefined ? body.address_id : null,
     admission_date: body.admission_date !== undefined ? body.admission_date : null,
     date_created: new Date().toISOString(),
-    last_updated: body.last_updated !== undefined ? body.last_updated : null,
+    updated_at: body.updated_at !== undefined ? body.updated_at : null,
     last_approved: body.last_approved !== undefined ? body.last_approved : null
   };
 

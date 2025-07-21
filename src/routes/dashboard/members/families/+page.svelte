@@ -97,8 +97,8 @@
 			
 			// Get latest membership year from last_updated
 			item.membership_annual_renewal?.forEach((renewal: any) => {
-				if (renewal.last_updated) {
-					const year = new Date(renewal.last_updated).getFullYear();
+				if (renewal.updated_at) {
+					const year = new Date(renewal.updated_at).getFullYear();
 					if (year > family.yrLastPaid) {
 						family.yrLastPaid = year;
 					}

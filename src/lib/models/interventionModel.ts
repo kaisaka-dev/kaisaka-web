@@ -35,7 +35,7 @@ export class InterventionModel extends TableManager<"intervention">('interventio
             child_id: child_id, 
             date_created: now, 
             intervention: intervention, 
-            last_updated: now, 
+            updated_at: now, 
             remarks: remarks, 
             service_category_id: service_category_id, 
             status: status
@@ -90,7 +90,7 @@ export class InterventionModel extends TableManager<"intervention">('interventio
     async updateRemarks(id: string, remarks: string): Promise<boolean>{
         const now = new Date().toISOString();
         const reference: Partial<InterventionRow> = { id: id }
-        const updates: Partial<InterventionRow> = { remarks: remarks, last_updated: now }
+        const updates: Partial<InterventionRow> = { remarks: remarks, updated_at: now }
         const data = await this.updateOne(reference, updates)
 
         return data
@@ -105,7 +105,7 @@ export class InterventionModel extends TableManager<"intervention">('interventio
     async updateStatus(id: string, status: status_enum): Promise<boolean>{
         const now = new Date().toISOString();
         const reference: Partial<InterventionRow> = { id: id }
-        const updates: Partial<InterventionRow> = { status: status, last_updated: now }
+        const updates: Partial<InterventionRow> = { status: status, updated_at: now }
         const data = await this.updateOne(reference, updates)
 
         return data

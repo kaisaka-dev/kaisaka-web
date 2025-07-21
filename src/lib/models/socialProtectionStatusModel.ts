@@ -64,13 +64,13 @@ export class socialProtectionStatusModel extends TableManager<"social_protection
    * @returns created status record or null
    */
   async insertStatus(
-    statusData: Omit<SocialProtectionStatusRow, 'id' | 'date_created' | 'last_updated'>
+    statusData: Omit<SocialProtectionStatusRow, 'id' | 'date_created' | 'updated_at'>
   ) {
     const now = new Date().toISOString();
     const fullData: Partial<SocialProtectionStatusRow> = {
       ...statusData,
       date_created: now,
-      last_updated: now
+      updated_at: now
     };
     return this.insertOne(fullData);
   }
@@ -85,7 +85,7 @@ export class socialProtectionStatusModel extends TableManager<"social_protection
     const references: Partial<SocialProtectionStatusRow> = { id };
     const updates: Partial<SocialProtectionStatusRow> = { 
       fam_year_accessed,
-      last_updated: new Date().toISOString()
+      updated_at: new Date().toISOString()
     };
     return this.updateOne(references, updates);
   }
@@ -100,7 +100,7 @@ export class socialProtectionStatusModel extends TableManager<"social_protection
     const references: Partial<SocialProtectionStatusRow> = { id };
     const updates: Partial<SocialProtectionStatusRow> = {
       comm_year_accessed,
-      last_updated: new Date().toISOString() 
+      updated_at: new Date().toISOString() 
     };
     return this.updateOne(references, updates);
   }
@@ -115,7 +115,7 @@ export class socialProtectionStatusModel extends TableManager<"social_protection
     const references: Partial<SocialProtectionStatusRow> = { id };
     const updates: Partial<SocialProtectionStatusRow> = { 
       participates_community_club,
-      last_updated: new Date().toISOString() 
+      updated_at: new Date().toISOString() 
     };
     return this.updateOne(references, updates);
   }
@@ -130,7 +130,7 @@ export class socialProtectionStatusModel extends TableManager<"social_protection
     const references: Partial<SocialProtectionStatusRow> = { id };
     const updates: Partial<SocialProtectionStatusRow> = { 
       participates_family_life,
-      last_updated: new Date().toISOString() 
+      updated_at: new Date().toISOString() 
     };
     return this.updateOne(references, updates);
   }
@@ -145,7 +145,7 @@ export class socialProtectionStatusModel extends TableManager<"social_protection
     const references: Partial<SocialProtectionStatusRow> = { id };
     const updates: Partial<SocialProtectionStatusRow> = { 
       child_id,
-      last_updated: new Date().toISOString() 
+      updated_at: new Date().toISOString() 
     };
     return this.updateOne(references, updates);
   }
@@ -165,7 +165,7 @@ export class socialProtectionStatusModel extends TableManager<"social_protection
     const references: Partial<SocialProtectionStatusRow> = { id };
     const fullUpdates: Partial<SocialProtectionStatusRow> = {
       ...updates,
-      last_updated: new Date().toISOString()
+      updated_at: new Date().toISOString()
     };
     return this.updateOne(references, fullUpdates);
   }

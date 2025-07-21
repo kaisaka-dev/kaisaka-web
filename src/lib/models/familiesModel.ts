@@ -67,7 +67,7 @@ export class FamiliesModel extends TableManager<"families">('families') {
                 )
             ),
             membership_annual_renewal(
-                last_updated
+                updated_at
             )
         `
         return this.findWithJoin(joinStatement, {eq: {id: id}})

@@ -64,13 +64,13 @@ export class educationStatusModel extends TableManager<"education_status">('educ
    * @returns created education record or null
    */
   async insertEducationStatus(
-    educationData: Omit<EducationStatusRow, 'id' | 'date_created' | 'last_updated'>
+    educationData: Omit<EducationStatusRow, 'id' | 'date_created' | 'updated_at'>
   ) {
     const now = new Date().toISOString();
     const fullData: Partial<EducationStatusRow> = {
       ...educationData,
       date_created: now,
-      last_updated: now
+      updated_at: now
     };
     return this.insertOne(fullData);
   }
@@ -90,7 +90,7 @@ export class educationStatusModel extends TableManager<"education_status">('educ
     const references: Partial<EducationStatusRow> = { id };
     const fullUpdates: Partial<EducationStatusRow> = {
       ...updates,
-      last_updated: new Date().toISOString()
+      updated_at: new Date().toISOString()
     };
     return this.updateOne(references, fullUpdates);
   }
@@ -105,7 +105,7 @@ export class educationStatusModel extends TableManager<"education_status">('educ
     const references: Partial<EducationStatusRow> = { id };
     const updates: Partial<EducationStatusRow> = { 
       grade_level,
-      last_updated: new Date().toISOString()
+      updated_at: new Date().toISOString()
     };
     return this.updateOne(references, updates);
   }
@@ -120,7 +120,7 @@ export class educationStatusModel extends TableManager<"education_status">('educ
     const references: Partial<EducationStatusRow> = { id };
     const updates: Partial<EducationStatusRow> = { 
       student_status_type,
-      last_updated: new Date().toISOString()
+      updated_at: new Date().toISOString()
     };
     return this.updateOne(references, updates);
   }
@@ -135,7 +135,7 @@ export class educationStatusModel extends TableManager<"education_status">('educ
     const references: Partial<EducationStatusRow> = { id };
     const updates: Partial<EducationStatusRow> = { 
       child_id,
-      last_updated: new Date().toISOString()
+      updated_at: new Date().toISOString()
     };
     return this.updateOne(references, updates);
   }

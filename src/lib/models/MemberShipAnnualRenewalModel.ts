@@ -33,7 +33,7 @@ export class MembershipAnnualRenewalModel extends TableManager<"membership_annua
       total_amount_due,
       remarks: remarks || null,
       date_created: now,
-      last_updated: now
+      updated_at: now
     };
     
     return this.insertOne(renewal);
@@ -111,7 +111,7 @@ export class MembershipAnnualRenewalModel extends TableManager<"membership_annua
     const reference: Partial<MembershipAnnualRenewalRow> = { id };
     const updates: Partial<MembershipAnnualRenewalRow> = { 
       total_amount_due, 
-      last_updated: now 
+      updated_at: now 
     };
     
     return this.updateOne(reference, updates);
@@ -128,7 +128,7 @@ export class MembershipAnnualRenewalModel extends TableManager<"membership_annua
     const reference: Partial<MembershipAnnualRenewalRow> = { id };
     const updates: Partial<MembershipAnnualRenewalRow> = { 
       remarks, 
-      last_updated: now 
+      updated_at: now 
     };
     
     return this.updateOne(reference, updates);
@@ -145,7 +145,7 @@ export class MembershipAnnualRenewalModel extends TableManager<"membership_annua
     const reference: Partial<MembershipAnnualRenewalRow> = { id };
     const updates: Partial<MembershipAnnualRenewalRow> = { 
       annual_program_id, 
-      last_updated: now 
+      updated_at: now 
     };
     
     return this.updateOne(reference, updates);
@@ -167,7 +167,7 @@ export class MembershipAnnualRenewalModel extends TableManager<"membership_annua
     const reference: Partial<MembershipAnnualRenewalRow> = { id };
     const fullUpdates: Partial<MembershipAnnualRenewalRow> = {
       ...updates,
-      last_updated: now
+      updated_at: now
     };
     
     return this.updateOne(reference, fullUpdates);
