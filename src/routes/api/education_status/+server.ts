@@ -82,6 +82,10 @@ export const PUT: RequestHandler = async({request}) => {
     updates.grade_level = body.grade_level
     hasUpdates = true
   }
+  if(body.student_status_type !== undefined){
+    updates.student_status_type = body.student_status_type
+    hasUpdates = true
+  }
 
   if (Object.keys(updates).length > 0) {
     const updated = await educationStatusModel.instance.updateEducationDetails(body.id, updates)
