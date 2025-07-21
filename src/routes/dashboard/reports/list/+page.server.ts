@@ -16,6 +16,7 @@ export type Errors = {
 // it's called list program in the database, but officially we've changed it to Report Period as it's more flexible
 export type ReportPeriod = {
 	id: number | null;
+	Start: string;
 	End: string;
 	startYYYY: number | null;
 	startMM?: number | null;
@@ -35,8 +36,23 @@ export type ReportPeriod = {
 
 
 
+export const load: PageLoad = async ({fetch}) => {
 	try {
+		const response = await fetch('/api/annual_program');
+		if (!response.ok) {
+			throw new Error('Failed to fetch report periods');
 		}
+
+		const result = await response.json();
+		const periodList: ReportPeriod[] = result.data.map((period: any) => {
+			return {
+				id: period.id,
+				Start: formatDate(period.start_year, period.start_month, period.start_date),
+				End: formatDate(period.end_year, period.end_month, period.end_date),
+				startYYYY: period.start_year,
+				startMM: period.start_month,
+				startDD: period.start_date,
+				endYYYY: period.end_year,
 				endMM: period.end_month,
 				endDD: period.end_date,
 				total_target_CWDS: "",
