@@ -15,13 +15,21 @@ import LoginModal from '$components/LoginModal.svelte'
   const handleOpen = () => showModal = true
   const gotoChildRegister = () => goto('/registration')
   const handleLogout = async () => {
-    const formData = new FormData()
-    await fetch('/auth/logout', {
-      method: 'POST',
-      body: formData, // send FormData directly
-    });
-    window.location.href='/';
+      const formData = new FormData();
+  const res = await fetch('/auth/logout', {
+    method: 'POST',
+    body: formData,
+  });
+
+  if (!res.ok) {
+    const msg = await res.text();
+    console.error('[Logout Failed]', msg);
+    alert('Logout failed');
+    return;
   }
+
+  window.location.href = '/';
+};
   let { data }: { data: ActionData } = $props()
 
   //var controls if the modal is on screen
