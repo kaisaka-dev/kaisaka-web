@@ -5,8 +5,8 @@ import { getLogSidecar } from '$lib/server/logging/log-sidecar.js';
 import type { QueryConfigurationBuilder } from '$lib/types/manager.js';
 import { type Worksheet } from 'exceljs';
 
-import { ReportGenerator } from './reportTemplate.js';
 import { getBirthdayRangeForAge } from './reportIntheProgram.js';
+import { ReportGenerator } from './reportTemplate.js';
 
 const MembershipCardParticipation = [
   { age_min: 0  , card: 'has_pwd',          type: 'acquistion'},
@@ -70,7 +70,7 @@ const MembershipCardParticipationSelectClause   = `*, disability_category!inner(
 
 const DisabilityParticipationSelectClause       = `*, disability_category!inner(name), members!inner(sex, birthday), social_protection_status!inner(*)` 
 
-export class AccessToSocialProtectionReportGenerator extends ReportGenerator {
+export class ReportGeneratorAccessToSocialProtection extends ReportGenerator {
 
   /**
    * Entry point for generating the full Excel report.
@@ -87,6 +87,23 @@ export class AccessToSocialProtectionReportGenerator extends ReportGenerator {
     await this.generateData(startYear, endYear, data.sheet);
 
     return await data.workbook.xlsx.writeBuffer();
+  }
+
+  /**
+   * Entry point for generating the full Excel report.
+   *
+   * @param {number} startYear - Current reporting year.
+   * @returns {Promise<Buffer>} - Buffer containing the Excel file.
+   */
+  static async generateWorkbookReport(startYear: number, endYear: number) {
+    logger.info('Started report for In the Program');
+    const {data, error} = await this.generateWorkbook('TEMPLATE_C2-SocInfo.xlsx');
+
+    if (error)
+      throw error
+    await this.generateData(startYear, endYear, data.sheet);
+
+    return await data.workbook;
   }
 
   /**
@@ -185,7 +202,7 @@ export class AccessToSocialProtectionReportGenerator extends ReportGenerator {
     modelFilter: QueryConfigurationBuilder,
     columnOffset: number,
     reportParams: AccessToSocialProtectionHeaderParams,
-    worksheet: Worksheet
+    worksheet: Worksheet,
   ) => {
     const result = await this.queryCountDatabase(modelSelectClause, modelFilter, reportParams)
     const rowAddress = 5 + reportParams.cardIndex * 2 + reportParams.disabilityIndex + reportParams.ageIndex * 2

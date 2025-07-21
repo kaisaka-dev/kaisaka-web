@@ -93,7 +93,7 @@ const cellAddressInProgramReportTemplate = (columnOffset: number, sexIndex: numb
   ? 5 + sexIndex + columnOffset * 2                           // Weird offset because of the 3rd column having merged cells in the template
   : 5 + sexIndex * 2 + columnOffset * 2 
 
-export class InTheProgramReportGenerator extends ReportGenerator {
+export class ReportGeneratorInTheProgram extends ReportGenerator {
 
   /**
    * Entry point for generating the full Excel report.
@@ -112,23 +112,34 @@ export class InTheProgramReportGenerator extends ReportGenerator {
     return await data.workbook.xlsx.writeBuffer();
   }
 
+  static async generateWorkbookReport(startYear: number, endYear: number) {
+    logger.info('Started report for In the Program');
+    const {data, error} = await this.generateWorkbook('TEMPLATE_A1-InTheProgram.xlsx');
+    
+    if (error)
+      throw error
+    await this.generateData(startYear, endYear, data.sheet);
+
+    return await data.workbook;
+  }
+
   /**
    * Populates the Excel worksheet with all layers of report data.
    *
    * @param {number} currentYear - Reporting year.
    * @param {Worksheet} worksheet - ExcelJS worksheet instance.
    */
-  static async generateData(startYear: number, endYear: number, worksheet: Worksheet) {
+  static async generateData(startYear: number, endYear: number, worksheet: Worksheet, mergeOffset: number = 0) {
     await Promise.all([
-      await this.writeCWDLayer(startYear, endYear, worksheet),
-      await this.writeDataLayer(worksheet)
+      await this.writeCWDLayer(startYear, endYear, worksheet, mergeOffset),
+      await this.writeDataLayer(worksheet, mergeOffset)
     ])
-    await this.getReportSummary(worksheet)
-    await this.getReportDifference(worksheet)
+    await this.getReportSummary(worksheet, mergeOffset)
+    await this.getReportDifference(worksheet, mergeOffset)
   }
 
-  static async writeCWDLayer(startYear: number, endYear: number, worksheet: Worksheet) {
-    const row = worksheet.getRow(9)
+  static async writeCWDLayer(startYear: number, endYear: number, worksheet: Worksheet, mergeOffset: number) {
+    const row = worksheet.getRow(9 + mergeOffset)
     const newCWDCurrentYear = await annualProgramModel.instance.findByStartAndEndYear(startYear, endYear)
     if (!newCWDCurrentYear)
       throw Error(`No Annual Program detected from ${startYear} to ${endYear}`)
@@ -163,10 +174,11 @@ export class InTheProgramReportGenerator extends ReportGenerator {
     modelFilter: QueryConfigurationBuilder,
     columnOffset: number,
     reportParams: InTheProgramHeaderParams,
-    worksheet: Worksheet
+    worksheet: Worksheet,
+    mergeOffset: number
   ) => {
     const result = await this.queryCountDatabase(modelInstance, modelSelectClause, modelFilter, reportParams)
-    const row = worksheet.getRow(21 + reportParams.ageIndex * 2 + reportParams.disabilityIndex)
+    const row = worksheet.getRow(21 + reportParams.ageIndex * 2 + reportParams.disabilityIndex + mergeOffset)
     const cellAddress = cellAddressInProgramReportTemplate(columnOffset, reportParams.sexIndex)
     const cell = row.getCell(cellAddress)
     
@@ -180,13 +192,13 @@ export class InTheProgramReportGenerator extends ReportGenerator {
    * @param {InTheProgramHeaderParams} reportParams - Parameters for the report cell.
    * @param {Worksheet} worksheet - ExcelJS worksheet.
    */
-  static async ReportQueryWriter (reportParams: InTheProgramHeaderParams, worksheet: Worksheet) {
+  static async ReportQueryWriter (reportParams: InTheProgramHeaderParams, worksheet: Worksheet, mergeOffset: number) {
     const writeResult = (
       modelInstance: ChildrenModel | InterventionModel, 
       modelSelectClause: string, 
       modelFilter: QueryConfigurationBuilder, 
       columnOffset: number
-    ) => this.writeResultToWorksheet(modelInstance, modelSelectClause, modelFilter, columnOffset, reportParams, worksheet)
+    ) => this.writeResultToWorksheet(modelInstance, modelSelectClause, modelFilter, columnOffset, reportParams, worksheet, mergeOffset)
 
     logger.info(`Cell (${reportParams.ageIndex}, ${reportParams.disabilityIndex}, ${reportParams.sexIndex}) - ${reportParams.ageGroup.label}, ${reportParams.disability.label}, ${reportParams.sex}`)
 
@@ -282,10 +294,10 @@ export class InTheProgramReportGenerator extends ReportGenerator {
    * @param {InTheProgramHeaderParams} reportParam - Report parameters to clone.
    * @param {Worksheet} worksheet - ExcelJS worksheet.
    */
-  static SexReportLayer = async (reportParam: InTheProgramHeaderParams, worksheet: Worksheet) => {
+  static SexReportLayer = async (reportParam: InTheProgramHeaderParams, worksheet: Worksheet, mergeOffset: number) => {
     await Promise.all(genders.map(async (sex, sexIndex) => {
       const paramClone = { ...reportParam, sex, sexIndex };
-      await this.ReportQueryWriter(paramClone, worksheet);
+      await this.ReportQueryWriter(paramClone, worksheet, mergeOffset);
     }));
   }
   
@@ -295,10 +307,10 @@ export class InTheProgramReportGenerator extends ReportGenerator {
    * @param {InTheProgramHeaderParams} reportParam - Report parameters to clone.
    * @param {Worksheet} worksheet - ExcelJS worksheet.
    */
-  static DisabilityReportLayer = async (reportParam: InTheProgramHeaderParams, worksheet: Worksheet) => {
+  static DisabilityReportLayer = async (reportParam: InTheProgramHeaderParams, worksheet: Worksheet, mergeOffset: number) => {
     await Promise.all(disabilities.map(async (disability, disabilityIndex) => {
       const paramClone = { ...reportParam, disability, disabilityIndex };
-      await this.SexReportLayer(paramClone, worksheet);
+      await this.SexReportLayer(paramClone, worksheet, mergeOffset);
     }));
   }
   
@@ -307,10 +319,10 @@ export class InTheProgramReportGenerator extends ReportGenerator {
    *
    * @param {Worksheet} worksheet - ExcelJS worksheet.
    */
-  static writeDataLayer = async (worksheet: Worksheet) => {
+  static writeDataLayer = async (worksheet: Worksheet, mergeOffset: number) => {
     await Promise.all(ageGroups.map(async (ageGroup, ageIndex) => {
       const paramClone = { ageGroup, ageIndex } as InTheProgramHeaderParams;
-      await this.DisabilityReportLayer(paramClone, worksheet);
+      await this.DisabilityReportLayer(paramClone, worksheet, mergeOffset);
     }));
   }
 
@@ -319,11 +331,11 @@ export class InTheProgramReportGenerator extends ReportGenerator {
    *
    * @param {Worksheet} worksheet - ExcelJS worksheet.
    */
-  static async getReportSummary(worksheet: Worksheet){
+  static async getReportSummary(worksheet: Worksheet, mergeOffset: number){
     const summaryOffsets = [0, 4]
     await Promise.all(
       summaryOffsets.flatMap(async (summaryOffset)=>{
-        await this.genderProgramMapping(async (sexIndex: number, programColumnOffset: number) => this.writeTwoSums(worksheet, programColumnOffset, sexIndex, summaryOffset))
+        await this.genderProgramMapping(async (sexIndex: number, programColumnOffset: number) => this.writeTwoSums(worksheet, programColumnOffset, sexIndex, summaryOffset, mergeOffset))
       }
     ))
   }
@@ -333,8 +345,8 @@ export class InTheProgramReportGenerator extends ReportGenerator {
    *
    * @param {Worksheet} worksheet - ExcelJS worksheet.
    */
-  static async getReportDifference(worksheet: Worksheet){
-    await this.genderProgramMapping(async (sexIndex: number, programColumnOffset: number) => this.writeDifference(worksheet, programColumnOffset, sexIndex));
+  static async getReportDifference(worksheet: Worksheet, mergeOffset: number){
+    await this.genderProgramMapping(async (sexIndex: number, programColumnOffset: number) => this.writeDifference(worksheet, programColumnOffset, sexIndex, mergeOffset));
   }
 
   /**
@@ -363,8 +375,8 @@ export class InTheProgramReportGenerator extends ReportGenerator {
    * @param {number} sexIndex - Index of gender.
    * @param {number} summaryOffset - Offset for syndrome group.
    */
-  static async writeTwoSums(worksheet: Worksheet, programColumnOffset: number, sexIndex: number, summaryOffset: number) {
-    const colNumber = cellAddressInProgramReportTemplate(programColumnOffset, sexIndex)
+  static async writeTwoSums(worksheet: Worksheet, programColumnOffset: number, sexIndex: number, summaryOffset: number, mergeOffset: number) {
+    const colNumber = cellAddressInProgramReportTemplate(programColumnOffset, sexIndex) + mergeOffset
     const colLetter = reportConversion.columnNumberToLetter(colNumber)
     const hasDownSyndrome = summaryOffset > 0 ? 1: 0
     const formula = `SUM(${colLetter}${21 + hasDownSyndrome},${colLetter}${23 + hasDownSyndrome},${colLetter}${25 + hasDownSyndrome},${colLetter}${27 + hasDownSyndrome},${colLetter}${29 + hasDownSyndrome})`
@@ -378,8 +390,8 @@ export class InTheProgramReportGenerator extends ReportGenerator {
    * @param {number} programColumnOffset - Offset of column group.
    * @param {number} sexIndex - Index of gender.
    */
-  static async writeDifference(worksheet: Worksheet, programColumnOffset: number, sexIndex: number) {
-    const colNumber = cellAddressInProgramReportTemplate(programColumnOffset, sexIndex)
+  static async writeDifference(worksheet: Worksheet, programColumnOffset: number, sexIndex: number, mergeOffset: number) {
+    const colNumber = cellAddressInProgramReportTemplate(programColumnOffset, sexIndex) + mergeOffset
     const colLetter = reportConversion.columnNumberToLetter(colNumber)
     const formula = `${colLetter}31 - ${colLetter}35`
     this.assignCellFormula(worksheet, 33, colNumber, formula);

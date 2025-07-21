@@ -4,7 +4,7 @@ import type { Database } from "./supabase-types.js";
 // All the names in the database
 export type tableNames = keyof Database['public']['Tables'] 
 export type enumNames = keyof Database['public']['Enums']
-
+export type viewNames = keyof Database['public']['Views']
 
 
 // A generic row from Table T being object-like
@@ -16,6 +16,9 @@ export type tableInsert<T extends tableNames>
 
 export type tableUpdate<T extends tableNames>
 = Database['public']['Tables'][T]['Update']
+
+export type viewRow<T extends viewNames>
+= Database['public']['Views'][T]['Row'] & Record<string, unknown>
 
 // Database query type for Table T
 export interface QueryConfigurationBuilder{

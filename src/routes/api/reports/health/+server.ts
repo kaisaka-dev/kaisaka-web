@@ -1,4 +1,4 @@
-import { HealthReportService } from '$lib/server/reports/services/health_report.js';
+import { HealthReportService } from '$lib/server/reports/services/reportObjectives.js';
 import { error } from '@sveltejs/kit';
 
 export async function POST() {

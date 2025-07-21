@@ -1,13 +1,8 @@
-
-import { ChildrenModel } from '$lib/models/childrenModel.js';
-
+import { CaregiversModel } from '$lib/models/caregiversModel.js';
 import { getLogSidecar } from '$lib/server/logging/log-sidecar.js';
 import type { QueryConfigurationBuilder } from '$lib/types/manager.js';
 import { type Worksheet } from 'exceljs';
-
 import { ReportGenerator } from './reportTemplate.js';
-import { getBirthdayRangeForAge } from './reportIntheProgram.js';
-import { CaregiversModel } from '$lib/models/caregiversModel.js';
 
 const groupMembership = [
   { label: 'Joining a new group this year'  },
@@ -23,8 +18,8 @@ const laborMarketAccess = [
 
 const wageTypes = [
   { label: 'Wage-employed'        , offset: 0},
-  { label: 'Self-employed'        , offset: 4},
-  { label: 'Sheltered workshop '  , offset: 6},
+  { label: 'Self-employed'        , offset: 3},
+  { label: 'Sheltered workshop '  , offset: 5},
 ]
 
 
@@ -50,8 +45,7 @@ interface ParticipationOfCaregiversHeaders {
   laborMarketAccessIndex: string,
   disability: typeof disabilities[number],
   disabilityIndex: number,
-  sex: string,
-  sexIndex: number
+
 };
 
 interface AccessToLaborMarket {
@@ -59,6 +53,9 @@ interface AccessToLaborMarket {
   groupMembershipIndex: number,
   disability: typeof disabilities[number],
   disabilityIndex: number,
+  wageType: typeof wageTypes[number],
+  sex: string,
+  sexIndex: number
 }
 
 /**
@@ -120,7 +117,7 @@ const AccessToLabourMarketSelectClause = `
   employment_status(*)
 ` 
 
-export class LiveInfoReportGenerator extends ReportGenerator {
+export class ReportGeneratorLivelihoodInformation extends ReportGenerator {
 
   /**
    * Entry point for generating the full Excel report.
@@ -139,45 +136,77 @@ export class LiveInfoReportGenerator extends ReportGenerator {
     return await data.workbook.xlsx.writeBuffer();
   }
 
+  static async generateWorkbookReport(startYear: number, endYear: number) {
+    logger.info('Started report for In the Program');
+    const {data, error} = await this.generateWorkbook('TEMPLATE_D2-LivInfo.xlsx');
+
+    if (error)
+      throw error
+    await this.generateData(startYear, endYear, data.sheet, 233);
+
+    return data.workbook
+  }
   /**
    * Populates the Excel worksheet with all layers of report data.
    *
    * @param {number} currentYear - Reporting year.
    * @param {Worksheet} worksheet - ExcelJS worksheet instance.
    */
-  static async generateData(startYear: number, endYear: number, worksheet: Worksheet) {
+  static async generateData(startYear: number, endYear: number, worksheet: Worksheet, mergeOffset: number = 0) {
     await Promise.all([
-      await this.ParticipationOfCaregivers(startYear, endYear, worksheet),
-      await this.AccessToLabourMarket(startYear, endYear, worksheet)
+      await this.ParticipationOfCaregivers(startYear, endYear, worksheet, mergeOffset),
+      await this.AccessToLabourMarket(startYear, endYear, worksheet, mergeOffset)
     ])
+    
+    logger.info("Done")
   }
 
-  static async ParticipationOfCaregivers(startYear:number, endYear:number, worksheet: Worksheet){
-    await Promise.all(
-      groupMembership.flatMap(async (groupMembership, groupMembershipId) => {
-        disabilities.flatMap(async (disability, disabilityId) => {
+  static async ParticipationOfCaregivers(startYear:number, endYear:number, worksheet: Worksheet, mergeOffset: number){
+    await Promise.all(groupMembership.flatMap(async (groupMembership, groupMembershipId) => {
+      await Promise.all(disabilities.flatMap(async (disability, disabilityId) => {
           const rowAddress = 5 + groupMembershipId * 2 + disabilityId;
           
           const incomeGeneratingActivities = async () => {
               const cellAddress = 5
-              const result = {
-                count: 2
-              }
               
               await Promise.all([
-                await this.assignCellValue(worksheet, rowAddress, cellAddress, result.count > 0 ? result.count : ``),
-                await this.assignCellValue(worksheet, rowAddress, cellAddress + 1, result.count > 0 ? result.count : ``)
+                await this.writeResultToWorksheet(
+                  ParticipationOfCaregiversSelectClause, 
+                  {}, 
+                  {laborMarketAccess:  groupMembership.label, disability, } as ParticipationOfCaregiversHeaders, 
+                  rowAddress, 
+                  cellAddress, 
+                  worksheet
+                ),
+                await this.writeResultToWorksheet(
+                  ParticipationOfCaregiversSelectClause, 
+                  {}, 
+                  {laborMarketAccess:  groupMembership.label, disability, } as ParticipationOfCaregiversHeaders, 
+                  rowAddress, 
+                  cellAddress + 1, 
+                  worksheet
+                ),
               ])
             }
           const communityGroups = async () => {
             const cellAddress = 10
-            const result = {
-              count: 2
-            }
-            
             await Promise.all([
-              await this.assignCellValue(worksheet, rowAddress, cellAddress, result.count > 0 ? result.count : ``),
-              await this.assignCellValue(worksheet, rowAddress, cellAddress + 1, result.count > 0 ? result.count : ``)
+              await this.writeResultToWorksheet(
+                ParticipationOfCaregiversSelectClause, 
+                {}, 
+                {laborMarketAccess:  groupMembership.label, disability, } as ParticipationOfCaregiversHeaders, 
+                rowAddress, 
+                cellAddress, 
+                worksheet
+              ),
+              await this.writeResultToWorksheet(
+                ParticipationOfCaregiversSelectClause, 
+                {}, 
+                {laborMarketAccess:  groupMembership.label, disability, } as ParticipationOfCaregiversHeaders, 
+                rowAddress, 
+                cellAddress + 1, 
+                worksheet
+              ),
             ])
           }
           
@@ -186,28 +215,44 @@ export class LiveInfoReportGenerator extends ReportGenerator {
             await communityGroups()
           ])
         })
+      )
       })
     )
   }
 
-  static async AccessToLabourMarket(startYear:number, endYear:number, worksheet: Worksheet){
+  static async AccessToLabourMarket(startYear:number, endYear:number, worksheet: Worksheet, mergeOffset: number){
     await Promise.all(
       laborMarketAccess.flatMap(async (laborMarket, laborMarketId) => {
+        await Promise.all(
         disabilities.flatMap(async (disability, disabilityId) => {
+          await Promise.all(
           wageTypes.flatMap(async (wageType)=>{
+            await Promise.all(
             sexes.flatMap(async (sex, sexIndex)=>{
               const rowAddress = 14 + laborMarketId * 2 + disabilityId;
               const cellAddress = 7 + ((wageType.offset == 0) ? wageType.offset + sexIndex * 2 : wageType.offset + sexIndex);
-              const result = {
-                count: 1
-              }
-
-              await this.assignCellValue(worksheet, rowAddress, cellAddress, result.count > 0 ? result.count : ``)
+              
+              await this.writeResultToWorksheet(
+                AccessToLabourMarketSelectClause, 
+                {}, 
+                {
+                  groupMembership:  laborMarket.label, 
+                  disability, 
+                  wageType, 
+                  sex, 
+                  sexIndex
+                } as AccessToLaborMarket, 
+                rowAddress, 
+                cellAddress + 1, 
+                worksheet
+              )
             })
+            )
           })
+        )
         })
+        )
       })
-
     )
   }
 
@@ -224,14 +269,13 @@ export class LiveInfoReportGenerator extends ReportGenerator {
   static writeResultToWorksheet = async (
     modelSelectClause: string, 
     modelFilter: QueryConfigurationBuilder,
-    columnOffset: number,
-    reportParams: LivInfoParams,
+    reportParams: ParticipationOfCaregiversHeaders | AccessToLaborMarket,
     rowAddress: number,
     cellAddress: number,
     worksheet: Worksheet
   ) => {
     const result = await this.queryCountDatabase(modelSelectClause, modelFilter, reportParams)
-    await this.assignCellValue(worksheet, rowAddress, cellAddress, result.count > 0 ? result.count : ``)
+    await this.assignCellValue(worksheet, rowAddress, cellAddress, result.count > 0 ? result.count : `-`)
   }
 
 
@@ -247,9 +291,8 @@ export class LiveInfoReportGenerator extends ReportGenerator {
   static async queryCountDatabase (
     modelSelectClause: string, 
     modelFilter: QueryConfigurationBuilder, 
-    headerParams: LivInfoParams
+    headerParams: ParticipationOfCaregiversHeaders | AccessToLaborMarket
   ): Promise<cellResults> {
-    const { age_min, disability, sex, ageIndex, disabilityIndex, sexIndex } = headerParams;
 
     const cell_result = {
       count: 0,
@@ -259,7 +302,7 @@ export class LiveInfoReportGenerator extends ReportGenerator {
     
     try {
       const result = await CaregiversModel.instance.findWithJoinAndCount(modelSelectClause, modelFilter);
-      logger.info(`${JSON.stringify(result.data)} ${JSON.stringify(modelFilter)}`)
+      // logger.info(`${JSON.stringify(result.data)} ${JSON.stringify(modelFilter)} `)
       cell_result.count = (result.count) ?? 0;
     } catch (error) {
       cell_result.error = JSON.stringify(error)
