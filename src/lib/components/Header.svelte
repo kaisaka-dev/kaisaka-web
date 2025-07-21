@@ -4,6 +4,23 @@
     let profileimg = '/img/Profile Icon.png';
     export let category = "";
     export let page = "";
+
+    const handleLogout = async () => {
+    const formData = new FormData();
+    const res = await fetch('/auth/logout', {
+      method: 'POST',
+      body: formData,
+    });
+
+    if (!res.ok) {
+      const msg = await res.text();
+      console.error('[Logout Failed]', msg);
+      alert('Logout failed');
+      return;
+    }
+    // Redirect after logout
+        window.location.href = '/';
+    };
 </script>
 
 <div id = "navbar" style="font-weight:bold; position: sticky;z-index:1000 ">
@@ -40,7 +57,7 @@
 
         <ul tabindex="-1" class="dropdown-content menu rounded-box z-1 w-52 p-2 shadow-sm !bg-[var(--header-color)]">
             <li><a href="/dashboard/staff-profile">My Profile</a></li>
-            <li><a href="/">Log Out</a></li>
+            <li><a href="#" on:click|preventDefault={handleLogout}>Log Out</a></li>
         </ul>
     </div>
 
