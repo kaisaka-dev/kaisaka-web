@@ -18,7 +18,7 @@
   {:else }
     <!-- for the password -->
     <div class="flex grow basis-0 !h-10">
-      <input type={showPassword ? 'text' : 'password'}  class="input !min-w-[50%] !max-w-[100%] grow basis-0 !h-10" placeholder={ placeholder } />
+      <input name={ inputName } type={showPassword ? 'text' : 'password'} class="input !min-w-[50%] !max-w-[100%] grow basis-0 !h-10" placeholder={ placeholder } />
       <button type="button" onclick={togglePassword} class="toggle-password">
         <!-- or else the eye disappears after you lose focus on the password -->
         {#if showPassword}
