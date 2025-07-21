@@ -1,4 +1,5 @@
-import type { PageLoad} from '../../../../../.svelte-kit/types/src/routes/$types.js';
+import type { PageServerLoad} from '../../../../../.svelte-kit/types/src/routes/$types.js';
+import { redirect } from "@sveltejs/kit";
 
 export type Errors = {
 	startYYYY: string,
@@ -36,7 +37,10 @@ export type ReportPeriod = {
 
 
 
-export const load: PageLoad = async ({fetch}) => {
+export const load: PageServerLoad = async ({fetch, locals}) => {
+	if (!locals.user) {
+		throw redirect(303, '/');
+	}
 	try {
 		const response = await fetch('/api/annual_program');
 		if (!response.ok) {

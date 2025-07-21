@@ -13,6 +13,7 @@ declare global {
 			session: Session | null,
 			user: User | null,
 			safeGetSession: safeGetSessionType,
+			profile: Record<string, any> | null
 		}
 		interface PageData {
       session: Session | null

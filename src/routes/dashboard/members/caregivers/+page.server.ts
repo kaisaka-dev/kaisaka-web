@@ -1,4 +1,5 @@
-import type { PageLoad} from '../../../../../.svelte-kit/types/src/routes/$types.js';
+import type { PageServerLoad} from '../../../../../.svelte-kit/types/src/routes/$types.js';
+import  {redirect} from '@sveltejs/kit'
 
 export type CaregiverListItem = {
 	id: string;
@@ -8,7 +9,11 @@ export type CaregiverListItem = {
 	link: string;
 };
 
-export const load: PageLoad = async ({fetch}) => {
+export const load: PageServerLoad = async ({locals, fetch}) => {
+	if (!locals.user) {
+        throw redirect(303, '/');
+    }
+	
 	try {
 		const response = await fetch('/api/caregivers');
 

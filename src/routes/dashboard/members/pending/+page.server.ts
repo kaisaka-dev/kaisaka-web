@@ -1,4 +1,5 @@
 import type { PageLoad } from '../../../../../.svelte-kit/types/src/routes/$types.js';
+import { redirect } from "@sveltejs/kit";
 
 type PendingDocument = {
 	id: string;
@@ -11,7 +12,10 @@ type PendingDocument = {
 	link: string;
 };
 
-export const load: PageLoad = async ({ fetch }) => {
+export const load: PageLoad = async ({ fetch, locals}) => {
+    if (!locals.user) {
+        throw redirect(303, '/');
+    }
 	try {
 		console.log('Fetching: /api/children?type=pending-documents');
 		const response = await fetch('/api/children?type=pending-documents');
