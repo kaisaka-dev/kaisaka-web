@@ -4,12 +4,14 @@
     import TextArea from '$components/input/InputTextarea.svelte'
     import Check from '$components/input/Checkbox.svelte'
     import Select from '$components/input/Select.svelte'
+    import Modal from '$components/Modal.svelte'
     import { goto } from '$app/navigation';
 
     export let data;
-    let selected;
+    let openModal: boolean = false;
 
     let firstName: string = data.child?.firstName || "Name Must Be Assigned"
+    let middleName: string = data.child?.middleName || "No Middle Name"
     let lastName: string = data.child?.lastName || "Last Name Must Be Assigned"
     let birthday: string = data.child?.birthday || new Date().toISOString().split('T')[0]
     let sex: string = data.child?.sex || "N/A"
@@ -20,11 +22,11 @@
     let disabilityCategory: string = data.child?.disabilityCategory || ""
     let disabilityNature: string = data.child?.disabilityNature || ""
     let admissionDate: string = data.child?.admissionDate
+    let remarks: string = data.child?.remarks || ""
 
     let educType: string = "N/A"
     let educStatus: string = "N/A"
     let educLevel: string = "N/A"
-    let studentStatus: string = "N/A"
     let yearStart: number 
     let yearEnd: number 
 
@@ -61,8 +63,12 @@
         Educationlevel: string,
         Educationstatus: string,
         yearStart: number,
-        yearEnd: number
+        yearEnd: number,
+        isNew: boolean,
+        isDeleted: boolean,
     }[] = []
+
+    let selectedIndex: number
 
     for(let i = 0; i < data.child?.educationHistory.length;i++){
         educHistory.push({
@@ -70,11 +76,80 @@
             Educationlevel: data.child.educationHistory[i]?.grade_level,
             Educationstatus: data.child.educationHistory[i]?.student_status_type,
             yearStart: data.child?.educationHistory[i]?.year_start,
-            yearEnd: data.child?.educationHistory[i]?.year_end
+            yearEnd: data.child?.educationHistory[i]?.year_end,
+            isNew:false,
+            isDeleted: false
 
         })
     }
+
+    let hasPWD: boolean = data.child?.pwd?.has;
+    let pwdID: string = data.child?.pwd?.id;
+    let pwdExpiry: string = data.child?.pwd?.expiry;
     
+    let socialProtectionhas: boolean = data.child?.socialProtection?.has
+    let socialProtectionFam: boolean = data.child?.socialProtection?.fam_life
+    let socialProtectionFamYear: number = data.child?.socialProtection?.family_year
+    let socialProtectionCom: boolean = data.child?.socialProtection?.community_club
+    let socialProtectionComYear: number = data.child?.socialProtection?.community_year
+
+    let hasPHhealth: boolean = data.child?.philHealth
+    let natID: boolean = data.child?.national_id
+    let medCert: boolean = data.child?.med_cert
+    let birthCert: boolean = data.child?.birth_cert
+    let barangayCert: boolean = data.child?.barangay_cert
+    let voterID: boolean = data.child?.voter_id
+
+    let interventions: {
+        id?: string,
+        name:string,
+        servicecatID?: number,
+        servicecat: string,
+        dateCreated: string,
+        status: string,
+        isNew: boolean,
+        isDeleted: boolean,
+        history?:{
+            status: string,
+            id?: string,
+            date:string,
+            intervention_id: string,
+            isNew: boolean,
+            isDeleted: boolean
+        }[]
+    }[] = []
+
+     for(let i = 0 ; i < data.interventioninfo.length; i++){
+         interventions.push({
+             id: data.interventioninfo[i].id,
+             name: data.interventioninfo[i].intervention,
+             servicecat: data.interventioninfo[i].service_category.name,
+             servicecatID: data.interventioninfo[i].service_category.id,
+             dateCreated: data.interventioninfo[i].date_created.split('T')[0],
+            status: data.interventioninfo[i].status,
+            history: [],
+            isNew: false,
+            isDeleted: false
+         })
+
+
+         for(let j = 0; j < data.interventioninfo[i].history.length;j++){
+            interventions[i].history?.push({
+            id: data.interventioninfo[i].history[j].id,
+            status: data.interventioninfo[i].history[j].status,
+            date: data.interventioninfo[i].history[j].date_checked.split('T')[0],
+            intervention_id: data.interventioninfo[i].history[j].intervention_id,
+            isNew: false,
+            isDeleted: false
+            })
+         }
+     }
+
+     let interventionCount  = interventions.length
+     
+
+
+
     
     const options_disNature = [
     "Deaf/Hard of Hearing",
@@ -91,6 +166,7 @@
     ];
 
     const educ_options = [
+        "",
         'Inclusive',
         'Special',
         'Nonformal',
@@ -98,6 +174,7 @@
     ]
 
     const student_options = [
+        "",
         'past_student',
         'enrolled',
         'dropped_out',
@@ -106,12 +183,89 @@
 
     //below are functions needed for the page
 
-    function updateField(index:number){
-        educType = educHistory[index].Educationtype
-        educLevel = educHistory[index].Educationlevel
-        educStatus = educHistory[index].Educationstatus
-        yearStart = educHistory[index].yearStart
-        yearEnd = educHistory[index].yearEnd
+    //TODO: IMPLEMENT VALIDATION CHECKING
+    function addFamily(){
+        existingFamily.push({
+            firstName:"",
+            lastName:"",
+            relationship: "",
+            is_child:"",
+            isDeleted: false,
+            isNew: true,
+        })
+
+        existingFamily = existingFamily
+    }
+
+    function deleteFamily(index:number){
+        existingFamily[index].isDeleted = true
+        existingFamily = existingFamily
+    }
+    function deleteIntervention(index:number) {
+        interventions[index].isDeleted = true
+        interventionCount--
+    }
+
+    function deleteStatus(index:number, interventionIndex: number){
+        interventions[interventionIndex].history[index].isDeleted = true
+    }
+
+    function addStatus( interventionIndex: number){
+        interventions[interventionIndex].history.push({
+            status: "",
+            date:"",
+            intervention_id: interventions[interventionIndex].id,
+            isNew: true,
+            isDeleted: false
+        })
+
+        interventions[interventionIndex].history = interventions[interventionIndex].history
+
+    }
+
+
+    function addEducRecord(){
+        educHistory.push({
+             Educationtype: "",
+             Educationlevel: "",
+             Educationstatus: "",
+             yearStart: new Date().getFullYear(),
+             yearEnd: new Date().getFullYear(),
+             isNew:true,
+             isDeleted: false
+        })
+
+        data.child.schoolYearArray?.push(String(educHistory[educHistory.length-1].yearStart))
+        data.child.schoolYearArray = data.child?.schoolYearArray
+
+        educHistory = educHistory
+    }
+
+    function deleteEducRecord(index:number){
+        educHistory[index].isDeleted = true
+        educHistory = educHistory
+        updateField(0)
+    }
+
+    function updateField(index:number){     
+        if(index == 0) {
+            educType = ""
+            educLevel = ""
+            educStatus = ""
+            yearStart =0 ;
+            yearEnd =0 ;
+        }
+
+        else {
+            educType = educHistory[index-1].Educationtype
+            educLevel = educHistory[index-1].Educationlevel
+            educStatus = educHistory[index-1].Educationstatus
+            yearStart = educHistory[index-1].yearStart
+            yearEnd = educHistory[index-1].yearEnd
+
+        }
+
+        selectedIndex = index-1
     }
         async function editData(): Promise<void> {
 
@@ -131,30 +285,56 @@
                 }
             });
 
-            const addressres = await fetch('/api/addresses', {
-            method: "PUT",
-            body: JSON.stringify({
-                id: data.member?.address_id,
-                address: address
-            }),
-                headers: {
-                    'Content-Type': 'application/json'
-                }
-            });
+            // const addressres = await fetch('/api/addresses', {
+            // method: "GET",
+            // body: JSON.stringify({
+            //     id: data.member?.address_id,
+            // }),
+            //     headers: {
+            //         'Content-Type': 'application/json'
+            //     }
+            // });
 
-            const barangayres = await fetch('/api/barangays', {
-            method: "PUT",
-            body: JSON.stringify({
-                id: data.child?.barangayid,
-                name: barangay
-            }),
-                headers: {
-                    'Content-Type': 'application/json'
-                }
-            });
+            // if(!addressres) {
+            //     const createAddress = await fetch('/api/addresses', {
+            //     method: "PUT",
+            //     body: JSON.stringify({
+            //     id: data.member?.address_id,
+            //     address: address
+            // }),
+            //     headers: {
+            //         'Content-Type': 'application/json'
+            //     }
+            // });
+            // }
+
+            // const addressres = await fetch('/api/addresses', {
+            // method: "PUT",
+            // body: JSON.stringify({
+            //     id: data.member?.address_id,
+            //     address: address
+            // }),
+            //     headers: {
+            //         'Content-Type': 'application/json'
+            //     }
+            // });
+
+            // const barangayres = await fetch('/api/barangays', {
+            // method: "PUT",
+            // body: JSON.stringify({
+            //     id: data.child?.barangayid,
+            //     name: barangay
+            // }),
+            //     headers: {
+            //         'Content-Type': 'application/json'
+            //     }
+            // });
 
             //This should happen if a persons record isnt found 
-            if(data.child?.canWork != canwork && data.child?.canWork == false){
+            const employmentRes = await fetch(`/api/employments_status?id=${data.member.id}`)
+
+
+            if(!employmentRes.ok && canwork == true){
                console.log(await fetch('/api/employment_status', {
                     method: "POST",
                     body: JSON.stringify({
@@ -199,7 +379,6 @@
             for(let i = 0; i < existingFamily.length;i++)
             {
                     let ischild: boolean = false
-                    console.log(existingFamily[i])
                     if(existingFamily[i].is_child === "Yes"){
                         ischild = true
                     }
@@ -232,41 +411,174 @@
                     //TODO: implement POST, DELETE 
             }
 
-            console.log(data.child?.educationHistory)
             //EDUCATION RECORD UPDATES BEGIN HERE
-            const updateEducRecord = await fetch('/api/education_status', {
-                method: "PUT",
+            for(let i = 0; i < educHistory.length; i++){
+                if(educHistory[i].isNew && !educHistory[i].isDeleted){
+                const createeducRecord = await fetch('/api/education_status', {
+                method: "POST",
                 body:JSON.stringify({
-                    id: data.child.educationHistory[data.child.schoolYearArray?.indexOf(selected)]?.id,
+                    child_id: data.child.id,
                     education_type: educType,
                     education_status: educStatus,
                     grade_level: educLevel,
                     year_start: yearStart,
                     year_end:yearEnd
+                    }),
+                    headers:{
+                            'Content-Type': 'application/json'
+                    }
                 })
-            })
-            
+                }
 
+                 else if(educHistory[i].isDeleted && !educHistory[i].isNew){
+                 const deleteEducRecord = await fetch('/api/education_status', {
+                 method: "DELETE",
+                 body:JSON.stringify({
+                     id: data.child?.educationHistory[i].id,
+                     }),
+                     headers:{
+                         'Content-Type': 'application/json'
+                     }
+                 })
+                 }
+            }
+            
+                const updateEducRecord = await fetch('/api/education_status', {
+                method: "PUT",
+                body:JSON.stringify({
+                    id: data.child.educationHistory[selectedIndex]?.id,
+                    education_type: educType,
+                    education_status: educStatus,
+                    grade_level: educLevel,
+                    year_start: yearStart,
+                    year_end:yearEnd
+                }),
+                headers:{
+                         'Content-Type': 'application/json'
+                     }
+            })
+
+
+        //DOCUMENT UPDATES BEGIN HERE
+        if(data.child?.pwd?.has && hasPWD ){ //just updates pwd info
+            const updatePWDrecord = await fetch('/api/pwd_ids', {
+               method: "PUT",
+                body:JSON.stringify({
+                    id: data.child.pwd.recordid,
+                    pwd_id: pwdID,
+                    expiry_date:pwdExpiry
+                }),
+                headers:{
+                         'Content-Type': 'application/json'
+                     } 
+            })
+        }
+
+        else if(!data.child?.pwd?.has && hasPWD){ //for when a new PWD record needs to be created
+             const createPWDrecord = await fetch('/api/pwd_ids', {
+               method: "POST",
+                body:JSON.stringify({
+                    pwd_id: pwdID,
+                    expiry_date:pwdExpiry
+                }),
+                headers:{
+                         'Content-Type': 'application/json'
+                     } 
+                })
+        }
+        
+        // else if(data.child?.pwd?.has && !hasPWD){ //for when a PWD record needs to be deleted
+        //     const deletePWDrecord = await fetch('/api/pwd_ids' , {
+        //         method: "DELETE",
+        //         body: JSON.stringify({
+
+        //         })
+        //     })
+        // }
+
+        
+        const documentationUpdate = await fetch('/api/children', {
+            method: "PUT",
+            body:JSON.stringify({
+                id: data.child?.id,
+                remarks:  remarks,
+                disability_nature: disabilityNature,
+                has_philhealth: hasPHhealth,
+                has_birth_cert: birthCert,
+                has_medical_cert: medCert,
+                has_barangay_cert: barangayCert,
+                has_vote: voterID,
+                has_national_id: natID
+            }),
+             headers:{
+                         'Content-Type': 'application/json'
+                     } 
+        })
+
+        //INTERVENTION UPDATES BEGIN HERE
+        for(let i = 0; i < interventions.length; i++) {
+            const interventionUpdate = await fetch('/api/intervention', {
+                method:'PUT',
+                body: JSON.stringify({
+                    id: interventions[i].id,
+                    intervention: interventions[i].name,
+                    status: interventions[i].status,
+                    date_created: interventions[i].dateCreated
+                }),
+                headers:{
+                         'Content-Type': 'application/json'
+                        } 
+            })
+
+            const categoryUpdate = await fetch('/api/service_category' , {
+                method: "PUT",
+                body: JSON.stringify({
+                    id: interventions[i].servicecatID,
+                    name: interventions[i].servicecat
+                }),
+                headers:{
+                         'Content-Type': 'application/json'
+                    } 
+            })
+
+            for(let j = 0; j < interventions[i].history?.length; j++){
+                const statusUpdate = await fetch('/api/intervention_history', {
+                    method: "PUT", 
+                    body: JSON.stringify({
+                        id: interventions[i].history[j].id,
+                        intervention: interventions[i].id,
+                        status: interventions[i].history[j].status,
+                        date_checked: interventions[i].history[j].date
+                    })
+                })
+            }
+        }
+            
         goto(`/dashboard/members/children/profile?id=${data.child.id}`);
     }
 
 </script>
+ <Header/>
 
 
-<span class = "z-5000"> <Header/> </span>
+
+
 
 <section>
     <h1>
      {data.child?.firstName ?? "First Name Missing!"} {data.child?.lastName ?? "Last Name Missing!"}'s Profile 
     </h1>
 </section>
-<div class = "flex flex-row ml-10 m-4 sticky top-20">
+<div class = "flex flex-row ml-10 m-4 sticky top-20 ">
     <div class = "flex flex-col !font-[JSans]">
         <div class = "hover:!text-[var(--green)]">
             <a class = "hover:!text-[var(--green)]" href = "#top">Information </a>
         </div>
         <div class = "hover:!text-[var(--green)]">
             <a class = "hover:!text-[var(--green)]" href = "#Family Info">Family </a>
+        </div>
+        <div class = "hover:!text-[var(--green)]">
+            <a class = "hover:!text-[var(--green)]" href = "#Education Info">Education </a>
         </div>
         <div class = "hover:!text-[var(--green)]">
             <a class = "hover:!text-[var(--green)]" href = "#Documentation Info">Documents </a>
@@ -283,7 +595,7 @@
             <button class="w-40 -ml-5 mt-5" on:click={() => goto(`/dashboard/members/children/profile?id=${data.child.id}`)} >Back</button>
         </div>
     </div> 
-    <div class = "!bg-[var(--green)] w-[4px] l-[100px] rounded-full ml-5"></div>
+    <div class = "!bg-[var(--green)] w-[4px] l-[100px] rounded-full ml-5 -z-5000"></div>
 </div>
 
 <!-- PERSONAL INFORMATION SECTION BELOW-->
@@ -296,6 +608,7 @@
     <div class = "!flex !flex-row !justify-start mt-2">
         <div class = "flex flex-col ml-4 mt-2 w-[1200px]">
           <Input label="First Name" id="first_name"  bind:value = {firstName} margin={false} />
+          <Input label="Middle Name" id="middle_name"   bind:value = {middleName} margin={false} />
           <Input label="Last Name" id="last_name"   bind:value = {lastName} margin={false} />
           <Input label="Birthday" type="date" id="birthday" bind:value = {birthday}  margin={false} />
           <Input label="Age" id ="age" disabled value = {new Date().getFullYear() - new Date(birthday).getFullYear() || "Please Specify Birthday!"} margin={false} />
@@ -314,7 +627,7 @@
           <Input label="Admission Date" type="date"  bind:value = {admissionDate} margin={false} />
         </div>
       <div style="height: fit-content">
-        <TextArea value = {data.child?.remarks || "N/A"} label="Remarks" rows={10}  margin={false} /></div>
+        <TextArea bind:value = {remarks} label="Remarks" rows={10}  margin={false} /></div>
 
     </div>
 </div>
@@ -341,20 +654,22 @@
            <div class = "!text-[var(--background)] !font-bold ml-30">Last Name </div>
            <div class = "!text-[var(--background)] !font-bold ml-35">First Name </div>
         </div>
-        {#each existingFamily as fammember}
+        {#each existingFamily as fammember,index}
+        {#if fammember.isDeleted == false}
         <div class = "flex flex-row mb-5">
             <div class = "w-50 ml-5"> <Select bind:value = {fammember.is_child} options = {["Yes", "No"]}/> </div>
             <div class = "mt-4 ml-10 w-50"> <Input type = "text" bind:value = {fammember.relationship}/> </div>
             <div class = "w-50 mt-4 ml-10">  <Input type = "text" bind:value ={fammember.lastName}/> </div>
             <div class = "w-50 mt-4 ml-10">  <Input type = "text" bind:value ={fammember.firstName}/> </div>
             <div class = "mt-1">
-                <button  class = "!bg-white !text-red-500 hover:!text-red-400 hover:!shadow-[var(--background)]">
+                <button on:click = {()=>deleteFamily(index)} class = "!bg-white !text-red-500 hover:!text-red-400 hover:!shadow-[var(--background)]">
                     x
                 </button> 
             </div>
         </div>
+        {/if}
         {/each}
-        <div class = "w-150"> <button> Add Member </button> <span class = "!text-red-500 ml-5 !text-xs"> Make sure member is already registered!</span> </div>
+        <div class = "w-150"> <button on:click={()=>addFamily()}> Add Member </button> <span class = "!text-red-500 ml-5 !text-xs"> Make sure member is already registered!</span> </div>
         {:else}
             <div> Child is not part of any family </div>
         {/if}
@@ -364,7 +679,7 @@
 
 
 <!--CONTAINER FOR EDUCATION HISTORY-->
-<div id ="Family Info" class = "mb-15"></div>
+<div id ="Education Info" class = "mb-15"></div>
 <div class = "flex flex-row">
     <div class = "mr-64">
         <h1 class = "!text-[var(--green)] font-[JSans] ml-55 -mb-5">
@@ -375,18 +690,26 @@
 <div class = "flex flex-row mt-10">
     <div class = "flex flex-col border-[var(--border)] border-4 ml-55 mr-10 p-6 w-170 min-w-150">
         {#if educHistory.length > 0}
-        <div> <Select label="Please select a school year" bind:value = {selected} options = {data.child?.schoolYearArray}/></div>
-        {#if selected}
-        {updateField(data.child?.schoolYearArray?.indexOf(selected))}
+        <div class = "flex flex-row"> <div> Please select a school year </div> <select class = "ml-5 w-50 z-100" on:change={(e)=>updateField(e.target.selectedIndex)}>
+            <option selected> </option>
+            {#each educHistory as year}
+            {#if year.isDeleted == false}
+            <option> {year.yearStart}</option>
+            {/if}
+            {/each}
+        </select></div>
         <div class = "mt-3"> <Select label="Education Type:" bind:value = {educType} options = {educ_options} /></div>
         <div class = "mt-3"> <Input label="Education Level:" bind:value = {educLevel}/></div>
         <div class = "mt-3"> <Select label="Education Status:" bind:value = {educStatus} options = {student_options}/> </div>
         <div class = "mt-3"> <Input label="School Year Start:" bind:value = {yearStart}/> </div>
         <div class = "mt-3"> <Input label="School Year End:" bind:value = {yearEnd}/> </div>
-        {/if}
         {:else}
         This child has no education history
         {/if}
+        <div class = "flex flex-row">
+        <div class = "w-150 mt-10"> <button on:click = {()=>addEducRecord()}> Add Education Record </button> </div>
+        <div class = "w-150 mt-10"> <button on:click = {()=>deleteEducRecord(selectedIndex)} class ="green"> Delete This Record </button> </div>
+        </div>
     </div>
 </div>
 <!--END OF EDUCATION HISTORY -->
@@ -396,64 +719,63 @@
 <h1 class = "!text-[var(--green)] font-[JSans] ml-55 mt-5 mb-2">
         Documents and Verification
 </h1>
-<div class = "flex flex-row border-[var(--border)] border-4 ml-55 mr-10 p-6 w-250 min-w-250">
+<div class = "flex flex-row border-[var(--border)] border-4 ml-55 mr-10 p-6 w-250 min-w-250 ">
     <div class = "flex flex-col !font-bold"> 
-       <div>
-            <Check label="PWD ID" checked = {data.child?.pwd?.has} disabled/>
+       <div class = "z-500">
+            <Check label="PWD ID" bind:checked = {hasPWD}/>
        </div>
-       {#if data.child?.pwd?.has} 
-       <div class = "w-150">
-            <Input type = "text" disabled label="ID #" value = {data.child?.pwd.id} />
+       {#if hasPWD} 
+       <div class = "w-150 z-500">
+            <Input type = "text"  label="ID #" bind:value = {pwdID} />
        </div>
-       <div class = "w-150">
-            <Input type = "text" disabled  label="Expiry Date" value = {data.child.pwd.expiry}/>
+       <div class = "w-150 z-500">
+            <Input type = "date"   label="Expiry Date" bind:value = {pwdExpiry}/>
        </div>
        {/if}
 
-       <div>
-            <Check disabled label="Social Security" checked = {data.child?.socialProtection?.has}/>
+       <div class = "z-500">
+            <Check label="Social Security" bind:checked = {socialProtectionhas}/>
        </div>
-       {#if data.child?.socialProtection?.has} 
-       <div class = "w-150">
-            {#if data.child?.socialProtection?.community_club}
-            <Check checked disabled label="Participation in Community Life" />
-            <div class = "w-150">
-            <Input disabled type = "text" label="Year of Community Access" value = {data.child.socialProtection.community_year}/>
+       {#if socialProtectionhas} 
+       <div class = "w-150 z-500">
+            <Check bind:checked = {socialProtectionCom} label="Participation in Community Life" />
+            {#if socialProtectionCom}
+            <div class = "w-150 z-500">
+            <Input type = "number" label="Year of Community Access" bind:value = {socialProtectionComYear}/>
             </div>
             {/if}
-
-            {#if data.child?.socialProtection?.fam_life}
-            <Check checked disabled label="Participation in Family Life" />
+            <Check bind:checked = {socialProtectionFam}  label="Participation in Family Life" />
+            {#if socialProtectionFam}
             <div class = "w-150">
-            <Input disabled type = "text" label="Year of Family Access" value = {data.child.socialProtection.family_year}/>
+            <Input type = "number" label="Year of Family Access" value = {socialProtectionFamYear}/>
             </div>
-            {/if} 
+            {/if}
        </div>
        {/if}
 
 
 
 
-       <div class = "mt-5">
-            <Check label = "PhilHealth" checked = {data.child?.philHealth} />
+       <div class = "mt-5 z-500">
+            <Check label = "PhilHealth" bind:checked = {hasPHhealth} />
        </div>
 
-       <div class = "mt-5">
-            <Check label = "National ID" checked = {data.child?.national_id} />
+       <div class = "mt-5 z-500">
+            <Check label = "National ID" bind:checked = {natID} />
        </div>
     </div>
     <div class = "flex flex-col !font-bold ml-10">
-        <div>
-            <Check label = "Medical Certificate" checked = {data.child?.med_cert} />
+        <div class = "z-500">
+            <Check label = "Medical Certificate" bind:checked = {medCert} />
        </div>
-        <div>
-            <Check label = "Birth Certificate" checked = {data.child?.birth_cert} />
+        <div class = "z-500">
+            <Check label = "Birth Certificate" bind:checked = {birthCert} />
        </div>
-        <div>
-            <Check label = "Barangay Certificate" checked = {data.child?.barangay_cert} />
+        <div class = "z-500">
+            <Check label = "Barangay Certificate" bind:checked = {barangayCert} />
        </div>
-        <div>
-            <Check label = "Voter ID" checked = {data.child?.voter_id} />
+        <div class = "z-500">
+            <Check label = "Voter ID" bind:checked = {voterID} />
        </div>
     </div>
 </div>
@@ -464,63 +786,68 @@
         Interventions
 </h1>
 
-<div class = "flex flex-col border-[var(--border)] border-4 ml-55 mr-10 p-6 w-275" id ="Intervention Info">
+<div class = "flex flex-col border-[var(--border)] border-4 ml-55 mr-10 p-4 w-275" id ="Intervention Info">
     <div class = "flex flex-col">
         <div class = "!bg-[var(--green)] p-3 flex flex-row">
-           <div class = "!text-[var(--background)] !font-bold ml-65">Intervention Name </div>
-           <div class = "!text-[var(--background)] !font-bold ml-35">Status History </div>
+           <div class = "!text-[var(--background)] !font-bold ml-65 mt-2">Intervention Name </div>
+           <div class = "!text-[var(--background)] !font-bold ml-55 mt-2">Status History </div>
         </div>
-
-        <div class = "border-[var(--border)] border-4 flex flex-col p-3 ">
-        {#each data.interventioninfo as intervention}
-            <div class = "flex flex-row">
-                <div>
-                    {#if intervention.service_category.name === "Social"}
-                     <div class = "!bg-[var(--green)] mt-4 p-2 w-45 rounded-full text-center !font-bold !text-[var(--background)]" > SOCIAL </div>
-                    {:else if intervention.service_category.name === "Livelihood"}
-                     <div class = "!bg-[var(--border)] mt-4 p-2 w-45 rounded-full text-center !font-bold !text-[var(--background)]" > LIVELIHOOD </div>
-                    {:else if intervention.service_category.name === "Health"}
-                     <div class = "!bg-[var(--error-color)] mt-4 p-2 w-45 rounded-full text-center !font-bold !text-[var(--background)]" > HEALTH </div>
-                    {:else if intervention.service_category.name === "Education"}
-                     <div class = "!bg-[var(--pink)] mt-4 p-2 w-45 rounded-full text-center !font-bold !text-[var(--background)]" > EDUCATION </div>
-                    {/if}
+        {#if interventionCount > 0}
+        {#each interventions as interventionvar,index}
+        {#if interventionvar.isDeleted == false}
+            <div class = "flex flex-row mt-5">
+                <div class = "-mr-15 w-50">
+                    <Select bind:value = {interventionvar.servicecat} options = {["Livelihood" , "Education" , "Social", "Health"]}/>
                 </div>
-
-                <div class = "ml-16 mt-5 w-150">
-                   {intervention?.intervention}
+                <div class = "mb-10 mt-4 ml-35 w-50">
+                   <Input bind:value = {interventionvar.name}/>
                 </div>
                 <div class =  "collapse">
-                    <input type="checkbox" />
+                <input type = "checkbox" />
                     <div class = "collapse-title flex flex-row">
-                        {#if intervention?.status === "Regressed"}
-                        <div class = "!bg-[var(--pink)] p-2 w-45 rounded-full text-center !font-bold !text-[var(--background)]" > Regressed </div> 
-                        {:else if intervention?.status === "Neutral"}
-                        <div class = "!bg-[var(--border)] p-2 w-45 rounded-full text-center !font-bold !text-[var(--background)]" > Neutral </div>
-                        {:else} 
-                        <div class = "!bg-[var(--green)] p-2 w-45 rounded-full text-center !font-bold !text-[var(--background)]" > Improved </div>
-                        {/if}
-                        <div class = "ml-10 mt-2"> {intervention?.date_created.split('T')[0]}</div>
+                        <div class = "-mt-4 z-5000 w-50 ml-15">
+                           <Select bind:value = {interventionvar.status} options = {["Regressed" , "Improved", "Neutral"]} />
+                        </div> 
+                        <div class = "w-50 ml-5 z-5000"><Input type = "date" bind:value = {interventionvar.dateCreated} /></div>
                     </div>
                     <div class = "collapse-content flex flex-col">
-                        {#each intervention?.history as status}
-                        <div class= "flex flex-row mb-5">
-                            {#if status.status === "Regressed"}
-                            <div class = "!bg-[var(--pink)] p-2 w-45 rounded-full text-center !font-bold !text-[var(--background)]" > Regressed </div> 
-                            {:else if status.status === "Neutral"}
-                            <div class = "!bg-[var(--border)] p-2 w-45 rounded-full text-center !font-bold !text-[var(--background)]" > Neutral </div>
-                            {:else} 
-                            <div class = "!bg-[var(--green)] p-2 w-45 rounded-full text-center !font-bold !text-[var(--background)]" > Improved </div>
-                            {/if}
-                        <div class = "ml-10 mt-2"> {status.date_checked}</div>
-                        </div>
+                        <div class = "flex flex-col">
+                        {#each interventionvar.history as status, statusindex}
+                        {#if status.isDeleted == false}
+                            <div class= "flex flex-row w-100">
+                                <div class = "-mt-4 z-5000 w-50 ml-15">
+                                <Select bind:value = {status.status} options = {["Regressed" , "Improved" , "Neutral"]} />
+                                </div> 
+                                <div class ="w-50 ml-5">  <Input type = "Date" value = {status.date}/></div>
+                                <div class = "-mt-2.5 -ml-5">
+                                <button class = "!bg-[var(--background)] !text-red-500 hover:!text-red-400 hover:!shadow-[var(--background)]"
+                                on:click = {()=>deleteStatus(statusindex, index)}>
+                                    x
+                                </button>
+                                </div>
+                            </div>
+                        {/if}
                         {/each}
+                        <button on:click = {() => addStatus(index)} class = "green w-50 ml-45 mt-5"> Add Status</button>
+                        </div>
                     </div>
                 </div>
-
+                <div class = "mt-2">
+                <button
+                        class = "!bg-[var(--background)] !text-red-500 hover:!text-red-400 hover:!shadow-[var(--background)]"
+                        on:click = {()=>deleteIntervention(index)}>
+                        x
+                </button>
+                </div>
             </div>
+        {/if}
         {/each}
-        </div>
+        {:else}
+        No intervention assigned to this child
+        {/if}
     </div>
+    
 </div>
+
 
 <!--END OF INTERVENTIONS-->

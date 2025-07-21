@@ -8,6 +8,7 @@
 	export let msg = ""; 										// Validation message
 	export let value: string | number = ""; // Declare selected as a reactive variable
 	export let margin = true;								// false if no margin, true if the default margin
+	export let event = ""
 </script>
 
 <div class="input-container" class:no-margin={label === '' || !margin}>
@@ -25,6 +26,7 @@
 					<option value={option.value}>{option.label}</option>
 				{/if}
 			{/each}
+			
 		</select>
 
 		{#if required && value === ""}

@@ -159,7 +159,7 @@ export const PUT: RequestHandler = async({request}) => {
     hasUpdates = true
   }
 
-  if(body.has_vote !== undefined){
+  if(body.has_national_id !== undefined){
     const updated = await ChildrenModel.instance.updateHasNatID(body.id, body.has_national_id)
     if (!updated) {
       throw error(500, 'Failed to update remarks')

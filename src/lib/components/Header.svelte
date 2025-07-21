@@ -6,7 +6,7 @@
     export let page = "";
 </script>
 
-<div id = "navbar" style="font-weight:bold; position: sticky">
+<div id = "navbar" style="font-weight:bold; position: sticky;z-index:1000 ">
     <img src = {logoimg} alt = "logo" id = "logo">
     <a href="/dashboard" id="home"> Home</a>
 
