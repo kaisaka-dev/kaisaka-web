@@ -86,7 +86,7 @@ export class annualProgramModel extends TableManager<"annual_program">('annual_p
   async updateProgramContent(
     id: number,
     updates: Partial<Pick<AnnualProgramRow,
-      'target_new_cwds' | 'general_reflection' | 'lessons_learned'
+      'target_new_cwds' | 'target_old_cwds' | 'actual_new_cwds' | 'actual_old_cwds' | 'general_reflection' | 'lessons_learned'
     >>
   ): Promise<boolean> {
     const references: Partial<AnnualProgramRow> = { id };
