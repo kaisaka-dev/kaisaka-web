@@ -12,31 +12,6 @@ export type Database = {
   __InternalSupabase: {
     PostgrestVersion: "12.2.3 (519615d)"
   }
-  graphql_public: {
-    Tables: {
-      [_ in never]: never
-    }
-    Views: {
-      [_ in never]: never
-    }
-    Functions: {
-      graphql: {
-        Args: {
-          operationName?: string
-          query?: string
-          variables?: Json
-          extensions?: Json
-        }
-        Returns: Json
-      }
-    }
-    Enums: {
-      [_ in never]: never
-    }
-    CompositeTypes: {
-      [_ in never]: never
-    }
-  }
   public: {
     Tables: {
       activity: {
@@ -123,7 +98,8 @@ export type Database = {
       }
       annual_program: {
         Row: {
-          actual_cwds: number
+          actual_new_cwds: number | null
+          actual_old_cwds: number
           date_created: string
           end_date: number | null
           end_month: number | null
@@ -135,9 +111,11 @@ export type Database = {
           start_month: number | null
           start_year: number
           target_new_cwds: number
+          target_old_cwds: number | null
         }
         Insert: {
-          actual_cwds?: number
+          actual_new_cwds?: number | null
+          actual_old_cwds?: number
           date_created?: string
           end_date?: number | null
           end_month?: number | null
@@ -149,9 +127,11 @@ export type Database = {
           start_month?: number | null
           start_year: number
           target_new_cwds: number
+          target_old_cwds?: number | null
         }
         Update: {
-          actual_cwds?: number
+          actual_new_cwds?: number | null
+          actual_old_cwds?: number
           date_created?: string
           end_date?: number | null
           end_month?: number | null
@@ -163,6 +143,7 @@ export type Database = {
           start_month?: number | null
           start_year?: number
           target_new_cwds?: number
+          target_old_cwds?: number | null
         }
         Relationships: []
       }
@@ -614,30 +595,30 @@ export type Database = {
           date_created: string
           id: string
           intervention: string
-          last_updated: string
           remarks: string | null
           service_category_id: number
           status: Database["public"]["Enums"]["improvement_status_enum"]
+          updated_at: string
         }
         Insert: {
           child_id?: string
           date_created?: string
           id?: string
           intervention: string
-          last_updated: string
           remarks?: string | null
           service_category_id: number
           status: Database["public"]["Enums"]["improvement_status_enum"]
+          updated_at: string
         }
         Update: {
           child_id?: string
           date_created?: string
           id?: string
           intervention?: string
-          last_updated?: string
           remarks?: string | null
           service_category_id?: number
           status?: Database["public"]["Enums"]["improvement_status_enum"]
+          updated_at?: string
         }
         Relationships: [
           {
@@ -650,7 +631,7 @@ export type Database = {
           {
             foreignKeyName: "intervention_service_category_id_fkey"
             columns: ["service_category_id"]
-            isOneToOne: true
+            isOneToOne: false
             referencedRelation: "service_category"
             referencedColumns: ["id"]
           },
@@ -742,9 +723,9 @@ export type Database = {
           id: string
           last_approved: string | null
           last_name: string
-          last_updated: string | null
           middle_name: string | null
           sex: Database["public"]["Enums"]["sex_enum"]
+          updated_at: string | null
         }
         Insert: {
           address_id?: string | null
@@ -755,9 +736,9 @@ export type Database = {
           id?: string
           last_approved?: string | null
           last_name: string
-          last_updated?: string | null
           middle_name?: string | null
           sex: Database["public"]["Enums"]["sex_enum"]
+          updated_at?: string | null
         }
         Update: {
           address_id?: string | null
@@ -768,9 +749,9 @@ export type Database = {
           id?: string
           last_approved?: string | null
           last_name?: string
-          last_updated?: string | null
           middle_name?: string | null
           sex?: Database["public"]["Enums"]["sex_enum"]
+          updated_at?: string | null
         }
         Relationships: [
           {
@@ -788,27 +769,27 @@ export type Database = {
           date_created: string
           family_id: string
           id: number
-          last_updated: string
           remarks: string | null
           total_amount_due: number
+          updated_at: string
         }
         Insert: {
           annual_program_id: number
           date_created?: string
           family_id?: string
           id?: number
-          last_updated?: string
           remarks?: string | null
           total_amount_due: number
+          updated_at?: string
         }
         Update: {
           annual_program_id?: number
           date_created?: string
           family_id?: string
           id?: number
-          last_updated?: string
           remarks?: string | null
           total_amount_due?: number
+          updated_at?: string
         }
         Relationships: [
           {
@@ -1083,9 +1064,9 @@ export type Database = {
           date_created: string
           fam_year_accessed: number | null
           id: number
-          last_updated: string | null
           participates_community_club: boolean | null
           participates_family_life: boolean | null
+          updated_at: string | null
         }
         Insert: {
           child_id?: string
@@ -1093,9 +1074,9 @@ export type Database = {
           date_created?: string
           fam_year_accessed?: number | null
           id?: number
-          last_updated?: string | null
           participates_community_club?: boolean | null
           participates_family_life?: boolean | null
+          updated_at?: string | null
         }
         Update: {
           child_id?: string
@@ -1103,9 +1084,9 @@ export type Database = {
           date_created?: string
           fam_year_accessed?: number | null
           id?: number
-          last_updated?: string | null
           participates_community_club?: boolean | null
           participates_family_life?: boolean | null
+          updated_at?: string | null
         }
         Relationships: [
           {
@@ -1395,9 +1376,6 @@ export type CompositeTypes<
     : never
 
 export const Constants = {
-  graphql_public: {
-    Enums: {},
-  },
   public: {
     Enums: {
       actions: ["create", "retrieve", "update", "delete"],
