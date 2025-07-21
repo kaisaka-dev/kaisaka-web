@@ -124,10 +124,9 @@ export const profileLoader: Handle = async ({ event, resolve }) => {
     if (!error) {
       console.log(profile)
       event.locals.profile = {
+        id: session.user.id,
         accountName: profile.username,
-        password: "password",
         email: profile.email,
-        role: "superadmin"
       };
     } else {
       console.error('[ProfileLoader] Failed to fetch profile', error);

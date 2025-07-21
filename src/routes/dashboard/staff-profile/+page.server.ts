@@ -9,8 +9,6 @@ export async function load( {locals}){
 
     return {
         accountName: profile.accountName,
-        role: profile.role,
-        password: profile.password,
         email: profile.email
 	};
 }
