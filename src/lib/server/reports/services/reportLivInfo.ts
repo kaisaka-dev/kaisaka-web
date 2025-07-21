@@ -142,7 +142,7 @@ export class ReportGeneratorLivelihoodInformation extends ReportGenerator {
 
     if (error)
       throw error
-    await this.generateData(startYear, endYear, data.sheet, 233);
+    await this.generateData(startYear, endYear, data.sheet); // 233 for reference
 
     return data.workbook
   }
@@ -152,16 +152,16 @@ export class ReportGeneratorLivelihoodInformation extends ReportGenerator {
    * @param {number} currentYear - Reporting year.
    * @param {Worksheet} worksheet - ExcelJS worksheet instance.
    */
-  static async generateData(startYear: number, endYear: number, worksheet: Worksheet, mergeOffset: number = 0) {
+  static async generateData(startYear: number, endYear: number, worksheet: Worksheet) {
     await Promise.all([
-      await this.ParticipationOfCaregivers(startYear, endYear, worksheet, mergeOffset),
-      await this.AccessToLabourMarket(startYear, endYear, worksheet, mergeOffset)
+      await this.ParticipationOfCaregivers(startYear, endYear, worksheet),
+      await this.AccessToLabourMarket(startYear, endYear, worksheet)
     ])
     
     logger.info("Done")
   }
 
-  static async ParticipationOfCaregivers(startYear:number, endYear:number, worksheet: Worksheet, mergeOffset: number){
+  static async ParticipationOfCaregivers(startYear:number, endYear:number, worksheet: Worksheet){
     await Promise.all(groupMembership.flatMap(async (groupMembership, groupMembershipId) => {
       await Promise.all(disabilities.flatMap(async (disability, disabilityId) => {
           const rowAddress = 5 + groupMembershipId * 2 + disabilityId;
@@ -220,7 +220,7 @@ export class ReportGeneratorLivelihoodInformation extends ReportGenerator {
     )
   }
 
-  static async AccessToLabourMarket(startYear:number, endYear:number, worksheet: Worksheet, mergeOffset: number){
+  static async AccessToLabourMarket(startYear:number, endYear:number, worksheet: Worksheet){
     await Promise.all(
       laborMarketAccess.flatMap(async (laborMarket, laborMarketId) => {
         await Promise.all(
@@ -274,7 +274,7 @@ export class ReportGeneratorLivelihoodInformation extends ReportGenerator {
     cellAddress: number,
     worksheet: Worksheet
   ) => {
-    const result = await this.queryCountDatabase(modelSelectClause, modelFilter, reportParams)
+    const result = await this.queryCountDatabase(modelSelectClause, modelFilter)
     await this.assignCellValue(worksheet, rowAddress, cellAddress, result.count > 0 ? result.count : `-`)
   }
 
@@ -290,8 +290,7 @@ export class ReportGeneratorLivelihoodInformation extends ReportGenerator {
    */
   static async queryCountDatabase (
     modelSelectClause: string, 
-    modelFilter: QueryConfigurationBuilder, 
-    headerParams: ParticipationOfCaregiversHeaders | AccessToLaborMarket
+    modelFilter: QueryConfigurationBuilder
   ): Promise<cellResults> {
 
     const cell_result = {
