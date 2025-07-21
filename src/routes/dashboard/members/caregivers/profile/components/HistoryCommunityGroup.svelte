@@ -8,7 +8,19 @@
 	export let editing: true;
 
 
-
+	function deleteComGroup(id:number): void {
+		console.log("deleted", id);
+		data = data.filter((item) => item.id != id)
+	}
+	function addComGroup(): void {
+		const newCommunity: Community = {
+			id: null, // left blank for now (cant be left blank though, since deleting is by key, and having 2 nulls would delete both)
+			name: "",
+			date_joined: new Date().toISOString().split('T')[0], // today
+			date_left: null // null means active
+		};
+		data = [...data, newCommunity];
+	}
 
 </script>
 
@@ -33,7 +45,7 @@
 						<td><InputRange type="date" bind:valueFrom={com.date_joined} bind:valueTo={com.date_left} /></td>
 						<td><InputText bind:value={com.name} /></td>
 						<td style="text-align:center;">
-							<i class="fa-solid fa-trash"></i>
+							<i class="fa-solid fa-trash" on:click={() => deleteComGroup(com.id)}></i>
 						</td>
 
 					{:else}
@@ -50,8 +62,16 @@
 					{/if}
 				</tr>
 			{/each}
+			{#if editing}
+				<tr>
+					<td><i class="fa-solid fa-plus" on:click={()=>addComGroup()}></i></td>
+					<td></td>
+					<td></td>
+				</tr>
+			{/if}
 			</tbody>
 		</table>
+
 	</div>
 </div>
 

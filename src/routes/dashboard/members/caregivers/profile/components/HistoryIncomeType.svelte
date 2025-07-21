@@ -8,7 +8,19 @@
 	export let editing: true;
 
 
-
+	function deleteInc(id:number): void {
+		console.log("deleted", id);
+		data = data.filter((item) => item.id != id)
+	}
+	function addInc(): void {
+		const newIncome: Income = {
+			id: null, // left blank for now (cant be left blank though, since deleting is by key, and having 2 nulls would delete both)
+			name: "",
+			date_start: new Date().toISOString().split('T')[0], // today
+			date_end: null // null means active
+		};
+		data = [...data, newIncome];
+	}
 
 
 </script>
@@ -34,7 +46,7 @@
 						<td><InputRange type="date" bind:valueFrom={inc.date_start} bind:valueTo={inc.date_end} /></td>
 						<td><InputText bind:value={inc.name} /></td>
 						<td style="text-align:center;">
-							<i class="fa-solid fa-trash"></i>
+							<i class="fa-solid fa-trash" on:click={() => deleteInc(inc.id)}></i>
 						</td>
 
 					{:else}
@@ -51,6 +63,13 @@
 					{/if}
 				</tr>
 			{/each}
+			{#if editing}
+				<tr>
+					<td><i class="fa-solid fa-plus" on:click={()=>addInc()}></i></td>
+					<td></td>
+					<td></td>
+				</tr>
+			{/if}
 			</tbody>
 		</table>
 	</div>

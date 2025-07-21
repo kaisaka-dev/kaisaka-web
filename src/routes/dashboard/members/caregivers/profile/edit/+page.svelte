@@ -76,12 +76,12 @@
                 ]
             }
         ],
-        community_history: [{date_joined: new Date(2024,1,5).toISOString().split('T')[0], date_left: new Date(2024,1,5).toISOString().split('T')[0], name: "Parent organization"},
-            {date_joined: new Date(2024,2,5).toISOString().split('T')[0], date_left: null, name: "Others"},
-            {date_joined: new Date(2024,3,5).toISOString().split('T')[0], date_left: new Date(2024,5,5).toISOString().split('T')[0], name: "Skills training group"}],
-        income_history: [{date_start: new Date(2024,1,5).toISOString().split('T')[0], date_end: new Date(2024,1,5).toISOString().split('T')[0], name: "Home-based"},
-            {date_start: new Date(2024,2,5).toISOString().split('T')[0], date_end: null, name: "Hme-based"},
-            {date_start: new Date(2024,3,5).toISOString().split('T')[0], date_end: new Date(2024,5,5).toISOString().split('T')[0], name: "Self-employed"}]
+        community_history: [{id:1, date_joined: new Date(2024,1,5).toISOString().split('T')[0], date_left: new Date(2024,1,5).toISOString().split('T')[0], name: "Parent organization"},
+            {id:2, date_joined: new Date(2024,2,5).toISOString().split('T')[0], date_left: null, name: "Others"},
+            {id:3, date_joined: new Date(2024,3,5).toISOString().split('T')[0], date_left: new Date(2024,5,5).toISOString().split('T')[0], name: "Skills training group"}],
+        income_history: [{id:1, date_start: new Date(2024,1,5).toISOString().split('T')[0], date_end: new Date(2024,1,5).toISOString().split('T')[0], name: "Home-based"},
+            {id:2, date_start: new Date(2024,2,5).toISOString().split('T')[0], date_end: null, name: "Hme-based"},
+            {id:3, date_start: new Date(2024,3,5).toISOString().split('T')[0], date_end: new Date(2024,5,5).toISOString().split('T')[0], name: "Self-employed"}]
 
     };
 

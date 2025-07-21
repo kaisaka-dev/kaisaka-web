@@ -89,12 +89,14 @@ export type Caregiver = {
 }
 
 export type Community = {
+	id: number;
 	date_joined: string;
 	date_left: string;
 	name: string;
 }
 
 export type Income = {
+	id: number;
 	date_start: string;
 	date_end: string;
 	name: string;
