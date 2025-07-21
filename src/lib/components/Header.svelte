@@ -57,7 +57,7 @@
 
         <ul tabindex="-1" class="dropdown-content menu rounded-box z-1 w-52 p-2 shadow-sm !bg-[var(--header-color)]">
             <li><a href="/dashboard/staff-profile">My Profile</a></li>
-            <li><a href="#" on:click|preventDefault={handleLogout}>Log Out</a></li>
+            <li><a href="/" on:click|preventDefault={handleLogout}>Log Out</a></li>
         </ul>
     </div>
 
