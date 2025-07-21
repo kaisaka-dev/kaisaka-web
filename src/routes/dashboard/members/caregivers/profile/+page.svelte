@@ -1,17 +1,17 @@
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+
 <script lang="ts">
-    import type { caregiver } from '$lib/types/caregiver.ts'
+    import type { Caregiver} from './+page.server.js';
     import type { family } from '$lib/types/family.ts'
-    import type { membershipFee } from '$lib/types/membershipFee.ts'
-    import type { EventType } from '$lib/types/event.ts'
 
     import Header from '$components/Header.svelte'
-    import InputText from '$components/input/InputText.svelte'
-    import Select from '$components/input/Select.svelte';
+
+    import HistoryCommunityGroup from './components/HistoryCommunityGroup.svelte';
+    import HistoryIncomeType from './components/HistoryIncomeType.svelte';
+    import PersonalInfo from './components/PersonalInfo.svelte';
 
     export let data
     let editing = false
-    let disabled = !editing;         // for the input component (restricts from editing if true)
-    let required = editing;        // false since this is view, but placing it here for easier copy pasting to the EDIT counterpart of this module
 
     
 
@@ -37,16 +37,18 @@
                   {firstName: "Another", lastName: "Caregiver!", role: "Parent"}
                 ]
     }
-    let sample: caregiver = {firstName: 'Paolo', lastName: 'Rivera', contactNo: '09171275268',
-                 address:'Hacienda Royale', barangay:'Barangay 218', dateAdmission:new Date(2023,5, 16), dateTermination: new Date(2024,5,12), remarks: 'Nothing Remarkable',
+    let sample: Caregiver = {first_name: 'Paolo', last_name: 'Rivera', contact_no: '09171275268',
+                 address:'Hacienda Royale', barangay:'Barangay 218', date_admission:new Date(2023,5, 16), date_termination: new Date(2024,5,12),
                  family: [sampleFamily1, sampleFamily2, sampleFamily3],
-                 paymentHistory: [{amount:200, date: new Date(2024,1,5)}, {amount:200, date: new Date(2023, 4,10)}]
-            }
 
-    let events: EventType[] = [
-        {id: 1231, name: "Training event", type: "Training", date: new Date(2022,2,12).toISOString().split('T')[0]},
-        {id: 12345, name: "Workshop event", type: "Workshop", date: new Date(2023,5, 16).toISOString().split('T')[0]}
-    ]
+                 community_history: [{date_joined: new Date(2024,1,5).toISOString().split('T')[0], date_left: new Date(2024,1,5).toISOString().split('T')[0], name: "Parent organization"},
+                     {date_joined: new Date(2024,2,5).toISOString().split('T')[0], date_left: null, name: "Others"},
+                     {date_joined: new Date(2024,3,5).toISOString().split('T')[0], date_left: new Date(2024,5,5).toISOString().split('T')[0], name: "Skills training group"}],
+                income_history: [{date_start: new Date(2024,1,5).toISOString().split('T')[0], date_end: new Date(2024,1,5).toISOString().split('T')[0], name: "Home-based"},
+                    {date_start: new Date(2024,2,5).toISOString().split('T')[0], date_end: null, name: "Hme-based"},
+                    {date_start: new Date(2024,3,5).toISOString().split('T')[0], date_end: new Date(2024,5,5).toISOString().split('T')[0], name: "Self-employed"}]
+
+    }
 
     let today = new Date()
 
@@ -64,18 +66,8 @@
         return Array.from(familyname).join(', ')
     }
 
-    function paymentYears(fees:membershipFee[]): number[] {
-        let years: number[] = []
-
-        for(const payment of fees) {
-            years.push(payment.date.getFullYear())
-        }
-
-        return years
-    }
-
     let yearsCounter: number[] = []
-    for(let i = sample.dateAdmission.getFullYear(); i <= today.getFullYear(); i++ ) {
+    for(let i = sample.date_admission.getFullYear(); i <= today.getFullYear(); i++ ) {
         yearsCounter.push(i);
     }
 </script>
@@ -101,7 +93,7 @@
 <!--End of Page Headers-->
 
 <!--Container for page content-->
-<div class = "flex flex row">
+<div class = "flex">
     <!--Container for side bar-->
     <div class = "flex flex-row ml-10 m-4 sticky top-20" id = "sidebar">
         <div class = "flex flex-col !font-[JSans]">
@@ -112,7 +104,10 @@
                 <a class = "hover:!text-[var(--green)]" href = "#Family Info">Family </a>
             </div>
             <div class = "hover:!text-[var(--green)]">
-                <a class = "hover:!text-[var(--green)]" href = "#Event Info">Attendance </a>
+                <a class = "hover:!text-[var(--green)]" href = "#Community Group">Community Group </a>
+            </div>
+            <div class = "hover:!text-[var(--green)]">
+                <a class = "hover:!text-[var(--green)]" href = "#Income Type">Income Type </a>
             </div>
             <div>
                 <button class="w-40 -ml-5 mt-10" onclick={() => location.href='profile/edit'}>Edit Profile</button>
@@ -124,41 +119,12 @@
     <!--Container for profile information-->
     <div>
         <!--Container for the personal information portion of the profile-->
-        <div id ="Personal Info" class = "w-240 min-w-240">
-            <h1 class = "!text-[var(--green)] font-[JSans]">
-                 Information
-            </h1>
-
-            <div class = "!flex !flex-row border-[var(--border)] border-4">
-                <div class = "flex flex-col my-4">
-                    <!-- the disabled and required are variables for easier copy pasting from VIEW to EDIT of the page-->
-                    <InputText  {disabled} {required} label="First Name" id="first-name" value={data.memberRecord.first_name} />
-                    <InputText  {disabled} {required} label="Last Name" id="last-name" value={data.memberRecord.last_name} />
-                    <InputText  {disabled} label="Birthday" id="birthday" value={data.memberRecord.contact_number} />
-                    <Select     {disabled} {required} label="Sex" id="sex" value={data.memberRecord.sex} />
-                    <InputText  {disabled} {required} label="Contact No." id="contact-no" value={data.memberRecord.contact_number} />
-                    <InputText  {disabled} label="Facebook Link" id="fb-link" value={data.member.facebook_link}/>
-                    <InputText  {disabled} label="Email" id="email" value={data.member.email}/>
-                    <InputText  {disabled} {required} label="Address" id="address" value={data.memberRecord.addresses?.address ?? 'N/A'} />
-                    <InputText  {disabled} {required} label="Barangay" id="barangay" value={data.barangay.name ?? 'N/A'} />
-                    <InputText  {disabled} {required} label="Occupation" id="occupation" value="TEST-VALUE" />
-                    <Select     {disabled} {required} label="Community Group" id="community-group" value="TEST-VALUE" />
-                    <Select     {disabled} {required} label="Income Generation" id="income-generation" value="TEST-VALUE" />
-
-                    <br>
-                    <InputText {disabled} label="Date of Admission" type="date" id="admission" value={new Date(data.memberRecord.admission_date).toISOString().split('T')[0]} />
-                    {#if sample.dateTermination || editing}
-                        <InputText {disabled} label="Date of Termination" type="date" id="termination"
-                                   value={sample.dateTermination ? new Date(sample.dateTermination).toISOString().split('T')[0] : ''} />
-                    {/if}
-                </div>
-            </div>
-        </div>
+        <PersonalInfo id="Personal Info" {editing} data={sample} />
 
         <!--Container for the families of the caregiver-->
         <div class = "mt-10">
-            <div id = "Family Info">
-                <h1 class = "!text-[var(--green)] font-[JSans]"> Families </h1>
+            <div id = "Family Info" >
+                <h2> Families </h2>
                 <div class = "grid grid-cols-2 gap-5 mt-2" >
                 {#each data.family as family}
                     <div class = "flex flex-col min-w-100 w-105">
@@ -176,49 +142,55 @@
                         {/each}
                         </div>
 
-                        <div class = "flex flex-col border-4 border-[var(--border)]">
-                            {#each yearsCounter as year}
-                                <div class = "flex flex-row">
-                                 <div class = "ml-5"> {year} </div>
-                                {#if paymentYears(sample.paymentHistory).includes(year)}
-                                <div class = "ml-14 mb-5">  P{sample.paymentHistory[paymentYears(sample.paymentHistory).indexOf(year)].amount} paid on {sample.paymentHistory[paymentYears(sample.paymentHistory).indexOf(year)].date.toISOString().split('T')[0]}  </div>
-                                {:else}
-                                <div class = "!text-red-500 mb-5 ml-35"> Payment Pending!</div>
-                                {/if}
-                                </div>
-                            {/each}
-                        </div>
+<!--                        <div class = "flex flex-col border-4 border-[var(&#45;&#45;border)]">-->
+<!--                            {#each yearsCounter as year}-->
+<!--                                <div class = "flex flex-row">-->
+<!--                                 <div class = "ml-5"> {year} </div>-->
+<!--                                {#if paymentYears(sample.paymentHistory).includes(year)}-->
+<!--                                <div class = "ml-14 mb-5">  P{sample.paymentHistory[paymentYears(sample.paymentHistory).indexOf(year)].amount} paid on {sample.paymentHistory[paymentYears(sample.paymentHistory).indexOf(year)].date.toISOString().split('T')[0]}  </div>-->
+<!--                                {:else}-->
+<!--                                <div class = "!text-red-500 mb-5 ml-35"> Payment Pending!</div>-->
+<!--                                {/if}-->
+<!--                                </div>-->
+<!--                            {/each}-->
+<!--                        </div>-->
                     </div>        
                 {/each}
                 </div>
             </div>
         </div>
 
+        <!--Container for Community Group -->
+        <HistoryCommunityGroup id="Community Group" data={sample.community_history} {editing} />
+
+        <!--Container for Income Type-->
+        <HistoryIncomeType id="Income Type" data={sample.income_history} {editing} />
+
         <!--Container for Attendance Information-->
-        <div class = "mt-10" id = "Event Info">
-            <h1 class = "!text-[var(--green)] mb-2"> Training and Attendance </h1>
-            <div class = "!bg-[var(--green)] p-3 w-255 min-w-255">
-               <span class = "!text-white mr-105" >Training Name </span> 
-               <span class = "!text-white mr-34" >Training Type </span>
-               <span class = "!text-white" >Date Attended </span>  
-            </div>
-            <div class = "flex flex-col border-[var(--border)] border-4">
-                {#each events as event}
-                    <div class = "flex flex-row mb-5">
-                        <div class = "ml-2 mt-1.5 w-50"> {event.name}</div>
-                        {#if event.type === "Workshop"}
-                        <div class = "ml-75 w-50 !bg-[var(--pink)] w-35 p-2 rounded-full text-center !font-bold !text-white"> {event.type}</div>
-                        {:else if event.type === "Training"}
-                        <div class = "ml-75 w-50 !bg-[var(--text-color)] w-35 p-2 rounded-full text-center !font-bold !text-white"> {event.type}</div>
-                        {:else if event.type === "FGD"}
-                        <div class = "ml-75 w-50 !bg-[var(--error-color)] w-35 p-2 rounded-full text-center !font-bold !text-white"> {event.type}</div>
-                        {:else}
-                        <div class = "ml-75 w-50 !bg-[var(--green)] w-35 p-2 rounded-full text-center !font-bold !text-white"> {event.type}</div>
-                        {/if}
-                        <div class = "ml-25 mt-1.5"> {event.date} </div>
-                    </div>
-                {/each}
-            </div>
-        </div>
+<!--        <div class = "mt-10" id = "Event Info">-->
+<!--            <h1 class = "!text-[var(&#45;&#45;green)] mb-2"> Training and Attendance </h1>-->
+<!--            <div class = "!bg-[var(&#45;&#45;green)] p-3 w-255 min-w-255">-->
+<!--               <span class = "!text-white mr-105" >Training Name </span> -->
+<!--               <span class = "!text-white mr-34" >Training Type </span>-->
+<!--               <span class = "!text-white" >Date Attended </span>  -->
+<!--            </div>-->
+<!--            <div class = "flex flex-col border-[var(&#45;&#45;border)] border-4">-->
+<!--                {#each events as event}-->
+<!--                    <div class = "flex flex-row mb-5">-->
+<!--                        <div class = "ml-2 mt-1.5 w-50"> {event.name}</div>-->
+<!--                        {#if event.type === "Workshop"}-->
+<!--                        <div class = "ml-75 w-50 !bg-[var(&#45;&#45;pink)] w-35 p-2 rounded-full text-center !font-bold !text-white"> {event.type}</div>-->
+<!--                        {:else if event.type === "Training"}-->
+<!--                        <div class = "ml-75 w-50 !bg-[var(&#45;&#45;text-color)] w-35 p-2 rounded-full text-center !font-bold !text-white"> {event.type}</div>-->
+<!--                        {:else if event.type === "FGD"}-->
+<!--                        <div class = "ml-75 w-50 !bg-[var(&#45;&#45;error-color)] w-35 p-2 rounded-full text-center !font-bold !text-white"> {event.type}</div>-->
+<!--                        {:else}-->
+<!--                        <div class = "ml-75 w-50 !bg-[var(&#45;&#45;green)] w-35 p-2 rounded-full text-center !font-bold !text-white"> {event.type}</div>-->
+<!--                        {/if}-->
+<!--                        <div class = "ml-25 mt-1.5"> {event.date} </div>-->
+<!--                    </div>-->
+<!--                {/each}-->
+<!--            </div>-->
+<!--        </div>-->
     </div>
 </div>

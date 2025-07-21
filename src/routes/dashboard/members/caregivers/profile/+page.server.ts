@@ -69,3 +69,38 @@ export async function load( {url, fetch} ) {
         family: familyArray,
     };
 }
+
+export type Caregiver = {
+	first_name: string;
+	last_name: string;
+	birthday: string | null;
+	sex: string | null;
+	contact_no: string;
+	fb_link: string | null;
+	email: string | null;
+	address: string;
+	barangay: string;
+	occupation: string | null;
+	date_admission: string;
+	date_termination: string;
+	family: Family[];
+	community_history: Community[];
+	income_history: Income[];
+}
+
+export type Community = {
+	date_joined: string;
+	date_left: string;
+	name: string;
+}
+
+export type Income = {
+	date_start: string;
+	date_end: string;
+	name: string;
+}
+export type Family = {
+	firstName: string;
+	lastName: string;
+	role: string;
+}

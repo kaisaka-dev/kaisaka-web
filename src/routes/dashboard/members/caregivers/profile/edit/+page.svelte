@@ -1,17 +1,19 @@
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+
 <script lang="ts">
-    // import type { caregiver } from '$lib/types/caregiver.js'
-    import type { family } from '$lib/types/family.js'
-    import type { membershipFee } from '$lib/types/membershipFee.js'
-    import type { EventType } from '$lib/types/event.js'
 
-    import Select from '$components/input/Select.svelte'
+    import type { Caregiver } from '../+page.server.js';
+    import type { family } from '$lib/types/family.ts'
+
     import Header from '$components/Header.svelte'
-    import Textinput from '$components/input/InputText.svelte'
-	import InputText from '$components/input/InputText.svelte';
 
-    let editing = true;
-    let disabled = !editing;         // for the input component (restricts from editing if true)
-    let required = editing;        // false since this is view, but placing it here for easier copy pasting to the EDIT counterpart of this module
+    import HistoryCommunityGroup from '../components/HistoryCommunityGroup.svelte';
+    import HistoryIncomeType from '../components/HistoryIncomeType.svelte';
+    import PersonalInfo from '../components/PersonalInfo.svelte';
+
+    export let data
+    let editing = true
+
     //below are sample data declarations just to test if the page works, will delete when relevant APIs are complete
     let sampleFamily1: family = {
         members: [{firstName: "Juan", lastName: "De La Cruz", role: "Parent"},
@@ -34,7 +36,7 @@
                   {firstName: "Another", lastName: "Caregiver!", role: "Caregiver"}
                 ]
     }
-    let sample = {
+    let sample: Caregiver = {
         first_name: "Paolo",
         last_name: "Rivera",
         birthday: "1990-06-22",
@@ -42,30 +44,11 @@
         contact_number: "09171275268",
         facebook_link: "https://facebook.com/paolo.rivera",
         email: "paolo.rivera@example.com",
-        addresses: {
-            address: "123 Hacienda Royale"
-        },
-        barangay: {
-            name: "San Isidro"
-        },
+        address: "123 Hacienda Royale",
+        barangay: "San Isidro",
         occupation: "Community Health Worker",
-        community_group: "Health Volunteers",
-        income_generation: "Livelihood Program",
-        admission_date: new Date(2023, 5, 16), // June 16, 2023
+        date_admission: new Date(2023, 5, 16), // June 16, 2023
         date_termination: null,
-        remarks: "Active in community activities. Fluent in English and Tagalog.",
-        payment_history: [
-            {
-                amount: 500,
-                date: new Date(2023, 5, 20),
-                year: 2023
-            },
-            {
-                amount: 500,
-                date: new Date(2024, 0, 15),
-                year: 2024
-            }
-        ],
         family: [
             {
                 id: 1,
@@ -92,7 +75,14 @@
                     }
                 ]
             }
-        ]
+        ],
+        community_history: [{date_joined: new Date(2024,1,5).toISOString().split('T')[0], date_left: new Date(2024,1,5).toISOString().split('T')[0], name: "Parent organization"},
+            {date_joined: new Date(2024,2,5).toISOString().split('T')[0], date_left: null, name: "Others"},
+            {date_joined: new Date(2024,3,5).toISOString().split('T')[0], date_left: new Date(2024,5,5).toISOString().split('T')[0], name: "Skills training group"}],
+        income_history: [{date_start: new Date(2024,1,5).toISOString().split('T')[0], date_end: new Date(2024,1,5).toISOString().split('T')[0], name: "Home-based"},
+            {date_start: new Date(2024,2,5).toISOString().split('T')[0], date_end: null, name: "Hme-based"},
+            {date_start: new Date(2024,3,5).toISOString().split('T')[0], date_end: new Date(2024,5,5).toISOString().split('T')[0], name: "Self-employed"}]
+
     };
 
 
@@ -120,18 +110,9 @@ function deleteEvent(name:string): void{
         return Array.from(familyname).join(', ')
     }
 
-    function paymentYears(fees:membershipFee[]): number[] {
-        let years: number[] = []
-
-        for(const payment of fees) {
-            years.push(payment.date.getFullYear())
-        }
-
-        return years
-    }
 
     let yearsCounter: number[] = []
-    for(let i = sample.admission_date.getFullYear(); i <= today.getFullYear(); i++ ) {
+    for(let i = sample.date_admission.getFullYear(); i <= today.getFullYear(); i++ ) {
         yearsCounter.push(i);
     }
 
@@ -201,41 +182,13 @@ function deleteEvent(name:string): void{
     <!--Container for profile information-->
     <div>
         <!--Container for the personal information portion of the profile-->
-        <div id ="Personal Info" class = "w-240 min-w-240">
-            <h1 class = "!text-[var(--green)] font-[JSans]">
-                 Information
-            </h1>
+        <PersonalInfo id="Personal Info" {editing} data={sample} />
 
-            <div class = "!flex !flex-row border-[var(--border)] border-4">
-                <div class = "flex flex-col my-4">
-                    <!-- the disabled and required are variables for easier copy pasting from VIEW to EDIT of the page-->
-                    <InputText  {disabled} {required} label="First Name" id="first-name" value={sample.first_name} />
-                    <InputText  {disabled} {required} label="Last Name" id="last-name" value={sample.last_name} />
-                    <InputText  {disabled} label="Birthday" id="birthday" value={sample.contact_number} />
-                    <Select     {disabled} {required} label="Sex" id="sex" value={sample.sex} />
-                    <InputText  {disabled} {required} label="Contact No." id="contact-no" value={sample.contact_number} />
-                    <InputText  {disabled} label="Facebook Link" id="fb-link" value={sample.facebook_link}/>
-                    <InputText  {disabled} label="Email" id="email" value={sample.email}/>
-                    <InputText  {disabled} {required} label="Address" id="address" value={sample.addresses?.address ?? 'N/A'} />
-                    <InputText  {disabled} {required} label="Barangay" id="barangay" value={sample.barangay.name ?? 'N/A'} />
-                    <InputText  {disabled} {required} label="Occupation" id="occupation" value="TEST-VALUE" />
-                    <Select     {disabled} {required} label="Community Group" id="community-group" value="TEST-VALUE" />
-                    <Select     {disabled} {required} label="Income Generation" id="income-generation" value="TEST-VALUE" />
-
-                    <br>
-                    <InputText {disabled} label="Date of Admission" type="date" id="admission" value={new Date(sample.admission_date).toISOString().split('T')[0]} />
-                    {#if sample.date_termination || editing}
-                        <InputText {disabled} label="Date of Termination" type="date" id="termination"
-                                   value={sample.date_termination ? new Date(sample.date_termination).toISOString().split('T')[0] : ''} />
-                    {/if}
-                </div>
-            </div>
-        </div>
 
         <!--Container for the families of the caregiver-->
         <div class = "mt-10">
             <div id = "Family Info">
-                <h1 class = "!text-[var(--green)] font-[JSans]"> Families </h1>
+                <h2> Families </h2>
                 <div class = "grid grid-cols-2 gap-y-10 gap-x-50 mt-2" >
                 {#each sample.family as family}
                     <div class = "flex flex-col min-w-150 w-150">
@@ -318,57 +271,11 @@ function deleteEvent(name:string): void{
             </div>
         </div>
 
-        <!--Container for Attendance Information-->
-        <div class = "mt-10" id = "Event Info">
-            <h1 class = "!text-[var(--green)] mb-2"> Training and Attendance </h1>
-            <div class = "!bg-[var(--green)] p-3 w-255 min-w-255">
-               <span class = "!text-white mr-55" >Training Name </span> 
-               <span class = "!text-white mr-34" >Training Type </span>
-               <span class = "!text-white" >Date Attended </span>  
-            </div>
-            <div class = "w-255  min-w-255 flex flex-col border-[var(--border)] border-4">
-                {#each events as event}
-                    <div class = "flex flex-row mb-5 mt-6">
-                        <div class = "ml-2 mt-1.5 w-50"> <Textinput label = "" value = {event.name}/></div>
-                        {#if event.type === "Training"}
-                        <select id = "familyrole2" class = "!mt-2 w-45 rounded-full text-[var(--background)] ml-30" > 
-                                <option selected value = "Training"> {event.type} </option>
-                                <option value = "FGD"> FGD</option>
-                                <option value = "Workshop"> Workshop</option>
-                                <option value = "Other"> Other</option>
-                        </select>                        
-                        {:else if event.type === "FGD"}
-                        <select id = "familyrole2" class = "!mt-2 w-45 rounded-full text-[var(--background)] ml-30" > 
-                                <option selected value = "FGD"> {event.type} </option>
-                                <option value = "Workshop"> Workshop</option>
-                                <option value = "Training"> Training</option>
-                                <option value = "Other"> Other</option>
-                        </select>
-                        {:else if event.type === "Workshop"}
-                        <select id = "familyrole2" class = "!mt-2 w-45 rounded-full text-[var(--background)] ml-30" > 
-                                <option selected value = "Workshop"> {event.type} </option>
-                                <option value = "FGD"> FGD</option>
-                                <option value = "Training"> Training</option>
-                                <option value = "Other"> Other</option>
-                        </select>                          
-                        {:else}
-                        <select id = "familyrole2" class = "!mt-2 w-45 rounded-full text-[var(--background)] ml-30" > 
-                                <option selected value = "Other"> {event.type} </option>
-                                <option value = "Workshop"> Workshop</option>
-                                <option value = "Training"> Training</option>
-                                <option value = "FGD"> FGD </option>
-                        </select>                           
-                        {/if}
-                        <div class = "ml-15 mt-2"> <InputText type = "date" label = "" value = {event.date}/> </div>
-                        <div class = "-mt-1">
-                            <button  class = "!bg-[var(--background)] !text-red-500 hover:!text-red-400 hover:!shadow-[var(--background)]"on:click = {()=>deleteEvent(event.name)} >
-                             x
-                            </button> 
-                        </div>
-                    </div>
-                {/each}
-            </div>
-        </div>
+        <!--Container for Community Group -->
+        <HistoryCommunityGroup id="Community Group" data={sample.community_history} {editing} />
+
+        <!--Container for Income Type-->
+        <HistoryIncomeType id="Income Type" data={sample.income_history} {editing} />
     </div>
     </form>
 </div>
