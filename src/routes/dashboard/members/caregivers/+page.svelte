@@ -3,21 +3,13 @@
     import FilterSearch from "$components/styled-buttons/FilterSearch.svelte";
     import Table from "$components/text/Table.svelte";
     import InputText from '$components/input/InputText.svelte';
-    import Select from '$components/input/Select.svelte';
-    import { onMount } from 'svelte';
+    import type { PageData } from './$types';
 
-    type CaregiverListItem = {
-        id: string;
-        firstName: string;
-        lastName: string;
-        contact: string;
-        link: string;
-    };
-
-    let caregiverList: CaregiverListItem[] = $state([]);
-    let filteredData: CaregiverListItem[] = $state([]);
-    let loading = $state(true);
-    let error = $state('');
+    // load the data
+    const { data } = $props<{ data: PageData }>();
+    let caregiverList: CaregiverListItem[] = $state(data.caregiverList);
+    let filteredData: CaregiverListItem[] = $state(data.caregiverList);
+    let error = $state(data.error || '');
     
     let filter = $state({
         main: "",
@@ -25,40 +17,6 @@
         lastName: "",
         contact: ""
     });
-
-    onMount(async () => {
-        await fetchCaregivers();
-    });
-
-    async function fetchCaregivers() {
-        try {
-            loading = true;
-            const response = await fetch('/api/caregivers');
-            
-            if (!response.ok) {
-                throw new Error('Failed to fetch caregivers');
-            }
-            
-            const result = await response.json();
-            
-            // Transform API data to match component expectations
-            caregiverList = result.data.map((caregiver: any) => ({
-                id: caregiver.id,
-                firstName: caregiver.members?.first_name || '',
-                lastName: caregiver.members?.last_name || '',
-                contact: caregiver.contact_number || '',
-                link: `/dashboard/members/caregivers/profile?id=${caregiver.id}`
-            }));
-            
-            filteredData = caregiverList;
-            error = '';
-        } catch (err) {
-            error = err instanceof Error ? err.message : 'An error occurred';
-            console.error('Error fetching caregivers:', err);
-        } finally {
-            loading = false;
-        }
-    }
 
     $effect(() => applyFilter());
 
@@ -109,16 +67,11 @@
     </FilterSearch>
 
     <br>
-    
-    {#if loading}
-        <div class="flex justify-center items-center py-8">
-            <p>Loading caregivers...</p>
-        </div>
-    {:else if error}
+    {#if error}
         <div class="flex justify-center items-center py-8">
             <div class="text-red-500">
                 <p>Error: {error}</p>
-                <button onclick={fetchCaregivers} class="mt-2 px-4 py-2 bg-blue-500 text-white rounded">
+                <button onclick={() => window.location.reload()} class="mt-2 px-4 py-2 bg-blue-500 text-white rounded">
                     Retry
                 </button>
             </div>
