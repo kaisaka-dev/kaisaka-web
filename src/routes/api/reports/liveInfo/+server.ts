@@ -1,10 +1,11 @@
-import { InTheProgramReportGenerator } from '$lib/server/reports/services/reportIntheProgram.js';
+
+import { LiveInfoReportGenerator } from '$lib/server/reports/services/reportLivInfo.js';
 import { error } from '@sveltejs/kit';
 
 export async function GET() {
   try {
     // Generate the health report by merging templates
-    const buffer = await InTheProgramReportGenerator.generateReport(2025, 2025);
+    const buffer = await LiveInfoReportGenerator.generateReport(2025, 2025);
     
     return new Response(new Uint8Array(buffer), {
       headers: {

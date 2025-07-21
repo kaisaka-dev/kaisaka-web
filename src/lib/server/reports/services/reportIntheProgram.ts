@@ -1,3 +1,4 @@
+import { annualProgramModel } from '$lib/models/annualProgramModel.js';
 import { ChildrenModel } from '$lib/models/childrenModel.js';
 import { InterventionModel } from '$lib/models/interventionModel.js';
 import { getLogSidecar } from '$lib/server/logging/log-sidecar.js';
@@ -5,7 +6,6 @@ import type { QueryConfigurationBuilder } from '$lib/types/manager.js';
 import { type Worksheet } from 'exceljs';
 import { reportConversion } from '../types/report-conversion.js';
 import { ReportGenerator } from './reportTemplate.js';
-import { annualProgramModel } from '$lib/models/annualProgramModel.js';
 
 /** 
  * Returns an ISO date range representing birthdays for a given age range.
@@ -14,7 +14,7 @@ import { annualProgramModel } from '$lib/models/annualProgramModel.js';
  * @param {number | null} [maxAge] - The maximum age (inclusive). If null or undefined, upper bound is not applied.
  * @returns {{ gte?: string, lte: string }} - The calculated birthday range in ISO date format.
  */
-function getBirthdayRangeForAge(minAge: number, maxAge?: number | null) {
+export function getBirthdayRangeForAge(minAge: number, maxAge?: number | null) {
   const today = new Date();
   const currentYear = today.getFullYear();
   const currentMonth = today.getMonth();
@@ -93,7 +93,7 @@ const cellAddressInProgramReportTemplate = (columnOffset: number, sexIndex: numb
   ? 5 + sexIndex + columnOffset * 2                           // Weird offset because of the 3rd column having merged cells in the template
   : 5 + sexIndex * 2 + columnOffset * 2 
 
-export class ProgramReportGenerator extends ReportGenerator{
+export class InTheProgramReportGenerator extends ReportGenerator {
 
   /**
    * Entry point for generating the full Excel report.
@@ -104,6 +104,7 @@ export class ProgramReportGenerator extends ReportGenerator{
   static async generateReport(startYear: number, endYear: number) {
     logger.info('Started report for In the Program');
     const {data, error} = await this.generateWorkbook('TEMPLATE_A1-InTheProgram.xlsx');
+    
     if (error)
       throw error
     await this.generateData(startYear, endYear, data.sheet);
