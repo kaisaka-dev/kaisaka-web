@@ -1,6 +1,16 @@
 import { DisabilityCategoryModel } from "$lib/models/disabilityCategoryModel.js"
 import { error, json, type RequestHandler } from "@sveltejs/kit";
 
+export const GET: RequestHandler = async() => {
+  const categories = await DisabilityCategoryModel.instance.getDisabilityCategories()
+  
+  if (!categories) {
+    throw error(500, 'Failed to fetch disability categories')
+  }
+  
+  return json({ data: categories })
+}
+
 export const POST: RequestHandler = async({request}) => {
 
   let body: any = {}

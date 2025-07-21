@@ -52,6 +52,14 @@ export class DisabilityCategoryModel extends TableManager<"disability_category">
   }
 
   /**
+   * Gets all disability categories
+   * @returns an array of all disability category records or null
+   */
+  async getDisabilityCategories(): Promise<DisabilityCategoryRow[] | null>{
+    return this.getAll()
+  }
+
+  /**
    * Updates disability category name
    * @param id the unique id of the disability category in the DB
    * @param name updated name of disability category to be applied
