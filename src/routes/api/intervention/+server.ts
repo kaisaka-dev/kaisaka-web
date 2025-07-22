@@ -105,20 +105,30 @@ export const POST: RequestHandler = async ({ request }) => {
       throw error(500, 'Failed to create service category');
     }
   }
+  
+  console.log('Service category found/created:', serviceCategory);
 
-  const inserted = await InterventionModel.instance.insertIntervention(
-    body.child_id,
-    body.intervention,
-    body.remarks !== undefined ? body.remarks : null,
-    serviceCategory.id,
-    body.status,
-  );
+  try {
+    const inserted = await InterventionModel.instance.insertIntervention(
+      body.child_id,
+      body.intervention,
+      body.remarks !== undefined ? body.remarks : null,
+      serviceCategory.id,
+      body.status,
+    );
 
-  if (!inserted) {
-    throw error(500, 'Failed to create intervention');
+    if (!inserted) {
+      console.error('Failed to insert intervention - no data returned');
+      throw error(500, 'Failed to create intervention');
+    }
+
+    return json({ message: 'Intervention created successfully', data: inserted });
+  } catch (err) {
+    console.error('Error creating intervention:', err);
+    const errorMessage = err instanceof Error ? err.message : JSON.stringify(err);
+    throw error(500, 'Failed to create intervention: ' + errorMessage);
   }
 
-  return json({ message: 'Intervention created successfully', data: inserted });
 }
 
 export const PUT: RequestHandler = async({request}) => {

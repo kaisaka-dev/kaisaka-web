@@ -39,9 +39,13 @@ export class InterventionModel extends TableManager<"intervention">('interventio
             service_category_id: service_category_id, 
             status: status
         }
-        const data = await this.insertOne(new_intervention)
-
-        return data
+        try {
+            const data = await this.insertOne(new_intervention)
+            return data
+        } catch (err) {
+            console.error('Database error in insertIntervention:', err);
+            throw err;
+        }
     }
 
     /**
