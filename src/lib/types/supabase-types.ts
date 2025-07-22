@@ -624,7 +624,7 @@ export type Database = {
           {
             foreignKeyName: "intervention_child_id_fkey"
             columns: ["child_id"]
-            isOneToOne: true
+            isOneToOne: false
             referencedRelation: "children"
             referencedColumns: ["id"]
           },
@@ -1201,7 +1201,13 @@ export type Database = {
       actions: "create" | "retrieve" | "update" | "delete"
       comp_status: "planned" | "completed" | "cancelled"
       completion_status_enum: "planned" | "completed" | "cancelled"
-      education_type_enum: "Special" | "Nonformal" | "Integrated" | "Inclusive"
+      education_type_enum:
+        | "Special (Exclusive school, blind/deaf)"
+        | "Non-formal"
+        | "Integrated / SPED classes"
+        | "Inclusive / General education"
+        | "Not enrolled"
+        | "Home program"
       employment_type_enum:
         | "Wage Employed"
         | "Self-Employed"
@@ -1381,7 +1387,14 @@ export const Constants = {
       actions: ["create", "retrieve", "update", "delete"],
       comp_status: ["planned", "completed", "cancelled"],
       completion_status_enum: ["planned", "completed", "cancelled"],
-      education_type_enum: ["Special", "Nonformal", "Integrated", "Inclusive"],
+      education_type_enum: [
+        "Special (Exclusive school, blind/deaf)",
+        "Non-formal",
+        "Integrated / SPED classes",
+        "Inclusive / General education",
+        "Not enrolled",
+        "Home program",
+      ],
       employment_type_enum: [
         "Wage Employed",
         "Self-Employed",
