@@ -15,6 +15,7 @@
     import { goto } from '$app/navigation';
     import InputRange from '$components/input/InputRange.svelte';
 
+    // variables affecting the type of view
     /**
      * note: /dashboard/registration and /registration is just the same, the constant is to hide
      * whether components will be shown or hidden based on if the view is for staff or if the view is for parents
@@ -22,6 +23,9 @@
      * staffView = true if it is the staff who is accessing the page
      */
     const staffView = /dashboard/i.test(page.url.pathname);
+    const thisYear = new Date().getFullYear();  // used to verify participation in family life, community life
+
+    // field variables
     let firstName = "";
     let middleName = "";
     let lastName = "";
@@ -173,7 +177,7 @@
 
         errors.firstName = firstName.trim() === "" ? "Required" : "";
         errors.lastName = lastName.trim() === "" ? "Required" : "";
-        errors.birthday = birthday.trim() === "" ? "Required" : "";
+        errors.birthday = birthday.trim() === "" ||  Number(age) < 0? "Invalid" : "";
         errors.sex = sex.trim() === "" ? "Required" : "";
         errors.address = address.trim() === "" ? "Required" : "";
         errors.barangay = barangay === "" ? "Required" : "";
@@ -181,7 +185,14 @@
         errors.disNature = disNature.trim() === "" ? "Required" : "";
         errors.educType = educType.trim() === "" ? "Required" : "";
 
+        // throws an error if the admission date is blank or is the future
         errors.admissionDate = admissionDate.trim() === "" ? "Required" : "";
+        if (errors.admissionDate === "") {
+            const admissionDateInt = parseInt(admissionDate.replace("-", ""), 10);
+            const todayDateInt = new Date().getFullYear()*100 + new Date().getMonth()+1;
+            errors.admissionDate = admissionDateInt > todayDateInt ? "Invalid" : "";
+        }
+
 
         // only check if the child has pwd id
         if (hasPwdId) {
@@ -194,12 +205,12 @@
 
         // only check if the child has participation
         if (partFamily) {
-            errors.partFamilyYear = partFamilyYear.toString().trim() === "" ? "Required" : "";
+            errors.partFamilyYear = partFamilyYear.toString().trim() === "" || partFamilyYear > thisYear ? "Invalid" : "";
         } else {
             errors.partFamilyYear = "";
         }
         if (partCommunity) {
-            errors.partCommunityYear = partCommunityYear.toString().trim() === "" ? "Required" : "";
+            errors.partCommunityYear = partCommunityYear.toString().trim() === "" || partCommunityYear > thisYear ? "Invalid" : "";
         } else {
             errors.partCommunityYear = "";
         }
