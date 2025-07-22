@@ -12,31 +12,6 @@ export type Database = {
   __InternalSupabase: {
     PostgrestVersion: "12.2.3 (519615d)"
   }
-  graphql_public: {
-    Tables: {
-      [_ in never]: never
-    }
-    Views: {
-      [_ in never]: never
-    }
-    Functions: {
-      graphql: {
-        Args: {
-          operationName?: string
-          query?: string
-          variables?: Json
-          extensions?: Json
-        }
-        Returns: Json
-      }
-    }
-    Enums: {
-      [_ in never]: never
-    }
-    CompositeTypes: {
-      [_ in never]: never
-    }
-  }
   public: {
     Tables: {
       activity: {
@@ -98,32 +73,22 @@ export type Database = {
       addresses: {
         Row: {
           address: string
-          barangay_id: number
           id: string
         }
         Insert: {
           address: string
-          barangay_id: number
           id?: string
         }
         Update: {
           address?: string
-          barangay_id?: number
           id?: string
         }
-        Relationships: [
-          {
-            foreignKeyName: "addresses_barangay_id_fkey"
-            columns: ["barangay_id"]
-            isOneToOne: false
-            referencedRelation: "barangays"
-            referencedColumns: ["id"]
-          },
-        ]
+        Relationships: []
       }
       annual_program: {
         Row: {
-          actual_cwds: number
+          actual_new_cwds: number | null
+          actual_old_cwds: number
           date_created: string
           end_date: number | null
           end_month: number | null
@@ -135,9 +100,11 @@ export type Database = {
           start_month: number | null
           start_year: number
           target_new_cwds: number
+          target_old_cwds: number | null
         }
         Insert: {
-          actual_cwds?: number
+          actual_new_cwds?: number | null
+          actual_old_cwds?: number
           date_created?: string
           end_date?: number | null
           end_month?: number | null
@@ -149,9 +116,11 @@ export type Database = {
           start_month?: number | null
           start_year: number
           target_new_cwds: number
+          target_old_cwds?: number | null
         }
         Update: {
-          actual_cwds?: number
+          actual_new_cwds?: number | null
+          actual_old_cwds?: number
           date_created?: string
           end_date?: number | null
           end_month?: number | null
@@ -163,6 +132,7 @@ export type Database = {
           start_month?: number | null
           start_year?: number
           target_new_cwds?: number
+          target_old_cwds?: number | null
         }
         Relationships: []
       }
@@ -294,7 +264,6 @@ export type Database = {
           email: string | null
           facebook_link: string | null
           id: string
-          income_id: number | null
           member_id: string
           occupation: string | null
         }
@@ -303,7 +272,6 @@ export type Database = {
           email?: string | null
           facebook_link?: string | null
           id?: string
-          income_id?: number | null
           member_id?: string
           occupation?: string | null
         }
@@ -312,18 +280,10 @@ export type Database = {
           email?: string | null
           facebook_link?: string | null
           id?: string
-          income_id?: number | null
           member_id?: string
           occupation?: string | null
         }
         Relationships: [
-          {
-            foreignKeyName: "caregivers_income_id_fkey"
-            columns: ["income_id"]
-            isOneToOne: true
-            referencedRelation: "income_type"
-            referencedColumns: ["id"]
-          },
           {
             foreignKeyName: "caregivers_member_id_fkey"
             columns: ["member_id"]
@@ -595,18 +555,44 @@ export type Database = {
       }
       income_type: {
         Row: {
+          caregiver_id: string | null
+          date_end: string | null
+          date_start: string | null
           id: number
+          income_category:
+            | Database["public"]["Enums"]["income_category_enum"]
+            | null
           name: string
         }
         Insert: {
+          caregiver_id?: string | null
+          date_end?: string | null
+          date_start?: string | null
           id?: number
+          income_category?:
+            | Database["public"]["Enums"]["income_category_enum"]
+            | null
           name: string
         }
         Update: {
+          caregiver_id?: string | null
+          date_end?: string | null
+          date_start?: string | null
           id?: number
+          income_category?:
+            | Database["public"]["Enums"]["income_category_enum"]
+            | null
           name?: string
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "income_type_caregiver_id_fkey"
+            columns: ["caregiver_id"]
+            isOneToOne: false
+            referencedRelation: "caregivers"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       intervention: {
         Row: {
@@ -614,43 +600,43 @@ export type Database = {
           date_created: string
           id: string
           intervention: string
-          last_updated: string
           remarks: string | null
           service_category_id: number
           status: Database["public"]["Enums"]["improvement_status_enum"]
+          updated_at: string
         }
         Insert: {
           child_id?: string
           date_created?: string
           id?: string
           intervention: string
-          last_updated: string
           remarks?: string | null
           service_category_id: number
           status: Database["public"]["Enums"]["improvement_status_enum"]
+          updated_at: string
         }
         Update: {
           child_id?: string
           date_created?: string
           id?: string
           intervention?: string
-          last_updated?: string
           remarks?: string | null
           service_category_id?: number
           status?: Database["public"]["Enums"]["improvement_status_enum"]
+          updated_at?: string
         }
         Relationships: [
           {
             foreignKeyName: "intervention_child_id_fkey"
             columns: ["child_id"]
-            isOneToOne: true
+            isOneToOne: false
             referencedRelation: "children"
             referencedColumns: ["id"]
           },
           {
             foreignKeyName: "intervention_service_category_id_fkey"
             columns: ["service_category_id"]
-            isOneToOne: true
+            isOneToOne: false
             referencedRelation: "service_category"
             referencedColumns: ["id"]
           },
@@ -736,41 +722,44 @@ export type Database = {
         Row: {
           address_id: string | null
           admission_date: string | null
+          barangay_id: number | null
           birthday: string | null
           date_created: string
           first_name: string
           id: string
           last_approved: string | null
           last_name: string
-          last_updated: string | null
           middle_name: string | null
           sex: Database["public"]["Enums"]["sex_enum"]
+          updated_at: string | null
         }
         Insert: {
           address_id?: string | null
           admission_date?: string | null
+          barangay_id?: number | null
           birthday?: string | null
           date_created?: string
           first_name: string
           id?: string
           last_approved?: string | null
           last_name: string
-          last_updated?: string | null
           middle_name?: string | null
           sex: Database["public"]["Enums"]["sex_enum"]
+          updated_at?: string | null
         }
         Update: {
           address_id?: string | null
           admission_date?: string | null
+          barangay_id?: number | null
           birthday?: string | null
           date_created?: string
           first_name?: string
           id?: string
           last_approved?: string | null
           last_name?: string
-          last_updated?: string | null
           middle_name?: string | null
           sex?: Database["public"]["Enums"]["sex_enum"]
+          updated_at?: string | null
         }
         Relationships: [
           {
@@ -778,6 +767,13 @@ export type Database = {
             columns: ["address_id"]
             isOneToOne: false
             referencedRelation: "addresses"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "members_barangay_id_fkey"
+            columns: ["barangay_id"]
+            isOneToOne: false
+            referencedRelation: "barangays"
             referencedColumns: ["id"]
           },
         ]
@@ -788,27 +784,27 @@ export type Database = {
           date_created: string
           family_id: string
           id: number
-          last_updated: string
           remarks: string | null
           total_amount_due: number
+          updated_at: string
         }
         Insert: {
           annual_program_id: number
           date_created?: string
           family_id?: string
           id?: number
-          last_updated?: string
           remarks?: string | null
           total_amount_due: number
+          updated_at?: string
         }
         Update: {
           annual_program_id?: number
           date_created?: string
           family_id?: string
           id?: number
-          last_updated?: string
           remarks?: string | null
           total_amount_due?: number
+          updated_at?: string
         }
         Relationships: [
           {
@@ -1083,9 +1079,9 @@ export type Database = {
           date_created: string
           fam_year_accessed: number | null
           id: number
-          last_updated: string | null
           participates_community_club: boolean | null
           participates_family_life: boolean | null
+          updated_at: string | null
         }
         Insert: {
           child_id?: string
@@ -1093,9 +1089,9 @@ export type Database = {
           date_created?: string
           fam_year_accessed?: number | null
           id?: number
-          last_updated?: string | null
           participates_community_club?: boolean | null
           participates_family_life?: boolean | null
+          updated_at?: string | null
         }
         Update: {
           child_id?: string
@@ -1103,9 +1099,9 @@ export type Database = {
           date_created?: string
           fam_year_accessed?: number | null
           id?: number
-          last_updated?: string | null
           participates_community_club?: boolean | null
           participates_family_life?: boolean | null
+          updated_at?: string | null
         }
         Relationships: [
           {
@@ -1220,12 +1216,19 @@ export type Database = {
       actions: "create" | "retrieve" | "update" | "delete"
       comp_status: "planned" | "completed" | "cancelled"
       completion_status_enum: "planned" | "completed" | "cancelled"
-      education_type_enum: "Special" | "Nonformal" | "Integrated" | "Inclusive"
+      education_type_enum:
+        | "Special (Exclusive school, blind/deaf)"
+        | "Non-formal"
+        | "Integrated / SPED classes"
+        | "Inclusive / General education"
+        | "Not enrolled"
+        | "Home program"
       employment_type_enum:
         | "Wage Employed"
         | "Self-Employed"
         | "Sheltered Workshop"
       improvement_status_enum: "Improved" | "Neutral" | "Regressed"
+      income_category_enum: "Home-based" | "Self-employed" | "Wage Earner"
       intervention_type: "education" | "social"
       part_type: "caregiver" | "child"
       participant_type_enum: "caregiver" | "child"
@@ -1395,21 +1398,26 @@ export type CompositeTypes<
     : never
 
 export const Constants = {
-  graphql_public: {
-    Enums: {},
-  },
   public: {
     Enums: {
       actions: ["create", "retrieve", "update", "delete"],
       comp_status: ["planned", "completed", "cancelled"],
       completion_status_enum: ["planned", "completed", "cancelled"],
-      education_type_enum: ["Special", "Nonformal", "Integrated", "Inclusive"],
+      education_type_enum: [
+        "Special (Exclusive school, blind/deaf)",
+        "Non-formal",
+        "Integrated / SPED classes",
+        "Inclusive / General education",
+        "Not enrolled",
+        "Home program",
+      ],
       employment_type_enum: [
         "Wage Employed",
         "Self-Employed",
         "Sheltered Workshop",
       ],
       improvement_status_enum: ["Improved", "Neutral", "Regressed"],
+      income_category_enum: ["Home-based", "Self-employed", "Wage Earner"],
       intervention_type: ["education", "social"],
       part_type: ["caregiver", "child"],
       participant_type_enum: ["caregiver", "child"],

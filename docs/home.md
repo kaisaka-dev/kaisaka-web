@@ -10,11 +10,12 @@ When documenting,
 
 Refer to Github's style of markdown as a basis to how you write[^2].
 
-> [!IMPORTANT] 
+> [!IMPORTANT]
 > This is an example strcuture to how documentation should be done.
+>
 >```txt
->src/
->├── lib/
+> src/
+> ├── lib/
 > │   ├── components/
 > │   │   ├── Button.svelte
 > │   │   ├── Button.test.ts       <-- Test file beside component

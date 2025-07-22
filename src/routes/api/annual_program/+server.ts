@@ -89,6 +89,18 @@ export const PUT: RequestHandler = async({request}) => {
     contentUpdates.target_new_cwds = body.target_new_cwds
     hasUpdates = true
   }
+  if (body.target_old_cwds !== undefined) {
+    contentUpdates.target_old_cwds = body.target_old_cwds
+    hasUpdates = true
+  }
+  if (body.actual_new_cwds !== undefined) {
+    contentUpdates.actual_new_cwds = body.actual_new_cwds
+    hasUpdates = true
+  }
+  if (body.actual_old_cwds !== undefined) {
+    contentUpdates.actual_old_cwds = body.actual_old_cwds
+    hasUpdates = true
+  }
   if (body.general_reflection !== undefined) {
     contentUpdates.general_reflection = body.general_reflection
     hasUpdates = true

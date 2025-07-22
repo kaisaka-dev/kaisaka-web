@@ -33,6 +33,7 @@ const interventionHistoryDB = new interventionHistory();
 export type childInformation =  {
     id: string,
     firstName: string,
+    middleName: string,
     lastName: string,
     birthday: string,
     sex: string,
@@ -48,6 +49,7 @@ export type childInformation =  {
     admissionDate: string,
     terminationDate?: string
     pwd?:{
+        recordid: string,
         has:boolean
         id: string,
         expiry: string
@@ -76,6 +78,7 @@ export type childInformation =  {
 type MemberRecord = {
     id: string,
     first_name?: string;
+    middle_name?: string;
     last_name?: string;
     birthday?: string;
     sex?: string;
@@ -116,9 +119,9 @@ type ChildRecord = {
     pwd_id?: string;
     has_philhealth: boolean,
     has_birth_cert: boolean,
-    med_cert:boolean,
+    has_medical_cert:boolean,
     has_barangay_cert: boolean,
-    has_voter_id: boolean,
+    has_vote: boolean,
     has_national_id:boolean
 };
 
@@ -128,6 +131,7 @@ type familyquery = {
 
 
 let entireFamily
+let pwdrecordid: string
 let pwdHas:boolean
 let pwdID:string
 let pwdExpiry:string
@@ -174,9 +178,15 @@ try{
         const pwdRecord = await pwdDB.findOneWithJoin("*", {
             eq:{id: childRecord.pwd_id}
         })
-        pwdHas = true;
-        pwdID = pwdRecord[0].pwd_id
-        pwdExpiry = pwdRecord[0]?.expiry_date    
+
+        if(pwdRecord){
+            pwdHas = true;
+            pwdID = pwdRecord?.pwd_id
+            pwdExpiry = pwdRecord?.expiry_date
+            pwdrecordid = pwdRecord?.id
+        }
+        
+        
     }
 
     //gets record in social protection table
@@ -216,11 +226,13 @@ try{
 
     const child: childInformation = {
         id: childRecord.id,
+        
 
         disabilitycatID: childRecord.disability_category.id,
         addressid: memberRecord.address_id || "",
         barangayid: barangayID || "",
         firstName: memberRecord.first_name || "",
+        middleName: memberRecord.middle_name|| "",
         lastName: memberRecord.last_name  || "",
         birthday: memberRecord.birthday || "",
         sex: memberRecord.sex || "",
@@ -233,14 +245,15 @@ try{
         disabilityNature: childRecord.disability_nature || "",
         admissionDate: new Date(memberRecord.admission_date).toISOString().split('T')['0'] || "",
         philHealth: childRecord.philHealth || false,
-        med_cert: childRecord.med_cert || false,
+        med_cert: childRecord.has_medical_cert || false,
         birth_cert: childRecord.has_birth_cert || false,
         barangay_cert: childRecord.has_barangay_cert || false,
         
         pwd:{
+            recordid: pwdrecordid,
             has: pwdHas,
-            id: pwdID as string,
-            expiry: pwdExpiry as string
+            id: pwdID,
+            expiry: pwdExpiry
         },
 
         socialProtection:{
@@ -251,13 +264,13 @@ try{
             community_year: socsecComYear
         },
 
-        voter_id: childRecord.has_voter_id || false,
+        voter_id: childRecord.has_vote || false,
         national_id: childRecord.has_national_id || false,
         educationHistory: educationArray,
         schoolYearArray: yearArray
     }
 
-    
+    console.log(child)
     const familyInfo = await familyDB.findOneWithJoin('*, families(*)', {
     eq:{member_id: childRecord.member_id}
     }) as familyquery;

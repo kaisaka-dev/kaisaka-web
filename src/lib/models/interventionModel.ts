@@ -1,9 +1,8 @@
-import TableManager, { type tableRow } from '../types/manager.js';
+import TableManager, { type QueryConfigurationBuilder, type tableRow } from '../types/manager.js';
 import type { Database } from '../types/supabase-types.ts';
 
 type status_enum = Database['public']['Enums']['improvement_status_enum'];
 type InterventionRow = tableRow<"intervention">
-
 /**
  * A model concerning about CRUD operations on *intervention information*. 
  * 
@@ -40,18 +39,22 @@ export class InterventionModel extends TableManager<"intervention">('interventio
             service_category_id: service_category_id, 
             status: status
         }
-        const data = await this.insertOne(new_intervention)
-
-        return data
+        try {
+            const data = await this.insertOne(new_intervention)
+            return data
+        } catch (err) {
+            console.error('Database error in insertIntervention:', err);
+            throw err;
+        }
     }
 
     /**
      * Find intervention data given an id number
      * @param id the unique id of the intervention in the DB
-     * @returns the intervention record corresponding the id
+     * @returns the intervention records corresponding the id
      */
-    async findById(id: string): Promise<InterventionRow | null>{
-        return this.findOne({ id: id });
+    async findById(id: string): Promise<InterventionRow[] | null>{
+        return this.findMany({ id: id });
     }
 
     /**
@@ -112,6 +115,36 @@ export class InterventionModel extends TableManager<"intervention">('interventio
     }
 
     /**
+     * Updates an intervention's name/description
+     * @param id the unique id of the intervention in the DB
+     * @param intervention updated intervention name/description to be applied
+     * @returns boolean if the update was successful
+     */
+    async updateIntervention(id: string, intervention: string): Promise<boolean>{
+        const now = new Date().toISOString();
+        const reference: Partial<InterventionRow> = { id: id }
+        const updates: Partial<InterventionRow> = { intervention: intervention, updated_at: now }
+        const data = await this.updateOne(reference, updates)
+
+        return data
+    }
+
+    /**
+     * Updates an intervention's date created
+     * @param id the unique id of the intervention in the DB
+     * @param date_created updated date created to be applied
+     * @returns boolean if the update was successful
+     */
+    async updateDateCreated(id: string, date_created: string): Promise<boolean>{
+        const now = new Date().toISOString();
+        const reference: Partial<InterventionRow> = { id: id }
+        const updates: Partial<InterventionRow> = { date_created: date_created, updated_at: now }
+        const data = await this.updateOne(reference, updates)
+
+        return data
+    }
+
+    /**
      * Deletes an intervention with given ID
      * @param id the unique id of the intervention in the DB
      * @returns boolean if the update was successful
@@ -123,5 +156,10 @@ export class InterventionModel extends TableManager<"intervention">('interventio
 
     async getMultipleJoin(select: string, filters: Record<string, string | number>): Promise<InterventionRow[] | null> {
         return await this.findWithJoin(select, filters );
+    }
+    async findByJoin_InTheProgramReport(config: QueryConfigurationBuilder) {
+        const joinStatement =`*, children!inner(id, birthday, members(first_name, last_name, sex), disability_category(name))`;
+
+        return this.findWithJoinAndCount(joinStatement, config)
     }
 }

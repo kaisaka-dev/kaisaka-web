@@ -80,6 +80,19 @@ export class membersModel extends TableManager<"members">('members') {
   }
 
   /**
+   * Updates member's barangay reference
+   * @param id member ID (UUID)
+   * @param barangay_id new barangay ID
+   * @returns boolean if update is successful or not
+   */
+  async updateBarangay(id: string, barangay_id: number | null): Promise<boolean> {
+    const references: Partial<MembersRow> = { id };
+    const updates: Partial<MembersRow> = { barangay_id };
+    const data = await this.updateOne(references, updates);
+    return data;
+  }
+
+  /**
    * Updates admission date
    * @param id member ID (UUID)
    * @param admission_date new admission date
@@ -109,5 +122,22 @@ export class membersModel extends TableManager<"members">('members') {
     const data = await this.findMany({ first_name: first_name, last_name: last_name })
     //console.log(data)
     return data
+  }
+
+  /**
+   * Finds members by barangay ID
+   * @param barangay_id the barangay ID to search for
+   * @returns array of members in the specified barangay or null
+   */
+  async findByBarangayId(barangay_id: number): Promise<MembersRow[] | null> {
+    return this.findMany({ barangay_id });
+  }
+
+  /**
+   * Gets all members
+   * @returns array of all member records or null
+   */
+  async getAll(): Promise<MembersRow[] | null> {
+    return this.findMany({});
   }
 }

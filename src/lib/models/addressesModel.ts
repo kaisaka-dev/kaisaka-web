@@ -15,11 +15,10 @@ export class AddressesModel extends TableManager<"addresses">('addresses') {
   /**
    * Inserts a new address
    * @param address full address name
-   * @param barangay_id id of barangay of address
    * @returns created address record or null
    */
-  async insertAddress(address: string, barangay_id: number): Promise<AddressesRow | null>{
-    const new_address : Partial<AddressesRow> = { address, barangay_id }
+  async insertAddress(address: string): Promise<AddressesRow | null>{
+    const new_address : Partial<AddressesRow> = { address }
     const data  = await this.insertOne(new_address)
 
     return data
@@ -44,12 +43,11 @@ export class AddressesModel extends TableManager<"addresses">('addresses') {
   }
 
   /**
-   * Finds addresses within a specific barangay
-   * @param barangay_id the unique id of the barangay in the DB
-   * @returns an array of addresses within the given barangay
+   * Gets all addresses
+   * @returns array of all address records or null
    */
-  async findByBarangayId(barangay_id: number): Promise<AddressesRow[] | null>{
-    return this.findMany({ barangay_id: barangay_id })
+  async getAll(): Promise<AddressesRow[] | null>{
+    return this.findMany({})
   }
 
 
@@ -68,17 +66,13 @@ export class AddressesModel extends TableManager<"addresses">('addresses') {
   }
 
   /**
-   * Update address record's barangay
-   * @param id the unique id of the address in the DB
-   * @param barangay_id the unique id of the barangay in the DB
-   * @returns boolean if update is successful or not
+   * Checks if an address with the given id exists
+   * @param id the id to check for
+   * @returns boolean indicating whether the address exists
    */
-  async updateBarangayId(id: string, barangay_id: number): Promise<boolean>{
-    const reference: Partial<AddressesRow> = { id: id }
-    const updates: Partial<AddressesRow> = { barangay_id: barangay_id }
-    const data = await this.updateOne(reference, updates)
-
-    return data
+  async existsById(id: string): Promise<boolean>{
+    const result = await this.findById(id);
+    return result !== null;
   }
 
   /**

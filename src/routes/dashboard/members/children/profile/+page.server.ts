@@ -79,9 +79,9 @@ type ChildRecord = {
     pwd_id?: string;
     has_philhealth: boolean,
     has_birth_cert: boolean,
-    med_cert:boolean,
+    has_medical_cert:boolean,
     has_barangay_cert: boolean,
-    has_voter_id: boolean,
+    has_vote: boolean,
     has_national_id:boolean
 };
 
@@ -122,7 +122,7 @@ try{
     }
 
     const memberRecord : MemberRecord = await memberRecRes.json()
-    //console.log('memberRecord: ', memberRecord)
+    console.log('memberRecord: ', memberRecord)
 
     //gets record in barangay table
     let barangayInfo = {}
@@ -203,13 +203,13 @@ try{
         address: memberRecord.addresses?.address  || "",
         barangay: barangayInfo?.name || "",
         canWork: memberRecord.employment_status?.able_to_work  || false,
-        employmentType: memberRecord.employment_status?.employmentType || "",
+        employmentType: memberRecord.employment_status?.employment_type || "",
         remarks: childRecord.remarks || "",
         disabilityCategory: childRecord.disability_category?.name  || "",
         disabilityNature: childRecord.disability_nature || "",
         admissionDate: new Date(memberRecord.admission_date).toISOString().split('T')['0'] || "",
         philHealth: childRecord.philhealth || false,
-        med_cert: childRecord.med_cert || false,
+        med_cert: childRecord.has_medical_cert || false,
         birth_cert: childRecord.has_birth_cert || false,
         barangay_cert: childRecord.has_barangay_cert || false,
         pwd:{
@@ -226,12 +226,13 @@ try{
             community_year: socsecComYear
         },
 
-        voter_id: childRecord.has_voter_id || false,
+        voter_id: childRecord.has_vote || false,
         national_id: childRecord.has_national_id || false,
         educationHistory: educationArray,
         schoolYearArray: yearArray
     }
 
+    console.log(child)
     const familyRes = await fetch(`/api/family_members?id=${childRecord.member_id}&select=*,families(*)&type=memberid`)
     if (!familyRes.ok) {
         throw new Error('Failed to fetch family member info');

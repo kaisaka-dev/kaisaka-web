@@ -1,17 +1,46 @@
+/**
+ * INTERVENTION HISTORY API - How to Use
+ * 
+ * GET - Retrieve intervention history records
+ * • Get specific history record by ID: GET /api/intervention_history?id=history-123
+ * • Get all history for intervention: GET /api/intervention_history?id=intervention-123&type=by_intervention
+ * 
+ * POST - Create new history record
+ * • Required: intervention_id, improvement, status
+ * • Status: "Improved" | "Neutral" | "Regressed"
+ * • Optional: remarks, date_checked (defaults to now)
+ * • Example: { "intervention_id": "123", "improvement": "Can walk 20 steps", "status": "Improved", "remarks": "Good progress" }
+ * 
+ * PUT - Update history record
+ * • Required: id, intervention (update object)
+ * • intervention object can contain: improvement, status, remarks, date_checked
+ * • Example: { "id": "123", "intervention": { "status": "Improved", "date_checked": "2024-01-20T10:00:00Z" } }
+ * 
+ * DELETE - Remove history record
+ * • DELETE /api/intervention_history?id=history-123
+ */
+
 import { InterventionHistoryModel } from "$lib/models/interventionHistoryModel.js";
 import { error, json, type RequestHandler } from "@sveltejs/kit";
 
 export const GET: RequestHandler = async ({ url }) => {
   const id = url.searchParams.get('id');
+  const type = url.searchParams.get('type');
   
   if (!id) {
-    throw error(400, 'Missing id');
+    throw error(400, 'Missing id parameter');
   }
 
   let interventionHistory;
 
   try {
-    interventionHistory = await InterventionHistoryModel.instance.findByInterventionId(id)
+    if (type === 'by_intervention') {
+      // Get all history records for a specific intervention
+      interventionHistory = await InterventionHistoryModel.instance.findByInterventionId(id)
+    } else {
+      // Get a specific history record by its primary key ID
+      interventionHistory = await InterventionHistoryModel.instance.findById(id)
+    }
 
     if (!interventionHistory) {
       throw error(404, 'Intervention history not found');
@@ -72,4 +101,25 @@ export const PUT: RequestHandler = async({request}) => {
   }
 
   return json({ message: 'Updated successfully' })
+}
+
+export const DELETE: RequestHandler = async ({ url }) => {
+  const id = url.searchParams.get('id');
+  
+  if (!id) {
+    throw error(400, 'Missing id parameter');
+  }
+
+  try {
+    const deleted = await InterventionHistoryModel.instance.deleteById(id);
+    
+    if (!deleted) {
+      throw error(404, 'Intervention history record not found or failed to delete');
+    }
+
+    return json({ message: 'Intervention history deleted successfully' });
+  } catch (err) {
+    console.error('Error deleting intervention history:', err);
+    throw error(500, 'Internal Server Error');
+  }
 }

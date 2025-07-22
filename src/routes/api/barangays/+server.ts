@@ -1,22 +1,54 @@
 
+/**
+ * GET /api/barangays
+ * 
+ * Available endpoints:
+ * - GET /api/barangays - Get all barangays
+ * - GET /api/barangays?id=123 - Get specific barangay by ID
+ * - GET /api/barangays?id=123&members=true - Get barangay with its members
+ * - GET /api/barangays?city_id=456 - Get barangays by city
+ * 
+ * POST - Create new barangay
+ * • Required: name
+ * • Optional: city_id, num (barangay number)
+ * 
+ * PUT - Update barangay
+ * • Required: id
+ * • Optional: name, city_id, num
+ */
+
 import { BarangayModel } from "$lib/models/barangaysModel.js";
 import { error, json, type RequestHandler } from "@sveltejs/kit";
 
-// READ - Get barangay by ID
 export const GET: RequestHandler = async ({ url }) => {
-  const id = Number(url.searchParams.get('id'));
+  const id = url.searchParams.get('id');
+  const city_id = url.searchParams.get('city_id');
+  const members = url.searchParams.get('members') === 'true';
     
-  if (!id) {
-    throw error(400, 'Missing required parameter: id');
+  try {
+    let data;
+    
+    if (id) {
+      const barangayId = parseInt(id);
+      
+      if (members) {
+        data = await BarangayModel.instance.getMembersInBarangay(barangayId);
+      } else {
+        data = await BarangayModel.instance.findById(barangayId);
+        if (!data) {
+          throw error(404, 'Barangay not found');
+        }
+      }
+    } else if (city_id) {
+      data = await BarangayModel.instance.findByCityId(parseInt(city_id));
+    } else {
+      data = await BarangayModel.instance.getAll();
+    }
+
+    return json({ data });
+  } catch (err) {
+    throw error(500, 'Failed to retrieve barangays');
   }
-
-  const brgy = await BarangayModel.instance.findById(id);
-
-  if (!brgy) {
-    throw error(404, 'Barangay not found');
-  }
-
-  return json(brgy);
 };
 
 export const POST: RequestHandler = async({request}) => {
@@ -28,11 +60,11 @@ export const POST: RequestHandler = async({request}) => {
     throw error(400, 'Missing required fields.')
   }
 
-  if (!body.name || !body.city) {
-    throw error(400, 'Missing required fields.')
+  if (!body.name) {
+    throw error(400, 'Missing required field: name')
   }
 
-  const inserted = await BarangayModel.instance.insertBarangay(body.name, body.city, body.num)
+  const inserted = await BarangayModel.instance.insertBarangay(body.name, body.city_id, body.num)
 
   if (!inserted){
     throw error(500, 'Failed to insert')

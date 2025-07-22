@@ -1,21 +1,40 @@
 import { pwdIdsModel } from "$lib/models/pwdIdsModel.js";
 import { error, json, type RequestHandler } from "@sveltejs/kit";
 
-export const GET: RequestHandler = async ({ url }) => {
-  const id = url.searchParams.get('id');
-  
-  if (!id) {
-    throw error(400, 'Missing required parameter: id');
+export const GET: RequestHandler = async ({ url, fetch }) => {
+  const pwdID = url.searchParams.get('id');
+  const childID = url.searchParams.get('childID');
+  let pwdRec;
+
+  if (pwdID) {
+    pwdRec = await pwdIdsModel.instance.findByPWDid(pwdID);
+    console.log(pwdRec)
+  } else if (childID) {
+    const childRes = await fetch(`/api/children/${childID}`);
+    console.log('[Fetch childRes]:', childRes);
+
+    if (!childRes.ok) {
+      throw error(400, 'Failed to fetch child');
+    }
+
+    const child = await childRes.json();
+
+    if (!child?.pwd_id) {
+      throw error(400, 'Child does not have a PWD ID');
+    }
+
+    pwdRec = await pwdIdsModel.instance.findById(child.pwd_id);
+  } else {
+    throw error(400, 'Missing required parameter: id or childID');
   }
-
-  const pwdID = await pwdIdsModel.instance.findById(id);
-
-  if (!pwdID) {
+  
+  if (!pwdRec) {
     throw error(404, 'PWD ID not found');
   }
 
-  return json(pwdID);
+  return json(pwdRec);
 };
+
 
 export const POST: RequestHandler = async ({ request }) => {
   let body: any = {}
@@ -78,4 +97,54 @@ export const PUT: RequestHandler = async({request}) => {
   }
 
   return json({ message: 'Updated successfully' })
+}
+
+
+export const DELETE: RequestHandler = async({ request, fetch }) => {
+    let body: any = {}
+    let result
+
+    try {
+      body = await request.json();
+    } catch {
+      throw error(400, 'Invalid JSON body.')
+    }
+    try{
+      if(body.childID !== undefined){
+        const childRes = await fetch(`/api/children/${body.childID}`);
+
+        if (!childRes.ok) {
+          throw error(400, 'Failed to fetch child');
+        }
+
+        const child = await childRes.json();
+
+        if (!child?.pwd_id) {
+          throw error(400, 'Child does not have a PWD ID');
+        }
+        const updateChild = await fetch('/api/children', {
+          method: 'PUT',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            id: child.id,
+            pwd_id: null
+          })
+        })
+        if(updateChild)
+          result = await pwdIdsModel.instance.deleteById(child.pwd_id)
+        else
+          throw error(400, 'failed to remove pwd id in child record')
+      }
+      else{
+        throw error(400, 'Missing required ID: childID')
+      }
+
+      if(!result)
+        throw error(404, 'Failed to delete PWD ID.')
+      return json({ success: true, data: result });
+    } catch {
+        throw error(500, 'Failed to delete PWD ID')
+    }
 }

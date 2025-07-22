@@ -30,6 +30,10 @@ export class annualProgramModel extends TableManager<"annual_program">('annual_p
     return this.findMany({ end_year });
   }
 
+  async findByStartAndEndYear(start_year: number, end_year: number){
+    return this.findMany({ start_year, end_year })
+  }
+
   /**
    * Finds programs by target CWD count
    * @param target_new_cwds 
@@ -40,13 +44,14 @@ export class annualProgramModel extends TableManager<"annual_program">('annual_p
   }
 
   async findPreviousWorkYear(currentId: number) {
-    const current = await this.findOne({ currentId })
+    const current = await this.findOne({ id: currentId })
     
-    if (!current) throw new Error(`AnnualProgram ${currentId} not found`)
+    if (!current) throw new Error(`AnnualProgram ID${currentId} not found`)
 
-
-
-    return this.findOne({},{lt: {end_year: current.start_year}, order: {column: "end_year", ascending: false}})
+    return this.findMany({},{
+      lt: {'end_year': current.start_year}, 
+      order: [{column: "end_year", ascending: false}]
+    })
   }
 
   /**
@@ -86,7 +91,7 @@ export class annualProgramModel extends TableManager<"annual_program">('annual_p
   async updateProgramContent(
     id: number,
     updates: Partial<Pick<AnnualProgramRow,
-      'target_new_cwds' | 'general_reflection' | 'lessons_learned'
+      'target_new_cwds' | 'target_old_cwds' | 'actual_new_cwds' | 'actual_old_cwds' | 'general_reflection' | 'lessons_learned'
     >>
   ): Promise<boolean> {
     const references: Partial<AnnualProgramRow> = { id };

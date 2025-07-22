@@ -1,3 +1,22 @@
+/**
+ * CHILDREN API - How to Use
+ * 
+ * GET - Retrieve children records
+ * • Get all children: GET /api/children
+ * • Get pending documents: GET /api/children?type=pending-documents&id=child-123
+ * • Get children list with joins: GET /api/children?type=list (or type=joined)
+ * 
+ * POST - Create new child record
+ * • Required: has_barangay_cert, has_birth_cert, has_medical_cert, is_active, member_id
+ * • Optional: has_philhealth, pwd_id, disability_id, disability_nature, remarks, has_national_id, has_vote
+ * • Example: { "member_id": "123", "has_barangay_cert": true, "has_birth_cert": false, "has_medical_cert": true, "is_active": true }
+ * 
+ * PUT - Update child record
+ * • Required: id
+ * • Optional: has_barangay_cert, has_birth_cert, has_medical_cert, has_philhealth, is_active, pwd_id, remarks, has_vote, has_national_id, disability_id, disability_nature
+ * • Example: { "id": "123", "has_philhealth": true, "disability_nature": "Mild cognitive impairment" }
+ */
+
 import { ChildrenModel } from "$lib/models/childrenModel.js";
 import { error, json, type RequestHandler } from "@sveltejs/kit";
 
@@ -127,6 +146,14 @@ export const PUT: RequestHandler = async({request}) => {
     hasUpdates = true
   }
 
+  if (body.has_philhealth !== undefined) {
+    const updated = await ChildrenModel.instance.updatePhilHealthId(body.id, body.has_philhealth)
+    if (!updated) {
+      throw error(500, 'Failed to update has_philhealth')
+    }
+    hasUpdates = true
+  }
+
   if (body.is_active !== undefined) {
     const updated = await ChildrenModel.instance.updateActiveStatus(body.id, body.is_active)
     if (!updated) {
@@ -147,6 +174,43 @@ export const PUT: RequestHandler = async({request}) => {
     const updated = await ChildrenModel.instance.updateRemarks(body.id, body.remarks)
     if (!updated) {
       throw error(500, 'Failed to update remarks')
+    }
+    hasUpdates = true
+  }
+
+  if(body.has_vote !== undefined){
+    const updated = await ChildrenModel.instance.updateHasVote(body.id, body.has_vote)
+    if (!updated) {
+      throw error(500, 'Failed to update remarks')
+    }
+    hasUpdates = true
+  }
+
+  if(body.has_national_id !== undefined){
+    const updated = await ChildrenModel.instance.updateHasNatID(body.id, body.has_national_id)
+    if (!updated) {
+      throw error(500, 'Failed to update remarks')
+    }
+    hasUpdates = true
+  }
+
+  if (body.disability_id !== undefined || body.disability_nature !== undefined) {
+    // Get current values if only one field is being updated
+    let disability_id = body.disability_id;
+    let disability_nature = body.disability_nature;
+    
+    if (disability_id === undefined || disability_nature === undefined) {
+      const currentChild = await ChildrenModel.instance.findById(body.id);
+      if (!currentChild) {
+        throw error(404, 'Child not found');
+      }
+      disability_id = disability_id !== undefined ? disability_id : currentChild.disability_id;
+      disability_nature = disability_nature !== undefined ? disability_nature : currentChild.disability_nature;
+    }
+    
+    const updated = await ChildrenModel.instance.updateDisabilityInfo(body.id, disability_id, disability_nature)
+    if (!updated) {
+      throw error(500, 'Failed to update disability information')
     }
     hasUpdates = true
   }

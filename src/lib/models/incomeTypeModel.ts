@@ -3,6 +3,8 @@ import TableManager, { type tableRow } from '../types/manager.js';
 /**
  * A model concerning about CRUD operations on *income_type*. 
  * 
+ * Schema: id, caregiver_id, date_start, date_end, income_category
+ * 
  * Made for the `income_type` API. 
  * 
  * **Reference**: Database Model `src/lib/models/db.md`
@@ -14,12 +16,23 @@ export class IncomeTypeModel extends TableManager<"income_type">('income_type') 
 
   /**
    * Inserts a new income type
-   * @param name name of the income type
+   * @param caregiver_id caregiver id (UUID)
+   * @param date_start start date
+   * @param date_end optional end date  
+   * @param income_category income category
    * @returns created income type record or null
    */
-  async insertIncomeType(name: string): Promise<IncomeTypeRow | null>{
+  async insertIncomeType(
+    caregiver_id: string,
+    date_start: string,
+    date_end?: string | null,
+    income_category?: 'Home-based' | 'Self-employed' | 'Wage Earner' | null
+  ): Promise<IncomeTypeRow | null>{
     const new_income_type : Partial<IncomeTypeRow> = { 
-      name
+      caregiver_id,
+      date_start,
+      date_end,
+      income_category
     }
     const data  = await this.insertOne(new_income_type)
 
@@ -36,23 +49,21 @@ export class IncomeTypeModel extends TableManager<"income_type">('income_type') 
   }
 
   /**
-   * Finds an income type by its name
-   * @param name the name of the income type
-   * @returns the income type instance with said name
+   * Finds income types by caregiver id
+   * @param caregiver_id the caregiver id to search for
+   * @returns array of income types for the caregiver or null
    */
-  async findByName(name: string): Promise<IncomeTypeRow | null>{
-    return this.findOne({ name: name })
+  async findByCaregiver(caregiver_id: string): Promise<IncomeTypeRow[] | null>{
+    return this.findMany({ caregiver_id: caregiver_id })
   }
 
   /**
-   * Finds income types by partial name match
-   * @param nameKeyword keyword to search in income type names
-   * @returns array of income types matching the name keyword
+   * Finds income types by category
+   * @param income_category the income category to search for
+   * @returns array of income types in the category or null
    */
-  async findByNameKeyword(nameKeyword: string): Promise<IncomeTypeRow[] | null>{
-    // Note: This would require a custom query for partial text matching
-    // For now, returning exact matches
-    return this.findMany({ name: nameKeyword })
+  async findByCategory(income_category: 'Home-based' | 'Self-employed' | 'Wage Earner'): Promise<IncomeTypeRow[] | null>{
+    return this.findMany({ income_category: income_category })
   }
 
   /**
@@ -64,14 +75,18 @@ export class IncomeTypeModel extends TableManager<"income_type">('income_type') 
   }
 
   /**
-   * Update income type record's name
+   * Update income type record
    * @param id the unique id of the income type in the DB
-   * @param name the updated name to be applied
+   * @param updates object containing fields to update
    * @returns boolean if update is successful or not
    */
-  async updateName(id: number, name: string): Promise<boolean>{
+  async updateIncomeType(id: number, updates: {
+    caregiver_id?: string,
+    date_start?: string,
+    date_end?: string | null,
+    income_category?: 'Home-based' | 'Self-employed' | 'Wage Earner' | null
+  }): Promise<boolean>{
     const reference: Partial<IncomeTypeRow> = { id: id }
-    const updates: Partial<IncomeTypeRow> = { name: name }
     const data = await this.updateOne(reference, updates)
 
     return data
@@ -88,23 +103,23 @@ export class IncomeTypeModel extends TableManager<"income_type">('income_type') 
   }
 
   /**
-   * Deletes an income type record given its name
-   * @param name the name of the income type in the DB
+   * Deletes income type records by caregiver id
+   * @param caregiver_id the caregiver id in the DB
    * @returns boolean if delete is successful or not
    */
-  async deleteByName(name: string): Promise<boolean>{
-    const result = await this.deleteOne({ name: name });
+  async deleteByCaregiver(caregiver_id: string): Promise<boolean>{
+    const result = await this.deleteMany({ caregiver_id: caregiver_id });
     return result !== null;
   }
 
   /**
-   * Checks if an income type with the given name exists
-   * @param name the name to check for
-   * @returns boolean indicating whether the income type exists
+   * Checks if income types exist for a given caregiver
+   * @param caregiver_id the caregiver id to check for
+   * @returns boolean indicating whether income types exist for the caregiver
    */
-  async exists(name: string): Promise<boolean>{
-    const result = await this.findByName(name);
-    return result !== null;
+  async existsForCaregiver(caregiver_id: string): Promise<boolean>{
+    const result = await this.findByCaregiver(caregiver_id);
+    return result !== null && result.length > 0;
   }
 
   /**
