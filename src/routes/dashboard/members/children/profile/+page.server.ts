@@ -254,21 +254,18 @@ try{
 
 
     const interventionRes = await fetch(`/api/intervention?id=${childRecord.id}&select=*, service_category(*)&type=serviceCategory`)
-
     const interventioninfo = await interventionRes.json()
 
     if(interventioninfo){
         for(let i = 0; i < interventioninfo.length;i++){
-           const interventionhistoryinfo = await fetch(`/api/intervention_history?id=${interventioninfo[i].id}`)
-          
+           const interventionhistoryinfo = await fetch(`/api/intervention_history?id=${interventioninfo[i].id}&type=by_intervention`)
            interventioninfo[i]['history'] = await interventionhistoryinfo.json()
         }
     }
 
-    console.log("Child: ", child)
-    console.log("family: ", entireFamily)
-    console.log("member: ", memberRecord)
-    console.log("inteventioninfo: ", interventioninfo)
+    // console.log("Child: ", child)
+    // console.log("family: ", entireFamily)
+    // console.log("member: ", memberRecord)
 
     return{
         child: child,
