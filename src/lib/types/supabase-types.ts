@@ -73,28 +73,17 @@ export type Database = {
       addresses: {
         Row: {
           address: string
-          barangay_id: number
           id: string
         }
         Insert: {
           address: string
-          barangay_id: number
           id?: string
         }
         Update: {
           address?: string
-          barangay_id?: number
           id?: string
         }
-        Relationships: [
-          {
-            foreignKeyName: "addresses_barangay_id_fkey"
-            columns: ["barangay_id"]
-            isOneToOne: false
-            referencedRelation: "barangays"
-            referencedColumns: ["id"]
-          },
-        ]
+        Relationships: []
       }
       annual_program: {
         Row: {
@@ -733,6 +722,7 @@ export type Database = {
         Row: {
           address_id: string | null
           admission_date: string | null
+          barangay_id: number | null
           birthday: string | null
           date_created: string
           first_name: string
@@ -746,6 +736,7 @@ export type Database = {
         Insert: {
           address_id?: string | null
           admission_date?: string | null
+          barangay_id?: number | null
           birthday?: string | null
           date_created?: string
           first_name: string
@@ -759,6 +750,7 @@ export type Database = {
         Update: {
           address_id?: string | null
           admission_date?: string | null
+          barangay_id?: number | null
           birthday?: string | null
           date_created?: string
           first_name?: string
@@ -775,6 +767,13 @@ export type Database = {
             columns: ["address_id"]
             isOneToOne: false
             referencedRelation: "addresses"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "members_barangay_id_fkey"
+            columns: ["barangay_id"]
+            isOneToOne: false
+            referencedRelation: "barangays"
             referencedColumns: ["id"]
           },
         ]

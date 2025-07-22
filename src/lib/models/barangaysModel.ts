@@ -128,4 +128,40 @@ export class BarangayModel extends TableManager<"barangays">('barangays') {
   async getAll(filter?: Partial<BarangayRow>): Promise<BarangayRow[] | null> {
     return this.findMany(filter)
   }
+
+  /**
+   * Gets all members in a specific barangay
+   * @param barangay_id the barangay ID
+   * @returns array of members in this barangay
+   */
+  async getMembersInBarangay(barangay_id: number): Promise<any[] | null> {
+    try {
+      const { data, error } = await this.supabase
+        .from('barangays')
+        .select(`
+          *,
+          members (
+            id,
+            first_name,
+            last_name,
+            middle_name,
+            sex,
+            birthday,
+            admission_date
+          )
+        `)
+        .eq('id', barangay_id)
+        .single();
+
+      if (error) {
+        console.error('Error fetching members in barangay:', error);
+        return null;
+      }
+
+      return data?.members || [];
+    } catch (err) {
+      console.error('Database query error:', err);
+      return null;
+    }
+  }
 }

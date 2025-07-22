@@ -1,20 +1,36 @@
 import { AddressesModel } from "$lib/models/addressesModel.js"
 import { error, json, type RequestHandler } from "@sveltejs/kit";
 
+/**
+ * GET /api/addresses
+ * 
+ * Available endpoints:
+ * - GET /api/addresses - Get all addresses
+ * - GET /api/addresses?id=uuid - Get specific address by ID
+ * - GET /api/addresses?address=street - Get addresses by address string
+ */
 export const GET: RequestHandler = async ({ url }) => {
   const id = url.searchParams.get('id');
+  const address = url.searchParams.get('address');
   
-  if (!id) {
-    throw error(400, 'Missing required parameter: id');
+  try {
+    let data;
+    
+    if (id) {
+      data = await AddressesModel.instance.findById(id);
+      if (!data) {
+        throw error(404, 'Address not found');
+      }
+    } else if (address) {
+      data = await AddressesModel.instance.findByAddress(address);
+    } else {
+      data = await AddressesModel.instance.getAll();
+    }
+    
+    return json({ data });
+  } catch (err) {
+    throw error(500, 'Failed to retrieve addresses');
   }
-
-  const address = await AddressesModel.instance.findById(id);
-
-  if (!address) {
-    throw error(404, 'Address not found');
-  }
-
-  return json(address);
 };
 
 export const POST: RequestHandler = async({request}) => {
@@ -26,11 +42,11 @@ export const POST: RequestHandler = async({request}) => {
     throw error(400, 'Missing required fields.')
   }
 
-  if (!body.address || !body.barangay_id) {
-    throw error(400, 'Missing required fields.')
+  if (!body.address) {
+    throw error(400, 'Missing required field: address')
   }
 
-  const inserted = await AddressesModel.instance.insertAddress(body.address, body.barangay_id)
+  const inserted = await AddressesModel.instance.insertAddress(body.address)
 
   if (!inserted){
     throw error(500, 'Failed to insert')
@@ -57,14 +73,6 @@ export const PUT: RequestHandler = async({request}) => {
     const updated = await AddressesModel.instance.updateAddress(body.id, body.address)
     if (!updated) {
       throw error(500, 'Failed to update address')
-    }
-    hasUpdates = true
-  }
-
-  if (body.barangay_id !== undefined) {
-    const updated = await AddressesModel.instance.updateBarangayId(body.id, body.barangay_id)
-    if (!updated) {
-      throw error(500, 'Failed to update barangay_id')
     }
     hasUpdates = true
   }

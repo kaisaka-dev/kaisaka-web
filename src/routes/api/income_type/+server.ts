@@ -1,6 +1,35 @@
 import { IncomeTypeModel } from "$lib/models/incomeTypeModel.js";
 import { error, json, type RequestHandler } from "@sveltejs/kit";
 
+/**
+ * GET /api/income_type
+ * 
+ * Available endpoints:
+ * - GET /api/income_type - Get all income types
+ * - GET /api/income_type?caregiver_id=uuid - Get income types for specific caregiver
+ * - GET /api/income_type?category=Home-based - Get income types by category (Home-based|Self-employed|Wage Earner)
+ */
+export const GET: RequestHandler = async({ url }) => {
+  const caregiver_id = url.searchParams.get('caregiver_id');
+  const category = url.searchParams.get('category');
+
+  try {
+    let data;
+
+    if (caregiver_id) {
+      data = await IncomeTypeModel.instance.findByCaregiver(caregiver_id);
+    } else if (category && ['Home-based', 'Self-employed', 'Wage Earner'].includes(category)) {
+      data = await IncomeTypeModel.instance.findByCategory(category as 'Home-based' | 'Self-employed' | 'Wage Earner');
+    } else {
+      data = await IncomeTypeModel.instance.getAll();
+    }
+
+    return json({ data });
+  } catch (err) {
+    throw error(500, 'Failed to retrieve income types');
+  }
+}
+
 export const POST: RequestHandler = async({request}) => {
   
   let body: any = {}

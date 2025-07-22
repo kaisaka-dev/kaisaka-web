@@ -2,27 +2,41 @@
 import { membersModel } from "$lib/models/membersModel.js";
 import { error, json, type RequestHandler } from "@sveltejs/kit";
 
-// READ - Get member by ID
+/**
+ * GET /api/members
+ * 
+ * Available endpoints:
+ * - GET /api/members - Get all members
+ * - GET /api/members?id=uuid - Get member by ID
+ * - GET /api/members?firstName=John&lastName=Doe - Get members by full name
+ * - GET /api/members?barangay_id=123 - Get members by barangay
+ */
 export const GET: RequestHandler = async ({ url }) => {
   const id = url.searchParams.get('id');
   const firstName = url.searchParams.get('firstName')
   const lastName = url.searchParams.get('lastName')
-  let member
+  const barangay_id = url.searchParams.get('barangay_id')
   
-  if (id) {
-    member = await membersModel.instance.findById(id);
+  try {
+    let member;
     
-  } else if ( firstName && lastName){
-    member = await membersModel.instance.findByFullName(firstName, lastName)
-  } else {
-    throw error(400, 'Missing ID or first name and last name.');
-  }
+    if (id) {
+      member = await membersModel.instance.findById(id);
+      if (!member) {
+        throw error(404, 'Member not found');
+      }
+    } else if (firstName && lastName) {
+      member = await membersModel.instance.findByFullName(firstName, lastName)
+    } else if (barangay_id) {
+      member = await membersModel.instance.findByBarangayId(parseInt(barangay_id))
+    } else {
+      member = await membersModel.instance.getAll()
+    }
 
-  if (!member) {
-    throw error(404, 'Member not found');
+    return json({ data: member });
+  } catch (err) {
+    throw error(500, 'Failed to retrieve members');
   }
-
-  return json({ data: member });
 };
 
 // CREATE - Add new member
@@ -52,6 +66,7 @@ export const POST: RequestHandler = async ({ request }) => {
     sex: body.sex,
     middle_name: body.middle_name !== undefined ? body.middle_name : null,
     address_id: body.address_id !== undefined ? body.address_id : null,
+    barangay_id: body.barangay_id !== undefined ? body.barangay_id : null,
     admission_date: body.admission_date !== undefined ? body.admission_date : null,
     date_created: new Date().toISOString(),
     updated_at: body.updated_at !== undefined ? body.updated_at : null,
@@ -129,6 +144,15 @@ export const PUT: RequestHandler = async({request}) => {
     const updated = await membersModel.instance.updateAdmissionDate(body.id, body.admission_date)
     if (!updated) {
       throw error(500, 'Failed to update admission_date')
+    }
+    hasUpdates = true
+  }
+
+  // Handle barangay update
+  if (body.barangay_id !== undefined) {
+    const updated = await membersModel.instance.updateBarangay(body.id, body.barangay_id)
+    if (!updated) {
+      throw error(500, 'Failed to update barangay_id')
     }
     hasUpdates = true
   }
