@@ -14,6 +14,23 @@
     import { childFormData } from '$lib/stores/childForm.js';
     import { goto } from '$app/navigation';
     import InputRange from '$components/input/InputRange.svelte';
+    import type  { PageData } from '../../../../../.svelte-kit/types/src/routes/$types.js';
+    import { dropdownOptions } from '$lib/types/options.js';
+
+
+    // load the data
+    const { data } = $props<{ data: PageData }>();
+    let options = $state({
+        disability_category: data.options.disCategory,
+        education_status: dropdownOptions.education_status,
+        education_level: dropdownOptions.education_level,
+        education_type: dropdownOptions.education_type,
+        employment_type: dropdownOptions.employment_type,
+        sex: dropdownOptions.sex
+
+    });
+    // console.log("typeof discategory: ", Constants.public.Enums.sex_enum)
+
 
     // variables affecting the type of view
     /**
@@ -59,76 +76,7 @@
     let ayStart = new Date().getFullYear();
     let ayEnd = new Date().getFullYear() + 1;
     let admissionDate = new Date().toISOString().slice(0, 7);
-
-    // let options_disCategory = $state();
-    //
-    // async function getOptionsDisCategory() {
-    //     const response = await fetch('/api/disability_category');
-    //     options_disCategory = await response.json();
-    // }
-    // getOptionsDisCategory()
-
-    const options_disNature = [
-        "ADHD",
-        "Autism Spectrum Disorder",
-        "Cerebral Palsy",
-        "Cleft Lip Palate",
-        "Cleft Palate",
-        "Communication Disorder",
-        "Congenital Michocephaly",
-        "Deaf",
-        "Down Syndrome",
-        "Ducent Muscular Dystrophy",
-        "Epilepsy",
-        "GDD",
-        "Hearing Impairment",
-        "Hyperactive",
-        "Intellectual",
-        "Learning",
-        "Low Vision",
-        "Orthopedic",
-        "Osteogenetic Imperfecta",
-        "Psychosocial Disability",
-        "Rubinstein Taybi Syndrome",
-        "Speech",
-        "Speech and Hearing Impairment",
-        "Speech Delay",
-        "Speech Problem",
-        "Tb Spondylodiscitis of the Spine",
-        "Visual Impairment"
-    ]; // from KAISAKA's 2024-jan-nov-list-of-
-    const options_disCategory = [
-        "Deaf/Hard of Hearing",
-        "Intellectual Disability",
-        "Learning Disability",
-        "Mental Disability",
-        "Physical Disability",
-        "Psychosocial Disability",
-        "Speech and Language Impairment",
-        "Visual Disability",
-        "Cancer",
-        "Rare Disease (RA10747)",
-        "Multiple Disability"
-    ];  // from KAISAKA's 2024-jan-nov-list-of-children
-    const options_educStatus = [
-        "Past student",
-        "New student",
-        "Dropped",
-        "Completed"
-    ];
-    const options_educLevel = [
-      "Nursery", "Kinder", "SNED", "Grade 1", "Grade 2", "Grade 3", "Grade 4", "Grade 5", "Grade 6",
-      "High School", "Senior High School", "College", "ALS", "Home-based", "EIC"
-    ];
-    const options_educType = [
-      "Not enrolled", "Home program", "Non-formal", "Special (Exclusive school, blind/deaf)", "Integrated / SPED classes", "Inclusive / General education"
-    ];
-    const options_laborMarketStatus = [
-        "Wage-emplyed",
-        "Self-employed",
-        "Sheltered workshop",
-        "None of the above"
-    ]
+    
 
 
     /* special fields */
@@ -313,10 +261,10 @@
     <InputText label="Last name" id="last-name" bind:value={lastName} required msg={errors.lastName}/>
     <InputText label="Birthday" id="bday" bind:value={birthday} type="date" required msg={errors.birthday}/>
     <InputText label="Age" id="age" value={age} disabled />
-    <Select label="Sex" id="sex" options={["Male", "Female", "Other"]} bind:value={sex} required msg={errors.sex}/>
+    <Select label="Sex" id="sex" options={options.sex} bind:value={sex} required msg={errors.sex}/>
     <InputText label="Address" id="address" bind:value={address} required msg={errors.address}/>
     <InputText label="Barangay" id="barangay" bind:value={barangay} required msg={errors.barangay}/>
-    <Select label="Disability Category" id="dis-category" options={options_disCategory} bind:value={disCategory} required msg={errors.disCategory}/>
+    <Select label="Disability Category" id="dis-category" options={options.disability_category} bind:value={disCategory} required msg={errors.disCategory}/>
     <Textarea label="Disability Nature" id="dis-nature" bind:value={disNature} required msg={errors.disNature}/>
 
     <Textarea label="Remarks" id="remarks" bind:value={remarks}/>
@@ -326,10 +274,10 @@
 
 <section id="education-info">
     <h1>Education Information</h1>
-    <Select label="Education" id="educ-type" options={options_educType} required bind:value={educType} msg={errors.educType}/>
+    <Select label="Education" id="educ-type" options={options.education_type} required bind:value={educType} msg={errors.educType}/>
     {#if educType !== "Not enrolled" && educType !== ""}
-        <Select label="Education Level" id="educ-lvl" options={options_educLevel} bind:value={educLvl} required msg={errors.educLvl}  />
-        <Select label="Education Status" id="educ-status" options={options_educStatus} required bind:value={educStatus} msg={errors.educStatus}/>
+        <Select label="Education Level" id="educ-lvl" options={options.education_level} bind:value={educLvl} required msg={errors.educLvl}  />
+        <Select label="Education Status" id="educ-status" options={options.education_status} required bind:value={educStatus} msg={errors.educStatus}/>
         <InputRange label="School Year" id="ay-range" bind:valueFrom={ayStart} bind:valueTo={ayEnd} type="number" required msg={errors.ayStart + " " + errors.ayEnd} />
     {/if}
 
@@ -371,7 +319,7 @@
     <Checkbox label="Able to work" id="able-to-work" bind:checked={ableToWork}/>
     {#if ableToWork}
         <div style="margin-left: 35px">
-            <Select label="Employment Type" id="employment" options={options_laborMarketStatus} bind:value={employmentType} />
+            <Select label="Employment Type" id="employment" options={options.employment_type} bind:value={employmentType} />
         </div>
     {/if}
 </section>
