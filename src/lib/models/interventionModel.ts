@@ -111,6 +111,36 @@ export class InterventionModel extends TableManager<"intervention">('interventio
     }
 
     /**
+     * Updates an intervention's name/description
+     * @param id the unique id of the intervention in the DB
+     * @param intervention updated intervention name/description to be applied
+     * @returns boolean if the update was successful
+     */
+    async updateIntervention(id: string, intervention: string): Promise<boolean>{
+        const now = new Date().toISOString();
+        const reference: Partial<InterventionRow> = { id: id }
+        const updates: Partial<InterventionRow> = { intervention: intervention, updated_at: now }
+        const data = await this.updateOne(reference, updates)
+
+        return data
+    }
+
+    /**
+     * Updates an intervention's date created
+     * @param id the unique id of the intervention in the DB
+     * @param date_created updated date created to be applied
+     * @returns boolean if the update was successful
+     */
+    async updateDateCreated(id: string, date_created: string): Promise<boolean>{
+        const now = new Date().toISOString();
+        const reference: Partial<InterventionRow> = { id: id }
+        const updates: Partial<InterventionRow> = { date_created: date_created, updated_at: now }
+        const data = await this.updateOne(reference, updates)
+
+        return data
+    }
+
+    /**
      * Deletes an intervention with given ID
      * @param id the unique id of the intervention in the DB
      * @returns boolean if the update was successful

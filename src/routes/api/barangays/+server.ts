@@ -1,4 +1,23 @@
 
+/**
+ * BARANGAYS API - How to Use
+ * 
+ * GET - Retrieve barangay by ID
+ * • Required: id parameter
+ * • GET /api/barangays?id=123
+ * 
+ * POST - Create new barangay
+ * • Required: name
+ * • Optional: city_id, num (barangay number)
+ * • Example: { "name": "Barangay Sample", "city_id": 456, "num": "001" }
+ * • Example (no city): { "name": "Barangay Sample" }
+ * 
+ * PUT - Update barangay
+ * • Required: id
+ * • Optional: name, city_id, num
+ * • Example: { "id": 123, "name": "Updated Barangay Name", "city_id": 789 }
+ */
+
 import { BarangayModel } from "$lib/models/barangaysModel.js";
 import { error, json, type RequestHandler } from "@sveltejs/kit";
 
@@ -28,11 +47,11 @@ export const POST: RequestHandler = async({request}) => {
     throw error(400, 'Missing required fields.')
   }
 
-  if (!body.name || !body.city) {
-    throw error(400, 'Missing required fields.')
+  if (!body.name) {
+    throw error(400, 'Missing required field: name')
   }
 
-  const inserted = await BarangayModel.instance.insertBarangay(body.name, body.city, body.num)
+  const inserted = await BarangayModel.instance.insertBarangay(body.name, body.city_id, body.num)
 
   if (!inserted){
     throw error(500, 'Failed to insert')

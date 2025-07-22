@@ -52,6 +52,21 @@ export class ServiceCategoryModel extends TableManager<"service_category">('serv
   }
 
   /**
+   * Find service category data given a name (case-insensitive)
+   * @param name the name of the service category
+   * @returns the first service category with matching name or null
+   */
+  async findByNameIgnoreCase(name: string): Promise<ServiceCategoryRow | null>{
+    const allCategories = await this.getAll()
+    if (!allCategories) return null
+    
+    const found = allCategories.find(category => 
+      category.name.toLowerCase() === name.toLowerCase()
+    )
+    return found || null
+  }
+
+  /**
    * Updates service category name
    * @param id the unique id of the service category in the DB
    * @param name the new name of service category to be applied
