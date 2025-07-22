@@ -42,7 +42,7 @@ export const GET: RequestHandler = async ({ url }) => {
     if (!type) {
       intervention = await InterventionModel.instance.findById(id);
       
-      if (!intervention) {
+      if (!intervention || intervention.length === 0) {
         throw error(404, 'Intervention not found');
       }
 
@@ -62,8 +62,8 @@ export const GET: RequestHandler = async ({ url }) => {
         throw error(400, 'Invalid type parameter');
     }
 
-    if (!intervention) {
-      throw error(404, 'Intervention not found');
+    if (!intervention || (Array.isArray(intervention) && intervention.length === 0)) {
+      throw error(404, 'No interventions found');
     }
 
     return json(intervention);

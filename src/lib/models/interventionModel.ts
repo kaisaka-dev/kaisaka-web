@@ -51,10 +51,10 @@ export class InterventionModel extends TableManager<"intervention">('interventio
     /**
      * Find intervention data given an id number
      * @param id the unique id of the intervention in the DB
-     * @returns the intervention record corresponding the id
+     * @returns the intervention records corresponding the id
      */
-    async findById(id: string): Promise<InterventionRow | null>{
-        return this.findOne({ id: id });
+    async findById(id: string): Promise<InterventionRow[] | null>{
+        return this.findMany({ id: id });
     }
 
     /**
