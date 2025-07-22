@@ -1,9 +1,8 @@
-import TableManager, { type tableRow } from '../types/manager.js';
+import TableManager, { type QueryConfigurationBuilder, type tableRow } from '../types/manager.js';
 import type { Database } from '../types/supabase-types.ts';
 
 type status_enum = Database['public']['Enums']['improvement_status_enum'];
 type InterventionRow = tableRow<"intervention">
-
 /**
  * A model concerning about CRUD operations on *intervention information*. 
  * 
@@ -123,5 +122,10 @@ export class InterventionModel extends TableManager<"intervention">('interventio
 
     async getMultipleJoin(select: string, filters: Record<string, string | number>): Promise<InterventionRow[] | null> {
         return await this.findWithJoin(select, filters );
+    }
+    async findByJoin_InTheProgramReport(config: QueryConfigurationBuilder) {
+        const joinStatement =`*, children!inner(id, birthday, members(first_name, last_name, sex), disability_category(name))`;
+
+        return this.findWithJoinAndCount(joinStatement, config)
     }
 }

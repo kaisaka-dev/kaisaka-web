@@ -30,6 +30,10 @@ export class annualProgramModel extends TableManager<"annual_program">('annual_p
     return this.findMany({ end_year });
   }
 
+  async findByStartAndEndYear(start_year: number, end_year: number){
+    return this.findMany({ start_year, end_year })
+  }
+
   /**
    * Finds programs by target CWD count
    * @param target_new_cwds 
@@ -40,13 +44,14 @@ export class annualProgramModel extends TableManager<"annual_program">('annual_p
   }
 
   async findPreviousWorkYear(currentId: number) {
-    const current = await this.findOne({ currentId })
+    const current = await this.findOne({ id: currentId })
     
-    if (!current) throw new Error(`AnnualProgram ${currentId} not found`)
+    if (!current) throw new Error(`AnnualProgram ID${currentId} not found`)
 
-
-
-    return this.findOne({},{lt: {end_year: current.start_year}, order: {column: "end_year", ascending: false}})
+    return this.findMany({},{
+      lt: {'end_year': current.start_year}, 
+      order: [{column: "end_year", ascending: false}]
+    })
   }
 
   /**
