@@ -1229,7 +1229,7 @@ export type Database = {
         | "Self-Employed"
         | "Sheltered Workshop"
       improvement_status_enum: "Improved" | "Neutral" | "Regressed"
-      income_category_enum: "Home-based" | "Self-employed" | "Wage earner"
+      income_category_enum: "Home-based" | "Self-employed" | "Wage Earner"
       intervention_type: "education" | "social"
       part_type: "caregiver" | "child"
       participant_type_enum: "caregiver" | "child"
@@ -1418,7 +1418,7 @@ export const Constants = {
         "Sheltered Workshop",
       ],
       improvement_status_enum: ["Improved", "Neutral", "Regressed"],
-      income_category_enum: ["Home-based", "Self-employed", "Wage earner"],
+      income_category_enum: ["Home-based", "Self-employed", "Wage Earner"],
       intervention_type: ["education", "social"],
       part_type: ["caregiver", "child"],
       participant_type_enum: ["caregiver", "child"],
