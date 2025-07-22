@@ -1,7 +1,9 @@
 <script lang="ts">
 	import InputRange from '$components/input/InputRange.svelte';
-	import InputText from '$components/input/InputText.svelte';
-	import type { Income} from '../+page.server.js';
+	import type { Income } from '../+page.server.js';
+	import { dropdownOptions } from '$lib/types/options.js';
+	import Select from '$components/input/Select.svelte';
+
 
 	export let id: string;
 	export let data: Income[];
@@ -44,7 +46,7 @@
 				<tr>
 					{#if editing}
 						<td><InputRange type="date" bind:valueFrom={inc.date_start} bind:valueTo={inc.date_end} /></td>
-						<td><InputText bind:value={inc.name} /></td>
+						<td><Select bind:value={inc.name} options={dropdownOptions.income_category} required /></td>
 						<td style="text-align:center;">
 							<i class="fa-solid fa-trash" on:click={() => deleteInc(inc.id)}></i>
 						</td>
@@ -79,5 +81,8 @@
 	i:hover {
 			cursor: pointer;
 			color: var(--error-color)
+	}
+	.fa-plus {
+			color: var(--green);
 	}
 </style>
