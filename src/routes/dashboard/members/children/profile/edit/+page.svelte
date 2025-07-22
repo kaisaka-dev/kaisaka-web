@@ -9,13 +9,14 @@
 
     export let data;
 
+
     let firstName: string = data.child?.firstName || "Name Must Be Assigned"
     let middleName: string = data.child?.middleName || "No Middle Name"
     let lastName: string = data.child?.lastName || "Last Name Must Be Assigned"
     let birthday: string = data.child?.birthday || new Date().toISOString().split('T')[0]
-    let sex: string = data.child?.sex || "N/A"
-    let address: string = data.child?.address || "N/A"
-    let barangay: string = data.child?.barangay || "N/A"
+    let sex: string = data.child?.sex || ""
+    let address: string = data.child?.address || "" 
+    let barangay: string = data.child?.barangay || "" 
     let canwork: boolean = data.child?.canWork || false
     let employmentType: string = data.child?.employmentType || ""
     let disabilityCategory: string = data.child?.disabilityCategory || ""
@@ -47,8 +48,8 @@
         }
 
         existingFamily.push({
-            firstName: data.family[i]?.members.first_name,
-            lastName: data.family[i]?.members.last_name,
+            firstName: data.family[i]?.members?.first_name,
+            lastName: data.family[i]?.members?.last_name,
             is_child: iskid,
             relationship: data.family[i]?.relationship_type,
             isNew: false,
@@ -387,39 +388,44 @@
                 }
             });
 
-            // const addressres = await fetch('/api/addresses', {
-            // method: "GET",
-            // body: JSON.stringify({
-            //     id: data.member?.address_id,
-            // }),
-            //     headers: {
-            //         'Content-Type': 'application/json'
-            //     }
-            // });
+           if(data.child?.addressid == "") { //creates new address if none exists
+                const addressres = await fetch('/api/addresses' , {
+                    method: "POST", 
+                    body: JSON.stringify({
+                        address: address
+                    }),
+                    headers: {
+                        "Content-Type" : "application/json"
+                    }
+                })
+           }
 
-            // if(!addressres) {
-            //     const createAddress = await fetch('/api/addresses', {
-            //     method: "PUT",
-            //     body: JSON.stringify({
-            //     id: data.member?.address_id,
-            //     address: address
-            // }),
-            //     headers: {
-            //         'Content-Type': 'application/json'
-            //     }
-            // });
-            // }
+           else if(data.child?.addressid !== "" && data.child?.address !== address ){ //updates existing address
+            console.log(data.child?.addressid)
+                const addressres = await fetch('/api/addresses' , {
+                    method: "PUT",
+                    body: JSON.stringify({
+                        id: data.child?.addressid,
+                        address: address
+                    }),
+                    headers: {
+                        "Content-Type" : "application/json"
+                    }
+                })
+           } 
 
-            // const addressres = await fetch('/api/addresses', {
-            // method: "PUT",
-            // body: JSON.stringify({
-            //     id: data.member?.address_id,
-            //     address: address
-            // }),
-            //     headers: {
-            //         'Content-Type': 'application/json'
-            //     }
-            // });
+           if(data.child?.barangayid === ""){ //creates a new barangay
+                const barangayres = await fetch("/api/barangays" , {
+                    method: "POST",
+                    body: JSON.stringify({
+                        name: barangay
+                    }),
+                    headers: {
+                        "Content-Type" : "application/json"
+                    }
+                })
+           }
+
 
             // const barangayres = await fetch('/api/barangays', {
             // method: "PUT",
@@ -450,8 +456,8 @@
                 }))   
             }
 
-            //this happens if the persons record is found in the db, needs a get tho 
-            else if(data.child?.employmentType != ""){
+            //if the persons record is found in the db, we just update
+            else if(employmentRes && canwork == true){
                console.log(await fetch('/api/employment_status', {
                     method: "PUT",
                     body: JSON.stringify({
@@ -464,6 +470,11 @@
                 }
                 }))
             }
+
+            //if the persons record is found in the db but we want to delete it NEEDS IMPLEMENTATION
+            // else if(employmentRes && canwork == false){
+
+            // }
 
             const disabilityCategoryres = await fetch('/api/disability_category', {
                 method:"PUT",

@@ -185,10 +185,13 @@ try{
 
         if(pwdRecord){
             pwdHas = true;
-            pwdID = pwdRecord?.pwd_id
-            pwdExpiry = pwdRecord?.expiry_date
-            pwdrecordid = pwdRecord?.id
+            pwdID = pwdRecord.pwd_id
+            pwdExpiry = pwdRecord.expiry_date
+            pwdrecordid = pwdRecord.id
+
         }
+
+        
         
         
     }
@@ -248,7 +251,7 @@ try{
         disabilityCategory: childRecord.disability_category?.name  || "",
         disabilityNature: childRecord.disability_nature || "",
         admissionDate: new Date(memberRecord.admission_date).toISOString().split('T')['0'] || "",
-        philHealth: childRecord.philHealth || false,
+        philHealth: childRecord.has_philhealth || false,
         med_cert: childRecord.has_medical_cert || false,
         birth_cert: childRecord.has_birth_cert || false,
         barangay_cert: childRecord.has_barangay_cert || false,
@@ -315,6 +318,7 @@ try{
         family: entireFamily,
         member: memberRecord,
         interventioninfo: interventioninfo || ''
+
     } 
 }
     catch(error){

@@ -145,17 +145,9 @@ try{
         pwdHas = false;
     }
     else {
-        const pwdRecRes = await fetch(`/api/pwd_ids?id=${childRecord.pwd_id}`)
-
-        if (!pwdRecRes.ok) {
-            throw new Error('Failed to fetch PWD ID record');
-        }
-        const pwdRecord = await pwdRecRes.json();
         pwdHas = true;
-        pwdID = pwdRecord.pwd_id
-        pwdExpiry = pwdRecord[0]?.expiry_date    
-
-        console.log("pwd id: ", pwdRecord)
+        pwdID = childRecord.pwd_ids.pwd_id
+        pwdExpiry = childRecord.pwd_ids.expiry_date   
     }
 
     //gets record in social protection table
@@ -208,14 +200,14 @@ try{
         disabilityCategory: childRecord.disability_category?.name  || "",
         disabilityNature: childRecord.disability_nature || "",
         admissionDate: new Date(memberRecord.admission_date).toISOString().split('T')['0'] || "",
-        philHealth: childRecord.philhealth || false,
+        philHealth: childRecord.has_philhealth || false,
         med_cert: childRecord.has_medical_cert || false,
         birth_cert: childRecord.has_birth_cert || false,
         barangay_cert: childRecord.has_barangay_cert || false,
         pwd:{
             has: pwdHas,
-            id: pwdID as string,
-            expiry: pwdExpiry as string
+            id: pwdID  || "",
+            expiry: pwdExpiry || ""
         },
 
         socialProtection:{
