@@ -275,7 +275,6 @@ export type Database = {
           email: string | null
           facebook_link: string | null
           id: string
-          income_id: number | null
           member_id: string
           occupation: string | null
         }
@@ -284,7 +283,6 @@ export type Database = {
           email?: string | null
           facebook_link?: string | null
           id?: string
-          income_id?: number | null
           member_id?: string
           occupation?: string | null
         }
@@ -293,18 +291,10 @@ export type Database = {
           email?: string | null
           facebook_link?: string | null
           id?: string
-          income_id?: number | null
           member_id?: string
           occupation?: string | null
         }
         Relationships: [
-          {
-            foreignKeyName: "caregivers_income_id_fkey"
-            columns: ["income_id"]
-            isOneToOne: true
-            referencedRelation: "income_type"
-            referencedColumns: ["id"]
-          },
           {
             foreignKeyName: "caregivers_member_id_fkey"
             columns: ["member_id"]
@@ -576,18 +566,44 @@ export type Database = {
       }
       income_type: {
         Row: {
+          caregiver_id: string | null
+          date_end: string | null
+          date_start: string | null
           id: number
+          income_category:
+            | Database["public"]["Enums"]["income_category_enum"]
+            | null
           name: string
         }
         Insert: {
+          caregiver_id?: string | null
+          date_end?: string | null
+          date_start?: string | null
           id?: number
+          income_category?:
+            | Database["public"]["Enums"]["income_category_enum"]
+            | null
           name: string
         }
         Update: {
+          caregiver_id?: string | null
+          date_end?: string | null
+          date_start?: string | null
           id?: number
+          income_category?:
+            | Database["public"]["Enums"]["income_category_enum"]
+            | null
           name?: string
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "income_type_caregiver_id_fkey"
+            columns: ["caregiver_id"]
+            isOneToOne: false
+            referencedRelation: "caregivers"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       intervention: {
         Row: {
@@ -1213,6 +1229,7 @@ export type Database = {
         | "Self-Employed"
         | "Sheltered Workshop"
       improvement_status_enum: "Improved" | "Neutral" | "Regressed"
+      income_category_enum: "Home base" | "Self employed" | "Wage earner"
       intervention_type: "education" | "social"
       part_type: "caregiver" | "child"
       participant_type_enum: "caregiver" | "child"
@@ -1401,6 +1418,7 @@ export const Constants = {
         "Sheltered Workshop",
       ],
       improvement_status_enum: ["Improved", "Neutral", "Regressed"],
+      income_category_enum: ["Home base", "Self employed", "Wage earner"],
       intervention_type: ["education", "social"],
       part_type: ["caregiver", "child"],
       participant_type_enum: ["caregiver", "child"],
