@@ -960,7 +960,7 @@
                 <div class =  "collapse">
                 <input type = "checkbox" />
                     <div class = "collapse-title flex flex-row">
-                        <div class = "-mt-4 z-5000 w-50 ml-15">
+                        <div class = " z-5000 w-50 ml-15">
                            <Select bind:value = {interventionvar.status} options = {["Regressed" , "Improved", "Neutral"]} />
                         </div> 
                         <div class = "w-50 ml-5 z-5000"><Input type = "date" bind:value = {interventionvar.dateCreated} /></div>
@@ -970,7 +970,7 @@
                         {#each interventionvar.history as status, statusindex}
                         {#if status.isDeleted == false}
                             <div class= "flex flex-row w-100">
-                                <div class = "-mt-4 z-5000 w-50 ml-15">
+                                <div class = " z-5000 w-50 ml-15">
                                 <Select bind:value = {status.status} options = {["Regressed" , "Improved" , "Neutral"]} />
                                 </div> 
                                 <div class ="w-50 ml-5">  <Input type = "Date" bind:value = {status.date}/></div>
