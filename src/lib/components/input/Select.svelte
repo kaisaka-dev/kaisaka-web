@@ -16,7 +16,7 @@
 	<div class="input-wrapper">
 		<select id={id} class="input" bind:value={value} {disabled}>
 			{#if !required}
-				<option value="" disabled selected></option> <!-- Default option, will not allow user to choose if field is required -->
+				<option value="" selected></option> <!-- Default option, null selection only available if NOT required -->
 			{/if}
 			{#each options as option}
 				{#if typeof option === 'string'}
