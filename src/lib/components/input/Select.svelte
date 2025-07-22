@@ -11,7 +11,9 @@
 </script>
 
 <div class="input-container" class:no-margin={label === '' || !margin}>
-	<label for={id}>{label} {required ? " *" : ""}</label>
+	{#if label}
+		<label for={id}>{label} {required ? " *" : ""}</label>
+	{/if}
 
 	<div class="input-wrapper">
 		<select id={id} class="input" bind:value={value} {disabled}>
