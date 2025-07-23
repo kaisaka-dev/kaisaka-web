@@ -7,6 +7,7 @@
  * - GET /api/barangays?id=123 - Get specific barangay by ID
  * - GET /api/barangays?id=123&members=true - Get barangay with its members
  * - GET /api/barangays?city_id=456 - Get barangays by city
+ * - GET /api/barangays?name=BrgyName - Get barangays by name
  * 
  * POST - Create new barangay
  * • Required: name
@@ -23,6 +24,7 @@ import { error, json, type RequestHandler } from "@sveltejs/kit";
 export const GET: RequestHandler = async ({ url }) => {
   const id = url.searchParams.get('id');
   const city_id = url.searchParams.get('city_id');
+  const name = url.searchParams.get('name');
   const members = url.searchParams.get('members') === 'true';
     
   try {
@@ -41,6 +43,8 @@ export const GET: RequestHandler = async ({ url }) => {
       }
     } else if (city_id) {
       data = await BarangayModel.instance.findByCityId(parseInt(city_id));
+    } else if (name) {
+      data = await BarangayModel.instance.findByName(name);
     } else {
       data = await BarangayModel.instance.getAll();
     }

@@ -151,6 +151,7 @@ try{
     eq:{id: url.searchParams.get('id')}
     }) as ChildRecord;
 
+
     if(!childRecord) { //null check for if the kid doesn't exist
         throw new Error('Failed to get Child!')
     }
@@ -163,6 +164,9 @@ try{
     if(!memberRecord ){ //null check for if the member record doesn't exist
         throw new Error('Member Info doesn\'t exist!')
     }
+
+        console.log(memberRecord)
+
 
     //gets record in barangay table
     const barangayID = memberRecord.addresses?.barangay_id
@@ -181,10 +185,13 @@ try{
 
         if(pwdRecord){
             pwdHas = true;
-            pwdID = pwdRecord?.pwd_id
-            pwdExpiry = pwdRecord?.expiry_date
-            pwdrecordid = pwdRecord?.id
+            pwdID = pwdRecord.pwd_id
+            pwdExpiry = pwdRecord.expiry_date
+            pwdrecordid = pwdRecord.id
+
         }
+
+        
         
         
     }
@@ -224,11 +231,11 @@ try{
         }
     }
 
-    const child: childInformation = {
+    let child: childInformation = {
         id: childRecord.id,
         
 
-        disabilitycatID: childRecord.disability_category.id,
+        disabilitycatID: childRecord.disability_category?.id,
         addressid: memberRecord.address_id || "",
         barangayid: barangayID || "",
         firstName: memberRecord.first_name || "",
@@ -244,7 +251,7 @@ try{
         disabilityCategory: childRecord.disability_category?.name  || "",
         disabilityNature: childRecord.disability_nature || "",
         admissionDate: new Date(memberRecord.admission_date).toISOString().split('T')['0'] || "",
-        philHealth: childRecord.philHealth || false,
+        philHealth: childRecord.has_philhealth || false,
         med_cert: childRecord.has_medical_cert || false,
         birth_cert: childRecord.has_birth_cert || false,
         barangay_cert: childRecord.has_barangay_cert || false,
@@ -269,8 +276,7 @@ try{
         educationHistory: educationArray,
         schoolYearArray: yearArray
     }
-
-    console.log(child)
+    
     const familyInfo = await familyDB.findOneWithJoin('*, families(*)', {
     eq:{member_id: childRecord.member_id}
     }) as familyquery;
@@ -312,6 +318,7 @@ try{
         family: entireFamily,
         member: memberRecord,
         interventioninfo: interventioninfo || ''
+
     } 
 }
     catch(error){

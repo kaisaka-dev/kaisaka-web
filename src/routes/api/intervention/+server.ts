@@ -90,7 +90,7 @@ export const POST: RequestHandler = async ({ request }) => {
     throw error(400, 'Invalid status. Must be: Improved, Neutral, or Regressed')
   }
 
-  if (!['education', 'social'].includes(body.type)) {
+  if (!['Education', 'Social', "Health", "Livelihood"].includes(body.type)) {
     throw error(400, 'Invalid type. Must be: education or social')
   }
 

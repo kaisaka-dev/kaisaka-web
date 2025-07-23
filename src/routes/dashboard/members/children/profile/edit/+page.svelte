@@ -4,19 +4,19 @@
     import TextArea from '$components/input/InputTextarea.svelte'
     import Check from '$components/input/Checkbox.svelte'
     import Select from '$components/input/Select.svelte'
-    import Modal from '$components/Modal.svelte'
     import { goto } from '$app/navigation';
+	
 
     export let data;
-    let openModal: boolean = false;
+
 
     let firstName: string = data.child?.firstName || "Name Must Be Assigned"
     let middleName: string = data.child?.middleName || "No Middle Name"
     let lastName: string = data.child?.lastName || "Last Name Must Be Assigned"
     let birthday: string = data.child?.birthday || new Date().toISOString().split('T')[0]
-    let sex: string = data.child?.sex || "N/A"
-    let address: string = data.child?.address || "N/A"
-    let barangay: string = data.child?.barangay || "N/A"
+    let sex: string = data.child?.sex || ""
+    let address: string = data.child?.address || "" 
+    let barangay: string = data.child?.barangay || "" 
     let canwork: boolean = data.child?.canWork || false
     let employmentType: string = data.child?.employmentType || ""
     let disabilityCategory: string = data.child?.disabilityCategory || ""
@@ -48,8 +48,8 @@
         }
 
         existingFamily.push({
-            firstName: data.family[i]?.members.first_name,
-            lastName: data.family[i]?.members.last_name,
+            firstName: data.family[i]?.members?.first_name,
+            lastName: data.family[i]?.members?.last_name,
             is_child: iskid,
             relationship: data.family[i]?.relationship_type,
             isNew: false,
@@ -70,7 +70,7 @@
 
     let selectedIndex: number
 
-    for(let i = 0; i < data.child?.educationHistory.length;i++){
+    for(let i = 0; i < data.child?.educationHistory.length; i++){
         educHistory.push({
             Educationtype: data.child.educationHistory[i]?.education_type,
             Educationlevel: data.child.educationHistory[i]?.grade_level,
@@ -100,7 +100,7 @@
     let barangayCert: boolean = data.child?.barangay_cert
     let voterID: boolean = data.child?.voter_id
 
-    let interventions: {
+    type interventions = {
         id?: string,
         name:string,
         servicecatID?: number,
@@ -113,42 +113,137 @@
             status: string,
             id?: string,
             date:string,
-            intervention_id: string,
+            intervention_id?: string,
             isNew: boolean,
             isDeleted: boolean
         }[]
-    }[] = []
+    }
 
-     for(let i = 0 ; i < data.interventioninfo.length; i++){
-         interventions.push({
-             id: data.interventioninfo[i].id,
-             name: data.interventioninfo[i].intervention,
-             servicecat: data.interventioninfo[i].service_category.name,
-             servicecatID: data.interventioninfo[i].service_category.id,
-             dateCreated: data.interventioninfo[i].date_created.split('T')[0],
-            status: data.interventioninfo[i].status,
-            history: [],
-            isNew: false,
-            isDeleted: false
-         })
+    
+    let healthIntervention : interventions = {
+        name: "",
+        servicecat: "Health",
+        dateCreated: "",
+        status: "",
+        isNew: true,
+        isDeleted: false,
+        history: []
+    }
 
+    let educationIntervention: interventions  = {
+        name: "",
+        servicecat: "Education",
+        dateCreated: "",
+        status: "",
+        isNew: true,
+        isDeleted: false,
+        history: []
+    }
 
-         for(let j = 0; j < data.interventioninfo[i].history.length;j++){
-            interventions[i].history?.push({
-            id: data.interventioninfo[i].history[j].id,
-            status: data.interventioninfo[i].history[j].status,
-            date: data.interventioninfo[i].history[j].date_checked.split('T')[0],
-            intervention_id: data.interventioninfo[i].history[j].intervention_id,
-            isNew: false,
-            isDeleted: false
-            })
-         }
-     }
+    let socialIntervention: interventions  = {
+        name: "",
+        servicecat: "Social",
+        dateCreated: "",
+        status: "",
+        isNew: true,
+        isDeleted: false,
+        history: []
+    }
 
-     let interventionCount  = interventions.length
+    let livelihoodIntervention: interventions  = {
+        name: "",
+        servicecat: "Livelihood",
+        dateCreated: "",
+        status: "",
+        isNew: true,
+        isDeleted: false,
+        history: []
+    }
+    
+    for(let i = 0; i < data.interventioninfo?.length; i++){
+        if(data.interventioninfo[i].service_category.name === "Health"){
+           healthIntervention.dateCreated = data.interventioninfo[i].date_created.split("T")[0]
+           healthIntervention.name = data.interventioninfo[i].intervention
+           healthIntervention.id = data.interventioninfo[i].id
+           healthIntervention.status = data.interventioninfo[i].status
+           healthIntervention.isNew = false
+
+           for(let j = 0; j < data.interventioninfo[i].history.length;j++){
+                healthIntervention.history?.push({
+                    status: data.interventioninfo[i].history[j].status,
+                    date:  data.interventioninfo[i].history[j].date_checked,
+                    isNew: false,
+                    isDeleted: false,
+                    id: data.interventioninfo[i].history[j].id,
+                    intervention_id: data.interventioninfo[i].id
+                })
+            }
+
+        }
+
+        else if(data.interventioninfo[i].service_category.name === "Education"){
+           educationIntervention.dateCreated = data.interventioninfo[i].date_created.split("T")[0]
+           educationIntervention.name = data.interventioninfo[i].intervention
+           educationIntervention.id = data.interventioninfo[i].id
+           educationIntervention.status = data.interventioninfo[i].status
+           educationIntervention.isNew = false
+
+           for(let j = 0; j < data.interventioninfo[i].history.length;j++){
+                educationIntervention.history?.push({
+                    status: data.interventioninfo[i].history[j].status,
+                    date:  data.interventioninfo[i].history[j].date_checked,
+                    isNew: false,
+                    isDeleted: false,
+                    id: data.interventioninfo[i].history[j].id,
+                    intervention_id: data.interventioninfo[i].id
+                })
+            }
+        }
+
+        else if(data.interventioninfo[i].service_category.name === "Livelihood"){
+           livelihoodIntervention.dateCreated = data.interventioninfo[i].date_created.split("T")[0]
+           livelihoodIntervention.name = data.interventioninfo[i].intervention
+           livelihoodIntervention.id = data.interventioninfo[i].id
+           livelihoodIntervention.status = data.interventioninfo[i].status
+           livelihoodIntervention.isNew = false
+
+           for(let j = 0; j < data.interventioninfo[i].history.length;j++){
+                livelihoodIntervention.history?.push({
+                    status: data.interventioninfo[i].history[j].status,
+                    date:  data.interventioninfo[i].history[j].date_checked,
+                    isNew: false,
+                    isDeleted: false,
+                    id: data.interventioninfo[i].history[j].id,
+                    intervention_id: data.interventioninfo[i].id
+                })
+            }
+
+        }
+
+        else if(data.interventioninfo[i].service_category.name === "Social"){
+           socialIntervention.dateCreated = data.interventioninfo[i].date_created.split("T")[0]
+           socialIntervention.name = data.interventioninfo[i].intervention
+           socialIntervention.id = data.interventioninfo[i].id
+           socialIntervention.status = data.interventioninfo[i].status
+           socialIntervention.isNew = false
+
+           for(let j = 0; j < data.interventioninfo[i].history.length;j++){
+                socialIntervention.history?.push({
+                    status: data.interventioninfo[i].history[j].status,
+                    date:  data.interventioninfo[i].history[j].date_checked,
+                    isNew: false,
+                    isDeleted: false,
+                    id: data.interventioninfo[i].history[j].id,
+                    intervention_id: data.interventioninfo[i].id
+                })
+            }
+
+        }
+    }
+
+    let childInterventions: interventions[] = []
      
-
-
+    childInterventions.push(healthIntervention, educationIntervention, socialIntervention, livelihoodIntervention)
 
     
     const options_disNature = [
@@ -202,24 +297,32 @@
         existingFamily = existingFamily
     }
     function deleteIntervention(index:number) {
-        interventions[index].isDeleted = true
-        interventionCount--
+        childInterventions[index].isDeleted = true
+
+        childInterventions[index].name = ""
+        childInterventions[index].status = ""
+        childInterventions[index].dateCreated = ""
+
+        for(let i = 0; i < childInterventions[index].history.length;i++){
+           deleteStatus(i, index)
+        }   
+
+        childInterventions = childInterventions
     }
 
     function deleteStatus(index:number, interventionIndex: number){
-        interventions[interventionIndex].history[index].isDeleted = true
+        childInterventions[interventionIndex].history[index].isDeleted = true
     }
 
     function addStatus( interventionIndex: number){
-        interventions[interventionIndex].history.push({
+        childInterventions[interventionIndex].history?.push({
             status: "",
             date:"",
-            intervention_id: interventions[interventionIndex].id,
             isNew: true,
             isDeleted: false
         })
 
-        interventions[interventionIndex].history = interventions[interventionIndex].history
+        childInterventions[interventionIndex].history = childInterventions[interventionIndex].history
 
     }
 
@@ -285,39 +388,44 @@
                 }
             });
 
-            // const addressres = await fetch('/api/addresses', {
-            // method: "GET",
-            // body: JSON.stringify({
-            //     id: data.member?.address_id,
-            // }),
-            //     headers: {
-            //         'Content-Type': 'application/json'
-            //     }
-            // });
+           if(data.child?.addressid == "") { //creates new address if none exists
+                const addressres = await fetch('/api/addresses' , {
+                    method: "POST", 
+                    body: JSON.stringify({
+                        address: address
+                    }),
+                    headers: {
+                        "Content-Type" : "application/json"
+                    }
+                })
+           }
 
-            // if(!addressres) {
-            //     const createAddress = await fetch('/api/addresses', {
-            //     method: "PUT",
-            //     body: JSON.stringify({
-            //     id: data.member?.address_id,
-            //     address: address
-            // }),
-            //     headers: {
-            //         'Content-Type': 'application/json'
-            //     }
-            // });
-            // }
+           else if(data.child?.addressid !== "" && data.child?.address !== address ){ //updates existing address
+            console.log(data.child?.addressid)
+                const addressres = await fetch('/api/addresses' , {
+                    method: "PUT",
+                    body: JSON.stringify({
+                        id: data.child?.addressid,
+                        address: address
+                    }),
+                    headers: {
+                        "Content-Type" : "application/json"
+                    }
+                })
+           } 
 
-            // const addressres = await fetch('/api/addresses', {
-            // method: "PUT",
-            // body: JSON.stringify({
-            //     id: data.member?.address_id,
-            //     address: address
-            // }),
-            //     headers: {
-            //         'Content-Type': 'application/json'
-            //     }
-            // });
+           if(data.child?.barangayid === ""){ //creates a new barangay
+                const barangayres = await fetch("/api/barangays" , {
+                    method: "POST",
+                    body: JSON.stringify({
+                        name: barangay
+                    }),
+                    headers: {
+                        "Content-Type" : "application/json"
+                    }
+                })
+           }
+
 
             // const barangayres = await fetch('/api/barangays', {
             // method: "PUT",
@@ -331,7 +439,7 @@
             // });
 
             //This should happen if a persons record isnt found 
-            const employmentRes = await fetch(`/api/employments_status?id=${data.member.id}`)
+            const employmentRes = await fetch(`/api/employment_status?id=${data.member.id}`)
 
 
             if(!employmentRes.ok && canwork == true){
@@ -348,8 +456,8 @@
                 }))   
             }
 
-            //this happens if the persons record is found in the db, needs a get tho 
-            else if(data.child?.employmentType != ""){
+            //if the persons record is found in the db, we just update
+            else if(employmentRes && canwork == true){
                console.log(await fetch('/api/employment_status', {
                     method: "PUT",
                     body: JSON.stringify({
@@ -362,6 +470,11 @@
                 }
                 }))
             }
+
+            //if the persons record is found in the db but we want to delete it NEEDS IMPLEMENTATION
+            // else if(employmentRes && canwork == false){
+
+            // }
 
             const disabilityCategoryres = await fetch('/api/disability_category', {
                 method:"PUT",
@@ -516,42 +629,96 @@
         })
 
         //INTERVENTION UPDATES BEGIN HERE
-        for(let i = 0; i < interventions.length; i++) {
-            const interventionUpdate = await fetch('/api/intervention', {
-                method:'PUT',
-                body: JSON.stringify({
-                    id: interventions[i].id,
-                    intervention: interventions[i].name,
-                    status: interventions[i].status,
-                    date_created: interventions[i].dateCreated
-                }),
-                headers:{
+        for(let i = 0; i < childInterventions.length; i++) {
+            if(childInterventions[i].isNew == true && childInterventions[i].name !== "" && childInterventions[i].isDeleted == false) { //for when interventions need to be created
+                const createIntervention = await fetch('/api/intervention', {
+                    method: "POST",
+                    body: JSON.stringify({
+                        child_id: data.child?.id,
+                        intervention: childInterventions[i].name,
+                        status: childInterventions[i].status,
+                        service_category_name: childInterventions[i].servicecat,
+                        type: childInterventions[i].servicecat
+                    }),
+                    headers:{
+                        'Content-Type': 'application/json'
+                    }
+                })
+
+                const allinterventions = await fetch(`/api/intervention?id=${data.child.id}&type=serviceCategory&select=*,service_category(*)`)
+                const newInterventionInfo = await allinterventions.json() //gets every intervention from the kid
+
+                for(let j = 0; j < childInterventions[i].history?.length;j++) {
+                    if(childInterventions[i].history[j].isDeleted == false){
+                        const createStatus = await fetch('/api/intervention_history' , {
+                        method: "POST",
+                        body: JSON.stringify({
+                            intervention_id: newInterventionInfo[newInterventionInfo.length-1].id,
+                            improvement: new Date(),
+                            status: childInterventions[i].history[j].status,
+                            date_checked: childInterventions[i].history[j].date
+                        }),
+                        headers: {
+                            'Content-Type': 'application/json'
+                        }
+                    })
+
+                    }
+                }
+            }
+
+            else if(childInterventions[i].isNew == false) { //for updating/deleting existing records
+                if(childInterventions[i].isDeleted == false){
+                    const interventionUpdate = await fetch('/api/intervention', { //updates the main record
+                    method:'PUT',
+                    body: JSON.stringify({
+                    id: childInterventions[i].id,
+                    intervention: childInterventions[i].name,
+                    status: childInterventions[i].status,
+                    date_created: childInterventions[i].dateCreated
+                    }),
+                    headers:{
                          'Content-Type': 'application/json'
                         } 
-            })
-
-            const categoryUpdate = await fetch('/api/service_category' , {
-                method: "PUT",
-                body: JSON.stringify({
-                    id: interventions[i].servicecatID,
-                    name: interventions[i].servicecat
-                }),
-                headers:{
-                         'Content-Type': 'application/json'
-                    } 
-            })
-
-            for(let j = 0; j < interventions[i].history?.length; j++){
-                const statusUpdate = await fetch('/api/intervention_history', {
-                    method: "PUT", 
-                    body: JSON.stringify({
-                        id: interventions[i].history[j].id,
-                        intervention: interventions[i].id,
-                        status: interventions[i].history[j].status,
-                        date_checked: interventions[i].history[j].date
                     })
-                })
-            }
+
+                    for(let j = 0; j < childInterventions[i].history?.length; j++){ //updates/deletes statuses
+                        if(childInterventions[i].history[j].isDeleted == false){
+                                const statusUpdate = await fetch('/api/intervention_history', {    
+                        method: "PUT", 
+                        body: JSON.stringify({
+                        id: childInterventions[i].history[j].id,
+                        intervention:{
+                        status: childInterventions[i].history[j].status,
+                        date_checked: childInterventions[i].history[j].date
+                        },
+                        }),
+                        headers:{
+                        'Content-Type': 'application/json'
+                                } 
+                            })
+                        }
+
+                        else{
+                            const deleteStatus = await fetch(`/api/intervention_history?id=${childInterventions[i].history[j].id}`, {
+                                method: "DELETE"
+                            });
+                        }
+                    }
+                }
+
+                else if(childInterventions[i].isDeleted == true){
+                    for(let j = 0; j < childInterventions[i].history?.length; j++){ //deletes all records in intervention_history first
+                        const deleteStatus = await fetch(`/api/intervention_history?id=${childInterventions[i].history[j].id}`, {
+                            method: 'DELETE'
+                        });
+                    }
+
+                    const deleteIntervention = await fetch(`/api/intervention?id=${childInterventions[i].id}`, {
+                        method: "DELETE"
+                    })
+                }
+            }   
         }
             
         goto(`/dashboard/members/children/profile?id=${data.child.id}`);
@@ -789,15 +956,14 @@
 <div class = "flex flex-col border-[var(--border)] border-4 ml-55 mr-10 p-4 w-275" id ="Intervention Info">
     <div class = "flex flex-col">
         <div class = "!bg-[var(--green)] p-3 flex flex-row">
-           <div class = "!text-[var(--background)] !font-bold ml-65 mt-2">Intervention Name </div>
+           <div class = "!text-[var(--background)] !font-bold mt-2">Service Category </div>
+           <div class = "!text-[var(--background)] !font-bold ml-20 mt-2">Interventions Performed </div>
            <div class = "!text-[var(--background)] !font-bold ml-55 mt-2">Status History </div>
         </div>
-        {#if interventionCount > 0}
-        {#each interventions as interventionvar,index}
-        {#if interventionvar.isDeleted == false}
+        {#each childInterventions as interventionvar,index}
             <div class = "flex flex-row mt-5">
-                <div class = "-mr-15 w-50">
-                    <Select bind:value = {interventionvar.servicecat} options = {["Livelihood" , "Education" , "Social", "Health"]}/>
+                <div class = "mt-4.5 -mr-15 w-50">
+                    <Input type = "text" disabled bind:value = {interventionvar.servicecat}/>
                 </div>
                 <div class = "mb-10 mt-4 ml-35 w-50">
                    <Input bind:value = {interventionvar.name}/>
@@ -805,7 +971,7 @@
                 <div class =  "collapse">
                 <input type = "checkbox" />
                     <div class = "collapse-title flex flex-row">
-                        <div class = "-mt-4 z-5000 w-50 ml-15">
+                        <div class = " z-5000 w-50 ml-15">
                            <Select bind:value = {interventionvar.status} options = {["Regressed" , "Improved", "Neutral"]} />
                         </div> 
                         <div class = "w-50 ml-5 z-5000"><Input type = "date" bind:value = {interventionvar.dateCreated} /></div>
@@ -815,10 +981,10 @@
                         {#each interventionvar.history as status, statusindex}
                         {#if status.isDeleted == false}
                             <div class= "flex flex-row w-100">
-                                <div class = "-mt-4 z-5000 w-50 ml-15">
+                                <div class = " z-5000 w-50 ml-15">
                                 <Select bind:value = {status.status} options = {["Regressed" , "Improved" , "Neutral"]} />
                                 </div> 
-                                <div class ="w-50 ml-5">  <Input type = "Date" value = {status.date}/></div>
+                                <div class ="w-50 ml-5">  <Input type = "Date" bind:value = {status.date}/></div>
                                 <div class = "-mt-2.5 -ml-5">
                                 <button class = "!bg-[var(--background)] !text-red-500 hover:!text-red-400 hover:!shadow-[var(--background)]"
                                 on:click = {()=>deleteStatus(statusindex, index)}>
@@ -840,11 +1006,7 @@
                 </button>
                 </div>
             </div>
-        {/if}
         {/each}
-        {:else}
-        No intervention assigned to this child
-        {/if}
     </div>
     
 </div>
