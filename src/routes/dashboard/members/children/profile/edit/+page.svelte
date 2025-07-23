@@ -376,8 +376,9 @@
             const memberres = await fetch('/api/members', {
             method: "PUT",
             body: JSON.stringify({
-                id: data.member.id,
+                id: data.member?.id,
                 first_name: firstName,
+                middle_name: middleName,
                 last_name: lastName,
                 birthday: birthday,
                 sex: sex,
@@ -414,7 +415,7 @@
                 })
            } 
 
-           if(data.child?.barangayid === ""){ //creates a new barangay
+           if(data.child?.barangayid === "" && barangay !== ""){ //creates a new barangay
                 const barangayres = await fetch("/api/barangays" , {
                     method: "POST",
                     body: JSON.stringify({
@@ -424,24 +425,38 @@
                         "Content-Type" : "application/json"
                     }
                 })
+
+                const querybarangay = await fetch (`/api/barangays?name=${barangay}`)
+                const barangayRecord = await querybarangay.json() //gets the barangay record    
+
+                const updateMember = await fetch("/api/members" , {
+                    method: "PUT", 
+                    body: JSON.stringify({
+                        id: data.member?.id,
+                        barangay_id: barangayRecord.data[0].id
+                    }),
+                    headers: {'Content-Type':'application/json'}
+                } )
+           }
+
+           else{
+                const barangayres = await fetch('/api/barangays', {
+                method: "PUT",
+                body: JSON.stringify({
+                id: data.child?.barangayid,
+                name: barangay
+                }),
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+                });
            }
 
 
-            // const barangayres = await fetch('/api/barangays', {
-            // method: "PUT",
-            // body: JSON.stringify({
-            //     id: data.child?.barangayid,
-            //     name: barangay
-            // }),
-            //     headers: {
-            //         'Content-Type': 'application/json'
-            //     }
-            // });
-
+            
             //This should happen if a persons record isnt found 
             const employmentRes = await fetch(`/api/employment_status?id=${data.member.id}`)
-
-
+            
             if(!employmentRes.ok && canwork == true){
                console.log(await fetch('/api/employment_status', {
                     method: "POST",
@@ -471,10 +486,11 @@
                 }))
             }
 
-            //if the persons record is found in the db but we want to delete it NEEDS IMPLEMENTATION
-            // else if(employmentRes && canwork == false){
-
-            // }
+            //if the persons record is found in the db but we want to delete it 
+            else if(employmentRes && canwork == false){
+                const employmentRecord = await employmentRes.json()
+                console.log(employmentRecord.id)
+            }
 
             const disabilityCategoryres = await fetch('/api/disability_category', {
                 method:"PUT",

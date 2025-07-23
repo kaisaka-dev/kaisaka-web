@@ -8,13 +8,16 @@
     import { goto } from '$app/navigation'
 
     export let data;
+
     //below are functions needed for the page
     let selected
 
     // age is computed
     let age = "";
+
+
     function calculateAge() {
-        const birthDate = new Date(data.child.birthday);
+        const birthDate = new Date(data.child?.birthday);
         const today = new Date();
         let calculatedAge = today.getFullYear() - birthDate.getFullYear();
         const hasHadBirthdayThisYear =
@@ -76,6 +79,11 @@
             <div class = "flex flex-row">
                 <div class = "ml-4 mt-3 w-40"> First Name</div>
                 <div class = "mt-4"> <Input disabled value = {data.child?.firstName ?? "N/A"}/> </div>
+            </div>
+
+            <div class = "flex flex-row">
+                <div class = "ml-4 mt-3 w-40"> Middle Name</div>
+                <div class = "mt-4"> <Input disabled value = {data.child?.middleName ?? "N/A"}/> </div>
             </div>
 
             <div class = "flex flex-row">

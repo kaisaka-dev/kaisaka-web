@@ -41,18 +41,19 @@ export type childInformation =  {
 
 type MemberRecord = {
     first_name?: string;
+    middle_name?:string;
     last_name?: string;
     birthday?: string;
     sex?: string;
     addresses?: {
         address?: string;
-        barangay_id?: string;
     };
     employment_status?: {
         able_to_work?: boolean;
         employmentType?: string;
     };
     admission_date?: string;
+    barangay_id: number;
 };
 
 type BarangayRecord = {
@@ -126,7 +127,7 @@ try{
 
     //gets record in barangay table
     let barangayInfo = {}
-    const barangayID = memberRecord?.addresses?.barangay_id;
+    const barangayID = memberRecord?.barangay_id;
 
     if(barangayID != null){
         const barangayRes = await fetch(`/api/barangays?id=${barangayID}`)
@@ -188,12 +189,13 @@ try{
 
     const child: childInformation = {
         id: childRecord.id,
-        firstName: memberRecord.first_name || "",
-        lastName: memberRecord.last_name  || "",
-        birthday: memberRecord.birthday || "",
+        firstName: memberRecord?.first_name || "",
+        middleName: memberRecord?.middle_name || "",
+        lastName: memberRecord?.last_name  || "",
+        birthday: memberRecord?.birthday || "",
         sex: memberRecord.sex || "",
         address: memberRecord.addresses?.address  || "",
-        barangay: barangayInfo?.name || "",
+        barangay: barangayInfo.data?.name || "",
         canWork: memberRecord.employment_status?.able_to_work  || false,
         employmentType: memberRecord.employment_status?.employment_type || "",
         remarks: childRecord.remarks || "",
@@ -224,7 +226,7 @@ try{
         schoolYearArray: yearArray
     }
 
-    console.log(child)
+    console.log("CHILD: " +child)
     const familyRes = await fetch(`/api/family_members?id=${childRecord.member_id}&select=*,families(*)&type=memberid`)
     if (!familyRes.ok) {
         throw new Error('Failed to fetch family member info');
