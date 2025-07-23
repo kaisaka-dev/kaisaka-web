@@ -85,8 +85,8 @@ type MemberRecord = {
     address_id?: string;
     addresses?: {
         address?: string;
-        barangay_id?: string;
     };
+    barangay_id: number;
     employment_status?: {
         able_to_work?: boolean;
         employmentType?: string;
@@ -169,10 +169,11 @@ try{
 
 
     //gets record in barangay table
-    const barangayID = memberRecord.addresses?.barangay_id
+    const barangayID = memberRecord.barangay_id
     const barangayInfo = await barangayDB.findOneWithJoin('*', {
         eq:{id: barangayID}
     }) as BarangayRecord;
+
     
     //gets record in pwd table
     if(!childRecord.pwd_id) {
@@ -274,7 +275,6 @@ try{
         voter_id: childRecord.has_vote || false,
         national_id: childRecord.has_national_id || false,
         educationHistory: educationArray,
-        schoolYearArray: yearArray
     }
     
     const familyInfo = await familyDB.findOneWithJoin('*, families(*)', {

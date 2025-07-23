@@ -58,7 +58,7 @@
 
     }
 
-    let educHistory: {
+    type educType = {
         Educationtype: string,
         Educationlevel: string,
         Educationstatus: string,
@@ -66,7 +66,12 @@
         yearEnd: number,
         isNew: boolean,
         isDeleted: boolean,
-    }[] = []
+        index?: number
+    }
+
+    let educHistory: educType[] = []
+    let displayEducHistory: educType[] = []
+    let displaySchoolYear: string[] = []
 
     let selectedIndex: number
 
@@ -81,7 +86,21 @@
             isDeleted: false
 
         })
+
+        displayEducHistory.push({
+            Educationtype: data.child.educationHistory[i]?.education_type,
+            Educationlevel: data.child.educationHistory[i]?.grade_level,
+            Educationstatus: data.child.educationHistory[i]?.student_status_type,
+            yearStart: data.child?.educationHistory[i]?.year_start,
+            yearEnd: data.child?.educationHistory[i]?.year_end,
+            isNew:false,
+            isDeleted: false,
+            index: i
+        })
+
+        displaySchoolYear.push(String(displayEducHistory[i].yearStart))
     }
+
 
     let hasPWD: boolean = data.child?.pwd?.has;
     let pwdID: string = data.child?.pwd?.id;
@@ -338,34 +357,54 @@
              isDeleted: false
         })
 
-        data.child.schoolYearArray?.push(String(educHistory[educHistory.length-1].yearStart))
-        data.child.schoolYearArray = data.child?.schoolYearArray
+        console.log(educHistory)
 
-        educHistory = educHistory
+        displayEducHistory.push({
+             Educationtype: "",
+             Educationlevel: "",
+             Educationstatus: "",
+             yearStart: new Date().getFullYear(),
+             yearEnd: new Date().getFullYear(),
+             isNew:true,
+             isDeleted: false,
+             index: educHistory.length-1
+        })
+
+        displayEducHistory = displayEducHistory
+
+        displaySchoolYear.push(String(displayEducHistory[displayEducHistory.length-1].yearStart))
+        displaySchoolYear = displaySchoolYear
+
+
     }
 
     function deleteEducRecord(index:number){
-        educHistory[index].isDeleted = true
-        educHistory = educHistory
-        updateField(0)
+        educHistory[displayEducHistory[index].index].isDeleted = true
+        displayEducHistory.splice(index,1)
+        displayEducHistory = displayEducHistory
+
+        displaySchoolYear.splice(index,1)
+        displaySchoolYear = displaySchoolYear
+
+        console.log(educHistory)
     }
+
 
     function updateField(index:number){     
         if(index == 0) {
             educType = ""
             educLevel = ""
             educStatus = ""
-            yearStart =0 ;
-            yearEnd =0 ;
+            yearStart = 0 ;
+            yearEnd = 0 ;
         }
 
         else {
-            educType = educHistory[index-1].Educationtype
-            educLevel = educHistory[index-1].Educationlevel
-            educStatus = educHistory[index-1].Educationstatus
-            yearStart = educHistory[index-1].yearStart
-            yearEnd = educHistory[index-1].yearEnd
-
+            educType = displayEducHistory[index-1].Educationtype
+            educLevel = displayEducHistory[index-1].Educationlevel
+            educStatus = displayEducHistory[index-1].Educationstatus
+            yearStart = displayEducHistory[index-1].yearStart
+            yearEnd = displayEducHistory[index-1].yearEnd
         }
 
         selectedIndex = index-1
@@ -782,7 +821,7 @@
 </div>
 
 <!-- PERSONAL INFORMATION SECTION BELOW-->
- <div class = "ml-22 -mt-70" id ="Personal Info">
+ <div class = "ml-22 -mt-80" id ="Personal Info">
     <h1 class = "!text-[var(--green)] font-[JSans] ml-33 mt-5 mb-2">
         Information
     </h1>
@@ -872,13 +911,11 @@
 </div>
 <div class = "flex flex-row mt-10">
     <div class = "flex flex-col border-[var(--border)] border-4 ml-55 mr-10 p-6 w-170 min-w-150">
-        {#if educHistory.length > 0}
+        {#if displayEducHistory.length > 0}
         <div class = "flex flex-row"> <div> Please select a school year </div> <select class = "ml-5 w-50 z-100" on:change={(e)=>updateField(e.target.selectedIndex)}>
             <option selected> </option>
-            {#each educHistory as year}
-            {#if year.isDeleted == false}
-            <option> {year.yearStart}</option>
-            {/if}
+            {#each displaySchoolYear as year}
+            <option> {year}</option>
             {/each}
         </select></div>
         <div class = "mt-3"> <Select label="Education Type:" bind:value = {educType} options = {educ_options} /></div>
@@ -891,7 +928,7 @@
         {/if}
         <div class = "flex flex-row">
         <div class = "w-150 mt-10 z-500"> <button on:click = {()=>addEducRecord()}> Add Education Record </button> </div>
-        <div class = "w-150 mt-10 z-500"> <button on:click = {()=>deleteEducRecord(selectedIndex)} class ="green"> Delete This Record </button> </div>
+        {#if displayEducHistory.length > 0} <div class = "w-150 mt-10 z-500"> <button on:click = {()=>deleteEducRecord(selectedIndex)} class ="green"> Delete This Record </button> </div> {/if}
         </div>
     </div>
 </div>
