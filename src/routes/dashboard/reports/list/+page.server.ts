@@ -57,10 +57,10 @@ export const load: PageLoad = async ({fetch}) => {
 				endDD: period.end_date,
 				total_target_CWDS: "",
 				new_target_CWDS: period.target_new_cwds,
-				old_target_CWDS: "",		// missing field in the database
+				old_target_CWDS: period.target_old_cwds,		// missing field in the database
 				total_actual_CWDS: "",	// missing field in the database
-				new_actual_CWDS: "",		// missing field in the database
-				old_actual_CWDS: "",		// missing field in the database
+				new_actual_CWDS: period.actual_new_cwds,		// missing field in the database
+				old_actual_CWDS: period.actual_old_cwds,		// missing field in the database
 				general_reflection: period.general_reflection || "",
 				lessons_learned: period.lessons_learned || ""
 			}
