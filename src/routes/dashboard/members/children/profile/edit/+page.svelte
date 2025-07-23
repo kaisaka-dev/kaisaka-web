@@ -314,7 +314,12 @@
     function validateForm(): boolean{
         errors.firstName = firstName.trim() === "" ? "Required" : ""
         errors.lastName = lastName.trim() === "" ? "Required" : ""
-        errors.birthday = birthday.trim() === "" ? "Required" : ""
+        if(new Date(birthday).getFullYear() > new Date().getFullYear()) {
+            errors.birthday = "Birthday cannot be in the future"
+        }
+        else{
+            errors.birthday = birthday.trim() === "" ? "Required" : ""
+        }
         errors.sex = sex.trim() === "" ? "Required" : ""
         errors.address = address.trim() === "" ? "Required" : ""
         errors.barangay = barangay.trim() === "" ? "Required" : ""
