@@ -4,6 +4,7 @@ import InputRange from '$components/input/InputRange.svelte';
 import Modal from '$components/Modal.svelte';
 import Textarea from '$components/input/InputTextarea.svelte';
 import type { ReportPeriod, Errors } from './+page.server.js';
+import { enhance } from '$app/forms';
 
 export let modalIsOpen = false;
 export let title = "";
@@ -82,18 +83,61 @@ function validateForm(): boolean {
 
 	return true;
 }
-function handleSubmit() {
-	if(validateForm()) modalIsOpen = false;
+async function handleSubmit() {
+	if (!validateForm()) return;
+
+	try {
+		const method = formData.id ? 'PUT' : 'POST';
+		const url = formData.id ? `/api/annual_program` : `/api/annual_program`;
+
+		console.log(method)
+		const submission = JSON.stringify({
+			id: formData.id,
+			start_year: formData.startYYYY,
+			start_month: formData.startMM,
+			start_date: formData.startDD,
+			end_year: formData.endYYYY,
+			end_month: formData.endMM,
+			end_date: formData.endDD,
+			target_new_cwds: formData.new_target_CWDS,
+			target_old_cwds: formData.old_target_CWDS,
+			actual_new_cwds: formData.new_actual_CWDS,
+			actual_old_cwds: formData.old_actual_CWDS,
+			general_reflection: formData.general_reflection,
+			lessons_learned: formData.lessons_learned
+		})
+		console.log(submission)
+
+		const response = await fetch(url, {
+			method,
+			headers: {
+				'Content-Type': 'application/json'
+			},
+			body: submission
+		});
+
+		if (!response.ok) {
+			throw new Error(await response.text());
+		}
+
+		modalIsOpen = false;
+	} catch (error) {
+		console.error('Submission error:', error);
+	}
 }
 
 // error checks
-$: if (formData.startMM >= 1 && formData.startMM <= 12 || formData.startMM == null) errors.startMM = ""
-   else errors.startMM = "month: 1 to 12 only"
-$: if (formData.endMM >= 1 && formData.endMM <= 12 || formData.endMM == null) errors.endMM = ""
+$: if (formData.startMM == null) errors.startMM = ""
+	else if (formData.startMM >= 1 && formData.startMM <= 12) errors.startMM = ""
+	else errors.startMM = "month: 1 to 12 only"
+$: if (formData.endMM == null) errors.endMM = ""
+   else if (formData.endMM >= 1 && formData.endMM <= 12) errors.endMM = ""
    else errors.endMM = "month: 1 to 12 only"
-$: if (formData.startDD >= 1 && formData.startDD <= 31 || formData.startDD == null) errors.startDD = ""
+$: if (formData.startDD == null) errors.startDD = ""
+	 else if (formData.startDD >= 1 && formData.startDD <= 31) errors.startDD = ""
 	 else errors.startDD = "date: 1 to 31 only"
-$: if (formData.endDD >= 1 && formData.endDD <= 31 || formData.endDD == null) errors.endDD = ""
+$: if (formData.endDD == null) errors.endDD = ""
+	 else if (formData.endDD >= 1 && formData.endDD <= 31) errors.endDD = ""
    else errors.endDD = "date: 1 to 31 only"
 
 </script>
@@ -101,7 +145,7 @@ $: if (formData.endDD >= 1 && formData.endDD <= 31 || formData.endDD == null) er
 <Modal buttonText="{button_title}" width="50%" bind:isOpen={modalIsOpen}>
 	<div slot="modal">
 		<h2>{title}</h2>
-		<form on:submit|preventDefault={handleSubmit}>
+		<form use:enhance method="POST" action="/api/annual_program" on:submit|preventDefault={handleSubmit}>
 			<InputRange type="number" label="Report Year" id="reportYYYY" bind:valueFrom={formData.startYYYY} bind:valueTo={formData.endYYYY} msg={errors.startYYYY + " " + errors.endYYYY} required />
 			<InputRange type="number" label="Report Month" id="reportYYYY" bind:valueFrom={formData.startMM} bind:valueTo={formData.endMM} msg={errors.startMM + " " + errors.endMM} />
 			<InputRange type="number" label="Report Date" id="reportYYYY" bind:valueFrom={formData.startDD} bind:valueTo={formData.endDD} msg={errors.startDD + " " + errors.endDD} />

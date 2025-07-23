@@ -16,8 +16,8 @@ export type Errors = {
 // it's called list program in the database, but officially we've changed it to Report Period as it's more flexible
 export type ReportPeriod = {
 	id: number | null;
-	Start: string;
-	End: string;
+	Start?: string;
+	End?: string;
 	startYYYY: number | null;
 	startMM?: number | null;
 	startDD?: number | null;
@@ -50,11 +50,11 @@ export const load: PageLoad = async ({fetch}) => {
 				Start: formatDate(period.start_year, period.start_month, period.start_date),
 				End: formatDate(period.end_year, period.end_month, period.end_date),
 				startYYYY: period.start_year,
-				startMM: period.start_month,
-				startDD: period.start_date,
+				startMM: period.start_month || "",
+				startDD: period.start_date || "",
 				endYYYY: period.end_year,
-				endMM: period.end_month,
-				endDD: period.end_date,
+				endMM: period.end_month || "",
+				endDD: period.end_date || "",
 				total_target_CWDS: "",
 				new_target_CWDS: period.target_new_cwds,
 				old_target_CWDS: period.target_old_cwds,		// missing field in the database
