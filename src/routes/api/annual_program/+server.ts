@@ -16,22 +16,37 @@ export const POST: RequestHandler = async({request}) => {
   let body: any = {}
   try {
     body = await request.json();
-  } catch {
-    throw error(400, 'Missing required fields.')
+    console.log('Annual Program POST - Received body:', JSON.stringify(body, null, 2));
+  } catch (parseError) {
+    console.error('Annual Program POST - JSON parsing failed:', parseError);
+    throw error(400, 'Invalid JSON format in request body.')
   }
 
-  if (!body.start_year || !body.end_year || !body.target_new_cwds) {
-    throw error(400, 'Missing required fields.')
-  }
-
-  const inserted = await annualProgramModel.instance.insertAnnualProgram(body);
-
-  if (!inserted){
-    throw error(500, 'Failed to insert')
-  }
-
-  return json({ message: 'Inserted', data: inserted}) 
+  // Check required fields with specific error messages
+  const requiredFields = ['start_year', 'end_year', 'target_new_cwds'];
+  const missingFields = requiredFields.filter(field => !body[field] && body[field] !== 0);
   
+  if (missingFields.length > 0) {
+    console.error('Annual Program POST - Missing required fields:', missingFields);
+    throw error(400, `Missing required fields: ${missingFields.join(', ')}. Required: start_year, end_year, target_new_cwds`);
+  }
+
+  console.log('Annual Program POST - Attempting to insert program...');
+  
+  try {
+    const inserted = await annualProgramModel.instance.insertAnnualProgram(body);
+
+    if (!inserted){
+      console.error('Annual Program POST - Insert returned null/undefined');
+      throw error(500, 'Failed to insert: Database operation returned no data')
+    }
+
+    console.log('Annual Program POST - Successfully inserted:', inserted.id);
+    return json({ message: 'Inserted', data: inserted}) 
+  } catch (dbError) {
+    console.error('Annual Program POST - Database error:', dbError);
+    throw error(500, `Failed to insert annual program: ${dbError instanceof Error ? dbError.message : 'Unknown database error'}`)
+  }
 }
 
 export const PUT: RequestHandler = async({request}) => {
