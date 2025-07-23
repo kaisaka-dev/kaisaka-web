@@ -31,7 +31,7 @@ export const POST: RequestHandler = async({request}) => {
   }
 
   // Check required fields with specific error messages
-  const requiredFields = ['start_year', 'end_year', 'target_new_cwds'];
+  const requiredFields = ['start_year', 'end_year', 'target_new_cwds', 'target_old_cwds'];
   const missingFields = requiredFields.filter(field => !body[field] && body[field] !== 0);
   
   if (missingFields.length > 0) {
@@ -41,18 +41,24 @@ export const POST: RequestHandler = async({request}) => {
 
   console.log('Annual Program POST - Attempting to insert program...');
   
+  // Remove id field since it's auto-generated
+  const { id, ...insertData } = body;
+  console.log('Annual Program POST - Data for insertion:', JSON.stringify(insertData, null, 2));
+  
   try {
-    const inserted = await annualProgramModel.instance.insertAnnualProgram(body);
+    const inserted = await annualProgramModel.instance.insertAnnualProgram(insertData);
+    console.log('Annual Program POST - Raw insert result:', inserted);
 
     if (!inserted){
       console.error('Annual Program POST - Insert returned null/undefined');
       throw error(500, 'Failed to insert: Database operation returned no data')
     }
 
-    console.log('Annual Program POST - Successfully inserted:', inserted.id);
+    console.log('Annual Program POST - Successfully inserted with ID:', inserted.id);
     return json({ message: 'Inserted', data: inserted}) 
   } catch (dbError) {
     console.error('Annual Program POST - Database error:', dbError);
+    console.error('Annual Program POST - Database error stack:', dbError instanceof Error ? dbError.stack : 'No stack trace');
     throw error(500, `Failed to insert annual program: ${dbError instanceof Error ? dbError.message : 'Unknown database error'}`)
   }
 }

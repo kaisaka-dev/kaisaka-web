@@ -145,7 +145,7 @@ $: if (formData.endDD == null) errors.endDD = ""
 <Modal buttonText="{button_title}" width="50%" bind:isOpen={modalIsOpen}>
 	<div slot="modal">
 		<h2>{title}</h2>
-		<form use:enhance method="POST" action="/api/annual_program" on:submit|preventDefault={handleSubmit}>
+		<form on:submit|preventDefault={handleSubmit}>
 			<InputRange type="number" label="Report Year" id="reportYYYY" bind:valueFrom={formData.startYYYY} bind:valueTo={formData.endYYYY} msg={errors.startYYYY + " " + errors.endYYYY} required />
 			<InputRange type="number" label="Report Month" id="reportYYYY" bind:valueFrom={formData.startMM} bind:valueTo={formData.endMM} msg={errors.startMM + " " + errors.endMM} />
 			<InputRange type="number" label="Report Date" id="reportYYYY" bind:valueFrom={formData.startDD} bind:valueTo={formData.endDD} msg={errors.startDD + " " + errors.endDD} />
