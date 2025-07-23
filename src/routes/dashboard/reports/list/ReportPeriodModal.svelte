@@ -75,7 +75,16 @@ function validateForm(): boolean {
 			(endMM - startMM) * 100 +
 			(endDD - startDD)
 		errors.endYYYY = sum >= 0 ? "" : "End Dates must be greater than Start Dates"
+
+		// month should be both null / not null at the same time
+		if ((startDD !== 0) &&  (endDD !== 0)
+			&& (startMM === 0) && (endMM === 0)) errors.startMM = "Fill out month"
+		if ((startMM === 0) !== (endMM === 0)) errors.startMM = "Invalid range"
+		if ((startDD === 0) !== (endDD === 0)) errors.startDD = "Invalid range"
+
 	}
+
+
 
 	for (const error of Object.values(errors)) {
 		if (error) {
