@@ -789,7 +789,7 @@
 </div>
 <div class = "border-[var(--border)] border-4 ml-55 mr-10 !font-bold w-250 min-w-225" >
     <div class = "!flex !flex-row !justify-start mt-2">
-        <div class = "flex flex-col ml-4 mt-2 w-[1200px]">
+        <div class = "flex flex-col ml-4 mt-2 w-[1200px] z-500">
           <Input label="First Name" id="first_name"  bind:value = {firstName} margin={false} />
           <Input label="Middle Name" id="middle_name"   bind:value = {middleName} margin={false} />
           <Input label="Last Name" id="last_name"   bind:value = {lastName} margin={false} />
