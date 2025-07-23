@@ -1072,6 +1072,41 @@ export type Database = {
           },
         ]
       }
+      social_participation: {
+        Row: {
+          child_id: string
+          created_at: string | null
+          id: number
+          participation_type: Database["public"]["Enums"]["participation_type_enum"]
+          updated_at: string | null
+          year: number
+        }
+        Insert: {
+          child_id: string
+          created_at?: string | null
+          id: number
+          participation_type: Database["public"]["Enums"]["participation_type_enum"]
+          updated_at?: string | null
+          year: number
+        }
+        Update: {
+          child_id?: string
+          created_at?: string | null
+          id?: number
+          participation_type?: Database["public"]["Enums"]["participation_type_enum"]
+          updated_at?: string | null
+          year?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "social_participation_child_id_fkey"
+            columns: ["child_id"]
+            isOneToOne: false
+            referencedRelation: "children"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       social_protection_status: {
         Row: {
           child_id: string
@@ -1232,6 +1267,7 @@ export type Database = {
       intervention_type: "education" | "social"
       part_type: "caregiver" | "child"
       participant_type_enum: "caregiver" | "child"
+      participation_type_enum: "Family Life" | "Community Life"
       resources:
         | "activity"
         | "addresses"
@@ -1421,6 +1457,7 @@ export const Constants = {
       intervention_type: ["education", "social"],
       part_type: ["caregiver", "child"],
       participant_type_enum: ["caregiver", "child"],
+      participation_type_enum: ["Family Life", "Community Life"],
       resources: [
         "activity",
         "addresses",
