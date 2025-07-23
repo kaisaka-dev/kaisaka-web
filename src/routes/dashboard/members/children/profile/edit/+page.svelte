@@ -295,9 +295,48 @@
         'completed'
     ]
 
+    let errors = {
+        firstName: "",
+        lastName: "",
+        birthday: "",
+        sex: "",
+        address:"",
+        barangay:"",
+        disabilityCat:"",
+        disabilityNat: "",
+        admissionDate: "",
+        employmentType:""
+    }
+
     //below are functions needed for the page
 
     //TODO: IMPLEMENT VALIDATION CHECKING
+    function validateForm(): boolean{
+        errors.firstName = firstName.trim() === "" ? "Required" : ""
+        errors.lastName = lastName.trim() === "" ? "Required" : ""
+        errors.birthday = birthday.trim() === "" ? "Required" : ""
+        errors.sex = sex.trim() === "" ? "Required" : ""
+        errors.address = address.trim() === "" ? "Required" : ""
+        errors.barangay = barangay.trim() === "" ? "Required" : ""
+        errors.disabilityCat = disabilityCategory.trim() === "" ? "Required" : ""
+        errors.disabilityNat = disabilityNature.trim() === "" ? "Required" : ""
+        if(canwork){
+            errors.employmentType = employmentType.trim() === "" ? "Required" : ""
+         }
+         errors.admissionDate = admissionDate.trim() === "" ? "Required" : ""
+
+
+        for (const error of Object.values(errors)) {
+            if (error) {
+                console.log("error found: ", error)
+                goto('#top');    // scrolls to top
+                return false;
+            }
+        }
+
+
+        return true
+    }
     function addFamily(){
         existingFamily.push({
             firstName:"",
@@ -410,6 +449,7 @@
         selectedIndex = index-1
     }
         async function editData(): Promise<void> {
+            if(validateForm()) {
 
             //PERSONAL INFORMATION EDITS BEGIN HERE
             const memberres = await fetch('/api/members', {
@@ -779,6 +819,8 @@
         goto(`/dashboard/members/children/profile?id=${data.child.id}`);
     }
 
+}
+
 </script>
  <Header/>
 
@@ -829,24 +871,24 @@
 <div class = "border-[var(--border)] border-4 ml-55 mr-10 !font-bold w-250 min-w-225" >
     <div class = "!flex !flex-row !justify-start mt-2">
         <div class = "flex flex-col ml-4 mt-2 w-[1200px] z-500">
-          <Input label="First Name" id="first_name"  bind:value = {firstName} margin={false} />
+          <Input label="First Name" id="first_name" required msg = {errors.firstName} bind:value = {firstName} margin={false} />
           <Input label="Middle Name" id="middle_name"   bind:value = {middleName} margin={false} />
-          <Input label="Last Name" id="last_name"   bind:value = {lastName} margin={false} />
-          <Input label="Birthday" type="date" id="birthday" bind:value = {birthday}  margin={false} />
+          <Input label="Last Name" id="last_name" required msg = {errors.lastName}   bind:value = {lastName} margin={false} />
+          <Input label="Birthday" type="date" id="birthday" bind:value = {birthday} required msg = {errors.birthday}  margin={false} />
           <Input label="Age" id ="age" disabled value = {new Date().getFullYear() - new Date(birthday).getFullYear() || "Please Specify Birthday!"} margin={false} />
-          <Select label="Sex" id="sex" bind:value = {sex} options = {['Male','Female','Other']}  margin={false} />
-          <Input  label="Address" id="address"  bind:value = {address} margin={false} />
-          <Input  label="Barangay" id="barangay"  bind:value = {barangay} margin={false} />
+          <Select label="Sex" id="sex" bind:value = {sex} required msg = {errors.sex} options = {['Male','Female','Other']}  margin={false} />
+          <Input  label="Address" id="address"  bind:value = {address} required msg = {errors.address} margin={false} />
+          <Input  label="Barangay" id="barangay"  bind:value = {barangay} required msg = {errors.barangay} margin={false} />
           <br>
-          <Select label="Disability Category" id="disabilityCategory" bind:value = {disabilityCategory} options = {options_disNature} margin={false} />
-          <Input  label="Disability Nature" id="disabilityNature"  bind:value = {disabilityNature} margin={false} />
+          <Select label="Disability Category" id="disabilityCategory" bind:value = {disabilityCategory} required msg = {errors.disabilityCat} options = {options_disNature} margin={false} />
+          <Input  label="Disability Nature" id="disabilityNature"  bind:value = {disabilityNature}  required msg = {errors.disabilityNat} margin={false} />
           <br>
           <Check  label="Able to work" bind:checked={canwork} margin={false} />
           {#if canwork}
-          <Select label="Employment Type" id="employment_type" bind:value = {employmentType} options = {['Wage Employed', "Self-Employed", "Sheltered Workshop"]} margin={false}  />
+          <Select label="Employment Type" id="employment_type" required msg = {errors.employmentType} bind:value = {employmentType} options = {['Wage Employed', "Self-Employed", "Sheltered Workshop"]} margin={false}  />
           <br>
           {/if}
-          <Input label="Admission Date" type="date"  bind:value = {admissionDate} margin={false} />
+          <Input label="Admission Date" type="date" required msg = {errors.admissionDate} bind:value = {admissionDate} margin={false} />
         </div>
       <div style="height: fit-content">
         <TextArea bind:value = {remarks} label="Remarks" rows={10}  margin={false} /></div>

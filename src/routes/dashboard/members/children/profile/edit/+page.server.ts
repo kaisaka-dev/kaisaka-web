@@ -71,7 +71,6 @@ export type childInformation =  {
     voter_id: boolean,
     national_id:boolean
     educationHistory?: any[]
-    schoolYearArray?: string[],
     disabilitycatID?: string
 }
 
@@ -219,7 +218,6 @@ try{
     }
 
     let educationArray = []
-    let yearArray = []
 
     const educationHistory = await educationDB.findWithJoin('*', {
         eq:{child_id: childRecord.id}
@@ -228,7 +226,6 @@ try{
     if(educationHistory){
         for(let i = 0; i < educationHistory.length;i++) {
             educationArray.push(educationHistory[i])
-            yearArray.push(String(educationHistory[i].year_start))
         }
     }
 
