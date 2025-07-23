@@ -52,14 +52,14 @@
             
             // Transform API data to match component expectations
             pendingList = result.data.map((child: any) => ({
-                id: child.members?.id || '',
+                id: child.id || '',
                 firstName: child.members?.first_name || '',
                 lastName: child.members?.last_name || '',
                 medCert: child.has_medical_cert ? "✅" : "❌",
                 birthCert: child.has_birth_cert ? "✅" : "❌",
                 brgyCert: child.has_barangay_cert ? "✅" : "❌",
                 interventionPlan: child.intervention?.intervention ? "✅" : "❌",
-                link: `/dashboard/members/children/profile?id=${child.members?.id}`
+                link: `/dashboard/members/children/profile?id=${child.id}`
             }));
             
             filteredData = pendingList;
