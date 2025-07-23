@@ -15,11 +15,19 @@ export const POST: RequestHandler = async({request}) => {
   
   let body: any = {}
   try {
-    body = await request.json();
-    console.log('Annual Program POST - Received body:', JSON.stringify(body, null, 2));
+    console.log('Annual Program POST - Request headers:', Object.fromEntries(request.headers.entries()));
+    console.log('Annual Program POST - Request method:', request.method);
+    
+    const rawBody = await request.text();
+    console.log('Annual Program POST - Raw body text:', rawBody);
+    console.log('Annual Program POST - Raw body length:', rawBody.length);
+    
+    body = JSON.parse(rawBody);
+    console.log('Annual Program POST - Parsed body:', JSON.stringify(body, null, 2));
   } catch (parseError) {
     console.error('Annual Program POST - JSON parsing failed:', parseError);
-    throw error(400, 'Invalid JSON format in request body.')
+    console.error('Annual Program POST - Error details:', parseError instanceof Error ? parseError.message : parseError);
+    throw error(400, `Invalid JSON format in request body: ${parseError instanceof Error ? parseError.message : 'Unknown parsing error'}`)
   }
 
   // Check required fields with specific error messages

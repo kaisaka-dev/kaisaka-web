@@ -88,7 +88,7 @@ export type Database = {
       annual_program: {
         Row: {
           actual_new_cwds: number | null
-          actual_old_cwds: number
+          actual_old_cwds: number | null
           date_created: string
           end_date: number | null
           end_month: number | null
@@ -100,11 +100,11 @@ export type Database = {
           start_month: number | null
           start_year: number
           target_new_cwds: number
-          target_old_cwds: number | null
+          target_old_cwds: number
         }
         Insert: {
           actual_new_cwds?: number | null
-          actual_old_cwds?: number
+          actual_old_cwds?: number | null
           date_created?: string
           end_date?: number | null
           end_month?: number | null
@@ -116,11 +116,11 @@ export type Database = {
           start_month?: number | null
           start_year: number
           target_new_cwds: number
-          target_old_cwds?: number | null
+          target_old_cwds: number
         }
         Update: {
           actual_new_cwds?: number | null
-          actual_old_cwds?: number
+          actual_old_cwds?: number | null
           date_created?: string
           end_date?: number | null
           end_month?: number | null
@@ -132,7 +132,7 @@ export type Database = {
           start_month?: number | null
           start_year?: number
           target_new_cwds?: number
-          target_old_cwds?: number | null
+          target_old_cwds?: number
         }
         Relationships: []
       }
