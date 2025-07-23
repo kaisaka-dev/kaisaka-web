@@ -110,9 +110,9 @@
 
 <!-- for editing existing report period -->
 <ReportPeriodModal bind:modalIsOpen={editModalIsOpen} title="Edit Report Period" button_title=""
-									 formData={data[formIdx]} />
+									 formData={sortedData[formIdx]} />
 
-{#if data.length > 0}
+{#if sortedData.length > 0}
 	<table>
 		<thead>
 		<tr>
