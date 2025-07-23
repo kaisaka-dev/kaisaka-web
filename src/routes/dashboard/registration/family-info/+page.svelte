@@ -218,7 +218,6 @@
 				goto('#family-info');    // scrolls to top
 				return;
 			}
-			goto('/dashboard');			// temporary fix for usability testing purposes
 			// Insert address
 			const addressData = await safeFetch('/api/addresses', childRegData.address);
 			console.log(addressData.message)
@@ -246,24 +245,39 @@
 			const childId = childData.data.id;
 
 			// Insert education status
-			childRegData.education_status!.child_id = childId;
-			const eduStatusData = await safeFetch('/api/education_status', childRegData.education_status);
-			console.log(eduStatusData.message)
+			if(childRegData.education_status !== undefined) {
+				childRegData.education_status!.child_id = childId;
+				const eduStatusData = await safeFetch('/api/education_status', childRegData.education_status);
+				console.log(eduStatusData.message)
+			}
 
-			// Insert social protection status
-			childRegData.social_protection_status!.child_id = childId;
-			const socProtStatusData = await safeFetch('/api/social_protection_status', childRegData.social_protection_status);
-			console.log(socProtStatusData.message)
+			// Insert social protection status (for community group)
+			if(childRegData.social_participation_com !== undefined) {
+				childRegData.social_participation_com!.child_id = childId;
+				console.log(childRegData.social_participation_com)
+				const socProtStatusDataCom = await safeFetch('/api/social_participation', childRegData.social_participation_com);
+				console.log(socProtStatusDataCom.message)
+			}
+
+			// Insert social participation status (for family life)
+			if(childRegData.social_participation_fam !== undefined) {
+				childRegData.social_participation_fam!.child_id = childId;
+				const socProtStatusDataFam = await safeFetch('/api/social_participation', childRegData.social_participation_fam);
+				console.log(socProtStatusDataFam.message)
+			}
 
 			// Insert employment status
-			childRegData.employment_status!.member_id = memberId;
-			const empStatusData = await safeFetch('/api/employment_status', childRegData.employment_status);
-			console.log(empStatusData.message)
+			if(childRegData.employment_status !== undefined) {
+				childRegData.employment_status!.member_id = memberId;
+				const empStatusData = await safeFetch('/api/employment_status', childRegData.employment_status);
+				console.log(empStatusData.message)
+			}
 
 			console.log('All data successfully inserted!');
 		} catch (err) {
 			console.error('Submission failed:', err);
 		}
+		goto('/dashboard');			// temporary fix for usability testing purposes
 
 	}
 </script>
