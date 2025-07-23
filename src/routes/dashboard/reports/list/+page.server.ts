@@ -50,15 +50,15 @@ export const load: PageLoad = async ({fetch}) => {
 				Start: formatDate(period.start_year, period.start_month, period.start_date),
 				End: formatDate(period.end_year, period.end_month, period.end_date),
 				startYYYY: period.start_year,
-				startMM: period.start_month || "",
-				startDD: period.start_date || "",
+				startMM: period.start_month || null,
+				startDD: period.start_date || null,
 				endYYYY: period.end_year,
-				endMM: period.end_month || "",
-				endDD: period.end_date || "",
-				total_target_CWDS: "",
+				endMM: period.end_month || null,
+				endDD: period.end_date || null,
+				total_target_CWDS: null,
 				new_target_CWDS: period.target_new_cwds,
 				old_target_CWDS: period.target_old_cwds,		// missing field in the database
-				total_actual_CWDS: "",	// missing field in the database
+				total_actual_CWDS: null,	// missing field in the database
 				new_actual_CWDS: period.actual_new_cwds,		// missing field in the database
 				old_actual_CWDS: period.actual_old_cwds,		// missing field in the database
 				general_reflection: period.general_reflection || "",

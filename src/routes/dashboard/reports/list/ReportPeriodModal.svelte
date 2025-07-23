@@ -65,10 +65,10 @@ function validateForm(): boolean {
 	}
 	if (formData.endYYYY !== null && formData.startYYYY !== null) {
 		// setting nulls and undefined to 0, to avoid my IDE from screaming at me
-		let endMM = formData.endMM === null || formData.endMM === undefined ? 0 : formData.endMM;
-		let startMM = formData.startMM === null || formData.startMM === undefined ? 0 : formData.startMM;
-		let endDD = formData.endDD === null || formData.endDD === undefined ? 0 : formData.endDD;
-		let startDD = formData.startDD === null || formData.startDD === undefined ? 0 : formData.startDD;
+		let endMM = formData.endMM ?? 0;
+		let startMM = formData.startMM ?? 0;
+		let endDD = formData.endDD ?? 0;
+		let startDD = formData.startDD ?? 0;
 
 		// converting the dates into integer for easier comparison
 		let sum = (formData.endYYYY - formData.startYYYY) * 10000 +
