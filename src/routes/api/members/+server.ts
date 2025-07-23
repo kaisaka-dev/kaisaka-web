@@ -73,12 +73,12 @@ export const GET: RequestHandler = async ({ url }) => {
  * Response:
  * {
  *   "message": "Member created successfully",
- *   "data": { /* created member object with generated ID */ }
+ *   "data": { /* created member object with generated ID  }
  * }
  * 
  * Error responses:
  * - 400: Missing required fields or invalid sex value
- * - 500: Database insertion failed
+ * - 500: Database insertion failed 
  */
 export const POST: RequestHandler = async ({ request }) => {
   let body: any = {}
