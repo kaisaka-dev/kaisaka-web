@@ -299,6 +299,7 @@ export class ChildrenModel extends TableManager<"children">('children') {
      */
   async getPendingDocuments(id: string = ''){
     const joinStatement = `
+          id,
           members!inner(
             id,
             first_name,
