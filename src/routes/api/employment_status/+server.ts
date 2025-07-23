@@ -85,3 +85,43 @@ export const PUT: RequestHandler = async({request}) => {
 
   return json({ message: 'Updated successfully' })
 }
+
+/**
+ * DELETE /api/employment_status
+ * 
+ * Deletes an employment status record by employment status ID or member ID.
+ * 
+ * Usage examples:
+ * - DELETE /api/employment_status?id=123 (delete by employment status record ID)
+ * - DELETE /api/employment_status?member_id=abc-123-def (delete by member ID)
+ * 
+ * @param url.searchParams.id - Employment status record ID (optional)
+ * @param url.searchParams.member_id - Member ID (optional)
+ * @returns JSON response with success message
+ */
+export const DELETE: RequestHandler = async ({ url }) => {
+  const id = url.searchParams.get('id');
+  const member_id = url.searchParams.get('member_id');
+  
+  if (!id && !member_id) {
+    throw error(400, 'Missing required parameter: id or member_id');
+  }
+
+  let deleted = false;
+  
+  if (id) {
+    const employmentId = parseInt(id);
+    if (isNaN(employmentId)) {
+      throw error(400, 'Invalid id format');
+    }
+    deleted = await EmploymentStatusModel.instance.deleteById(employmentId);
+  } else if (member_id) {
+    deleted = await EmploymentStatusModel.instance.deleteByMemberId(member_id);
+  }
+
+  if (!deleted) {
+    throw error(404, 'Employment status record not found or failed to delete');
+  }
+
+  return json({ message: 'Employment status deleted successfully' });
+}
