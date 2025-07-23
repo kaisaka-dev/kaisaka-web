@@ -890,8 +890,8 @@
         This child has no education history
         {/if}
         <div class = "flex flex-row">
-        <div class = "w-150 mt-10"> <button on:click = {()=>addEducRecord()}> Add Education Record </button> </div>
-        <div class = "w-150 mt-10"> <button on:click = {()=>deleteEducRecord(selectedIndex)} class ="green"> Delete This Record </button> </div>
+        <div class = "w-150 mt-10 z-500"> <button on:click = {()=>addEducRecord()}> Add Education Record </button> </div>
+        <div class = "w-150 mt-10 z-500"> <button on:click = {()=>deleteEducRecord(selectedIndex)} class ="green"> Delete This Record </button> </div>
         </div>
     </div>
 </div>
