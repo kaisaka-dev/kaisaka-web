@@ -1,5 +1,6 @@
 import { login } from "$lib/server/auth-actions.js"
-import { redirect, type Actions } from "@sveltejs/kit"
+import { redirect, type Actions} from "@sveltejs/kit"
+import type { PageServerLoad} from '../../.svelte-kit/types/src/routes/$types.js';
 
 export const actions: Actions = {
   login: async ({ request, locals: { supabase } }) => {
@@ -31,3 +32,14 @@ export const actions: Actions = {
     }
   }
 } satisfies Actions
+
+export const load: PageServerLoad = async ({ locals }) => {
+  if (locals.user) {
+    throw redirect(303, '/dashboard');
+  }
+
+  return {
+    error: '',
+    ok: false
+  };
+};
