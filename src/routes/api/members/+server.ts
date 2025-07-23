@@ -39,7 +39,47 @@ export const GET: RequestHandler = async ({ url }) => {
   }
 };
 
-// CREATE - Add new member
+/**
+ * POST /api/members
+ * 
+ * Creates a new member record.
+ * 
+ * Required fields:
+ * - first_name (string): Member's first name
+ * - last_name (string): Member's last name  
+ * - sex (string): Must be "Male", "Female", or "Other"
+ * 
+ * Optional fields:
+ * - middle_name (string|null): Member's middle name
+ * - birthday (string|null): Birth date in ISO format (YYYY-MM-DD)
+ * - address_id (string|null): UUID reference to addresses table
+ * - barangay_id (number|null): Reference to barangays table
+ * - admission_date (string|null): Date member was admitted in ISO format
+ * - last_approved (string|null): Last approval date in ISO format
+ * - updated_at (string|null): Last update timestamp in ISO format
+ * 
+ * Example request body:
+ * {
+ *   "first_name": "Juan",
+ *   "last_name": "Cruz", 
+ *   "middle_name": "Santos",
+ *   "birthday": "1990-05-15",
+ *   "sex": "Male",
+ *   "address_id": "123e4567-e89b-12d3-a456-426614174000",
+ *   "barangay_id": 42,
+ *   "admission_date": "2023-01-15"
+ * }
+ * 
+ * Response:
+ * {
+ *   "message": "Member created successfully",
+ *   "data": { /* created member object with generated ID */ }
+ * }
+ * 
+ * Error responses:
+ * - 400: Missing required fields or invalid sex value
+ * - 500: Database insertion failed
+ */
 export const POST: RequestHandler = async ({ request }) => {
   let body: any = {}
   try {
