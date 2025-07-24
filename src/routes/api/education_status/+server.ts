@@ -35,6 +35,7 @@ export const POST: RequestHandler = async ({ request }) => {
     education_type: body.education_type !== undefined ? body.education_type : null,
     year_end: body.year_end !== undefined ? body.year_end : null,
     grade_level: body.grade_level !== undefined ? body.grade_level : null,
+    student_status_type: body.student_status_type !== undefined ? body.student_status_type : null,
     updated_at: new Date().toISOString()
   };
 
