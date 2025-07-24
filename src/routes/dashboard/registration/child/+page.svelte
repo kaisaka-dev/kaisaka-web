@@ -217,7 +217,7 @@
                 address: {
                     address: formData.address,
                 },
-                barangays: {
+                barangay: {
                     name: formData.barangay,
                 },
                 member: {
@@ -225,7 +225,8 @@
                     middle_name: formData.middle_name,
                     last_name: formData.last_name,
                     birthday: formData.birthday,
-                    sex: formData.sex
+                    sex: formData.sex,
+                    admission_date: `${formData.date_admission}-01T00:00:00Z` // "2024-03-01T00:00:00Z"
                 },
                 child: {
                     has_barangay_cert: formData.has.barangay_cert,
@@ -270,7 +271,7 @@
                 ...(formData.employment.able_to_work ? {
                     employment_status: {
                         able_to_work: formData.employment.able_to_work,
-                        employment_type: formData.employment.type
+                        employment_type: formData.employment.type || null
                     }
                 }: {}),
                 // education status: only if they're part of community group
@@ -279,7 +280,8 @@
                         year_start: formData.educ.year_start,
                         education_type: formData.educ.type,
                         year_end: formData.educ.year_end,
-                        grade_level: formData.educ.grade_level
+                        grade_level: formData.educ.grade_level,
+                        student_status_type: formData.educ.status
                     }
                 }: {})
 
