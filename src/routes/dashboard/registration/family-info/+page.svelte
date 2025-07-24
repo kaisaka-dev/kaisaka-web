@@ -266,7 +266,7 @@
 </section>
 
 <section style="text-align: center;">
-	<button onclick={() => location.href = 'child'}>Back</button>
+	<button onclick={() => goto('child')}>Back</button>
 
 	<button class="green" onclick="{handleSubmit}">Submit</button>
 </section>

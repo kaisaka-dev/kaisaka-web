@@ -87,6 +87,8 @@
             com_year: thisYear
         }
     })
+    console.log(data.pastFormData)
+    formData = data.pastFormData.formData
 
 
     // returns true if the year is within the range of this year-100 to this year
@@ -97,9 +99,6 @@
     function schoolYearValid(year: number) {
         return year >= thisYear-100 && year <= thisYear+100;
     }
-
-
-    let educType = $state("");
 
 
 
