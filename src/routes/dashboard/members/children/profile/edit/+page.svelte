@@ -70,11 +70,11 @@
 
     let selectedIndex: number = 0
 
-    for(let i = 0; i < data.child?.educationHistory.length; i++){
+    for(let i = 0; i < data.child?.educationHistory?.length; i++){
         educHistory.push({
-            Educationtype: data.child.educationHistory[i]?.education_type,
-            Educationlevel: data.child.educationHistory[i]?.grade_level,
-            Educationstatus: data.child.educationHistory[i]?.student_status_type,
+            Educationtype: data.child?.educationHistory[i]?.education_type,
+            Educationlevel: data.child?.educationHistory[i]?.grade_level,
+            Educationstatus: data.child?.educationHistory[i]?.student_status_type,
             yearStart: data.child?.educationHistory[i]?.year_start,
             yearEnd: data.child?.educationHistory[i]?.year_end,
             isNew:false,
@@ -83,9 +83,9 @@
         })
 
         displayEducHistory.push({
-            Educationtype: data.child.educationHistory[i]?.education_type,
-            Educationlevel: data.child.educationHistory[i]?.grade_level,
-            Educationstatus: data.child.educationHistory[i]?.student_status_type,
+            Educationtype: data.child?.educationHistory[i]?.education_type,
+            Educationlevel: data.child?.educationHistory[i]?.grade_level,
+            Educationstatus: data.child?.educationHistory[i]?.student_status_type,
             yearStart: data.child?.educationHistory[i]?.year_start,
             yearEnd: data.child?.educationHistory[i]?.year_end,
             isNew:false,
@@ -96,11 +96,11 @@
         displaySchoolYear.push(String(displayEducHistory[i].yearStart))
     }
 
-    let educType: string = displayEducHistory[0].Educationtype
-    let educStatus: string = displayEducHistory[0].Educationstatus
-    let educLevel: string = displayEducHistory[0].Educationlevel
-    let yearStart: number = displayEducHistory[0].yearStart
-    let yearEnd: number = displayEducHistory[0].yearEnd
+    let educType: string = displayEducHistory[0]?.Educationtype
+    let educStatus: string = displayEducHistory[0]?.Educationstatus
+    let educLevel: string = displayEducHistory[0]?.Educationlevel
+    let yearStart: number = displayEducHistory[0]?.yearStart
+    let yearEnd: number = displayEducHistory[0]?.yearEnd
 
 
     let hasPWD: boolean = data.child?.pwd?.has;
@@ -295,7 +295,7 @@
         employmentType:"",
         educationtype: "",
         educationlvl: "",
-        educationstatus: "",
+        educstatus: "",
         yearstart: "",
     }
 
@@ -322,11 +322,12 @@
          errors.admissionDate = admissionDate.trim() === "" ? "Required" : ""
 
 
-        console.log(educStatus)
+
         errors.educationtype = educType.trim() === "" ? "Required" : ""
         errors.educationlvl = educLevel.trim() === "" ? "Required" : ""
-        errors.educationstatus = !educStatus === null ? "Required" : ""
+        errors.educstatus = !educStatus ? "Required" : ""
         errors.yearstart = yearStart == null ? "Required" : ""
+
 
 
         for (const error of Object.values(errors)) {
@@ -391,7 +392,6 @@
 
 
     function updateField(index:number){     
-        console.log(index)
             educType = displayEducHistory[index].Educationtype
             educLevel = displayEducHistory[index].Educationlevel
             educStatus = displayEducHistory[index].Educationstatus
@@ -457,8 +457,7 @@
 
     
         async function editData(): Promise<void> {
-            if(validateForm()) {
-
+           if(validateForm()) {
             //PERSONAL INFORMATION EDITS BEGIN HERE
             const memberres = await fetch('/api/members', {
             method: "PUT",
@@ -966,10 +965,11 @@
             {#each displaySchoolYear as year}
             <option> {year}</option>
             {/each}
-        </select></div>
+        </select>
+        </div>
         <div class = "mt-3"> <Select required msg = {errors.educationtype} label="Education Type:" bind:value = {educType} options = {dropdownOptions.education_type} /></div>
         <div class = "mt-3"> <Select required msg = {errors.educationlvl} label="Education Level:" bind:value = {educLevel} options = {dropdownOptions.education_level}/></div>
-        <div class = "mt-3"> <Select required msg = {errors.educationstatus} label="Education Status:" bind:value = {educStatus} options = {dropdownOptions.education_status}/> </div>
+        <div class = "mt-3"> <Select required msg = {errors.educstatus} label="Education Status:" bind:value = {educStatus} options = {dropdownOptions.education_status}/> </div>
         <div class = "mt-3"> <Input required msg = {errors.yearstart} type = "number" label="School Year Start:" bind:value = {yearStart}/> </div>
         <div class = "mt-3"> <Input type = "number" label="School Year End:" bind:value = {yearEnd}/> </div>
         {:else}
