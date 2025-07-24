@@ -9,6 +9,7 @@
 	import { get } from 'svelte/store';
 	import { goto } from '$app/navigation';
 	import { page } from '$app/state';
+	import type { Caregiver, CaregiverError } from './+page.server.js';
 
 	/**
 	 * note: /dashboard/registration and /registration is just the same, the constant is to hide
@@ -20,66 +21,6 @@
 	const childRegData = get(childFormData)
 	console.log(childRegData);
 
-	/**
-	 * object type used to store information about a new caregiver.
-	 */
-	type NewCaregiver = {
-		type: 'new';
-		firstName: string;
-		lastName: string;
-		bday: string;
-		sex: string;
-		contactNo: string;
-		fbLink?: string;
-		email?: string;
-		address: string;
-		brgy: string;
-		occupation: string;
-		relationship: string;
-		communityGrp_id: number;
-		communityYr: number;
-	};
-
-	/**
-	 * object type used to store information about a linked caregiver
-	 */
-	type LinkedCaregiver = {
-		// info about the search
-		type: 'linked';
-		firstName: string;
-		lastName: string;
-		contactNo: string;
-
-		// info of a list of family members which are linked to the searched family member
-		infoLinked: InfoLinked[];
-
-	};
-
-	/**
-	 * object type used to store information about the searched caregiver
-	 */
-	type InfoLinked = {
-		caregiver_id: string;
-		firstName: string;
-		lastName: string;
-		contactNo: string;
-		relationship: string;
-	}
-
-	type Caregiver =
-		| NewCaregiver
-		| LinkedCaregiver;
-
-	type CaregiverError =
-		| {			// for new caregivers
-		firstName: string;
-		lastName: string;
-		sex: string;
-		contactNo: string;
-		address: string;
-		brgy: string;
-	}				// for existing caregivers
-		| { msg: string };
 
 	let caregivers = $state<Caregiver[]>([
 		{
@@ -100,19 +41,16 @@
 		}
 	]); // initialize variable so that the page will have at least one caregiver
 
-	let caregiverErrors = $state<CaregiverError[]>(
-		caregivers.map((caregiver) => {
-			return caregiver.type === 'new'
-				? {
-					firstName: '',
-					lastName: '',
-					sex: '',
-					contactNo: '',
-					address: '',
-					brgy: ''
-				}
-				: { msg: '' };
-		})
+	let caregiverErrors = $derived<CaregiverError[]>(
+		caregivers.map(() => ({
+				firstName: '',
+				lastName: '',
+				sex: '',
+				contactNo: '',
+				address: '',
+				brgy: '',
+				msg: ''
+		}))
 	);
 
 	function addNewCaregiver() {
@@ -144,7 +82,8 @@
 				sex: '',
 				contactNo: '',
 				brgy: '',
-				address: ''
+				address: '',
+				msg: ''
 			}
 		];
 	}
@@ -165,17 +104,12 @@
 	 */
 	let linkedIndex = $derived(caregivers.findIndex(g => g.type === 'linked'));
 
-	// // will re-run whenever `caregivers` is changed
-	// $effect(() =>
-	// {
-	// 	console.log("linkedindex variable: ", linkedIndex)
-	// 	console.log(caregivers)
-	// })
-
+	// validates the caregiver form data
 	function validateForm(): boolean {
 		let isValid = true;
 
-		caregiverErrors = caregivers.map((caregiver, index) => {
+		caregiverErrors = caregivers.map((caregiver) => {
+			// ensures at least 1 existing family member
 			if (caregiver.type === 'linked') {
 				if (!caregiver.infoLinked || caregiver.infoLinked.length === 0) {
 					isValid = false;
@@ -189,7 +123,7 @@
 					sex: !caregiver.sex ? 'Required' : '',
 					contactNo: !caregiver.contactNo.trim() ? 'Required' : '',
 					address: !caregiver.address.trim() ? 'Required' : '',
-					brgy: !caregiver.brgy ? 'Required' : ''
+					brgy: !caregiver.brgy ? 'Required' : '',
 				};
 				if (Object.values(errors).some(msg => msg)) isValid = false;
 				return errors;
@@ -199,6 +133,7 @@
 		return isValid;
 	}
 
+	// called by handle submit whenever calling the POST api
 	async function safeFetch<T = any>(url: string, payload: any): Promise<T> {
 		const res = await fetch(url, {
 			method: 'POST',
@@ -212,72 +147,100 @@
 		return await res.json();
 	}
 
+	// handles the submission of both child-info and family-info
 	async function handleSubmit() {
 		try {
 			if (!validateForm()) {
 				goto('#family-info');    // scrolls to top
 				return;
 			}
-			// Insert address
+			console.log(childRegData)
+
+			// insert address
 			const addressData = await safeFetch('/api/addresses', childRegData.address);
 			console.log(addressData.message)
 			childRegData.member!.address_id = addressData.data.id;
 
-			// Insert member
+			// insert barangay
+			const barangayData = await safeFetch('/api/barangays', childRegData.barangay);
+			console.log(barangayData.message)
+			childRegData.member!.barangay_id = barangayData.data.id;
+
+			// insert member
 			const memberData = await safeFetch('/api/members', childRegData.member);
 			console.log(memberData.message)
 			const memberId = memberData.data.id;
 
 			var pwdId = null;
 
-			//insert PWD ID
+			// insert PWD ID
 			if(childRegData.pwd_id !== undefined){
 				const pwdIdData = await safeFetch('/api/pwd_ids', childRegData.pwd_id);
 				console.log(pwdIdData.message)
 				pwdId = pwdIdData.data.id;
 			}
 
-			// Insert child info
+			// insert child info
 			childRegData.child!.member_id = memberId;
 			childRegData.child!.pwd_id = pwdId;
 			const childData = await safeFetch('/api/children', childRegData.child);
 			console.log(childData.message)
 			const childId = childData.data.id;
 
-			// Insert education status
+			// insert education status
 			if(childRegData.education_status !== undefined) {
 				childRegData.education_status!.child_id = childId;
 				const eduStatusData = await safeFetch('/api/education_status', childRegData.education_status);
 				console.log(eduStatusData.message)
 			}
 
-			// Insert social protection status (for community group)
+			// insert social protection status (for community group)
 			if(childRegData.social_participation_com !== undefined) {
 				childRegData.social_participation_com!.child_id = childId;
-				console.log(childRegData.social_participation_com)
 				const socProtStatusDataCom = await safeFetch('/api/social_participation', childRegData.social_participation_com);
 				console.log(socProtStatusDataCom.message)
 			}
 
-			// Insert social participation status (for family life)
+			// insert social participation status (for family life)
 			if(childRegData.social_participation_fam !== undefined) {
 				childRegData.social_participation_fam!.child_id = childId;
 				const socProtStatusDataFam = await safeFetch('/api/social_participation', childRegData.social_participation_fam);
 				console.log(socProtStatusDataFam.message)
 			}
 
-			// Insert employment status
+			// insert employment status
 			if(childRegData.employment_status !== undefined) {
 				childRegData.employment_status!.member_id = memberId;
 				const empStatusData = await safeFetch('/api/employment_status', childRegData.employment_status);
 				console.log(empStatusData.message)
 			}
 
+			// for family
+
+			// if linked family exists
+			if (linkedIndex !== -1) {
+				// add the child to the existing family
+				// add the other caregivers to the existing family
+			} else {
+				// create a new family
+
+				// add the child to the newly created family
+
+				// add all the caregivers to the newly created family
+			}
+
+
 			console.log('All data successfully inserted!');
+			alert('All data sucessfully inserted!')
+
+			if (staffView) goto('/dashboard');			// back to dashboard if previous view is dashboard
+			else goto('/'); // back to main page if previous view is main page
+
 		} catch (err) {
 			console.error('Submission failed:', err);
+			alert('Submission failed')
 		}
-		goto('/dashboard');			// temporary fix for usability testing purposes
+
 
 	}
 </script>
