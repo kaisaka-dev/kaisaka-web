@@ -228,6 +228,7 @@ try{
             educationArray.push(educationHistory[i])
         }
     }
+    
 
     let child: childInformation = {
         id: childRecord.id,
