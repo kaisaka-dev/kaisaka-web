@@ -1,12 +1,21 @@
 import { annualProgramModel } from '$lib/models/annualProgramModel.js';
 import { ChildrenModel } from '$lib/models/childrenModel.js';
 import { InterventionModel } from '$lib/models/interventionModel.js';
-import { getLogSidecar } from '$lib/server/logging/log-sidecar.js';
+import { createLogSidecar, getLogSidecar } from '$lib/server/logging/log-sidecar.js';
 import type { QueryConfigurationBuilder, tableRow } from '$lib/types/manager.js';
 import { type Worksheet } from 'exceljs';
 import type { report_body } from '../../../../routes/api/reports/target_cwds/+server.js';
 import { reportConversion } from '../types/report-conversion.js';
 import { ReportGenerator } from './reportTemplate.js';
+
+createLogSidecar({
+  maxFileSize: '10m',
+  maxFiles: '1d',
+  logDir: './logs',
+  enableSupabaseShipping: true,
+  logLevel: 'info',
+  compressionEnabled: true
+});
 
 /** 
  * Returns an ISO date range representing birthdays for a given age range.
