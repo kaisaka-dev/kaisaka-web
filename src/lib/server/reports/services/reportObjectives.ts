@@ -7,7 +7,7 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 export class HealthReportService {
-  static async generate(): Promise<Buffer> {
+  static async generate(): Promise<ExcelJS.Buffer> {
     // Define the templates to merge for health report
     const templateDir = path.resolve(__dirname, '../templates/');
     const templateFiles = [
@@ -19,6 +19,7 @@ export class HealthReportService {
     
     // Load all template workbooks
     const workbooks: ExcelJS.Workbook[] = [];
+    
     for (const fileName of templateFiles) {
       const workbook = new ExcelJS.Workbook();
       await workbook.xlsx.readFile(path.join(templateDir, fileName));

@@ -2,7 +2,7 @@
 import { ExcelMerger } from '$lib/server/reports/merger/report-merger.js';
 import { ReportGeneratorAccessToSocialProtection } from '$lib/server/reports/services/reportAccessToSocialProtection.js';
 import { ReportGeneratorInTheProgram } from '$lib/server/reports/services/reportIntheProgram.js';
-import { ReportGeneratorLivelihoodInformation } from '$lib/server/reports/services/reportLivInfo.js';
+import { ReportGeneratorLivelihoodInformation } from '$lib/server/reports/services/reportLivelihoodInformatonInfo.js';
 import type { RequestEvent } from '@sveltejs/kit';
 import ExcelJS from 'exceljs';
 import path from 'path';

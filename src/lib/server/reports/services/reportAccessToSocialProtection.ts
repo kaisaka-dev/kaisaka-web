@@ -114,14 +114,14 @@ export class ReportGeneratorAccessToSocialProtection extends ReportGenerator {
    */
   static async generateData(startYear: number, endYear: number, worksheet: Worksheet) {
     await Promise.all([
-      await this.MembershipCardParticipationDataLayer(startYear, endYear, worksheet),
-      await this.DisabilityParticipationDataLayer(startYear, endYear, worksheet)
+      this.MembershipCardParticipationDataLayer(startYear, endYear, worksheet),
+      this.DisabilityParticipationDataLayer(startYear, endYear, worksheet)
     ])
   }
 
   static async MembershipCardParticipationDataLayer(startYear:number, endYear:number, worksheet: Worksheet){
-    await Promise.all(MembershipCardParticipation.flatMap(async(card, cardIndex)=>{
-      await Promise.all(disabilities.flatMap(async(disability, disabilityIndex)=>{
+    Promise.all(MembershipCardParticipation.map(async(card, cardIndex)=>{
+      Promise.all(disabilities.map(async(disability, disabilityIndex)=>{
         const writer = async (sex: string, sexIndex: number) => {
           const reportParams = {
             ...card,
@@ -138,8 +138,8 @@ export class ReportGeneratorAccessToSocialProtection extends ReportGenerator {
   }
 
   static async DisabilityParticipationDataLayer(startYear:number, endYear:number, worksheet: Worksheet){
-    await Promise.all(DisabilityParticipationDataLayer.flatMap(async(age_min, ageIndex)=>{
-      await Promise.all(disabilities.flatMap(async(disability, disabilityIndex)=>{
+    Promise.all(DisabilityParticipationDataLayer.flatMap(async(age_min, ageIndex)=>{
+      Promise.all(disabilities.flatMap(async(disability, disabilityIndex)=>{
         const writer = async (sex: string, sexIndex: number) => {
           const reportParams = {...age_min, ageIndex, disability, disabilityIndex, sex: sex, sexIndex: sexIndex, cardIndex: 0 } as AccessToSocialProtectionHeaderParams
 
@@ -355,7 +355,5 @@ export class ReportGeneratorAccessToSocialProtection extends ReportGenerator {
     const cell = row.getCell(colAddress)
     cell.value = value
     await row.commit()
-  } 
-
-
+  }
 }

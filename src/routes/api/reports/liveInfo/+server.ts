@@ -1,5 +1,5 @@
 
-import { ReportGeneratorLivelihoodInformation } from '$lib/server/reports/services/reportLivInfo.js';
+import { ReportGeneratorLivelihoodInformation } from '$lib/server/reports/services/reportLivelihoodInformatonInfo.js';
 import { error } from '@sveltejs/kit';
 
 export async function GET() {

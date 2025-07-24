@@ -40,7 +40,7 @@ const ageGroups = [
       { min: 12, max: 17,   label: '12-17 years' },
       { min: 18, max: 25,   label: '18-25 years' },
       { min: 26, max: null, label: '26+ years'   }
-    ];
+];
 
 const disabilities = [
   { 
@@ -131,8 +131,8 @@ export class ReportGeneratorInTheProgram extends ReportGenerator {
    */
   static async generateData(startYear: number, endYear: number, worksheet: Worksheet, mergeOffset: number = 0) {
     await Promise.all([
-      await this.writeCWDLayer(startYear, endYear, worksheet, mergeOffset),
-      await this.writeDataLayer(worksheet, mergeOffset)
+      this.writeCWDLayer(startYear, endYear, worksheet, mergeOffset),
+      this.writeDataLayer(worksheet, mergeOffset)
     ])
     await this.getReportSummary(worksheet, mergeOffset)
     await this.getReportDifference(worksheet, mergeOffset)
@@ -295,9 +295,9 @@ export class ReportGeneratorInTheProgram extends ReportGenerator {
    * @param {Worksheet} worksheet - ExcelJS worksheet.
    */
   static SexReportLayer = async (reportParam: InTheProgramHeaderParams, worksheet: Worksheet, mergeOffset: number) => {
-    await Promise.all(genders.map(async (sex, sexIndex) => {
+    Promise.all(genders.map(async (sex, sexIndex) => {
       const paramClone = { ...reportParam, sex, sexIndex };
-      await this.ReportQueryWriter(paramClone, worksheet, mergeOffset);
+      this.ReportQueryWriter(paramClone, worksheet, mergeOffset);
     }));
   }
   
@@ -308,9 +308,9 @@ export class ReportGeneratorInTheProgram extends ReportGenerator {
    * @param {Worksheet} worksheet - ExcelJS worksheet.
    */
   static DisabilityReportLayer = async (reportParam: InTheProgramHeaderParams, worksheet: Worksheet, mergeOffset: number) => {
-    await Promise.all(disabilities.map(async (disability, disabilityIndex) => {
+    Promise.all(disabilities.map(async (disability, disabilityIndex) => {
       const paramClone = { ...reportParam, disability, disabilityIndex };
-      await this.SexReportLayer(paramClone, worksheet, mergeOffset);
+      this.SexReportLayer(paramClone, worksheet, mergeOffset);
     }));
   }
   
@@ -320,9 +320,9 @@ export class ReportGeneratorInTheProgram extends ReportGenerator {
    * @param {Worksheet} worksheet - ExcelJS worksheet.
    */
   static writeDataLayer = async (worksheet: Worksheet, mergeOffset: number) => {
-    await Promise.all(ageGroups.map(async (ageGroup, ageIndex) => {
+    Promise.all(ageGroups.map(async (ageGroup, ageIndex) => {
       const paramClone = { ageGroup, ageIndex } as InTheProgramHeaderParams;
-      await this.DisabilityReportLayer(paramClone, worksheet, mergeOffset);
+      this.DisabilityReportLayer(paramClone, worksheet, mergeOffset);
     }));
   }
 
@@ -334,8 +334,8 @@ export class ReportGeneratorInTheProgram extends ReportGenerator {
   static async getReportSummary(worksheet: Worksheet, mergeOffset: number){
     const summaryOffsets = [0, 4]
     await Promise.all(
-      summaryOffsets.flatMap(async (summaryOffset)=>{
-        await this.genderProgramMapping(async (sexIndex: number, programColumnOffset: number) => this.writeTwoSums(worksheet, programColumnOffset, sexIndex, summaryOffset, mergeOffset))
+      summaryOffsets.map(async (summaryOffset)=>{
+        this.genderProgramMapping(async (sexIndex: number, programColumnOffset: number) => this.writeTwoSums(worksheet, programColumnOffset, sexIndex, summaryOffset, mergeOffset))
       }
     ))
   }
@@ -357,13 +357,13 @@ export class ReportGeneratorInTheProgram extends ReportGenerator {
   static async genderProgramMapping(writer: (sexIndex: number, programColumnOffset: number)=>void){
     const programOffsetMapping = async (sexIndex: number) => {
       const programColumnOffsets = [0, 1, 2, 4]
-      await Promise.all( programColumnOffsets.flatMap(async (programColumnOffset)=>{
-          await writer(sexIndex, programColumnOffset)
+      Promise.all( programColumnOffsets.map(async (programColumnOffset)=>{
+          writer(sexIndex, programColumnOffset)
       }))
     }
     
     await Promise.all(genders.map(async (sex, sexIndex) => {
-      await programOffsetMapping(sexIndex)
+      programOffsetMapping(sexIndex)
     }))
   }
 

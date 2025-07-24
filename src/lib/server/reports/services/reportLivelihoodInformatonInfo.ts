@@ -27,9 +27,7 @@ const disabilities = [
   { 
     ilike: '',
     label: 'All'
-  },
-  
-  { 
+  }, { 
     ilike: 'Down Syndrome',
     label: 'Down Syndrome'
   }
@@ -45,7 +43,6 @@ interface ParticipationOfCaregiversHeaders {
   laborMarketAccessIndex: string,
   disability: typeof disabilities[number],
   disabilityIndex: number,
-
 };
 
 interface AccessToLaborMarket {
@@ -129,19 +126,18 @@ export class ReportGeneratorLivelihoodInformation extends ReportGenerator {
     logger.info('Started report for In the Program');
     const {data, error} = await this.generateWorkbook('TEMPLATE_D2-LivInfo.xlsx');
 
-    if (error)
-      throw error
+    if (error) throw error
     await this.generateData(startYear, endYear, data.sheet);
 
-    return await data.workbook.xlsx.writeBuffer();
+    return data.workbook.xlsx.writeBuffer();
   }
 
   static async generateWorkbookReport(startYear: number, endYear: number) {
     logger.info('Started report for In the Program');
     const {data, error} = await this.generateWorkbook('TEMPLATE_D2-LivInfo.xlsx');
 
-    if (error)
-      throw error
+    if (error) throw error
+    
     await this.generateData(startYear, endYear, data.sheet); // 233 for reference
 
     return data.workbook
@@ -154,106 +150,96 @@ export class ReportGeneratorLivelihoodInformation extends ReportGenerator {
    */
   static async generateData(startYear: number, endYear: number, worksheet: Worksheet) {
     await Promise.all([
-      await this.ParticipationOfCaregivers(startYear, endYear, worksheet),
-      await this.AccessToLabourMarket(startYear, endYear, worksheet)
+      this.ParticipationOfCaregivers(startYear, endYear, worksheet),
+      this.AccessToLabourMarket(startYear, endYear, worksheet)
     ])
     
     logger.info("Done")
   }
 
   static async ParticipationOfCaregivers(startYear:number, endYear:number, worksheet: Worksheet){
-    await Promise.all(groupMembership.flatMap(async (groupMembership, groupMembershipId) => {
-      await Promise.all(disabilities.flatMap(async (disability, disabilityId) => {
-          const rowAddress = 5 + groupMembershipId * 2 + disabilityId;
-          
-          const incomeGeneratingActivities = async () => {
-              const cellAddress = 5
-              
-              await Promise.all([
-                await this.writeResultToWorksheet(
-                  ParticipationOfCaregiversSelectClause, 
-                  {}, 
-                  {laborMarketAccess:  groupMembership.label, disability, } as ParticipationOfCaregiversHeaders, 
-                  rowAddress, 
-                  cellAddress, 
-                  worksheet
-                ),
-                await this.writeResultToWorksheet(
-                  ParticipationOfCaregiversSelectClause, 
-                  {}, 
-                  {laborMarketAccess:  groupMembership.label, disability, } as ParticipationOfCaregiversHeaders, 
-                  rowAddress, 
-                  cellAddress + 1, 
-                  worksheet
-                ),
-              ])
-            }
-          const communityGroups = async () => {
-            const cellAddress = 10
-            await Promise.all([
-              await this.writeResultToWorksheet(
-                ParticipationOfCaregiversSelectClause, 
-                {}, 
-                {laborMarketAccess:  groupMembership.label, disability, } as ParticipationOfCaregiversHeaders, 
-                rowAddress, 
-                cellAddress, 
-                worksheet
-              ),
-              await this.writeResultToWorksheet(
-                ParticipationOfCaregiversSelectClause, 
-                {}, 
-                {laborMarketAccess:  groupMembership.label, disability, } as ParticipationOfCaregiversHeaders, 
-                rowAddress, 
-                cellAddress + 1, 
-                worksheet
-              ),
-            ])
-          }
+    await Promise.all(groupMembership.map(async (groupMembership, groupMembershipId) => {
+      Promise.all(disabilities.map(async (disability, disabilityId) => {
+        const rowAddress = 5 + groupMembershipId * 2 + disabilityId;
+        
+        const incomeGeneratingActivities = async () => {
+          const cellAddress = 5
           
           await Promise.all([
-            await incomeGeneratingActivities(),
-            await communityGroups()
+            this.writeResultToWorksheet(
+              ParticipationOfCaregiversSelectClause, 
+              {}, 
+              {laborMarketAccess:  groupMembership.label, disability, } as ParticipationOfCaregiversHeaders, 
+              rowAddress, 
+              cellAddress, 
+              worksheet
+            ),
+            this.writeResultToWorksheet(
+              ParticipationOfCaregiversSelectClause, 
+              {}, 
+              {laborMarketAccess:  groupMembership.label, disability, } as ParticipationOfCaregiversHeaders, 
+              rowAddress, 
+              cellAddress + 1, 
+              worksheet
+            ),
           ])
-        })
-      )
-      })
-    )
+        }
+        const communityGroups = async () => {
+          const cellAddress = 10
+          await Promise.all([
+            this.writeResultToWorksheet(
+              ParticipationOfCaregiversSelectClause, 
+              {}, 
+              {laborMarketAccess:  groupMembership.label, disability, } as ParticipationOfCaregiversHeaders, 
+              rowAddress, 
+              cellAddress, 
+              worksheet
+            ),
+            this.writeResultToWorksheet(
+              ParticipationOfCaregiversSelectClause, 
+              {}, 
+              {laborMarketAccess:  groupMembership.label, disability, } as ParticipationOfCaregiversHeaders, 
+              rowAddress, 
+              cellAddress + 1, 
+              worksheet
+            ),
+          ])
+        }
+        
+        await Promise.all([
+          incomeGeneratingActivities(),
+          communityGroups()
+        ])
+      }))
+    }))
   }
 
   static async AccessToLabourMarket(startYear:number, endYear:number, worksheet: Worksheet){
-    await Promise.all(
-      laborMarketAccess.flatMap(async (laborMarket, laborMarketId) => {
-        await Promise.all(
-        disabilities.flatMap(async (disability, disabilityId) => {
-          await Promise.all(
-          wageTypes.flatMap(async (wageType)=>{
-            await Promise.all(
-            sexes.flatMap(async (sex, sexIndex)=>{
-              const rowAddress = 14 + laborMarketId * 2 + disabilityId;
-              const cellAddress = 7 + ((wageType.offset == 0) ? wageType.offset + sexIndex * 2 : wageType.offset + sexIndex);
-              
-              await this.writeResultToWorksheet(
-                AccessToLabourMarketSelectClause, 
-                {}, 
-                {
-                  groupMembership:  laborMarket.label, 
-                  disability, 
-                  wageType, 
-                  sex, 
-                  sexIndex
-                } as AccessToLaborMarket, 
-                rowAddress, 
-                cellAddress + 1, 
-                worksheet
-              )
-            })
+    await Promise.all(laborMarketAccess.map(async (laborMarket, laborMarketId) => {
+      Promise.all(disabilities.map(async (disability, disabilityId) => {
+        Promise.all(wageTypes.map(async (wageType)=>{
+          Promise.all(sexes.map(async (sex, sexIndex)=>{
+            const rowAddress = 14 + laborMarketId * 2 + disabilityId;
+            const cellAddress = 7 + ((wageType.offset == 0) ? wageType.offset + sexIndex * 2 : wageType.offset + sexIndex);
+            
+            await this.writeResultToWorksheet(
+              AccessToLabourMarketSelectClause, 
+              {}, 
+              {
+                groupMembership:  laborMarket.label, 
+                disability, 
+                wageType, 
+                sex, 
+                sexIndex
+              } as AccessToLaborMarket, 
+              rowAddress, 
+              cellAddress + 1, 
+              worksheet
             )
-          })
-        )
-        })
-        )
-      })
-    )
+          }))
+        }))
+      }))
+    }))
   }
 
   /**
@@ -292,7 +278,6 @@ export class ReportGeneratorLivelihoodInformation extends ReportGenerator {
     modelSelectClause: string, 
     modelFilter: QueryConfigurationBuilder
   ): Promise<cellResults> {
-
     const cell_result = {
       count: 0,
       error: ""
@@ -307,17 +292,6 @@ export class ReportGeneratorLivelihoodInformation extends ReportGenerator {
       cell_result.error = JSON.stringify(error)
     } 
     return cell_result
-  }
-
-  /**
-   * Executes a writer function for each gender and program column combination.
-   *
-   * @param {(sexIndex: number, programColumnOffset: number) => void} writer - Function to run per combination.
-   */
-  static async genderProgramMapping(writer: (sex: string, sexIndex: number)=>void){
-    await Promise.all(sexes.map(async (sex, sexIndex) => {
-      await writer(sex, sexIndex)
-    }))
   }
 
   /**
