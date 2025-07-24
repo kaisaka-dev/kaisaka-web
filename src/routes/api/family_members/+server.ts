@@ -2,38 +2,73 @@ import { FamilyMembersModel } from "$lib/models/FamilyMembersModel.js";
 import { parseJoinParams } from "$lib/types/joining.js";
 import { error, json, type RequestHandler } from "@sveltejs/kit";
 
+/**
+ * FAMILY_MEMBERS API - How to Use
+ * 
+ * GET - Retrieve family member records
+ * • Get all family members: GET /api/family_members
+ * • Get by member ID: GET /api/family_members?member_id=uuid
+ * • Get by family ID: GET /api/family_members?family_id=uuid
+ * • Get with joins (legacy): GET /api/family_members?id=uuid&type=memberid&select=...
+ * 
+ * POST - Create family member relationship
+ * • Required: family_id, member_id, is_child (boolean)
+ * • Optional: relationship_type
+ * 
+ * PUT - Update family member relationship
+ * • Required: family_id, member_id
+ * • Optional: is_child, relationship_type
+ * 
+ * DELETE - Remove family member relationship
+ * • Required: family_id, member_id
+ */
+
 export const GET: RequestHandler = async ({ url }) => {
   const id = url.searchParams.get('id');
   const type = url.searchParams.get('type');
+  const member_id = url.searchParams.get('member_id');
+  const family_id = url.searchParams.get('family_id');
   const joinParams = parseJoinParams(url);
   
-  if (!id || !joinParams.select || !type) {
-    throw error(400, 'Missing id, type, or select query param');
-  }
-
-  let family_member;
-
   try {
-    switch (type) {
-      case 'memberid':
-        family_member = await FamilyMembersModel.instance.getMultipleJoin(joinParams.select, { eq: { member_id: id } });
-        break;
-      case 'familyid':
-        family_member = await FamilyMembersModel.instance.getMultipleJoin(joinParams.select, { eq: { family_id: id } });
-        break;
-      default:
-        throw error(400, 'Invalid type parameter');
+    let family_member;
+
+    // Simple getters (new functionality)
+    if (member_id && !type && !joinParams.select) {
+      // Get all family relationships for a member
+      family_member = await FamilyMembersModel.instance.findByMemberId(member_id);
+    } else if (family_id && !type && !joinParams.select) {
+      // Get all members in a family
+      family_member = await FamilyMembersModel.instance.findByFamilyId(family_id);
+    } else if (!id && !type && !member_id && !family_id) {
+      // Get all family member relationships
+      family_member = await FamilyMembersModel.instance.findMany();
+    } 
+    // Legacy complex join functionality
+    else if (id && joinParams.select && type) {
+      switch (type) {
+        case 'memberid':
+          family_member = await FamilyMembersModel.instance.getMultipleJoin(joinParams.select, { eq: { member_id: id } });
+          break;
+        case 'familyid':
+          family_member = await FamilyMembersModel.instance.getMultipleJoin(joinParams.select, { eq: { family_id: id } });
+          break;
+        default:
+          throw error(400, 'Invalid type parameter for legacy joins');
+      }
+    } else {
+      throw error(400, 'Invalid query parameters. Use member_id, family_id, or legacy id+type+select combination');
     }
 
-    console.log('in API: ', family_member)
+    console.log('Family members API result:', family_member ? (Array.isArray(family_member) ? family_member.length : 1) : 'null', 'items');
 
     if (!family_member) {
-      throw error(404, 'Family Member not found');
+      return json({ data: [] });
     }
 
-    return json(family_member);
+    return json({ data: family_member });
   } catch (err) {
-    console.error('Error fetching family member:', err);
+    console.error('Error fetching family members:', err);
     throw error(500, 'Internal Server Error');
   }
 };

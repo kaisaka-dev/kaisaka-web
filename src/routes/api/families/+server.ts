@@ -1,3 +1,22 @@
+/**
+ * FAMILIES API - How to Use
+ * 
+ * GET - Retrieve family records
+ * • Get all families: GET /api/families
+ * • Get family by ID: GET /api/families?id=family-uuid
+ * • Get surnames only: GET /api/families?type=surnames&id=family-uuid
+ * • Get complete family data: GET /api/families?id=family-uuid (default behavior)
+ * 
+ * POST - Create new family record
+ * • No request body required - family is auto-generated with current timestamp
+ * • Returns: { "message": "Family created successfully", "data": { "id": "uuid", "date_created": "ISO-string" } }
+ * • Data types: id (string/UUID), date_created (string/ISO timestamp)
+ * 
+ * PUT - Update family record
+ * • Not supported - families table only contains id and date_created fields
+ * • Returns 400 error with explanation
+ */
+
 import { FamiliesModel } from "$lib/models/familiesModel.js";
 import { error, json, type RequestHandler } from "@sveltejs/kit";
 
