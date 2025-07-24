@@ -4,9 +4,11 @@
 	import Select from '$components/input/Select.svelte';
 	import SearchBtn from '$components/styled-buttons/SearchBtn.svelte';
 	import Validation from '$components/text/Validation.svelte';
+	import type { Caregiver, CaregiverError, InfoLinked } from './+page.server.js';
 
-	export let formData;
-	export let errors;
+
+	export let formData: Caregiver;
+	export let errors: CaregiverError;
 	export let index: number;
 	export let deleteCaregiver: (index: number) => void;
 	export let linkedIndex: number;
@@ -16,30 +18,30 @@
 	let disabled = false;
 
 
-	const linkedCaregivers = [
+	const linkedCaregivers: InfoLinked[] = [
 		{
-			caregiver_id: '0',
+			member_id: '0',
 			firstName: 'Gideon',
 			lastName: 'Chua',
 			contactNo: '0912 123 1234',
 			relationship: ''
 		},
 		{
-			caregiver_id: '1',
+			member_id: '1',
 			firstName: 'Gabrielle',
 			lastName: 'Chua',
 			contactNo: '0912 123 1234',
 			relationship: ''
 		},
 		{
-			caregiver_id: '2',
+			member_id: '2',
 			firstName: 'Graciella',
 			lastName: 'Chua',
 			contactNo: '0912 123 1234',
 			relationship: ''
 		},
 		{
-			caregiver_id: '3',
+			member_id: '3',
 			firstName: 'Gian',
 			lastName: 'Chua',
 			contactNo: '0912 123 1234',
@@ -52,8 +54,8 @@
 	 */
 	function handleSearch() {
 		if (formData.type === 'linked') {
-			const hasName = formData.firstName.trim() && formData.lastName.trim();
-			const hasContact = formData.contactNo.trim();
+			const hasName = Boolean(formData.firstName.trim()) && Boolean(formData.lastName.trim());
+			const hasContact = Boolean(formData.contactNo.trim());
 			const incompleteFields = !hasName && !hasContact
 			const found = true;
 
@@ -61,6 +63,7 @@
 
 			if (!incompleteFields && found) {
 				showtable = hasName || hasContact;
+				formData.family_id = "06f137dd-27b9-4efc-a917-e93c0cb9db1e"; 	// TODO: connect it to the api
 				formData.infoLinked = [...linkedCaregivers];
 
 				// console.log(linkedCaregivers.length)
@@ -75,11 +78,6 @@
 			showtable = false;
 		}
 	}
-	//
-	// /**
-	//  * watching for radio button changes, update the parent array's data type into the updated caregiver type
-	//  */
-	// $: formData.type = caregivertype;
 
 	/**
 	 * one member can only join one family, this will disable all the buttons so that they will be unable
@@ -93,6 +91,7 @@
 			// change formData into NewCaregiver instead of LinkedCaregiver data type
 			formData = {
 				type: 'linked',
+				family_id: '',
 				firstName: formData.firstName,
 				lastName: formData.lastName,
 				contactNo: formData.contactNo,
