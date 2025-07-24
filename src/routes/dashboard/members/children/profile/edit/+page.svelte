@@ -5,6 +5,7 @@
     import Check from '$components/input/Checkbox.svelte'
     import Select from '$components/input/Select.svelte'
     import { goto } from '$app/navigation';
+    import { dropdownOptions } from '$lib/types/options.js'
 	
 
     export let data;
@@ -23,12 +24,6 @@
     let disabilityNature: string = data.child?.disabilityNature || ""
     let admissionDate: string = data.child?.admissionDate
     let remarks: string = data.child?.remarks || ""
-
-    let educType: string = "N/A"
-    let educStatus: string = "N/A"
-    let educLevel: string = "N/A"
-    let yearStart: number 
-    let yearEnd: number 
 
     let existingFamily: {
         firstName: string,
@@ -73,7 +68,7 @@
     let displayEducHistory: educType[] = []
     let displaySchoolYear: string[] = []
 
-    let selectedIndex: number
+    let selectedIndex: number = 0
 
     for(let i = 0; i < data.child?.educationHistory.length; i++){
         educHistory.push({
@@ -100,6 +95,12 @@
 
         displaySchoolYear.push(String(displayEducHistory[i].yearStart))
     }
+
+    let educType: string = displayEducHistory[0].Educationtype
+    let educStatus: string = displayEducHistory[0].Educationstatus
+    let educLevel: string = displayEducHistory[0].Educationlevel
+    let yearStart: number = displayEducHistory[0].yearStart
+    let yearEnd: number = displayEducHistory[0].yearEnd
 
 
     let hasPWD: boolean = data.child?.pwd?.has;
@@ -279,21 +280,7 @@
     "Multiple Disability",
     ];
 
-    const educ_options = [
-        "",
-        'Inclusive',
-        'Special',
-        'Nonformal',
-        'Integrated'
-    ]
 
-    const student_options = [
-        "",
-        'past_student',
-        'enrolled',
-        'dropped_out',
-        'completed'
-    ]
 
     let errors = {
         firstName: "",
@@ -305,7 +292,11 @@
         disabilityCat:"",
         disabilityNat: "",
         admissionDate: "",
-        employmentType:""
+        employmentType:"",
+        educationtype: "",
+        educationlvl: "",
+        educationstatus: "",
+        yearstart: "",
     }
 
     //below are functions needed for the page
@@ -331,6 +322,13 @@
          errors.admissionDate = admissionDate.trim() === "" ? "Required" : ""
 
 
+        console.log(educStatus)
+        errors.educationtype = educType.trim() === "" ? "Required" : ""
+        errors.educationlvl = educLevel.trim() === "" ? "Required" : ""
+        errors.educationstatus = !educStatus === null ? "Required" : ""
+        errors.yearstart = yearStart == null ? "Required" : ""
+
+
         for (const error of Object.values(errors)) {
             if (error) {
                 console.log("error found: ", error)
@@ -338,6 +336,8 @@
                 return false;
             }
         }
+
+        
 
 
         return true
@@ -390,25 +390,36 @@
     }
 
 
+    function updateField(index:number){     
+        console.log(index)
+            educType = displayEducHistory[index].Educationtype
+            educLevel = displayEducHistory[index].Educationlevel
+            educStatus = displayEducHistory[index].Educationstatus
+            yearStart = displayEducHistory[index].yearStart
+            yearEnd = displayEducHistory[index].yearEnd
+    
+
+            selectedIndex = index
+    }
+
+
     function addEducRecord(){
         educHistory.push({
              Educationtype: "",
              Educationlevel: "",
              Educationstatus: "",
              yearStart: new Date().getFullYear(),
-             yearEnd: new Date().getFullYear(),
+             yearEnd: null,
              isNew:true,
              isDeleted: false
         })
-
-        console.log(educHistory)
 
         displayEducHistory.push({
              Educationtype: "",
              Educationlevel: "",
              Educationstatus: "",
              yearStart: new Date().getFullYear(),
-             yearEnd: new Date().getFullYear(),
+             yearEnd: null,
              isNew:true,
              isDeleted: false,
              index: educHistory.length-1
@@ -419,10 +430,10 @@
         displaySchoolYear.push(String(displayEducHistory[displayEducHistory.length-1].yearStart))
         displaySchoolYear = displaySchoolYear
 
-
     }
 
     function deleteEducRecord(index:number){
+        console.log(index)
         educHistory[displayEducHistory[index].index].isDeleted = true
         displayEducHistory.splice(index,1)
         displayEducHistory = displayEducHistory
@@ -430,29 +441,21 @@
         displaySchoolYear.splice(index,1)
         displaySchoolYear = displaySchoolYear
 
-        console.log(educHistory)
-    }
-
-
-    function updateField(index:number){     
-        if(index == 0) {
+        if(displayEducHistory.length == 0) {
             educType = ""
             educLevel = ""
             educStatus = ""
-            yearStart = 0 ;
-            yearEnd = 0 ;
+            yearStart = null
+            yearEnd = null
         }
 
-        else {
-            educType = displayEducHistory[index-1].Educationtype
-            educLevel = displayEducHistory[index-1].Educationlevel
-            educStatus = displayEducHistory[index-1].Educationstatus
-            yearStart = displayEducHistory[index-1].yearStart
-            yearEnd = displayEducHistory[index-1].yearEnd
+        else{
+            updateField(0)
         }
-
-        selectedIndex = index-1
     }
+
+
+    
         async function editData(): Promise<void> {
             if(validateForm()) {
 
@@ -890,7 +893,7 @@
           <br>
           <Check  label="Able to work" bind:checked={canwork} margin={false} />
           {#if canwork}
-          <Select label="Employment Type" id="employment_type" required msg = {errors.employmentType} bind:value = {employmentType} options = {['Wage Employed', "Self-Employed", "Sheltered Workshop"]} margin={false}  />
+          <Select label="Employment Type" id="employment_type" required msg = {errors.employmentType} bind:value = {employmentType} options = {dropdownOptions.employment_type} margin={false}  />
           <br>
           {/if}
           <Input label="Admission Date" type="date" required msg = {errors.admissionDate} bind:value = {admissionDate} margin={false} />
@@ -959,23 +962,22 @@
 <div class = "flex flex-row mt-10">
     <div class = "flex flex-col border-[var(--border)] border-4 ml-55 mr-10 p-6 w-170 min-w-150">
         {#if displayEducHistory.length > 0}
-        <div class = "flex flex-row"> <div> Please select a school year </div> <select class = "ml-5 w-50 z-100" on:change={(e)=>updateField(e.target.selectedIndex)}>
-            <option selected> </option>
+        <div class = "flex flex-row"> <div> Please select a school year </div> <select class = "ml-5 w-50 z-100" value = {displaySchoolYear[0]} on:change={(e)=>updateField(e.target.selectedIndex)}>
             {#each displaySchoolYear as year}
             <option> {year}</option>
             {/each}
         </select></div>
-        <div class = "mt-3"> <Select label="Education Type:" bind:value = {educType} options = {educ_options} /></div>
-        <div class = "mt-3"> <Input label="Education Level:" bind:value = {educLevel}/></div>
-        <div class = "mt-3"> <Select label="Education Status:" bind:value = {educStatus} options = {student_options}/> </div>
-        <div class = "mt-3"> <Input label="School Year Start:" bind:value = {yearStart}/> </div>
-        <div class = "mt-3"> <Input label="School Year End:" bind:value = {yearEnd}/> </div>
+        <div class = "mt-3"> <Select required msg = {errors.educationtype} label="Education Type:" bind:value = {educType} options = {dropdownOptions.education_type} /></div>
+        <div class = "mt-3"> <Select required msg = {errors.educationlvl} label="Education Level:" bind:value = {educLevel} options = {dropdownOptions.education_level}/></div>
+        <div class = "mt-3"> <Select required msg = {errors.educationstatus} label="Education Status:" bind:value = {educStatus} options = {dropdownOptions.education_status}/> </div>
+        <div class = "mt-3"> <Input required msg = {errors.yearstart} type = "number" label="School Year Start:" bind:value = {yearStart}/> </div>
+        <div class = "mt-3"> <Input type = "number" label="School Year End:" bind:value = {yearEnd}/> </div>
         {:else}
         This child has no education history
         {/if}
         <div class = "flex flex-row">
-        <div class = "w-150 mt-10 z-500"> <button on:click = {()=>addEducRecord()}> Add Education Record </button> </div>
-        {#if displayEducHistory.length > 0} <div class = "w-150 mt-10 z-500"> <button on:click = {()=>deleteEducRecord(selectedIndex)} class ="green"> Delete This Record </button> </div> {/if}
+        <div class = "w-150 mt-10 z-500"> <i class = "!text-[var(--green)]" on:click = {()=>addEducRecord()}> + Add Education Record </i></div>
+        {#if displayEducHistory.length > 0} <div class = "w-150 ml-20 mt-10 z-500"> <i class = "!text-[var(--error-color)]" on:click = {()=>deleteEducRecord(selectedIndex)}> - Delete This Record </i> </div> {/if}
         </div>
     </div>
 </div>
