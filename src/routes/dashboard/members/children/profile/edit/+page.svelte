@@ -6,7 +6,6 @@
     import Select from '$components/input/Select.svelte'
     import { goto } from '$app/navigation';
     import { dropdownOptions } from '$lib/types/options.js'
-	
 
     export let data;
 
@@ -14,7 +13,7 @@
     let firstName: string = data.child?.firstName || "Name Must Be Assigned"
     let middleName: string = data.child?.middleName || "No Middle Name"
     let lastName: string = data.child?.lastName || "Last Name Must Be Assigned"
-    let birthday: string = data.child?.birthday || new Date().toISOString().split('T')[0]
+    let birthday = data.child?.birthday || new Date().toISOString().split('T')[0]
     let sex: string = data.child?.sex || ""
     let address: string = data.child?.address || "" 
     let barangay: string = data.child?.barangay || "" 
@@ -24,6 +23,8 @@
     let disabilityNature: string = data.child?.disabilityNature || ""
     let admissionDate: string = data.child?.admissionDate
     let remarks: string = data.child?.remarks || ""
+    let age = ""
+    
 
     let existingFamily: {
         firstName: string,
@@ -262,7 +263,6 @@
     }
 
     let childInterventions: interventions[] = []
-     
     childInterventions.push(healthIntervention, educationIntervention, socialIntervention, livelihoodIntervention)
 
     
@@ -292,17 +292,53 @@
         disabilityCat:"",
         disabilityNat: "",
         admissionDate: "",
-        employmentType:"",
+        employmentType: "",
         educationtype: "",
         educationlvl: "",
         educstatus: "",
         yearstart: "",
+        pwdID: "",
+        pwdExpiry: "",
+        healthIntervention: "",
+        socialIntervention: "",
+        livelihoodIntervention: "",
+        educationIntervention: "",
+        interventionnameErrors: ["","","",""],
+        interventiondateErrors: ["","","",""],
+        interventionstatusErrors: ["","","",""]
     }
 
     //below are functions needed for the page
 
-    //TODO: IMPLEMENT VALIDATION CHECKING
+    $: if (birthday) {
+        const birthDate = new Date(birthday);
+        const today = new Date();
+        let calculatedAge = today.getFullYear() - birthDate.getFullYear();
+
+        const hasHadBirthdayThisYear =
+        today.getMonth() > birthDate.getMonth() ||
+        (today.getMonth() === birthDate.getMonth() && today.getDate() >= birthDate.getDate());
+
+        if (!hasHadBirthdayThisYear) {
+        calculatedAge -= 1;
+        }
+
+        age = calculatedAge.toString();
+    } else {
+        age = "";
+    }
+
+    
     function validateForm(): boolean{
+        let hasErrors = false
+        //resets values that can be hidden
+        errors.pwdID = ""
+        errors.pwdExpiry = ""
+        errors.educationtype = ""
+        errors.educationlvl = ""
+        errors.educstatus = ""
+
+
         errors.firstName = firstName.trim() === "" ? "Required" : ""
         errors.lastName = lastName.trim() === "" ? "Required" : ""
         if(new Date(birthday).getFullYear() > new Date().getFullYear()) {
@@ -319,30 +355,116 @@
         if(canwork){
             errors.employmentType = employmentType.trim() === "" ? "Required" : ""
          }
-         errors.admissionDate = admissionDate.trim() === "" ? "Required" : ""
+
+         
+
+        if(new Date(admissionDate).getFullYear() > new Date().getFullYear() || new Date(admissionDate).getMonth() > new Date().getMonth() ||  new Date(admissionDate).getDate() > new Date().getDate()){
+            console.log(new Date(admissionDate).getDay() > new Date().getDay)
+            errors.admissionDate = "Date cannot be in the future"
+        }
+         
+        else if(admissionDate === ""){
+            errors.admissionDate == "Required"
+         }
+
+         else{
+            errors.admissionDate = ""
+         }
 
 
-
-        errors.educationtype = educType.trim() === "" ? "Required" : ""
-        errors.educationlvl = educLevel.trim() === "" ? "Required" : ""
-        errors.educstatus = !educStatus ? "Required" : ""
-        errors.yearstart = yearStart == null ? "Required" : ""
-
-
-
-        for (const error of Object.values(errors)) {
-            if (error) {
-                console.log("error found: ", error)
-                goto('#top');    // scrolls to top
-                return false;
-            }
+        if(displayEducHistory.length > 0) {
+            errors.educationtype = educType.trim() === "" ? "Required" : ""
+            errors.educationlvl = educLevel.trim() === "" ? "Required" : ""
+            errors.educstatus = !educStatus ? "Required" : ""
+            errors.yearstart = yearStart == null ? "Required" : ""
         }
 
+        if(hasPWD == true) {
+            errors.pwdID = pwdID.trim() === "" ? "Required" : ""
+            errors.pwdExpiry = pwdExpiry.trim() === "" ? "Required" : ""
+        }
+
+        for(let i = 0; i < 4;i++) {
+            //checks for the name related errors
+            if(childInterventions[i].name == "" && (childInterventions[i].dateCreated != null && childInterventions[i].status != null)) {
+                errors.interventionnameErrors[i] = "Required"
+                console.log(childInterventions[i].dateCreated)
+            }
+
+
+            else{
+                errors.interventionnameErrors[i] = ""
+            }
+
+            if(childInterventions[i].dateCreated == "" && (childInterventions[i].name != null && childInterventions[i].status != null)) {
+                errors.interventiondateErrors[i] = "Required"
+            }
+
+            else{
+                errors.interventiondateErrors[i] = ""
+            }
+
+            if(childInterventions[i].dateCreated == "" && (childInterventions[i].name != null && childInterventions[i].status != null)) {
+                errors.interventiondateErrors[i] = "Required"
+            }
+
+            else{
+                errors.interventiondateErrors[i] = ""
+            }
+
+
+            if(childInterventions[i].status == "" && (childInterventions[i].name != null && childInterventions[i].dateCreated != null)) {
+                errors.interventionstatusErrors[i] = "Required"
+            }
+
+            else{
+                errors.interventionstatusErrors[i] = ""
+            }
+
+            for(let j = 0; j < childInterventions[i].history?.length; j++){
+                if(childInterventions[i]?.history[j]?.status == "" || childInterventions[i]?.history[j]?.date == ""){
+                    childInterventions[i].status = ""
+                    errors.interventionstatusErrors[i] = "Missing Status Information!"
+                }
+            }
+           
+            if(childInterventions[i].isDeleted == true){
+                errors.interventionnameErrors[i] = ""
+                errors.interventiondateErrors[i] = ""
+                errors.interventionstatusErrors[i] = ""
+            }
+
+            else if(childInterventions[i].dateCreated == "" && childInterventions[i].status == "" && childInterventions[i].name == ""){
+                errors.interventionnameErrors[i] = ""
+                errors.interventiondateErrors[i] = ""
+                errors.interventionstatusErrors[i] = ""
+            }
+            
+        }        
+
         
+        for (let i of Object.values(errors)) {
+            if(Array.isArray(i)) {
+               for(let j = 0; j < i.length; j++) {
+                 if(i[j] != "") {
+                    hasErrors = true
+                 }
+               }
+            }
 
 
+           else if (i !== "") {
+                hasErrors= true
+            }
+        }
+        if(hasErrors){
+            goto("#top")
+            return false
+        }
         return true
     }
+
+    
     function addFamily(){
         existingFamily.push({
             firstName:"",
@@ -404,16 +526,6 @@
 
 
     function addEducRecord(){
-        educHistory.push({
-             Educationtype: "",
-             Educationlevel: "",
-             Educationstatus: "",
-             yearStart: new Date().getFullYear(),
-             yearEnd: null,
-             isNew:true,
-             isDeleted: false
-        })
-
         displayEducHistory.push({
              Educationtype: "",
              Educationlevel: "",
@@ -433,8 +545,10 @@
     }
 
     function deleteEducRecord(index:number){
-        console.log(index)
-        educHistory[displayEducHistory[index].index].isDeleted = true
+        if(displayEducHistory[index].isNew == false) {
+            educHistory[displayEducHistory[index].index].isDeleted = true
+        } 
+
         displayEducHistory.splice(index,1)
         displayEducHistory = displayEducHistory
 
@@ -476,6 +590,7 @@
             });
 
            if(data.child?.addressid == "") { //creates new address if none exists
+                console.log("Creating address: " + address) 
                 const addressres = await fetch('/api/addresses' , {
                     method: "POST", 
                     body: JSON.stringify({
@@ -484,6 +599,19 @@
                     headers: {
                         "Content-Type" : "application/json"
                     }
+                })
+                
+                //gets the address
+                const addressquery = await fetch(`/api/addresses?address=${address}`)
+                const addressrecord = await addressquery.json()
+
+                const updateMember = await fetch("/api/members" , {
+                    method: "PUT", 
+                    body: JSON.stringify({
+                        id: data.member?.id,
+                        address_id: addressrecord.data[0].id
+                    }),
+                    headers: {'Content-Type':'application/json'}
                 })
            }
 
@@ -542,7 +670,6 @@
             
             //This should happen if a persons record isnt found 
             const employmentRes = await fetch(`/api/employment_status?id=${data.member.id}`)
-            
             if(!employmentRes.ok && canwork == true){
                console.log(await fetch('/api/employment_status', {
                     method: "POST",
@@ -573,9 +700,10 @@
             }
 
             //if the persons record is found in the db but we want to delete it 
-            else if(employmentRes && canwork == false){
-                const employmentRecord = await employmentRes.json()
-                console.log(employmentRecord.id)
+            else if(employmentRes && canwork == false) {
+                const deleteEmploymentRecord = await fetch(`/api/employment_status?member_id=${data.member?.id}`, {
+                    method: 'DELETE'
+                })
             }
 
             const disabilityCategoryres = await fetch('/api/disability_category', {
@@ -627,25 +755,10 @@
             }
 
             //EDUCATION RECORD UPDATES BEGIN HERE
-            for(let i = 0; i < educHistory.length; i++){
-                if(educHistory[i].isNew && !educHistory[i].isDeleted){
-                const createeducRecord = await fetch('/api/education_status', {
-                method: "POST",
-                body:JSON.stringify({
-                    child_id: data.child.id,
-                    education_type: educType,
-                    education_status: educStatus,
-                    grade_level: educLevel,
-                    year_start: yearStart,
-                    year_end:yearEnd
-                    }),
-                    headers:{
-                            'Content-Type': 'application/json'
-                    }
-                })
-                }
-
-                 else if(educHistory[i].isDeleted && !educHistory[i].isNew){
+            //goes through old history to determine if any existing records need to be deleted
+            if(educHistory.length > 0) {
+                for(let i = 0; i < educHistory?.length; i++){
+                if(educHistory[i].isDeleted){
                  const deleteEducRecord = await fetch('/api/education_status', {
                  method: "DELETE",
                  body:JSON.stringify({
@@ -655,9 +768,14 @@
                          'Content-Type': 'application/json'
                      }
                  })
-                 }
+                }
+                }
             }
-            
+
+            if(displayEducHistory.length > 0) {
+            //Update and Post for the selected record
+            if(displayEducHistory[selectedIndex].isNew == false) {
+                console.log("Updating Education Record")
                 const updateEducRecord = await fetch('/api/education_status', {
                 method: "PUT",
                 body:JSON.stringify({
@@ -671,9 +789,24 @@
                 headers:{
                          'Content-Type': 'application/json'
                      }
-            })
+                })
+            }
 
-
+            else if(displayEducHistory[selectedIndex].isNew == true) {
+                console.log("Creating education record")
+                const createEducRecord = await fetch('/api/education_status' , {
+                    method: "POST",
+                    body: JSON.stringify({
+                        child_id: data.child?.id,
+                        year_start: yearStart,
+                        year_end: yearEnd,
+                        education_type: educType,
+                        grade_level: educLevel,
+                        student_status_type: educStatus 
+                    })
+                })
+            }
+            }
         //DOCUMENT UPDATES BEGIN HERE
         if(data.child?.pwd?.has && hasPWD ){ //just updates pwd info
             const updatePWDrecord = await fetch('/api/pwd_ids', {
@@ -700,18 +833,19 @@
                          'Content-Type': 'application/json'
                      } 
                 })
+
+                const getPWD = await fetch(`/api/pwd_ids?pwd_id=${pwdID}`)
+                let pwdRecord = await getPWD.json()
+
+                const updateChild = await fetch('/api/children' , {
+                    method: "PUT", 
+                    body: JSON.stringify({
+                        id: data.child?.id,
+                        pwd_id: pwdRecord.data[0].id
+                    })
+                })
         }
-        
-        // else if(data.child?.pwd?.has && !hasPWD){ //for when a PWD record needs to be deleted
-        //     const deletePWDrecord = await fetch('/api/pwd_ids' , {
-        //         method: "DELETE",
-        //         body: JSON.stringify({
-
-        //         })
-        //     })
-        // }
-
-        
+          
         const documentationUpdate = await fetch('/api/children', {
             method: "PUT",
             body:JSON.stringify({
@@ -882,7 +1016,7 @@
           <Input label="Middle Name" id="middle_name"   bind:value = {middleName} margin={false} />
           <Input label="Last Name" id="last_name" required msg = {errors.lastName}   bind:value = {lastName} margin={false} />
           <Input label="Birthday" type="date" id="birthday" bind:value = {birthday} required msg = {errors.birthday}  margin={false} />
-          <Input label="Age" id ="age" disabled value = {new Date().getFullYear() - new Date(birthday).getFullYear() || "Please Specify Birthday!"} margin={false} />
+          <Input disabled label="Age" id ="age" bind:value = {age} margin={false} />
           <Select label="Sex" id="sex" bind:value = {sex} required msg = {errors.sex} options = {['Male','Female','Other']}  margin={false} />
           <Input  label="Address" id="address"  bind:value = {address} required msg = {errors.address} margin={false} />
           <Input  label="Barangay" id="barangay"  bind:value = {barangay} required msg = {errors.barangay} margin={false} />
@@ -995,10 +1129,10 @@
        </div>
        {#if hasPWD} 
        <div class = "w-150 z-500">
-            <Input type = "text"  label="ID #" bind:value = {pwdID} />
+            <Input type = "text" required msg = {errors.pwdID}  label="ID #" bind:value = {pwdID} />
        </div>
        <div class = "w-150 z-500">
-            <Input type = "date"   label="Expiry Date" bind:value = {pwdExpiry}/>
+            <Input type = "date" required msg = {errors.pwdExpiry}  label="Expiry Date" bind:value = {pwdExpiry}/>
        </div>
        {/if}
 
@@ -1068,15 +1202,15 @@
                     <Input type = "text" disabled bind:value = {interventionvar.servicecat}/>
                 </div>
                 <div class = "mb-10 mt-4 ml-35 w-50">
-                   <Input bind:value = {interventionvar.name}/>
+                   <Input type = "text" bind:value = {interventionvar.name} required msg = {errors.interventionnameErrors[index]}/>
                 </div>
                 <div class =  "collapse">
                 <input type = "checkbox" />
                     <div class = "collapse-title flex flex-row">
                         <div class = " z-5000 w-50 ml-15">
-                           <Select bind:value = {interventionvar.status} options = {["Regressed" , "Improved", "Neutral"]} />
+                           <Select  required msg = {errors.interventionstatusErrors[index]} bind:value = {interventionvar.status} options = {["Regressed" , "Improved", "Neutral"]} />
                         </div> 
-                        <div class = "w-50 ml-5 z-5000"><Input type = "date" bind:value = {interventionvar.dateCreated} /></div>
+                        <div class = "w-50 ml-5 z-5000"><Input type = "date" bind:value = {interventionvar.dateCreated} required msg = {errors.interventiondateErrors[index]} /></div>
                     </div>
                     <div class = "collapse-content flex flex-col">
                         <div class = "flex flex-col">

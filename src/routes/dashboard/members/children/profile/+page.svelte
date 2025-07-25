@@ -282,6 +282,7 @@
 </h1>
 
 <div class = "flex flex-col border-[var(--border)] border-4 ml-55 mr-10 p-6 w-275" id ="Intervention Info">
+    {#if data.interventioninfo.length > 0}
     <div class = "flex flex-col">
         <div class = "!bg-[var(--green)] p-3 flex flex-row">
            <div class = "!text-[var(--background)] !font-bold ml-65">Intervention Name </div>
@@ -338,6 +339,9 @@
         {/each}
         </div>
     </div>
+    {:else}
+        Child does not have any interventions
+    {/if}
 </div>
 
 <!--END OF INTERVENTIONS-->
