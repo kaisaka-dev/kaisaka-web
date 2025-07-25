@@ -2,6 +2,7 @@ import type { PageLoad } from '../../../../../.svelte-kit/types/src/routes/$type
 
 export const load: PageLoad = async({fetch}) => {
 
+	// fetching the (dropdown) options for disability category
 	const response = await fetch('/api/disability_category');
 	const options_disCategory = await response.json();
 

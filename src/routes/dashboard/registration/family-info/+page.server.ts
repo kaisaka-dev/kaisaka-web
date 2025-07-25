@@ -1,3 +1,17 @@
+import type { PageLoad } from '../../../../../.svelte-kit/types/src/routes/$types.js';
+
+export const load: PageLoad = async({fetch}) => {
+
+	const response = await fetch('/api/community_group_type');
+	const options_comGroupType = await response.json();
+
+	return {
+		options: {
+			comGroupType: options_comGroupType.data
+		}
+	};
+}
+
 /**
  * object type used to store information about a new caregiver.
  */
@@ -8,13 +22,14 @@ export type NewCaregiver = {
 	bday: string;
 	sex: string;
 	contactNo: string;
-	fbLink?: string;
-	email?: string;
+	fbLink: string;
+	email: string;
 	address: string;
 	brgy: string;
 	occupation: string;
 	relationship: string;
-	communityGrp_id: number;
+	communityGrp_id: number | null;
+	income: string;
 	communityYr: number;
 };
 

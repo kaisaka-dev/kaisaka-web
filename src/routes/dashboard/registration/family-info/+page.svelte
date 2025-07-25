@@ -9,7 +9,10 @@
 	import { get } from 'svelte/store';
 	import { goto } from '$app/navigation';
 	import { page } from '$app/state';
-	import type { Caregiver, CaregiverError } from './+page.server.js';
+	import type { Caregiver, CaregiverError, NewCaregiver, LinkedCaregiver } from './+page.server.js';
+	import type { PageData } from '../../../../../.svelte-kit/types/src/routes/$types.js';
+	import { dropdownOptions } from '$lib/types/options.js';
+
 
 	/**
 	 * note: /dashboard/registration and /registration is just the same, the constant is to hide
@@ -20,6 +23,15 @@
 	const staffView = /dashboard/i.test(page.url.pathname);
 	const childRegData = get(childFormData)
 	console.log(childRegData);
+	$inspect(caregivers)
+
+	// load the data
+	const { data } = $props<{ data: PageData }>();
+	let options = $state({
+		comGroupType: data.options.comGroupType,
+		incomeType: dropdownOptions.income_category,
+		sex: dropdownOptions.sex
+	});
 
 
 	let caregivers = $state<Caregiver[]>([
@@ -36,7 +48,8 @@
 			brgy: '',
 			occupation: '',
 			relationship: '',
-			communityGrp_id: -1,
+			communityGrp_id: null,
+			income: '',
 			communityYr: new Date().getFullYear()
 		}
 	]); // initialize variable so that the page will have at least one caregiver
@@ -69,7 +82,8 @@
 				brgy: '',
 				occupation: '',
 				relationship: '',
-				communityGrp_id: -1,
+				communityGrp_id: null,
+				income: '',
 				communityYr: new Date().getFullYear()
 			}
 		];
@@ -163,7 +177,7 @@
 
 			// insert barangay
 			const barangayData = await safeFetch('/api/barangays', childRegData.barangay);
-			console.log(barangayData.message)
+			console.log("Barangay ", barangayData.message)
 			childRegData.member!.barangay_id = barangayData.data.id;
 
 			// insert member
@@ -218,20 +232,35 @@
 			// for family
 
 			// if linked family exists
-			if (linkedIndex !== -1) {
-				// add the child to the existing family
-				// add the other caregivers to the existing family
-			} else {
+			if (linkedIndex !== -1 && !isNewCaregiver(caregivers[linkedIndex])) {
+				// get the family id of the existing family
+				const familyId = caregivers[linkedIndex].family_id;
+
+				// create new relationships for each child-familyMember relationship which isn't null
+
+				// add the child and caregivers to the newly created family
+				await POST_family(memberId, familyId)
+
+
+			} // if registering a new family
+			else {
 				// create a new family
+				const familyData = await safeFetch('/api/families', null);
+				console.log(familyData.message)
+				const familyId = familyData.id
 
-				// add the child to the newly created family
+				// add the child and caregivers to the newly created family
+				await POST_family(memberId, familyId)
 
-				// add all the caregivers to the newly created family
+
 			}
 
 
+
+
+
 			console.log('All data successfully inserted!');
-			alert('All data sucessfully inserted!')
+			alert('All data sucessfully inserted!');
 
 			if (staffView) goto('/dashboard');			// back to dashboard if previous view is dashboard
 			else goto('/'); // back to main page if previous view is main page
@@ -241,6 +270,97 @@
 			alert('Submission failed')
 		}
 
+		async function POST_family(member_id, family_id) {
+			// add the child to the existing family (POST to family_members)
+			const famChildData = await safeFetch('/api/family_members', {
+				is_child: true,
+				member_id: member_id,
+				family_id: family_id
+			});
+			console.log('Child added to family:', famChildData.message);
+
+
+			// add the other caregivers to the existing family
+			for (const [i, caregiver] of caregivers.entries()) {
+				if (isNewCaregiver(caregiver)) {
+					// add all the caregivers to the db (POST to member, and POST to caregivers)
+					const caregiverMember = await POST_caregiver(caregiver);
+
+					// add the caregivers to the existing family
+					const famMemData = await safeFetch('/api/family_members', {
+						is_child: false,
+						member_id: caregiverMember.id,
+						family_id: family_id
+					});
+					console.log(caregiver.firstName, ' added to family: ', famMemData.message)
+				}
+			}
+		}
+
+		async function POST_caregiver(caregiver: NewCaregiver) {
+			console.log("... inserting: ", caregiver)
+			// insert address
+			const addressData = await safeFetch('/api/addresses', { address: caregiver.address });
+			console.log(addressData.message)
+			const address_id = addressData.data.id;
+
+			// insert barangay
+			const barangayData = await safeFetch('/api/barangays', { name: caregiver.brgy });
+			console.log("Barangay ", barangayData.message)
+			const barangay_id = barangayData.data.id;
+
+			// create the member record for caregiver
+			const memberData = await safeFetch('/api/members', {
+				first_name: caregiver.firstName,
+				last_name: caregiver.lastName,
+				birthday: caregiver.bday || null,
+				sex: caregiver.sex,
+				admission_date: childRegData.member.admission_date ?? `${new Date()}-01T00:00:00Z`, 	// makes it the same as the child
+				address_id: address_id,
+				barangay_id: barangay_id
+			});
+			console.log(memberData.message)
+			const member_id = memberData.data.id;
+
+			// create the caregiver record for the caregiver
+			const caregiverData = await safeFetch('/api/caregivers', {
+				contact_number: caregiver.contactNo,
+				facebook_link: caregiver.fbLink,
+				email: caregiver.email,
+				occupation: caregiver.occupation,
+				member_id: member_id
+			})
+			console.log(caregiverData.message)
+			const caregiver_id = caregiverData.data.id;
+
+			// create the caregiver_groups record
+			if (caregiver.communityGrp_id != null) {
+				const comGrpData = await safeFetch('/api/caregiver_groups', {
+					date_joined: new Date(caregiver.communityYr, 0, 1),	// converts year into january
+					community_group_id: caregiver.communityGrp_id,
+					caregiver_id: caregiver_id
+				})
+				console.log(comGrpData.message)
+			}
+
+			// create the income type record
+			if (caregiver.income != null && caregiver.income !== "") {
+				const incomeData = await safeFetch('/api/income_type', {
+					income_category: caregiver.income,
+					date_start: new Date(),
+					caregiver_id: caregiver_id
+				})
+				console.log(incomeData.message)
+			}
+
+			return memberData.data;
+		}
+
+		// helper functions
+		// to identify the datatype of the caregiver
+		function isNewCaregiver(caregiver: Caregiver): caregiver is NewCaregiver {
+			return caregiver.type === 'new';
+		}
 
 	}
 </script>
@@ -257,6 +377,7 @@
 			{index}
 			{linkedIndex}
 			deleteCaregiver={deleteCaregiver}
+			options={options}
 		/>
 	{/each}
 

@@ -6,7 +6,7 @@
 	export let required = false;
 	export let disabled = false;
 	export let msg = ""; 										// Validation message
-	export let value: string | number = ""; // Declare selected as a reactive variable
+	export let value: string | number | null = null; // Declare selected as a reactive variable
 	export let margin = true;								// false if no margin, true if the default margin
 </script>
 
@@ -17,8 +17,10 @@
 
 	<div class="input-wrapper">
 		<select id={id} class="input" bind:value={value} {disabled}>
-			{#if !required}
+			{#if !required && typeof options[0] === 'string'}
 				<option value="" selected></option> <!-- Default option, null selection only available if NOT required -->
+			{:else if !required}
+				<option value={null} selected></option> <!-- Default option, null selection only available if NOT required -->
 			{/if}
 			{#each options as option}
 				{#if typeof option === 'string'}
