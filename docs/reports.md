@@ -1,6 +1,6 @@
 <!-- markdownlint-disable -->
-## In the Program report
 
+## In the Program report
 Unique Identifying Headers. These act as filters for a specific group:
 
  - Age Group (0 - 5 years old, etc..)
@@ -22,10 +22,22 @@ Formulas:
  3) Total "All" Disabilities except Down Syndrome: Difference of Formula 1 and Formula 2
 
 *Missing*:
-Tieing children to annual program. 
-
-Metaphorically, there is an academic year, that is "Annual Program", but we do not have a "Grade Level" to determine if they are in or not, unless they are dated to terminated. Thus, assume to be within the program unless otherwise specified.
-
+ - [ ] Inputting API for CWDs
+   - [ ] startYYYY
+   - [ ] startMM
+   - [ ] startDD
+   - [ ] endYYYY
+   - [ ] endMM
+   - [ ] endDD
+   - [ ] total_target_CWDS
+   - [ ] new_target_CWDS
+   - [ ] old_target_CWDS
+   - [ ] total_actual_CWDS
+   - [ ] new_actual_CWDS
+   - [ ] old_actual_CWDS
+   - [ ] general_reflection
+   - [ ] lessons_learned
+ - [ ] Defining what it means for a child to be within the program. Metaphorically, there is an academic year, that is "Annual Program", but we do not have a "Grade Level" to determine if they are in or not, unless they are dated to terminated. Thus, assume to be within the program unless otherwise specified.
 
 ### Four Function Select Statement:
   
@@ -119,12 +131,12 @@ SELECT
 }
 ```
 
-### Access To Social Protection
+## Access To Social Protection
 
 
 Unique Identifying Headers. These act as filters for a specific group:
 
-For the First Report:
+### First Report:
 
  - Age Group (All, 15 or older, etc..)
  - Requirement (Card ID)
@@ -136,18 +148,24 @@ For the First Report:
    - other social protection schemes - support from LGUs and other institutions
  - Disability ("All" or Down Syndrome)
  - Sex (Male or Female)
+
+Functions under First Report:
+
  - Annual Program (Already Accessed Last Year vs Newly Accessed This Year)
 
-For the Second Report
+### Second Report
 
  - Age Group (All or 6 older)
  - Disability ("All" or Down Syndrome)
  - Participation in X Group ("Family Life" or "Community Life / Clubs")
 
-*Missing*: 
-Tieing IDs and Group Participation with a History Table 
+### Missing: 
+ - [ ] Tieing ID Cards with a History Table
+   - [ ]  How to determine if PWD id is "Acquisition" (Newly Acquired)
+   - [ ]  How to determine if PWD id is "Renewal"
+ - [ ] Group Participation with a History Table (for Annual Program)
 
-#### First Report
+### First Report
 ```sql
 SELECT
   *,                                -- (pwd id, has_philhealth, has_voters, has_national_id, has_social)
@@ -170,7 +188,7 @@ ON public.children
 }
 ```
 
-#### Second Report
+### Second Report
 ```sql
 SELECT
   *,                                -- (pwd id, has_philhealth, has_voters, has_national_id, has_social)
@@ -192,7 +210,7 @@ ON public.children
 ```
 
 
-#### Participation of Caregivers
+## Participation of Caregivers
 
 Unique Identifying Headers. These act as filters for a specific group:
 
@@ -203,6 +221,15 @@ Functions for each
 
  - Income-generating Activities
  - Community Groups (Formal / Nonformal)
+
+*Missing*:
+- [ ] Defining Group membership in Time (Retrieve from DB or define new table for)
+  - [ ] Joining a new group this year
+  - [ ] Participating in existing group
+- [ ] Defining Participation of Caregiver Functions
+  - [ ] Income-generating Activities AND Community Groups (Formal / Nonformal)
+- [ ] Definition of Count and Type of X
+  - [ ] String Concatenation
 
 ```sql
 SELECT
@@ -239,7 +266,7 @@ SELECT
 
 ```
 
-#### Access to Labor Market
+## Access to Labor Market
 
 Unique Identifying Headers. These act as filters for a specific group:
 
@@ -254,6 +281,13 @@ Functions for Each:
  - Total of the previous two
  - Not Able to Work
  
+ *Missing*:
+ - [ ] Labor Market Access History Table
+   - [ ] Already had access in previous year
+   - [ ] Gained access this year
+   - [ ] Not Able to Work
+ - [ ] JSON Query Builder definition for Work Status
+ - [ ] Tie Annual Program to Report (is_active)
 
 ```sql
 SELECT
@@ -281,10 +315,18 @@ SELECT
 {
   eq: {
     'members.sex': reportParams.sex,                                    // sex
-    'social_protection_status.x': true,          // participation in x group (participates_family_life, participates_community_club)
+    'social_protection_status.x': true,                                 // participation in x group (participates_family_life, participates_community_club)
   },
   ilike: { 'disability_category.name': reportParams.disability.ilike},  // disabilities
   gte: { 'members.birthday': birthdayRange.gte },                       // age min
   lte: { 'members.birthday': birthdayRange.lte },                       // age max
 }
 ```
+
+## Conclusion Report
+### Missing:
+ - [ ] General Reflection
+ - [ ] Lessons Learned
+ - [ ] Name of LPO
+ - [ ] Accomplished By
+ - [ ] Date Accomplished
