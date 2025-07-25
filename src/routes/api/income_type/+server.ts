@@ -61,27 +61,6 @@ export const POST: RequestHandler = async({request}) => {
   return json({ message: 'Inserted', data: inserted})
 }
 
-export const GET: RequestHandler = async({ url }) => {
-  const caregiver_id = url.searchParams.get('caregiver_id');
-  const category = url.searchParams.get('category');
-
-  try {
-    let data;
-
-    if (caregiver_id) {
-      data = await IncomeTypeModel.instance.findByCaregiver(caregiver_id);
-    } else if (category && ['Home-based', 'Self-employed', 'Wage Earner'].includes(category)) {
-      data = await IncomeTypeModel.instance.findByCategory(category as 'Home-based' | 'Self-employed' | 'Wage Earner');
-    } else {
-      data = await IncomeTypeModel.instance.getAll();
-    }
-
-    return json({ data });
-  } catch (err) {
-    throw error(500, 'Failed to retrieve income types');
-  }
-}
-
 export const PUT: RequestHandler = async({request}) => {
   
   let body: any = {}
