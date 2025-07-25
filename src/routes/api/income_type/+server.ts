@@ -39,19 +39,20 @@ export const POST: RequestHandler = async({request}) => {
     throw error(400, 'Missing required fields.')
   }
 
-  if (!body.caregiver_id) {
-    throw error(400, 'Missing required field: caregiver_id.')
+  if (!body.income_category) {
+    throw error(400, 'Missing required field: income_category.')
   }
 
-  if (!body.date_start) {
-    throw error(400, 'Missing required field: date_start.')
+  // Validate income_category enum
+  if (!['Home-based', 'Self-employed', 'Wage Earner'].includes(body.income_category)) {
+    throw error(400, 'Invalid income_category. Must be: Home-based, Self-employed, or Wage Earner')
   }
 
   const inserted = await IncomeTypeModel.instance.insertIncomeType(
     body.caregiver_id,
     body.date_start,
     body.date_end || null,
-    body.income_category || null
+    body.income_category  // Now required, no null fallback
   )
 
   if (!inserted){

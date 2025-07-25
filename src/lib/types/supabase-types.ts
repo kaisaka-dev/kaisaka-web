@@ -559,30 +559,21 @@ export type Database = {
           date_end: string | null
           date_start: string | null
           id: number
-          income_category:
-            | Database["public"]["Enums"]["income_category_enum"]
-            | null
-          name: string
+          income_category: Database["public"]["Enums"]["income_category_enum"]
         }
         Insert: {
           caregiver_id?: string | null
           date_end?: string | null
           date_start?: string | null
           id?: number
-          income_category?:
-            | Database["public"]["Enums"]["income_category_enum"]
-            | null
-          name: string
+          income_category: Database["public"]["Enums"]["income_category_enum"]
         }
         Update: {
           caregiver_id?: string | null
           date_end?: string | null
           date_start?: string | null
           id?: number
-          income_category?:
-            | Database["public"]["Enums"]["income_category_enum"]
-            | null
-          name?: string
+          income_category?: Database["public"]["Enums"]["income_category_enum"]
         }
         Relationships: [
           {
@@ -1084,7 +1075,7 @@ export type Database = {
         Insert: {
           child_id: string
           created_at?: string | null
-          id: number
+          id?: number
           participation_type: Database["public"]["Enums"]["participation_type_enum"]
           updated_at?: string | null
           year: number
