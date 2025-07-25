@@ -15,7 +15,7 @@ export abstract class ReportGenerator {
     const sheet = workbook.getWorksheet(1)  // adjust to your sheet name
 
     return (!sheet) 
-          ? {data: undefined, error: Error('No sheet made')} 
-          : {data: {workbook: workbook, sheet: sheet }, error: undefined}
+          ? { data: undefined,                           error: Error('No sheet made') } 
+          : { data: {workbook: workbook, sheet: sheet }, error: undefined              }
   }
 }

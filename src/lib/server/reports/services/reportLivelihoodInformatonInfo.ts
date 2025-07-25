@@ -106,9 +106,7 @@ const AccessToLabourMarketSelectClause = `
         sex,
         birthday
       ),
-      disability_category (
-        name
-      )
+      disability_category (name)
     )
   )
   employment_status(*)

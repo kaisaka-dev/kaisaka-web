@@ -357,13 +357,13 @@ export class ReportGeneratorInTheProgram extends ReportGenerator {
   static async genderProgramMapping(writer: (sexIndex: number, programColumnOffset: number)=>void){
     const programOffsetMapping = async (sexIndex: number) => {
       const programColumnOffsets = [0, 1, 2, 4]
-      Promise.all( programColumnOffsets.map(async (programColumnOffset)=>{
-          writer(sexIndex, programColumnOffset)
+      await Promise.all( programColumnOffsets.map(async (programColumnOffset)=>{
+          await writer(sexIndex, programColumnOffset)
       }))
     }
     
     await Promise.all(genders.map(async (sex, sexIndex) => {
-      programOffsetMapping(sexIndex)
+      await programOffsetMapping(sexIndex)
     }))
   }
 
