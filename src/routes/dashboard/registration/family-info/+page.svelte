@@ -9,9 +9,11 @@
 	import { get } from 'svelte/store';
 	import { goto } from '$app/navigation';
 	import { page } from '$app/state';
-	import type { Caregiver, CaregiverError, NewCaregiver, LinkedCaregiver } from './+page.server.js';
+	import type { FamilyMembers, CaregiverError, NewCaregiver } from '$lib/types/registrationForm.js';
+
 	import type { PageData } from '../../../../../.svelte-kit/types/src/routes/$types.js';
 	import { dropdownOptions } from '$lib/types/options.js';
+	import ExistingForm from './ExistingForm.svelte';
 
 
 	/**
@@ -34,10 +36,42 @@
 	});
 	const members = $state(data.members)
 
+	let familyMembers: FamilyMembers = $state(
+		 {
+			hasExisting: false,
+			linkedFamily: {
+				type: 'linked',
+				family_id: null,
+				firstName: "",
+				lastName: "",
+				contactNo: "",
 
-	let caregivers = $state<Caregiver[]>([
-		{
-			type: 'new', // explicit discriminator
+				// info of a list of family members which are linked to the searched family member
+				infoLinked: []
+			},
+			newCaregivers: []
+		}
+	)
+
+	$inspect(familyMembers)
+
+	let caregiverErrors = $derived<CaregiverError[]>(
+		familyMembers.newCaregivers.map(() => ({
+			firstName: '',
+			lastName: '',
+			sex: '',
+			contactNo: '',
+			address: '',
+			brgy: '',
+			communityYr: '',
+			msg: ''
+		}))
+	);
+	let linkedFamilyError = $state('')	// default no errors
+
+	function addNewCaregiver() {
+		const newCaregiver = {
+			type: 'new',
 			firstName: '',
 			lastName: '',
 			bday: '',
@@ -52,57 +86,21 @@
 			communityGrp_id: null,
 			income: '',
 			communityYr: new Date().getFullYear()
-		}
-	]); // initialize variable so that the page will have at least one caregiver
+		};
 
-	$inspect(caregivers)
+		const newError = {
+			firstName: '',
+			lastName: '',
+			sex: '',
+			contactNo: '',
+			brgy: '',
+			address: '',
+			communityYr: '',
+			msg: ''
+		};
 
-	let caregiverErrors = $derived<CaregiverError[]>(
-		caregivers.map(() => ({
-				firstName: '',
-				lastName: '',
-				sex: '',
-				contactNo: '',
-				address: '',
-				brgy: '',
-				msg: ''
-		}))
-	);
-
-	function addNewCaregiver() {
-		caregivers = [
-			...caregivers,
-			{
-				type: 'new',
-				firstName: '',
-				lastName: '',
-				bday: '',
-				sex: '',
-				contactNo: '',
-				fbLink: '',
-				email: '',
-				address: '',
-				brgy: '',
-				occupation: '',
-				relationship: '',
-				communityGrp_id: null,
-				income: '',
-				communityYr: new Date().getFullYear()
-			}
-		];
-
-		caregiverErrors = [
-			...caregiverErrors,
-			{
-				firstName: '',
-				lastName: '',
-				sex: '',
-				contactNo: '',
-				brgy: '',
-				address: '',
-				msg: ''
-			}
-		];
+		familyMembers.newCaregivers = [...familyMembers.newCaregivers, newCaregiver];
+		caregiverErrors = [...caregiverErrors, newError];
 	}
 
 	/**
@@ -110,41 +108,55 @@
 	 * @param index
 	 */
 	function deleteCaregiver(index: number) {
-		caregivers = caregivers.filter((_, i) => i !== index);
-		caregiverErrors = caregiverErrors.filter((_, i) => i !== index);
-	}
+		const newCaregivers = [];
+		const newErrors = [];
 
-	/**
-	 * checks if a linked caregiver exists
-	 * returns the index if a family is linked
-	 * returns -1 if not
-	 */
-	let linkedIndex = $derived(caregivers.findIndex(g => g.type === 'linked'));
+		for (let i = 0; i < familyMembers.newCaregivers.length; i++) {
+			if (i !== index) {
+				newCaregivers.push(familyMembers.newCaregivers[i]);
+				newErrors.push(caregiverErrors[i]);
+			}
+		}
+
+		familyMembers.newCaregivers = newCaregivers;
+		caregiverErrors = newErrors;
+	}
 
 	// validates the caregiver form data
 	function validateForm(): boolean {
 		let isValid = true;
 
-		caregiverErrors = caregivers.map((caregiver) => {
-			// ensures at least 1 existing family member
-			if (caregiver.type === 'linked') {
-				if (!caregiver.infoLinked || caregiver.infoLinked.length === 0) {
-					isValid = false;
-					return { msg: "Please have at least one family member" };
-				}
-				return { msg: '' };
+		// validation for existing
+		if (familyMembers.hasExisting) {
+			const hasLinkedMembers = (familyMembers.linkedFamily?.infoLinked?.length ?? 0) > 0;
+			if (!hasLinkedMembers) {
+				isValid = false;
+				linkedFamilyError = "Please have at least one family member";
 			} else {
-				const errors = {
-					firstName: !caregiver.firstName.trim() ? 'Required' : '',
-					lastName: !caregiver.lastName.trim() ? 'Required' : '',
-					sex: !caregiver.sex ? 'Required' : '',
-					contactNo: !caregiver.contactNo.trim() ? 'Required' : '',
-					address: !caregiver.address.trim() ? 'Required' : '',
-					brgy: !caregiver.brgy ? 'Required' : '',
-				};
-				if (Object.values(errors).some(msg => msg)) isValid = false;
-				return errors;
+				linkedFamilyError = "";
 			}
+		}
+
+		// validation for new caregivers
+
+		caregiverErrors = familyMembers.newCaregivers.map((caregiver) => {
+			const errors = {
+				firstName: !caregiver.firstName.trim() ? 'Required' : '',
+				lastName: !caregiver.lastName.trim() ? 'Required' : '',
+				sex: !caregiver.sex ? 'Required' : '',
+				contactNo: !caregiver.contactNo.trim() ? 'Required' : '',
+				address: !caregiver.address.trim() ? 'Required' : '',
+				brgy: !caregiver.brgy ? 'Required' : '',
+				communityYr: '',
+				msg: ''
+			};
+
+			// check if any error messages are present to invalidate the form
+			if (Object.values(errors).some(msg => msg)) {
+				isValid = false;
+			}
+
+			return errors;
 		});
 
 		return isValid;
@@ -235,9 +247,9 @@
 			// for family
 
 			// if linked family exists
-			if (linkedIndex !== -1 && !isNewCaregiver(caregivers[linkedIndex])) {
+			if (familyMembers.hasExisting && familyMembers.linkedFamily != null) {
 				// get the family id of the existing family
-				const familyId = caregivers[linkedIndex].family_id;
+				const familyId = familyMembers.linkedFamily.family_id;
 
 				// create new relationships for each child-familyMember relationship which isn't null
 
@@ -285,19 +297,17 @@
 
 
 			// add the other caregivers to the existing family
-			for (const [i, caregiver] of caregivers.entries()) {
-				if (isNewCaregiver(caregiver)) {
-					// add all the caregivers to the db (POST to member, and POST to caregivers)
-					const caregiverMember = await POST_caregiver(caregiver);
+			for (const [i, newCaregiver] of familyMembers.newCaregivers.entries()) {
+				// add all the caregivers to the db (POST to member, and POST to caregivers)
+				const caregiverMember = await POST_caregiver(newCaregiver);
 
-					// add the caregivers to the existing family
-					const famMemData = await safeFetch('/api/family_members', {
-						is_child: false,
-						member_id: caregiverMember.id,
-						family_id: family_id
-					});
-					console.log(caregiver.firstName, ' added to family: ', famMemData.message)
-				}
+				// add the caregivers to the existing family
+				const famMemData = await safeFetch('/api/family_members', {
+					is_child: false,
+					member_id: caregiverMember.id,
+					family_id: family_id
+				});
+				console.log(newCaregiver.firstName, ' added to family: ', famMemData.message)
 			}
 		}
 
@@ -360,11 +370,6 @@
 			return memberData.data;
 		}
 
-		// helper functions
-		// to identify the datatype of the caregiver
-		function isNewCaregiver(caregiver: Caregiver): caregiver is NewCaregiver {
-			return caregiver.type === 'new';
-		}
 
 	}
 </script>
@@ -374,19 +379,20 @@
 <section id="family-info">
 	<h1>Family Information</h1>
 
-	{#each caregivers as caregiver, index (index + caregiver.firstName + caregiver.lastName + caregiver.contactNo + caregiver.type)}
+	<ExistingForm bind:formData={familyMembers} error_msg={linkedFamilyError} members={members} />
+
+	{#each familyMembers.newCaregivers as caregiver, index (index)}
 		<CaregiverForm
-			bind:formData={caregivers[index]}
+			bind:formData={familyMembers.newCaregivers[index]}
 			errors={caregiverErrors[index]}
 			{index}
-			{linkedIndex}
 			deleteCaregiver={deleteCaregiver}
-			options={options}
+			{options}
 		/>
 	{/each}
 
 	<br>
-	<button id="caregiver-1" onclick={addNewCaregiver}>Add another caregiver</button>
+	<button id="caregiver-1" onclick={addNewCaregiver}>Add new caregiver</button>
 
 </section>
 

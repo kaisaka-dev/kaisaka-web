@@ -1,153 +1,24 @@
 <script lang="ts">
-	import Radio from '$components/input/Radio.svelte';
 	import InputText from '$components/input/InputText.svelte';
 	import Select from '$components/input/Select.svelte';
-	import SearchBtn from '$components/styled-buttons/SearchBtn.svelte';
-	import Validation from '$components/text/Validation.svelte';
-	import type { Caregiver, NewCaregiver, LinkedCaregiver, CaregiverError, InfoLinked } from './+page.server.js';
+	import type {  NewCaregiver, CaregiverError } from '$lib/types/registrationForm.js';
 
 
-	export let formData: Caregiver;
+	export let formData: NewCaregiver;
 	export let errors: CaregiverError;
 	export let index: number;
 	export let deleteCaregiver: (index: number) => void;
-	export let linkedIndex: number;
 	export let options;
 
-	let caregivertype = formData.type;
-	let showtable = false;
-	let disabled = false;
 
 
-	const linkedCaregivers: InfoLinked[] = [
-		{
-			member_id: '0',
-			firstName: 'Gideon',
-			lastName: 'Chua',
-			contactNo: '0912 123 1234',
-			relationship: ''
-		},
-		{
-			member_id: '1',
-			firstName: 'Gabrielle',
-			lastName: 'Chua',
-			contactNo: '0912 123 1234',
-			relationship: ''
-		},
-		{
-			member_id: '2',
-			firstName: 'Graciella',
-			lastName: 'Chua',
-			contactNo: '0912 123 1234',
-			relationship: ''
-		},
-		{
-			member_id: '3',
-			firstName: 'Gian',
-			lastName: 'Chua',
-			contactNo: '0912 123 1234',
-			relationship: ''
-		}
-	]
-
-	/**
-	 * function passed to SearchBtn, shows table if the search is valid. else, error messages are shown
-	 */
-	function handleSearch() {
-		if (formData.type === 'linked') {
-			const hasName = Boolean(formData.firstName.trim()) && Boolean(formData.lastName.trim());
-			const hasContact = Boolean(formData.contactNo.trim());
-			const incompleteFields = !hasName && !hasContact
-			const found = true;
-
-			errors.msg = incompleteFields ? "Imcomplete fields" : ""
-
-			if (!incompleteFields && found) {
-				showtable = hasName || hasContact;
-				formData.family_id = "06f137dd-27b9-4efc-a917-e93c0cb9db1e"; 	// TODO: connect it to the api
-				formData.infoLinked = [...linkedCaregivers];
-
-				// console.log(linkedCaregivers.length)
-				// console.log(formData.infoLinked.length)
-				// console.log(formData.infoLinked)
-			}
-			else if (!incompleteFields) {
-				showtable = false;
-				errors.msg = "Record not found";
-			}
-		} else {
-			showtable = false;
-		}
-	}
-
-	/**
-	 * one member can only join one family, this will disable all the buttons so that they will be unable
-	 * to join another family
-	 */
-	$: disabled = (linkedIndex !== -1 && linkedIndex !== index);
-
-	$:
-	if (caregivertype != formData.type) {	// change only if there's a change in the form type selected
-		if (caregivertype === 'linked') {
-			// change formData into NewCaregiver instead of LinkedCaregiver data type
-			formData = {
-				type: 'linked',
-				family_id: '',
-				firstName: formData.firstName,
-				lastName: formData.lastName,
-				contactNo: formData.contactNo,
-				infoLinked: []
-			};
-			errors = {
-				msg: ''
-			};
-		} else if (caregivertype === 'new') {
-			// change formData into LinkedCaregiver instead of NewCaregiver
-			formData = {
-				type: 'new',
-				firstName: formData.firstName,
-				lastName: formData.lastName,
-				bday: '',
-				sex: '',
-				contactNo: formData.contactNo,
-				fbLink: '',
-				email: '',
-				address: '',
-				brgy: '',
-				occupation: '',
-				relationship: '',
-				communityGrp_id: null,
-				income: '',
-				communityYr: new Date().getFullYear()
-			};
-			errors = {
-				firstName: '',
-				lastName: '',
-				sex: '',
-				contactNo: '',
-				brgy: '',
-				address: ''
-			};
-		}
-	}
-
-	// to identify the datatype of the caregiver
-	function isNewCaregiver(caregiver: Caregiver): caregiver is NewCaregiver {
-		return caregiver.type === 'new';
-	}
 </script>
 
 <div class="collapse collapse-arrow" style="box-shadow: 0 4px 0 var(--border); border-radius:0px">
 	<input type="checkbox" checked/>
 	<h2 class="collapse-title font-semibold">Caregiver {index + 1}</h2>
 	<div class="collapse-content text-sm">
-		<div style="display: flex; flex-direction: row; margin-bottom: 1.5rem" >
-			<Radio label="First time" id={`firsttime-${index}`} value="new" name={`caregiver-type-${index}`} bind:group={caregivertype} />
-			<Radio label="Existing family" id={`existing-${index}`} value="linked" name={`caregiver-type-${index}`} bind:group={caregivertype} {disabled} />
-		</div>
 
-
-		{#if isNewCaregiver(formData)}
 			<InputText label="First name" id={`first-name-${index}`} bind:value={formData.firstName} required msg={errors.firstName} />
 			<InputText label="Last name" id={`last-name-${index}`} bind:value={formData.lastName} required msg={errors.lastName} />
 			<InputText label="Birthday" id="bday" bind:value={formData.bday} type="date" />
@@ -166,61 +37,12 @@
 			{/if}
 
 
-		{:else if caregivertype === "linked" }
-			<InputText label="First name" id={`first-name-${index}`} bind:value={formData.firstName} msg={errors.firstName} />
-			<InputText label="Last name" id={`last-name-${index}`} bind:value={formData.lastName} msg={errors.lastName} />
-			<div style="width:720px; text-align:center;" class="flex gap-4 items-center ml-6 mb-1">
-				<div class="flex-grow border-t border-gray-400"></div>
-				<span class="text-sm">or</span>
-				<div class="flex-grow border-t border-gray-400"></div>
-			</div>
-			<InputText label="Contact No." id={`contact-no-${index}`} bind:value={formData.contactNo} msg={errors.contactNo} />
 
-			<div style="display: flex; flex-direction: row; width:740px; margin-top: 2rem">
-				<Validation msg="{errors.msg}"style="width: 300px; margin-left: 2rem; font-size: var(--medium-text)"/>
-
-				<div style="margin-left: auto">
-				<SearchBtn onSearch={handleSearch} /></div></div>
-
-
-
-
-			{#if showtable}
-				<br>
-				<div class="input-container">
-					<table>
-						<thead>
-						<tr>
-							<th>First Name</th>
-							<th>Last Name</th>
-							<th>Contact No.</th>
-							<th>Relationship</th>
-						</tr>
-						</thead>
-						<tbody>
-							{#if formData.type === 'linked'}
-								{#each formData.infoLinked as _, linked_i}
-									<tr>
-										<td>{formData.infoLinked[linked_i].firstName}</td>
-										<td>{formData.infoLinked[linked_i].lastName}</td>
-										<td>{formData.infoLinked[linked_i].contactNo}</td>
-										<td><InputText id="relationship-{linked_i}" /></td>
-									</tr>
-								{/each}
-							{/if}
-						</tbody>
-					</table>
-				</div>
-			{/if}
-
-
-		{/if}
 
 
 		<div class="input-container">
-		{#if index !== 0}
 			<button on:click={() => deleteCaregiver(index)}>Delete</button>
-		{/if}</div>
+		</div>
 
 
 
