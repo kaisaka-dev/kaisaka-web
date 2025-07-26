@@ -23,15 +23,16 @@
 	const staffView = /dashboard/i.test(page.url.pathname);
 	const childRegData = get(childFormData)
 	console.log(childRegData);
-	$inspect(caregivers)
+
 
 	// load the data
 	const { data } = $props<{ data: PageData }>();
-	let options = $state({
+	const options = $state({
 		comGroupType: data.options.comGroupType,
 		incomeType: dropdownOptions.income_category,
 		sex: dropdownOptions.sex
 	});
+	const members = $state(data.members)
 
 
 	let caregivers = $state<Caregiver[]>([
@@ -53,6 +54,8 @@
 			communityYr: new Date().getFullYear()
 		}
 	]); // initialize variable so that the page will have at least one caregiver
+
+	$inspect(caregivers)
 
 	let caregiverErrors = $derived<CaregiverError[]>(
 		caregivers.map(() => ({
@@ -246,8 +249,9 @@
 			else {
 				// create a new family
 				const familyData = await safeFetch('/api/families', null);
-				console.log(familyData.message)
-				const familyId = familyData.id
+
+				console.log(familyData.message, familyData.data.id)
+				const familyId = familyData.data.id
 
 				// add the child and caregivers to the newly created family
 				await POST_family(memberId, familyId)
