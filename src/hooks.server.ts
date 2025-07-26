@@ -94,7 +94,7 @@ const authGuard: Handle = async ({ event, resolve }) => {
   event.locals.session = session
   event.locals.user = user
 
-  const publicPaths = ['/', '/register/child', `/sign-up`, `/dashboard/profile`, '/?/login', '/auth/', '/auth/register', '/auth/login'];
+  const publicPaths = ['/', '/registration/child', `'/registration/family-info`, `/sign-up`, `/dashboard/profile`, '/?/login', '/auth/', '/auth/register', '/auth/login'];
   const isPublic = publicPaths.includes(event.url.pathname);
 
   if (isPublic) {
