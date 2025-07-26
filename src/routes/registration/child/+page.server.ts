@@ -1,6 +1,6 @@
-import type { PageLoad } from '../../../../.svelte-kit/types/src/routes/$types.js';
+import type { PageServerLoad } from '../../../../.svelte-kit/types/src/routes/$types.js';
 
-export const load: PageLoad = async({fetch}) => {
+export const load: PageServerLoad = async({fetch}) => {
 
 	// fetching the (dropdown) options for disability category
 	const response = await fetch('/api/disability_category');
