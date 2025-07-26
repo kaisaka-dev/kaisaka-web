@@ -9,6 +9,7 @@ import { error, json, type RequestHandler } from "@sveltejs/kit";
  * • Get all family members: GET /api/family_members
  * • Get by member ID: GET /api/family_members?member_id=uuid
  * • Get by family ID: GET /api/family_members?family_id=uuid
+ * • Get detailed info: GET /api/family_members?details=true&family_id=uuid (optional family_id)
  * • Get with joins (legacy): GET /api/family_members?id=uuid&type=memberid&select=...
  * 
  * POST - Create family member relationship
@@ -28,13 +29,19 @@ export const GET: RequestHandler = async ({ url }) => {
   const type = url.searchParams.get('type');
   const member_id = url.searchParams.get('member_id');
   const family_id = url.searchParams.get('family_id');
+  const details = url.searchParams.get('details') === 'true';
   const joinParams = parseJoinParams(url);
   
   try {
     let family_member;
 
-    // Simple getters (new functionality)
-    if (member_id && !type && !joinParams.select) {
+    // Detailed info getter (new functionality)
+    if (details) {
+      // Get family members with detailed info (names, contact)
+      family_member = await FamilyMembersModel.instance.getFamilyMembersWithDetails(family_id || undefined);
+    }
+    // Simple getters
+    else if (member_id && !type && !joinParams.select) {
       // Get all family relationships for a member
       family_member = await FamilyMembersModel.instance.findByMemberId(member_id);
     } else if (family_id && !type && !joinParams.select) {

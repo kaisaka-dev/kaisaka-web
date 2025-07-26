@@ -177,4 +177,32 @@ export class FamilyMembersModel extends TableManager<"family_members">('family_m
   async getMultipleJoin(select: string, filters: Record<string, string | number>): Promise<FamilyMembersRow[] | null> {
     return await this.findWithJoin(select, filters );
   }
+
+  /**
+   * Gets family members with detailed information including names and contact info
+   * @param family_id optional family id to filter by
+   * @returns array of family members with details or null
+   */
+  async getFamilyMembersWithDetails(family_id?: string): Promise<any[] | null> {
+    const joinStatement = `
+      family_id,
+      member_id, 
+      relationship_type,
+      is_child,
+      date_added,
+      members!inner(
+        first_name,
+        last_name,
+        caregivers(
+          contact_number
+        )
+      )
+    `;
+    
+    if (family_id) {
+      return this.findWithJoin(joinStatement, { eq: { family_id } });
+    } else {
+      return this.findWithJoin(joinStatement);
+    }
+  }
 }
