@@ -4,17 +4,25 @@
 	import Validation from '$components/text/Validation.svelte';
 	import type { FamilyMembers, MemberListFamily } from '$lib/types/registrationForm.js';
 	import Checkbox from '$components/input/Checkbox.svelte';
+	import Select from '$components/input/Select.svelte';
 
 	export let formData: FamilyMembers;
 	export let error_msg: string = "";
 	export let members: MemberListFamily[];
 	let showtable = false;
+	let showMultipleResults = false;
+	let foundMembers: { family_id: string, label: string, member: MemberListFamily }[] = [];
+	let selectedFamilyId: string = '';
 
 /**
  * function passed to SearchBtn, shows table if the search is valid. else, error messages are shown
  */
 function handleSearch() {
 	showtable = false;
+	showMultipleResults = false;
+	foundMembers = [];
+	selectedFamilyId = '';
+
 	const hasName = Boolean(formData.linkedFamily.firstName.trim()) && Boolean(formData.linkedFamily.lastName.trim());
 	const hasContact = Boolean(formData.linkedFamily.contactNo.trim());
 	const incompleteFields = !hasName && !hasContact
@@ -22,33 +30,71 @@ function handleSearch() {
 
 	// if fields are complete, proceed to search
 	if (!incompleteFields) {
-		// 1. find matching member
-		const foundMember = members.find(member =>
+		// 1. find all matching members
+		const matchingMembers = members.filter(member =>
 			(hasName &&
-				member.firstName.toLowerCase().includes(formData.linkedFamily.firstName.toLowerCase()) &&
-				member.lastName.toLowerCase().includes(formData.linkedFamily.lastName.toLowerCase())) ||
-			(hasContact && member.contactNo === formData.linkedFamily.contactNo)
+				member.firstName.toLowerCase().trim().includes(formData.linkedFamily.firstName.toLowerCase().trim()) &&
+				member.lastName.toLowerCase().trim().includes(formData.linkedFamily.lastName.toLowerCase().trim())) ||
+			(hasContact && member.contactNo.replace(/\s/g, '') === formData.linkedFamily.contactNo.replace(/\s/g, ''))
 		);
 
-		if (foundMember) {
-			// 2. set the family ID
-			formData.linkedFamily.family_id = foundMember.family_id;
+		console.log('Found members:', matchingMembers);
 
-			// 3. find all members with same family ID
-			formData.linkedFamily.infoLinked = members
-				.filter(m => m.family_id === foundMember.family_id)
-				.map(member => ({
-					member_id: member.member_id,
-					firstName: member.firstName,
-					lastName: member.lastName,
-					contactNo: member.contactNo,
-					relationship: member.relationship || ''
-				}));
-
-			showtable = true;
+		if (matchingMembers.length === 0) {
+			error_msg = "No matching family members found";
+		} else if (matchingMembers.length === 1) {
+			// single result - automatically selects that one
+			const foundMember = matchingMembers[0];
+			selectFamily(foundMember);
+		} else {
+			// multiple results - show selection dropdown
+			foundMembers = matchingMembers.map(member => ({
+				family_id: member.family_id,
+				label: `${member.firstName} ${member.lastName} - ${member.contactNo}`,
+				member: member
+			}));
+			showMultipleResults = true;
+			error_msg = "Multiple matches found. Please select one:";
 		}
 	}
 }
+
+	function selectFamily(foundMember: MemberListFamily) {
+		// 2. set the family ID
+		formData.linkedFamily.family_id = foundMember.family_id;
+
+		// 3. find all members with same family ID
+		formData.linkedFamily.infoLinked = members
+			.filter(m => m.family_id === foundMember.family_id)
+			.map(member => ({
+				member_id: member.member_id,
+				firstName: member.firstName,
+				lastName: member.lastName,
+				contactNo: member.contactNo,
+				relationship: member.relationship || ''
+			}));
+
+		showtable = true;
+		showMultipleResults = false;
+	}
+
+	function onFamilySelect(selectedFamilyId: string) {
+		if (selectedFamilyId) {
+			const selectedMember = foundMembers.find(fm => fm.family_id === selectedFamilyId)?.member;
+			if (selectedMember) {
+				selectFamily(selectedMember);
+				error_msg = '';
+			}
+		}
+	}
+
+	// Create options for the Select component
+	$: selectOptions = foundMembers.map(fm => ({
+		id: fm.family_id,
+		name: fm.label
+	}));
+
+$: onFamilySelect(selectedFamilyId)
 
 </script>
 
@@ -74,7 +120,15 @@ function handleSearch() {
 			<div style="margin-left: auto">
 				<SearchBtn onSearch={handleSearch} /></div></div>
 
-
+			{#if showMultipleResults}
+				<br>
+				<Select
+					label="Select Family Member"
+					id="family-select"
+					options={selectOptions}
+					bind:value={selectedFamilyId}
+				/>
+			{/if}
 
 
 			{#if showtable}
@@ -95,7 +149,7 @@ function handleSearch() {
 								<td>{formData.linkedFamily.infoLinked[linked_i].firstName}</td>
 								<td>{formData.linkedFamily.infoLinked[linked_i].lastName}</td>
 								<td>{formData.linkedFamily.infoLinked[linked_i].contactNo}</td>
-								<td><InputText id="relationship-{linked_i}" /></td>
+								<td><InputText id="relationship-{linked_i}" bind:value={formData.linkedFamily.infoLinked[linked_i].relationship}/></td>
 							</tr>
 						{/each}
 						</tbody>
