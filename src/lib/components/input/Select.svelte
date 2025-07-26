@@ -32,9 +32,7 @@
 			
 		</select>
 
-		{#if required && value === ""}
-			<Validation msg={msg} />
-		{/if}
+		<Validation msg={msg} />
 	</div>
 
 </div>
