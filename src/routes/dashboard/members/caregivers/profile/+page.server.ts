@@ -4,15 +4,15 @@ export async function load( {url, fetch} ) {
     if(!id) {
         throw new Error("Missing id")
     }
-    const memberRes = await fetch(`/api/caregivers/${id}?select=*, members(*)`)
+    const caregiverRes = await fetch(`/api/caregivers/${id}?select=*, members(*)`)
 
-    if(!memberRes.ok){
+    if(!caregiverRes.ok){
         throw new Error('Failed to fetch member info');
     }
 
-    const memberInfo = await memberRes.json()
+    const caregiverInfo = await caregiverRes.json()
 
-    const memberRecRes = await fetch(`/api/members/${memberInfo.members.id}?select=*,addresses(*)`);
+    const memberRecRes = await fetch(`/api/members/${caregiverInfo.members.id}?select=*,addresses(*),barangays(*)`);
         
     if(!memberRecRes.ok){
         throw new Error('Failed to fetch member record info');
@@ -21,31 +21,13 @@ export async function load( {url, fetch} ) {
     const memberRecord = await memberRecRes.json()
     console.log(memberRecord)
 
-    //gets record in barangay table
-    let barangayInfo = {}
-    const barangayID = memberRecord?.addresses?.barangay_id;
-
-    if(barangayID != null){
-        const barangayRes = await fetch(`/api/barangays?id=${barangayID}`)
-        if (!barangayRes.ok) {
-            throw new Error('Failed to fetch barangay info');
-            
-        }
-        else{
-            barangayInfo = await barangayRes.json();
-        }
-    }
-
     //finds the family id of the record with the given member_id in the family table
-    const familyRes = await fetch(`/api/family_members?id=${memberInfo.members.id}&select=*,families(*)&type=memberid`)
+    const familyRes = await fetch(`/api/family_members?id=${memberRecord.id}&select=*,families(*)&type=memberid`)
     if (!familyRes.ok) {
         throw new Error('Failed to fetch family member info');
     }
     
     const familyInfo = await familyRes.json()
-    
-    //console.log("Family Info:", familyInfo)
-
     let familyArray = [];
 
     for(let i in familyInfo) { //loop over every record, query the db for every family with the id, and add the members to an array
@@ -61,12 +43,49 @@ export async function load( {url, fetch} ) {
         familyArray.push(entireFamily)
     }
 
+    const communityres = await fetch(`/api/caregiver_groups/?caregiver_id=${caregiverInfo.id}`)
+    let communityHistory = []
+
+    if(communityres.ok){
+        const communityInfo = await communityres.json()
+        
+        for(let i in communityInfo){
+            communityHistory.push(communityInfo[i])
+        }
+    }
+
+    const incomeres = await fetch(`/api/income_type?caregiver_id=${caregiverInfo.id}`)
+    let incomeHistory = []
+
+    if(incomeres.ok){
+        const incomeInfo = await incomeres.json()
+        for(let i in incomeInfo) {
+            incomeHistory.push(incomeInfo[i])
+        }
+    }
+    
+    
+    let caregiver: Caregiver = {
+        first_name:  memberRecord.first_name,
+        last_name: memberRecord. last_name,
+        birthday: memberRecord.birthday,
+        sex: memberRecord.sex,
+        contact_no: caregiverInfo.contact_no,
+        fb_link: caregiverInfo.facebook_link,
+        email: caregiverInfo.email,
+        address: memberRecord.addresses.address,
+        barangay: memberRecord.barangays?.name,
+        occupation: caregiverInfo.occupation,
+        date_admission: memberRecord.date_admission,
+        date_termination: memberRecord.date_termination,
+        family: familyArray,
+        community_history: communityHistory,
+        income_history: incomeHistory
+    }
 
     return {
-        member: memberInfo,
+        caregiver: caregiver,
         memberRecord: memberRecord,
-        barangay: barangayInfo,
-        family: familyArray,
     };
 }
 
@@ -83,9 +102,9 @@ export type Caregiver = {
 	occupation: string | null;
 	date_admission: string;
 	date_termination: string;
-	family: Family[];
-	community_history: Community[];
-	income_history: Income[];
+	family: Family[] | null;
+	community_history: Community[] | null;
+	income_history: Income[] | null;
 }
 
 export type Community = {

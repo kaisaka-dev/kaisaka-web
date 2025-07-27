@@ -1,5 +1,6 @@
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
 
+
 <script lang="ts">
     import type { Caregiver} from './+page.server.js';
     import type { family } from '$lib/types/family.ts'
@@ -12,6 +13,43 @@
 
     export let data
     let editing = false
+
+    
+
+    //below are sample data declarations just to test if the page works, will delete when relevant APIs are complete
+    let sampleFamily1: family = {
+        members: [{firstName: "Juan", lastName: "De La Cruz", role: "Grandparent"},
+                  {firstName: "Sample2", lastName: "Name1", role: "Child"},
+                  {firstName: "Paolo", lastName: "Rivera", role: "Caregiver"}
+                ]
+    }
+
+    let sampleFamily2: family = {
+         members: [{firstName: "Sample25", lastName: "Name112", role: "Parent"},
+                  {firstName: "Sample2123", lastName: "Name2311", role: "Child"},
+                  {firstName: "Paolo", lastName: "Rivera", role: "Caregiver"}
+                ]
+    }
+
+    let sampleFamily3: family = {
+         members: [{firstName: "Sample71", lastName: "Name692", role: "Child"},
+                  {firstName: "Sample2123", lastName: "Name692", role: "Child"},
+                  {firstName: "Paolo", lastName: "Rivera", role: "Caregiver"},
+                  {firstName: "Another", lastName: "Caregiver!", role: "Parent"}
+                ]
+    }
+    let sample: Caregiver = {first_name: 'Paolo', last_name: 'Rivera', contact_no: '09171275268',
+                 address:'Hacienda Royale', barangay:'Barangay 218', date_admission:new Date(2023,5, 16), date_termination: new Date(2024,5,12),
+                 family: [sampleFamily1, sampleFamily2, sampleFamily3],
+
+                 community_history: [{id:1, date_joined: new Date(2024,1,5).toISOString().split('T')[0], date_left: new Date(2024,1,5).toISOString().split('T')[0], name: "Parent organization"},
+                     {id:2, date_joined: new Date(2024,2,5).toISOString().split('T')[0], date_left: null, name: "Others"},
+                     {id:3, date_joined: new Date(2024,3,5).toISOString().split('T')[0], date_left: new Date(2024,5,5).toISOString().split('T')[0], name: "Skills training group"}],
+                income_history: [{id:1, date_start: new Date(2024,1,5).toISOString().split('T')[0], date_end: new Date(2024,1,5).toISOString().split('T')[0], name: "Home-based"},
+                    {id:2, date_start: new Date(2024,2,5).toISOString().split('T')[0], date_end: null, name: "Hme-based"},
+                    {id:3, date_start: new Date(2024,3,5).toISOString().split('T')[0], date_end: new Date(2024,5,5).toISOString().split('T')[0], name: "Self-employed"}]
+
+    }
 
     let today = new Date()
 
@@ -82,14 +120,15 @@
     <!--Container for profile information-->
     <div>
         <!--Container for the personal information portion of the profile-->
-        <PersonalInfo id="Personal Info" {editing} data={sample} />
+        <PersonalInfo id="Personal Info" {editing} data={data.caregiver} />
 
         <!--Container for the families of the caregiver-->
         <div class = "mt-10">
             <div id = "Family Info" >
                 <h2> Families </h2>
-                <div class = "grid grid-cols-2 gap-5 mt-2" >
-                {#each data.family as family}
+                <div class = "grid grid-cols-2 gap-5 mt-2 border-4 border-[var(--border)] p-4" >
+                {#if data.caregiver.family.data}
+                {#each data.caregiver.family.data as family}
                     <div class = "flex flex-col min-w-100 w-105">
                        <span class = "!bg-[var(--green)] p-2 w-105 min-w-105 !text-white">  {familyName(family)} </span>
                        <div class = "border-4 border-[var(--border)]">
@@ -104,21 +143,11 @@
                             </div>
                         {/each}
                         </div>
-
-<!--                        <div class = "flex flex-col border-4 border-[var(&#45;&#45;border)]">-->
-<!--                            {#each yearsCounter as year}-->
-<!--                                <div class = "flex flex-row">-->
-<!--                                 <div class = "ml-5"> {year} </div>-->
-<!--                                {#if paymentYears(sample.paymentHistory).includes(year)}-->
-<!--                                <div class = "ml-14 mb-5">  P{sample.paymentHistory[paymentYears(sample.paymentHistory).indexOf(year)].amount} paid on {sample.paymentHistory[paymentYears(sample.paymentHistory).indexOf(year)].date.toISOString().split('T')[0]}  </div>-->
-<!--                                {:else}-->
-<!--                                <div class = "!text-red-500 mb-5 ml-35"> Payment Pending!</div>-->
-<!--                                {/if}-->
-<!--                                </div>-->
-<!--                            {/each}-->
-<!--                        </div>-->
                     </div>        
                 {/each}
+                {:else}
+                    Caregiver is not part of any families
+                 {/if}
                 </div>
             </div>
         </div>
