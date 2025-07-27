@@ -149,7 +149,11 @@ $: onFamilySelect(selectedFamilyId)
 								<td>{formData.linkedFamily.infoLinked[linked_i].firstName}</td>
 								<td>{formData.linkedFamily.infoLinked[linked_i].lastName}</td>
 								<td>{formData.linkedFamily.infoLinked[linked_i].contactNo}</td>
+								{#if formData.linkedFamily.infoLinked[linked_i].caregiver_id != null}
 								<td><InputText id="relationship-{linked_i}" bind:value={formData.linkedFamily.infoLinked[linked_i].relationship}/></td>
+								{:else}
+								<td>CWD</td>
+								{/if}
 							</tr>
 						{/each}
 						</tbody>
