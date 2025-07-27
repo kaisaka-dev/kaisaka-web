@@ -316,25 +316,25 @@
 				// add the caregivers to the existing family
 				const famMemData = await safeFetch('/api/family_members', {
 					is_child: false,
-					member_id: caregiverMember.id,
+					member_id: caregiverMember.member_id,
 					family_id: family_id
 				});
 				console.log(newCaregiver.firstName, ' added to family: ', famMemData.message)
 
 				// add the relationship of caregivers to child IF NOT EMPTY
-				// console.log("the relationship: ", {
-				// 	caregiver: caregiverMember.id,
-				// 	child: child_id,
-				// 	relationship: newCaregiver.relationship
-				// })
-				// if (newCaregiver.relationship && newCaregiver.relationship.trim() !== '') {
-				// 	const relationshipData = await safeFetch('/api/relationship_cc', {
-				// 		caregiver: caregiverMember.id,
-				// 		child: child_id,
-				// 		relationship: newCaregiver.relationship
-				// 	});
-				// 	console.log(relationshipData.message)
-				// }
+				console.log("the relationship: ", {
+					caregiver: caregiverMember.caregiver_id,
+					child: child_id,
+					relationship: newCaregiver.relationship
+				})
+				if (newCaregiver.relationship && newCaregiver.relationship.trim() !== '') {
+					const relationshipData = await safeFetch('/api/relationship_cc', {
+						caregiver: caregiverMember.caregiver_id,
+						child: child_id,
+						relationship: newCaregiver.relationship
+					});
+					console.log(relationshipData.message)
+				}
 			}
 		}
 
@@ -394,7 +394,10 @@
 				console.log(incomeData.message)
 			}
 
-			return memberData.data;
+			return {
+				member_id: memberData.data.id,
+				caregiver_id: caregiver_id
+			};
 		}
 
 
