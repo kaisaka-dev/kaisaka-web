@@ -233,10 +233,10 @@ try{
     }
     const familyInfo = await familyRes.json()
 
-    if (!familyInfo || familyInfo.length === 0 || !familyInfo[0]?.family_id) {
+    if (!familyInfo || familyInfo.length === 0 || !familyInfo.data[0]?.family_id) {
         entireFamily = {}
     } else {
-        const familyID = familyInfo[0].family_id
+        const familyID = familyInfo.data[0].family_id
         const entireFamilyRes = await fetch(`/api/family_members?id=${familyID}&select=*,members(*)&type=familyid`)
         
         if (!entireFamilyRes.ok) {
@@ -258,13 +258,13 @@ try{
     }
 
     // console.log("Child: ", child)
-    // console.log("family: ", entireFamily)
+    //console.log("family: ", entireFamily.data)
     // console.log("member: ", memberRecord)
 
     return{
         child: child,
         error: null,
-        family: entireFamily,
+        family: Array.isArray(entireFamily?.data) ? entireFamily.data : [],
         member: memberRecord,
         interventioninfo: interventioninfo || ''
     } 
