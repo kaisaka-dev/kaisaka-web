@@ -1,60 +1,66 @@
-# Svelte library
+# Kaisaka Web
 
-[![Bun](https://img.shields.io/badge/Bun-000?logo=bun&logoColor=fff)](#) [![Figma](https://img.shields.io/badge/Figma-F24E1E?logo=figma&logoColor=white)](#) [![Jira](https://img.shields.io/badge/Jira-0052CC?logo=jira&logoColor=fff)](#) [![SvelteKit](https://img.shields.io/badge/SvelteKit-%23f1413d.svg?logo=svelte&logoColor=white)](#) [![TailwindCSS](https://img.shields.io/badge/Tailwind%20CSS-%2338B2AC.svg?logo=tailwind-css&logoColor=white)](#)
+![Static Badge](https://img.shields.io/badge/AY2425--T3-CSSWENG-red)
 
-Everything you need to build a Svelte library, powered by [`sv`](https://npmjs.com/package/sv).
+## Organization Overview
 
-Read more about creating a library [in the docs](https://svelte.dev/docs/kit/packaging).
+## Features
 
-## Creating a project
+- XLSX Processor
+  - Report Generation
+  - Child List
+- Child Profiler
+- Caregiver Profiler
 
-If you're seeing this, you've probably already done this step. Congrats!
+## Tech Stack
 
-```bash
-# create a new project in the current directory
-npx sv create
+These are the major libraries used for our work.
 
-# create a new project in my-app
-npx sv create my-app
+- Frontend Framework
+  - SvelteKit - Full-stack web framework with Svelte 5
+  - TypeScript - Type-safe JavaScript development
+- Styling & UI
+  - Tailwind CSS - Utility-first CSS framework with plugins for forms and typography
+- Backend & Database
+  - Supabase - Backend-as-a-Service with authentication, database, and real-time features
+  - Supabase Auth Helpers - Authentication integration for SvelteKit
+- Document Processing
+  - ExcelJS - Excel file reading/writing and manipulation
+  - File-saver - Client-side file downloading
+- Development & Testing
+  - Vite - Build tool and development server
+  - Vitest - Unit testing framework with coverage
+  - Playwright - End-to-end testing
+  - Testing Library - Component testing utilities
+  - Storybook - Component development and documentation
+- Code Quality
+  - ESLint - Code linting with TypeScript support
+  - Prettier - Code formatting
+  - Svelte Check - Svelte-specific type checking
+- Logging & Validation
+  - Winston - Logging library with daily rotation
+  - Zod - Runtime type validation and parsing
+- Deployment
+  - Vercel Adapter - Optimized for Vercel deployment
+
+## Installation & Setup
+
+`node`
+
+`npm i`
+
+`npm run dev`
+
+## Environment Variables
+
+Example Env:
+
+```.env
+
 ```
 
-## Developing
+## API Documentation
 
-Once you've created a project and installed dependencies with `npm install` (or `pnpm install` or `yarn`), start a development server:
+Check `/docs/` for developer documentation.
 
-```bash
-npm run dev
-
-# or start the server and open the app in a new browser tab
-npm run dev -- --open
-```
-
-Everything inside `src/lib` is part of your library, everything inside `src/routes` can be used as a showcase or preview app.
-
-## Building
-
-To build your library:
-
-```bash
-npm run package
-```
-
-To create a production version of your showcase app:
-
-```bash
-npm run build
-```
-
-You can preview the production build with `npm run preview`.
-
-> To deploy your app, you may need to install an [adapter](https://svelte.dev/docs/kit/adapters) for your target environment.
-
-## Publishing
-
-Go into the `package.json` and give your package the desired name through the `"name"` option. Also consider adding a `"license"` field and point it to a `LICENSE` file which you can create from a template (one popular option is the [MIT license](https://opensource.org/license/mit/)).
-
-To publish your library to [npm](https://www.npmjs.com):
-
-```bash
-npm publish
-```
+## Deployment
