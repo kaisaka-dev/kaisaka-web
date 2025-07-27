@@ -1,5 +1,6 @@
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
 
+
 <script lang="ts">
     import type { Caregiver} from './+page.server.js';
     import type { family } from '$lib/types/family.ts'
@@ -119,14 +120,15 @@
     <!--Container for profile information-->
     <div>
         <!--Container for the personal information portion of the profile-->
-        <PersonalInfo id="Personal Info" {editing} data={sample} />
+        <PersonalInfo id="Personal Info" {editing} data={data.caregiver} />
 
         <!--Container for the families of the caregiver-->
         <div class = "mt-10">
             <div id = "Family Info" >
                 <h2> Families </h2>
-                <div class = "grid grid-cols-2 gap-5 mt-2" >
-                {#each data.family as family}
+                <div class = "grid grid-cols-2 gap-5 mt-2 border-4 border-[var(--border)] p-4" >
+                {#if data.caregiver.family.data}
+                {#each data.caregiver.family.data as family}
                     <div class = "flex flex-col min-w-100 w-105">
                        <span class = "!bg-[var(--green)] p-2 w-105 min-w-105 !text-white">  {familyName(family)} </span>
                        <div class = "border-4 border-[var(--border)]">
@@ -141,21 +143,11 @@
                             </div>
                         {/each}
                         </div>
-
-<!--                        <div class = "flex flex-col border-4 border-[var(&#45;&#45;border)]">-->
-<!--                            {#each yearsCounter as year}-->
-<!--                                <div class = "flex flex-row">-->
-<!--                                 <div class = "ml-5"> {year} </div>-->
-<!--                                {#if paymentYears(sample.paymentHistory).includes(year)}-->
-<!--                                <div class = "ml-14 mb-5">  P{sample.paymentHistory[paymentYears(sample.paymentHistory).indexOf(year)].amount} paid on {sample.paymentHistory[paymentYears(sample.paymentHistory).indexOf(year)].date.toISOString().split('T')[0]}  </div>-->
-<!--                                {:else}-->
-<!--                                <div class = "!text-red-500 mb-5 ml-35"> Payment Pending!</div>-->
-<!--                                {/if}-->
-<!--                                </div>-->
-<!--                            {/each}-->
-<!--                        </div>-->
                     </div>        
                 {/each}
+                {:else}
+                    Caregiver is not part of any families
+                 {/if}
                 </div>
             </div>
         </div>

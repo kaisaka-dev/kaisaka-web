@@ -53,7 +53,7 @@
 		}
 	)
 
-	$inspect(familyMembers)
+	// $inspect(familyMembers)
 
 	let caregiverErrors = $derived<CaregiverError[]>(
 		familyMembers.newCaregivers.map(() => ({
@@ -252,9 +252,21 @@
 				const familyId = familyMembers.linkedFamily.family_id;
 
 				// create new relationships for each child-familyMember relationship which isn't null
+				// if (familyMembers.hasExisting && familyMembers.linkedFamily?.infoLinked) {
+				// 	for (const linkedMember of familyMembers.linkedFamily.infoLinked) {
+				// 		if (linkedMember.relationship && linkedMember.relationship.trim() !== '') {
+				// 			const relationshipData = await safeFetch('/api/relationship_cc', {
+				// 				caregiver: linkedMember.member_id,
+				// 				child: childId,
+				// 				relationship: linkedMember.relationship
+				// 			});
+				// 			console.log(relationshipData.message)
+				// 		}
+				// 	}
+				// }
 
 				// add the child and caregivers to the newly created family
-				await POST_family(memberId, familyId)
+				await POST_family(childId, memberId, familyId)
 
 
 			} // if registering a new family
@@ -266,7 +278,7 @@
 				const familyId = familyData.data.id
 
 				// add the child and caregivers to the newly created family
-				await POST_family(memberId, familyId)
+				await POST_family(childId, memberId, familyId)
 
 
 			}
@@ -286,7 +298,7 @@
 			alert('Submission failed')
 		}
 
-		async function POST_family(member_id, family_id) {
+		async function POST_family(child_id: string, member_id: string, family_id: string) {
 			// add the child to the existing family (POST to family_members)
 			const famChildData = await safeFetch('/api/family_members', {
 				is_child: true,
@@ -308,6 +320,21 @@
 					family_id: family_id
 				});
 				console.log(newCaregiver.firstName, ' added to family: ', famMemData.message)
+
+				// add the relationship of caregivers to child IF NOT EMPTY
+				// console.log("the relationship: ", {
+				// 	caregiver: caregiverMember.id,
+				// 	child: child_id,
+				// 	relationship: newCaregiver.relationship
+				// })
+				// if (newCaregiver.relationship && newCaregiver.relationship.trim() !== '') {
+				// 	const relationshipData = await safeFetch('/api/relationship_cc', {
+				// 		caregiver: caregiverMember.id,
+				// 		child: child_id,
+				// 		relationship: newCaregiver.relationship
+				// 	});
+				// 	console.log(relationshipData.message)
+				// }
 			}
 		}
 
@@ -338,7 +365,7 @@
 
 			// create the caregiver record for the caregiver
 			const caregiverData = await safeFetch('/api/caregivers', {
-				contact_number: caregiver.contactNo,
+				contact_number: caregiver.contactNo.replace(/\s/g, ''),
 				facebook_link: caregiver.fbLink,
 				email: caregiver.email,
 				occupation: caregiver.occupation,
