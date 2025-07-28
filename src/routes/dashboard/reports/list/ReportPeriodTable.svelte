@@ -77,10 +77,11 @@
 		label: headers[i] ?? key.replace(/([A-Z])/g, ' $1').replace(/^./, str => str.toUpperCase()) // camelCase -> Camel Case
 	}));
 
-	async function downloadExcel() {
+	async function downloadExcel(row: ReportPeriod) {
 		try {
 			const response = await fetch('/api/reports/target_cwds', {
-				method: 'POST'
+				method: 'POST',
+				body: JSON.stringify(row)
 			});
 
 			if (!response.ok) {
@@ -154,7 +155,7 @@
 					<button onclick={() => editModalOpen(index)}>Edit</button>
 				</td>
 				<td>
-					<button class="green" onclick={downloadExcel}>Export</button>
+					<button class="green" onclick={downloadExcel(row)}>Export</button>
 				</td>
 			</tr>
 		{/each}

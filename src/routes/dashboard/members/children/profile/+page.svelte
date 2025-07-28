@@ -160,7 +160,8 @@
 </div>
 <div class = "flex flex-row mt-10">
     <div class = "flex flex-col border-[var(--border)] border-4 ml-55 mr-10 p-6 w-170 min-w-150">
-        {#if data.family?.length > 0}
+        {#if data.family}
+        {console.log(data.family)}
         {#each data.family as fammember}
         <div class = "flex flex-row mb-5">
             {#if fammember?.is_child == false}

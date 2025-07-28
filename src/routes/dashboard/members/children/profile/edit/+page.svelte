@@ -359,7 +359,6 @@
          
 
         if(new Date(admissionDate).getFullYear() > new Date().getFullYear() || new Date(admissionDate).getMonth() > new Date().getMonth() ||  new Date(admissionDate).getDate() > new Date().getDate()){
-            console.log(new Date(admissionDate).getDay() > new Date().getDay)
             errors.admissionDate = "Date cannot be in the future"
         }
          
