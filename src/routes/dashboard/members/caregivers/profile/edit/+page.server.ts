@@ -42,28 +42,30 @@ export async function load( {url, fetch} ) {
         familyArray.push(entireFamily)
     }
 
-    const communityres = await fetch(`/api/caregiver_groups?caregiver_id=${caregiverInfo.id}`)
+     const communityres = await fetch(`/api/caregiver_groups?caregiver_id=${caregiverInfo.id}`)
     let communityHistory = []
 
-    
     if(communityres.ok){
         const communityInfo = await communityres.json()
-
         
-        for(let i in communityInfo.data){
-            communityHistory.push(communityInfo.data[i])
-
-            const communityQuery = await fetch(`/api/community_group_type?id=${communityInfo.data[i].community_group_id}`)
-            if(communityQuery.ok) {
-                const communityGroupRecord = await communityQuery.json()
-                communityHistory[i]['name'] = communityGroupRecord.data.name
-                communityHistory[i]['isDeleted'] = false
-                communityHistory[i]['isNew'] = false
-            }
+        for(let i in communityInfo){
+            communityHistory.push(communityInfo[i])
         }
-
-
     }
+
+    communityHistory = communityHistory.flat()
+    console.log(communityHistory)
+
+    for(let i in communityHistory) {
+        const communityTyperes = await fetch(`/api/community_group_type?id=${communityHistory[i].community_group_id}`)
+        if(communityTyperes.ok){
+            const communitytypeRecord = await communityTyperes.json()
+            communityHistory[i]['name'] = communitytypeRecord.data.name
+            communityHistory[i]['isDeleted'] = false
+            communityHistory[i]['isNew'] = false
+        }
+    }
+
 
 
 
