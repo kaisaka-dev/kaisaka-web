@@ -97,6 +97,7 @@
         if(new Date(birthday).getFullYear() > new Date().getFullYear()) {
             errors.birthday = "Birthday cannot be in the future"
         }
+
         else{
             errors.birthday = birthday.trim() === "" ? "Required" : ""
         }
@@ -106,7 +107,7 @@
         errors.barangay = barangay.trim() === "" ? "Required" : ""
         errors.occupation = occupation.trim() === "" ? "Required" : ""
 
-        if(new Date(date_admission).getFullYear() > new Date().getFullYear() || new Date(date_admission).getMonth() > new Date().getMonth() ||  new Date(date_admission).getDate() > new Date().getDate()){
+        if(new Date(date_admission).getFullYear() > new Date().getFullYear() || (new Date(date_admission).getMonth() > new Date().getMonth() && new Date(date_admission).getFullYear() < new Date().getMonth()) ||  new Date(date_admission).getDate() > new Date().getDate()){
             errors.date_admission = "Date cannot be in the future"
         }
          

@@ -358,7 +358,7 @@
 
          
 
-        if(new Date(admissionDate).getFullYear() > new Date().getFullYear() || new Date(admissionDate).getMonth() > new Date().getMonth() ||  new Date(admissionDate).getDate() > new Date().getDate()){
+        if(new Date(admissionDate).getFullYear() > new Date().getFullYear()){
             errors.admissionDate = "Date cannot be in the future"
         }
          
