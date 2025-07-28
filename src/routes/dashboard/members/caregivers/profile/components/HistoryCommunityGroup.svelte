@@ -36,20 +36,13 @@
 	// delete the community group to the caregiver's history
 	function deleteComGroup(index:number): void {
 		data[index].isDeleted = true
-<<<<<<< HEAD
-=======
-		data = data
->>>>>>> 3b61cf81ba5c685dad0d0c3dfd53f7c1038b1445
 	}
 
 	// adds a community group to the caregiver's history
 	function addComGroup(): void {
 		const newCommunity: Community = {
-<<<<<<< HEAD
 			isDeleted: false,
 			isNew: true,
-=======
->>>>>>> 3b61cf81ba5c685dad0d0c3dfd53f7c1038b1445
 			name: "",
 			date_joined: new Date().toISOString().split('T')[0], // today
 			date_left: null, // null means active
@@ -128,12 +121,8 @@
 			</tr>
 			</thead>
 			<tbody>
-<<<<<<< HEAD
 			{#each data as com, index}
 			{#if com.isDeleted == false && editing}
-=======
-			{#each data as com,index}
->>>>>>> 3b61cf81ba5c685dad0d0c3dfd53f7c1038b1445
 				<tr>
 					{#if com.isDeleted == false}
 					{#if editing}

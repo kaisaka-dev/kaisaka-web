@@ -93,7 +93,7 @@ export async function load( {url, fetch} ) {
         date_termination: memberRecord.date_termination,
         family: familyArray,
         community_history: communityHistory,
-        income_history: incomeHistory
+        income_history: incomeHistory.flat()
     }
 
 

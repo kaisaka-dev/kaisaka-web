@@ -76,15 +76,27 @@ export async function load( {url, fetch} ) {
 
     if(incomeres.ok){
         const incomeInfo = await incomeres.json()
+
         for(let i in incomeInfo) {
             incomeHistory.push(incomeInfo[i])
         }
     }
+
+    incomeHistory = incomeHistory.flat()
+
+    for(let i in incomeHistory){
+        incomeHistory[i]['isDeleted'] = false,
+        incomeHistory[i]['isNew'] = false
+    }
+    
+
+
     
     
     let caregiver: Caregiver = {
         id: id,
         first_name:  memberRecord.first_name,
+        middle_name: memberRecord.middle_name,
         last_name: memberRecord. last_name,
         birthday: memberRecord.birthday,
         sex: memberRecord.sex,
@@ -102,6 +114,8 @@ export async function load( {url, fetch} ) {
     }
 
 
+    console.log(caregiver.income_history)
+
     return {
         caregiver: caregiver,
         memberRecord: memberRecord,
@@ -111,6 +125,7 @@ export async function load( {url, fetch} ) {
 export type Caregiver = {
     id: string,
 	first_name: string;
+    middle_name: string;
 	last_name: string;
 	birthday: string | null;
 	sex: string | null;
