@@ -1,4 +1,5 @@
 import { FamilyMembersModel } from "$lib/models/FamilyMembersModel.js";
+import { CaregiversModel } from "$lib/models/caregiversModel.js";
 import { parseJoinParams } from "$lib/types/joining.js";
 import { error, json, type RequestHandler } from "@sveltejs/kit";
 
@@ -14,7 +15,7 @@ import { error, json, type RequestHandler } from "@sveltejs/kit";
  * 
  * POST - Create family member relationship
  * • Required: family_id, member_id, is_child (boolean)
- * • Optional: relationship_type
+ * • Optional: relationship_type, caregiver_id (for non-child, non-caregiver members)
  * 
  * PUT - Update family member relationship
  * • Required: family_id, member_id
@@ -93,10 +94,29 @@ export const POST: RequestHandler = async({request}) => {
     throw error(400, 'Missing required fields: family_id, member_id, is_child.')
   }
 
+  let caregiver_id: string | null = null;
+
+  // If member is a child, caregiver_id should be null
+  if (body.is_child) {
+    caregiver_id = null;
+  } else {
+    // If member is not a child, check if they are a caregiver
+    const caregiverRecord = await CaregiversModel.instance.findByMemberId(body.member_id);
+    
+    if (caregiverRecord) {
+      // If they are a caregiver, use their own caregiver ID
+      caregiver_id = caregiverRecord.id;
+    } else {
+      // If they are not a caregiver, use the provided caregiver_id or null
+      caregiver_id = body.caregiver_id || null;
+    }
+  }
+
   const inserted = await FamilyMembersModel.instance.insertFamilyMember(
     body.family_id,
     body.member_id,
     body.is_child,
+    caregiver_id,
     body.relationship_type
   )
 
