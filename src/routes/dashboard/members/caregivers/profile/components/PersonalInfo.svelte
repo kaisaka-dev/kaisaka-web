@@ -2,6 +2,7 @@
 import Select from '$components/input/Select.svelte';
 import InputText from '$components/input/InputText.svelte';
 import type { Caregiver} from '../+page.server.js';
+import { dropdownOptions } from '$lib/types/options.js';
 
 export let id: string;
 export let data: Caregiver;
@@ -16,7 +17,7 @@ let required = editing;        	// false since this is view, but placing it here
 		<InputText {disabled} {required} label="First Name" id="first-name" value={data?.first_name} />
 		<InputText  {disabled} {required} label="Last Name" id="last-name" value={data?.last_name} />
 		<InputText  {disabled} label="Birthday" id="birthday" value={data?.birthday} />
-		<Select     {disabled} {required} label="Sex" id="sex" value={data?.sex} />
+		<Select     {disabled} {required} label="Sex" id="sex" value={data?.sex} options={dropdownOptions.sex}/>
 		<InputText  {disabled} {required} label="Contact No." id="contact-no" value={data?.contact_no} />
 		<InputText  {disabled} label="Facebook Link" id="fb-link" value={data?.fb_link}/>
 		<InputText  {disabled} label="Email" id="email" value={data?.email}/>
