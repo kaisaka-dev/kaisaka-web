@@ -6,10 +6,13 @@
 	import Select from '$components/input/Select.svelte';
 	import Modal from '$components/Modal.svelte';
 	import InputText from '$components/input/InputText.svelte';
+	import Validation from '$lib/components/text/Validation.svelte';
 
 	export let id: string;
 	export let data: Community[];
-	export let editing: true;
+	export let editing: boolean;
+	export let error: string;
+	
 
 
 
@@ -33,12 +36,20 @@
 	// delete the community group to the caregiver's history
 	function deleteComGroup(index:number): void {
 		data[index].isDeleted = true
+<<<<<<< HEAD
+=======
 		data = data
+>>>>>>> 3b61cf81ba5c685dad0d0c3dfd53f7c1038b1445
 	}
 
 	// adds a community group to the caregiver's history
 	function addComGroup(): void {
 		const newCommunity: Community = {
+<<<<<<< HEAD
+			isDeleted: false,
+			isNew: true,
+=======
+>>>>>>> 3b61cf81ba5c685dad0d0c3dfd53f7c1038b1445
 			name: "",
 			date_joined: new Date().toISOString().split('T')[0], // today
 			date_left: null, // null means active
@@ -105,6 +116,7 @@
 
 	<div id = {id} class = "w-240 min-w-240">
 		<h2> Community Group </h2>
+		<Validation msg = {error}/>
 		<table>
 			<thead>
 			<tr>
@@ -116,7 +128,12 @@
 			</tr>
 			</thead>
 			<tbody>
+<<<<<<< HEAD
+			{#each data as com, index}
+			{#if com.isDeleted == false && editing}
+=======
 			{#each data as com,index}
+>>>>>>> 3b61cf81ba5c685dad0d0c3dfd53f7c1038b1445
 				<tr>
 					{#if com.isDeleted == false}
 					{#if editing}
@@ -140,6 +157,29 @@
 					{/if}
 					{/if}
 				</tr>
+			{:else if editing == false}
+				<tr>
+					{#if editing}
+						<td><InputRange type="date" bind:valueFrom={com.date_joined} bind:valueTo={com.date_left} /></td>
+						<td><Select bind:value={com.name} options={options_community} required /></td>
+						<td style="text-align:center;">
+							<i class="fa-solid fa-trash" on:click={() => deleteComGroup(index)}></i>
+						</td>
+
+					{:else}
+						<td>{com.date_joined}
+							<i class="fa-solid fa-arrow-right !text-[var(--green)]"></i>
+							{#if com.date_left === null}
+								<span class="!text-[var(--green)]"> Present </span>
+							{:else}
+								{com.date_left}
+							{/if}
+						</td>
+						<td>{com.name}</td>
+
+					{/if}
+				</tr>
+			{/if}
 			{/each}
 			{#if editing}
 				<tr>

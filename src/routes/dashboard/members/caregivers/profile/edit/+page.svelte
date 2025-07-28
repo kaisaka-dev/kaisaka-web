@@ -9,6 +9,7 @@
     import Select from '$components/input/Select.svelte';
     import { goto } from '$app/navigation';
     import Validation from '$lib/components/text/Validation.svelte';
+	import { fa } from 'zod/v4/locales';
 
 
 
@@ -42,7 +43,10 @@
         barangay: "",
         occupation: "",
         date_admission: "",
-        family_errors: []
+        family_errors: [],
+        community_groupName: "",
+        community_groupDate: "",
+        community_overall:""
     }
 
     let families = data.caregiver.family
@@ -90,6 +94,7 @@
         for(let i in errors.family_errors){
             errors.family_errors[i] = ""
         }
+        errors.community_overall = ""
 
         errors.first_name = first_name.trim() === "" ? "Required" : ""
         errors.last_name = last_name.trim() === "" ? "Required" : ""
@@ -106,7 +111,7 @@
         errors.barangay = barangay.trim() === "" ? "Required" : ""
         errors.occupation = occupation.trim() === "" ? "Required" : ""
 
-        if(new Date(date_admission).getFullYear() > new Date().getFullYear() || new Date(date_admission).getMonth() > new Date().getMonth() ||  new Date(date_admission).getDate() > new Date().getDate()){
+        if(new Date(date_admission) > new Date()){
             errors.date_admission = "Date cannot be in the future"
         }
          
@@ -121,6 +126,25 @@
                 }
             }
          }
+
+         for(let i in data.caregiver.community_history) {
+            if(data.caregiver.community_history[i].isDeleted == false){
+                if(data.caregiver.community_history[i].name === ""){
+                errors.community_overall = errors.community_overall + "A Community Group has a missing name"
+                }
+
+                if(data.caregiver.community_history[i].date_joined === "" || new Date(data.caregiver.community_history[i].date_joined) > new Date(data.caregiver.community_history[i].date_left) && data.caregiver.community_history[i].date_left !== null) {
+                    if(errors.community_overall !== "") {
+                        errors.community_overall = errors.community_overall + " and a there is an invalid date!"
+                    }
+
+                    else {
+                        errors.community_overall = "Invalid date!"
+                    }
+                }
+         }
+         
+        }
 
          for (let i of Object.values(errors)) {
             if(Array.isArray(i)) {
@@ -242,6 +266,42 @@
                 }
             }
 
+
+            //COMMUNITY GROUP UPDATES BEGIN HERE
+            for(let i in data.caregiver.community_history){
+                //Creating community history record
+                if(data.caregiver.community_history[i].isNew == true && data.caregiver.community_history[i].isDeleted == false) {
+                    const createCaregiverMembership = await fetch('/api/caregiver_groups', {
+                        method: "POST",
+                        body: JSON.stringify({
+                            caregiver_id: data.caregiver.id,
+                            community_group_id: data.caregiver.community_history[i].name,
+                            date_joined: data.caregiver.community_history[i].date_joined,
+                            date_left: data.caregiver.community_history[i].date_left
+                        }),
+                        headers:{
+                            "Content-Type":"application/json"
+                        }
+                    })
+                }
+                //Editing exisitng record
+                if(data.caregiver.community_history[i].isNew == false && data.caregiver.community_history[i].isDeleted == false) {
+                    const updateCaregiverMembership = await fetch('/api/caregiver_groups' , {
+                        method: "PUT" ,
+                        body: JSON.stringify({
+                            id: data.caregiver.community_history[i].id,
+                            date_joined: data.caregiver.community_history[i].date_joined,
+                            date_left: data.caregiver.community_history[i].date_left
+                        }),
+                        headers:{
+                            "Content-Type":"application/json"
+                        }
+                    })
+                }
+
+                //Deleting existing record
+            }
+
             goto(`/dashboard/members/caregivers/profile?id=${data.caregiver.id}`);
         }
     }
@@ -285,13 +345,16 @@
     <div class = "flex flex-row ml-10 m-4 sticky top-20" id = "sidebar">
         <div class = "flex flex-col !font-[JSans]">
             <div class = "hover:!text-[var(--green)]">
-                <a class = "hover:!text-[var(--green)]" href = "#Personal Info">Information </a>
+                <a class = "hover:!text-[var(--green)]" href = "#Personal Information">Information </a>
             </div>
             <div class = "hover:!text-[var(--green)]">
                 <a class = "hover:!text-[var(--green)]" href = "#Family Info">Family </a>
             </div>
             <div class = "hover:!text-[var(--green)]">
-                <a class = "hover:!text-[var(--green)]" href = "#Event Info">Attendance </a>
+                <a class = "hover:!text-[var(--green)]" href = "#Community Group">Community History </a>
+            </div>
+            <div class = "hover:!text-[var(--green)]">
+                <a class = "hover:!text-[var(--green)]" href = "#Income Type">Income Type </a>
             </div>
             <div>
                 <button class = "green w-40 -ml-5 mt-10"  on:click={() => editData()}>
@@ -372,7 +435,11 @@
         </div>
 
         <!--Container for Community Group -->
+<<<<<<< HEAD
+        <HistoryCommunityGroup id="Community Group" bind:data= {data.caregiver.community_history} bind:error = {errors.community_overall} {editing} />
+=======
         <HistoryCommunityGroup id="Community Group" bind:data= {data.caregiver.community_history} {editing} />
+>>>>>>> 3b61cf81ba5c685dad0d0c3dfd53f7c1038b1445
 
         <!--Container for Income Type-->
         <HistoryIncomeType id="Income Type" data={data.caregiver?.income_history} {editing} />
