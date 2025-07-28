@@ -16,7 +16,7 @@
 		</section>
 	</div>
 	<div class="modal-backdrop">
-		<button aria-label="Close" onclick={() => isOpen = false}></button>
+		<button type = "button" aria-label="Close" onclick={() => isOpen = false}></button>
 	</div>
 </div>
 

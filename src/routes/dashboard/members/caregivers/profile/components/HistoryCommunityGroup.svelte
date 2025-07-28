@@ -2,6 +2,7 @@
 	import InputRange from '$components/input/InputRange.svelte';
 	import { onMount } from 'svelte';
 	import type { Community } from '../+page.server.js';
+	
 	import Select from '$components/input/Select.svelte';
 	import Modal from '$components/Modal.svelte';
 	import InputText from '$components/input/InputText.svelte';
@@ -9,6 +10,7 @@
 	export let id: string;
 	export let data: Community[];
 	export let editing: true;
+
 
 
 	let modalOpen = false; 	// modal for creating new community group
@@ -50,42 +52,43 @@
 		// Trim and validate input
 		newComGroup = newComGroup.trim();
 
-		if (!newComGroup) {
+		if (newComGroup === "") {
 			msg_newComGroup= 'Please enter a community group name';
-			return;
 		}
 
-		// Check for uniqueness against existing options
-		const isUnique = !options_community.some(
+
+		else{
+			// Check for uniqueness against existing options
+			const isUnique = !options_community.some(
 			(option: { id: number; name: string }) =>
 				option.name.toLowerCase() === newComGroup.toLowerCase()
-		);
+			);
 
-		if (!isUnique) {
+			if (!isUnique) {
 			msg_newComGroup = 'This community group already exists';
-			return;
-		}
-		modalOpen = false;
-		// If unique, proceed with submission
-		try {
-			const response = await fetch('/api/community_group_type', {
+			}
+			modalOpen = false;
+			// If unique, proceed with submission
+			try {
+				const response = await fetch('/api/community_group_type', {
 				method: 'POST',
 				headers: {
 					'Content-Type': 'application/json'
 				},
 				body: JSON.stringify({ name: newComGroup })
-			});
+				});
 
-			if (response.ok) {
+				if (response.ok) {
 				// Refresh options if successful
 				options_community = await getOptions();
 				newComGroup = "";
-			} else {
+				} else {
 				throw new Error('Failed to add community group');
-			}
+				}
 		} catch (error) {
 			console.error('Error:', error);
 			alert('Error adding community group');
+		}
 		}
 	}
 
@@ -94,6 +97,8 @@
 
 
 <div class = "mt-10">
+				{console.log(data)}
+
 	<div id = {id} class = "w-240 min-w-240">
 		<h2> Community Group </h2>
 		<table>
@@ -142,7 +147,7 @@
 									<br>
 									<p>note that this change will reflect across <span class="!text-[var(--green)]"> all caregivers </span></p>
 									<button type="button" on:click={() => modalOpen = false}>Cancel</button>
-									<button class="green" type="submit" on:click={handleSubmit}>Submit</button>
+									<button class="green" type="button" on:click={handleSubmit}>Submit</button>
 							</div>
 						</Modal>
 					</td>

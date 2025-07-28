@@ -32,7 +32,6 @@
     let date_admission: string = data.caregiver?.date_admission;
     let date_termination: string = data.caregiver?.date_termination;
 
-    console.log(occupation)
     let errors = {
         first_name: "",
         last_name: "",
@@ -62,6 +61,7 @@
     for(let i in families) {
         errors.family_errors.push("")
     }
+
 
 
     $: if (birthday) {
@@ -368,7 +368,7 @@
         </div>
 
         <!--Container for Community Group -->
-        <HistoryCommunityGroup id="Community Group" data={data.caregiver?.community_history} {editing} />
+        <HistoryCommunityGroup id="Community Group" data= {data.caregiver.community_history} {editing} />
 
         <!--Container for Income Type-->
         <HistoryIncomeType id="Income Type" data={data.caregiver?.income_history} {editing} />
