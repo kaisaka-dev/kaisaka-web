@@ -9,14 +9,12 @@
     import Select from '$components/input/Select.svelte';
     import { goto } from '$app/navigation';
     import Validation from '$lib/components/text/Validation.svelte';
-	import { fa } from 'zod/v4/locales';
 
 
 
 
     export let data
     let editing = true
-
 
     let first_name: string = data.caregiver.first_name;
     let middle_name: string = data.caregiver.middle_name;
@@ -44,9 +42,8 @@
         occupation: "",
         date_admission: "",
         family_errors: [],
-        community_groupName: "",
-        community_groupDate: "",
-        community_overall:""
+        community_overall:"",
+        income_overall: ""
     }
 
     let families = data.caregiver.family
@@ -95,6 +92,7 @@
             errors.family_errors[i] = ""
         }
         errors.community_overall = ""
+        errors.income_overall = ""
 
         errors.first_name = first_name.trim() === "" ? "Required" : ""
         errors.last_name = last_name.trim() === "" ? "Required" : ""
@@ -127,7 +125,8 @@
             }
          }
 
-         for(let i in data.caregiver.community_history) {
+         if(data.caregiver.community_history.length > 0) {
+            for(let i in data.caregiver.community_history) {
             if(data.caregiver.community_history[i].isDeleted == false){
                 if(data.caregiver.community_history[i].name === ""){
                 errors.community_overall = errors.community_overall + "A Community Group has a missing name"
@@ -144,7 +143,31 @@
                 }
          }
          
+            }
+         }
+         
+
+        if(data.caregiver.income_history.length > 0) {
+            for(let i in data.caregiver.income_history) {
+            if(data.caregiver.income_history[i].isDeleted == false){
+                if(data.caregiver.income_history[i].income_category === ""){
+                    errors.income_overall =  "An income entry is missing a category"
+                }
+
+                if(data.caregiver.income_history[i].date_start === "" || new Date(data.caregiver.income_history[i].date_start) > new Date(data.caregiver.income_history[i].date_end) && data.caregiver.income_history[i].date_end !== null) {
+                    if(errors.income_overall !== "") {
+                        errors.income_overall = errors.income_overall + " and a there is an invalid date!"
+                    }
+
+                    else {
+                        errors.income_overall = "Invalid date!"
+                    }
+                }
+            }
         }
+        }
+        
+
 
          for (let i of Object.values(errors)) {
             if(Array.isArray(i)) {
@@ -290,6 +313,7 @@
                         method: "PUT" ,
                         body: JSON.stringify({
                             id: data.caregiver.community_history[i].id,
+                            community_group_id: data.caregiver.community_history[i].name,
                             date_joined: data.caregiver.community_history[i].date_joined,
                             date_left: data.caregiver.community_history[i].date_left
                         }),
@@ -300,7 +324,68 @@
                 }
 
                 //Deleting existing record
+                if(data.caregiver.community_history[i].isNew == false && data.caregiver.community_history[i].isDeleted == true) {
+                    const updateCaregiverMembership = await fetch('/api/caregiver_groups' , {
+                        method: "DELETE" ,
+                        body: JSON.stringify({
+                            id: data.caregiver.community_history[i].id
+                        }),
+                        headers:{
+                            "Content-Type":"application/json"
+                        }
+                    })
+                }
             }
+
+
+            //INCOME UPDATES BEGIN HERE
+            for(let i in data.caregiver.income_history){
+                //Creating income history record
+                if(data.caregiver.income_history[i].isNew == true && data.caregiver.income_history[i].isDeleted == false){
+                    const createcaregiverIncome = await fetch('/api/income_type' , {
+                        method: "POST",
+                        body: JSON.stringify({
+                            caregiver_id: data.caregiver.id,
+                            income_category: data.caregiver.income_history[i].income_category,
+                            date_start: data.caregiver.income_history[i].date_start,
+                            date_end: data.caregiver.income_history[i].date_end
+                        }),
+                        headers: {
+                            "Content-Type" : "applciation/json"
+                        }
+                    })
+                }
+
+                //Updates existing income history record
+                if(data.caregiver.income_history[i].isNew == false && data.caregiver.income_history[i].isDeleted == false){
+                    const updatecaregiverIncome = await fetch('/api/income_type' , {
+                        method: "PUT",
+                        body: JSON.stringify({
+                            id: data.caregiver.income_history[i].id,
+                            income_category: data.caregiver.income_history[i].income_category,
+                            date_start: data.caregiver.income_history[i].date_start,
+                            date_end: data.caregiver.income_history[i].date_end
+                        }),
+                        headers: {
+                            "Content-Type" : "applciation/json"
+                        }
+                    })
+                }
+
+                //Deletes existing income history record
+                if(data.caregiver.income_history[i].isNew == false && data.caregiver.income_history[i].isDeleted == true){
+                    const updatecaregiverIncome = await fetch('/api/income_type' , {
+                        method: "DELETE",
+                        body: JSON.stringify({
+                            id: data.caregiver.income_history[i].id
+                        }),
+                        headers: {
+                            "Content-Type" : "applciation/json"
+                        }
+                    })
+                }
+            }
+
 
             goto(`/dashboard/members/caregivers/profile?id=${data.caregiver.id}`);
         }
@@ -435,14 +520,10 @@
         </div>
 
         <!--Container for Community Group -->
-<<<<<<< HEAD
         <HistoryCommunityGroup id="Community Group" bind:data= {data.caregiver.community_history} bind:error = {errors.community_overall} {editing} />
-=======
-        <HistoryCommunityGroup id="Community Group" bind:data= {data.caregiver.community_history} {editing} />
->>>>>>> 3b61cf81ba5c685dad0d0c3dfd53f7c1038b1445
 
         <!--Container for Income Type-->
-        <HistoryIncomeType id="Income Type" data={data.caregiver?.income_history} {editing} />
+        <HistoryIncomeType id="Income Type" bind:data={data.caregiver.income_history} bind:error = {errors.income_overall} {editing} />
     </div>
     </form>
 </div>

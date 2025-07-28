@@ -157,6 +157,6 @@
         <HistoryCommunityGroup id="Community Group" data={data.caregiver.community_history} error ={""} editing = {editing} />
 
         <!--Container for Income Type-->
-        <HistoryIncomeType id="Income Type" data={sample.income_history}  {editing} />
+        <HistoryIncomeType id="Income Type" data={data.caregiver.income_history} error = {""}  editing = {editing} />
     </div>
 </div>
