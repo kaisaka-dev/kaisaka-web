@@ -20,9 +20,9 @@ let required = editing;        	// false since this is view, but placing it here
 		<InputText  {disabled} {required} label="Contact No." id="contact-no" value={data?.contact_no} />
 		<InputText  {disabled} label="Facebook Link" id="fb-link" value={data?.fb_link}/>
 		<InputText  {disabled} label="Email" id="email" value={data?.email}/>
-		<InputText  {disabled} {required} label="Address" id="address" value={data.address ?? '-'} />
-		<InputText  {disabled} {required} label="Barangay" id="barangay" value={data.barangay ?? '-'} />
-		<InputText  {disabled} {required} label="Occupation" id="occupation" value={data.occupation ?? '-'} />
+		<InputText  {disabled} {required} label="Address" id="address" value={data?.address ?? '-'} />
+		<InputText  {disabled} {required} label="Barangay" id="barangay" value={data?.barangay ?? '-'} />
+		<InputText  {disabled} {required} label="Occupation" id="occupation" value={data?.occupation ?? '-'} />
 
 		<br>
 		<InputText {disabled} label="Date of Admission" type="date" id="admission" value={data.date_admission} />

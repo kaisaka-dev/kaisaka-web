@@ -30,9 +30,9 @@ export async function load( {url, fetch} ) {
     const familyInfo = await familyRes.json()
     let familyArray = [];
 
-    for(let i in familyInfo) { //loop over every record, query the db for every family with the id, and add the members to an array
+    for(let i in familyInfo.data) { //loop over every record, query the db for every family with the id, and add the members to an array
 
-        let entireFamilyRes = await fetch(`/api/family_members?id=${familyInfo[i].family_id}&select=*,members(*)&type=familyid`)
+        let entireFamilyRes = await fetch(`/api/family_members?id=${familyInfo.data[i].family_id}&select=*,members(*)&type=familyid`)
 
         if(!entireFamilyRes.ok){
             throw new Error('Failed to fetch family members');
@@ -66,22 +66,25 @@ export async function load( {url, fetch} ) {
     
     
     let caregiver: Caregiver = {
+        id: id,
         first_name:  memberRecord.first_name,
+        middle_name: memberRecord.middle_name,
         last_name: memberRecord. last_name,
         birthday: memberRecord.birthday,
         sex: memberRecord.sex,
-        contact_no: caregiverInfo.contact_no,
+        contact_no: caregiverInfo.contact_number,
         fb_link: caregiverInfo.facebook_link,
         email: caregiverInfo.email,
         address: memberRecord.addresses.address,
         barangay: memberRecord.barangays?.name,
         occupation: caregiverInfo.occupation,
-        date_admission: memberRecord.date_admission,
+        date_admission: memberRecord.admission_date.split('T')[0],
         date_termination: memberRecord.date_termination,
         family: familyArray,
         community_history: communityHistory,
         income_history: incomeHistory
     }
+
 
     return {
         caregiver: caregiver,
@@ -90,7 +93,9 @@ export async function load( {url, fetch} ) {
 }
 
 export type Caregiver = {
+    id: string;
 	first_name: string;
+    middle_name: string;
 	last_name: string;
 	birthday: string | null;
 	sex: string | null;
