@@ -2,11 +2,11 @@ import { annualProgramModel } from '$lib/models/annualProgramModel.js';
 import { ChildrenModel } from '$lib/models/childrenModel.js';
 import { InterventionModel } from '$lib/models/interventionModel.js';
 import { getLogSidecar } from '$lib/server/logging/log-sidecar.js';
-import type { QueryConfigurationBuilder } from '$lib/types/manager.js';
+import type { QueryConfigurationBuilder, tableRow } from '$lib/types/manager.js';
 import { type Worksheet } from 'exceljs';
+import type { report_body } from '../../../../routes/api/reports/target_cwds/+server.js';
 import { reportConversion } from '../types/report-conversion.js';
 import { ReportGenerator } from './reportTemplate.js';
-import type { report_body } from '../../../../routes/api/reports/target_cwds/+server.js';
 
 /** 
  * Returns an ISO date range representing birthdays for a given age range.
@@ -82,13 +82,13 @@ interface cellResults {
 
 //const logger = getLogSidecar();
 
-const childrenSelectClause            = `*, disability_category!inner(name), members!inner(first_name, last_name, sex, birthday)`
+const childrenSelectClause            = `*, disability_category!inner(name), members!inner(first_name, last_name, sex, birthday, admission_date)`
 
-const interventionSelectClause        = `*, disability_category!inner(name), members!inner(first_name, last_name, sex, birthday), intervention!inner(intervention)` // `*, children!inner(id, members!inner(first_name, last_name, sex, birthday), disability_category!inner(name))`;
+const interventionSelectClause        = `*, disability_category!inner(name), members!inner(first_name, last_name, sex, birthday, admission_date), intervention!inner(intervention)` // `*, children!inner(id, members!inner(first_name, last_name, sex, birthday), disability_category!inner(name))`;
 
-const improvedSelectClause            = `*, disability_category!inner(name), members!inner(first_name, last_name, sex, birthday), intervention!inner(intervention, intervention_history!inner(improvement, status))`;
+const improvedSelectClause            = `*, disability_category!inner(name), members!inner(first_name, last_name, sex, birthday, admission_date), intervention!inner(intervention, intervention_history!inner(improvement, status))`;
 
-const transitionSelectClause          = '*, disability_category!inner(name), members!inner(first_name, last_name, sex, birthday)'
+const transitionSelectClause          = '*, disability_category!inner(name), members!inner(first_name, last_name, sex, birthday, admission_date)'
 
 const cellAddressInProgramReportTemplate = (columnOffset: number, sexIndex: number) => columnOffset != 2 
   ? 5 + sexIndex + columnOffset * 2                           // Weird offset because of the 3rd column having merged cells in the template
@@ -131,50 +131,82 @@ export class ReportGeneratorInTheProgram extends ReportGenerator {
    * @param {Worksheet} worksheet - ExcelJS worksheet instance.
    */
   static async generateData(startYear: Date, endYear: Date, worksheet: Worksheet, body: report_body, mergeOffset: number = 0) {
+    const newCWDCurrentYearArray = await annualProgramModel.instance.findByStartAndEndYear(startYear.getFullYear(), endYear.getFullYear())
+    
+    if (!newCWDCurrentYearArray)
+      throw Error(`No Annual Program detected from ${startYear} to ${endYear}`)
+    const newCWDCurrentYear = newCWDCurrentYearArray[0]
+
+    const oldCWDPreviousYearArray = await annualProgramModel.instance.findPreviousWorkYear(newCWDCurrentYearArray[0].id)
+
+    if (!oldCWDPreviousYearArray)
+      throw Error(`No previous Annual Program detected from Annual Program ${startYear}-${endYear}`)
+
+    
+    const oldCWDPreviousYear = oldCWDPreviousYearArray[0]
+
     await Promise.all([
-      this.writeCWDLayer(startYear, endYear, worksheet, mergeOffset, body),
-      this.writeDataLayer(worksheet, mergeOffset)
+      this.writeCWDLayer(startYear, endYear, worksheet, mergeOffset, newCWDCurrentYear, oldCWDPreviousYear, body),
+      this.writeDataLayer(worksheet, mergeOffset, newCWDCurrentYear)
     ])
     await this.getReportSummary(worksheet, mergeOffset)
     await this.getReportDifference(worksheet, mergeOffset)
   }
 
-  static async writeCWDLayer(startYear: Date, endYear: Date, worksheet: Worksheet, mergeOffset: number, body: report_body) {
+  static async writeCWDLayer(startYear: Date, endYear: Date, worksheet: Worksheet, mergeOffset: number, newCWDCurrentYear: tableRow<'annual_program'>, oldCWDPreviousYear: tableRow<'annual_program'>, body: report_body) {
     const oldRow = worksheet.getRow(12 + mergeOffset)
     const newRow = worksheet.getRow(10 + mergeOffset)
+    const DSRow = worksheet.getRow(14 + mergeOffset)
 
-    const newCWDCurrentYear = await annualProgramModel.instance.findByStartAndEndYear(startYear.getFullYear(), endYear.getFullYear())
-    if (!newCWDCurrentYear)
-      throw Error(`No Annual Program detected from ${startYear} to ${endYear}`)
-
-    const oldCWDPreviousYear = await annualProgramModel.instance.findPreviousWorkYear(newCWDCurrentYear[0].id)
-
-    if (!oldCWDPreviousYear)
-      throw Error(`No previous Annual Program detected from Annual Program ${startYear}-${endYear}`)
+    
 
     const totalActualCWDCell = oldRow.getCell(6);
     const oldActualCWDPreviousYearCell = oldRow.getCell(8);
     const newActualCWDCurrentYearCell = oldRow.getCell(11);
 
-    oldActualCWDPreviousYearCell.value = body.old_actual_CWDS ?? oldCWDPreviousYear[0].target_new_cwds 
-    newActualCWDCurrentYearCell.value = body.new_actual_CWDS ?? newCWDCurrentYear[0].target_new_cwds
-    totalActualCWDCell.value = {formula: 'K9 + H9'}
+    oldActualCWDPreviousYearCell.value = body.old_actual_CWDS ?? oldCWDPreviousYear.target_new_cwds 
+    newActualCWDCurrentYearCell.value = body.new_actual_CWDS ?? newCWDCurrentYear.target_new_cwds
+    totalActualCWDCell.value = {formula: 'K12 + H12'}
 
     
 
     
     body.new_target_CWDS ??= 0
     body.old_target_CWDS ??= 0
-    const total_target_CWDS = body.new_target_CWDS + body.old_target_CWDS;
 
-    newRow.getCell(6).value = total_target_CWDS ;
     newRow.getCell(8).value = body.old_target_CWDS;
     newRow.getCell(11).value = body.new_target_CWDS;
+    newRow.getCell(6).value = { formula: 'K10 + H10'};
+    const dsString = '*, disability_category!inner(name), members!inner(admission_date)'
+    const newStartDate = this.getEarliestDate(newCWDCurrentYear.start_year, newCWDCurrentYear.end_month, newCWDCurrentYear.end_date).toISOString()
+    const newEndDate = this.getLatestDate(newCWDCurrentYear.end_year, newCWDCurrentYear.end_month, newCWDCurrentYear.end_date).toISOString()
+    const oldEndDate = this.getLatestDate(oldCWDPreviousYear.end_year, oldCWDPreviousYear.end_month, oldCWDPreviousYear.end_date).toISOString()
+    const [res1, res2] = await Promise.all( [ChildrenModel.instance.findWithJoinAndCount(dsString, 
+    { 
+      ilike: {'disability_category.name': 'down syndrome'},
+      lte: {'members.admission_date': newEndDate},
+      gte: {'members.admission_date': newStartDate},
 
-     
+    })
+     ,
+    ChildrenModel.instance.findWithJoinAndCount(dsString, 
+    { 
+      ilike: {'disability_category.name': 'down syndrome'},
+      lte: {'members.admission_date': oldEndDate},
+    })
+    ])
+    
+    const oldDS = res1.count, newDS = res2.count
+    
+
+    DSRow.getCell(8).value = oldDS;
+    DSRow.getCell(11).value = newDS;
+    DSRow.getCell(6).value = { formula: 'K14 + H14' };
+    
     await Promise.all([
       oldRow.commit(), 
-      newRow.commit()
+      newRow.commit(),
+      DSRow.commit()
     ])
   }
 
@@ -212,7 +244,7 @@ export class ReportGeneratorInTheProgram extends ReportGenerator {
    * @param {InTheProgramHeaderParams} reportParams - Parameters for the report cell.
    * @param {Worksheet} worksheet - ExcelJS worksheet.
    */
-  static async ReportQueryWriter (reportParams: InTheProgramHeaderParams, worksheet: Worksheet, mergeOffset: number) {
+  static async ReportQueryWriter (reportParams: InTheProgramHeaderParams, worksheet: Worksheet, mergeOffset: number, newCWDCurrentYear: tableRow<'annual_program'>) {
     const writeResult = (
       modelInstance: ChildrenModel | InterventionModel, 
       modelSelectClause: string, 
@@ -223,15 +255,14 @@ export class ReportGeneratorInTheProgram extends ReportGenerator {
     //logger.info(`Cell (${reportParams.ageIndex}, ${reportParams.disabilityIndex}, ${reportParams.sexIndex}) - ${reportParams.ageGroup.label}, ${reportParams.disability.label}, ${reportParams.sex}`)
 
     const birthdayRange = getBirthdayRangeForAge(reportParams.ageGroup.min, reportParams.ageGroup.max);
-    
+    const admissionLTE = this.getLatestDate(newCWDCurrentYear.end_year, newCWDCurrentYear.end_month, newCWDCurrentYear.end_date).toISOString()
     const childrenConfig: QueryConfigurationBuilder = {
       eq: {
-        'members.sex': reportParams.sex,
-        'is_active': true
+        'members.sex': reportParams.sex
       },
       ...(reportParams.disability.ilike && {ilike: { 'disability_category.name': reportParams.disability.ilike}}),
       ...(birthdayRange.gte ?  { gte: { 'members.birthday': birthdayRange.gte } } : {}),
-      ...(birthdayRange.lte && { lte: { 'members.birthday': birthdayRange.lte } }),
+      ...(birthdayRange.lte && { lte: { 'members.birthday': birthdayRange.lte, 'members.admission_date' : admissionLTE} }),
     }
 
     const interventionConfig: QueryConfigurationBuilder = {
@@ -240,7 +271,7 @@ export class ReportGeneratorInTheProgram extends ReportGenerator {
       },
       ...(reportParams.disability.ilike && {ilike: { 'disability_category.name': reportParams.disability.ilike}}),
       ...(birthdayRange.gte ?  { gte: { 'members.birthday': birthdayRange.gte } } : {}),
-      ...(birthdayRange.lte && { lte: { 'members.birthday': birthdayRange.lte } }),
+      ...(birthdayRange.lte && { lte: { 'members.birthday': birthdayRange.lte, 'members.admission_date' : admissionLTE } }),
     };  
 
     const improvedConfig: QueryConfigurationBuilder = {
@@ -250,17 +281,16 @@ export class ReportGeneratorInTheProgram extends ReportGenerator {
       },
       ...(reportParams.disability.ilike && {ilike: { 'disability_category.name': reportParams.disability.ilike}}),
       ...(birthdayRange.gte ?  { gte: { 'members.birthday': birthdayRange.gte } } : {}),
-      ...(birthdayRange.lte && { lte: { 'members.birthday': birthdayRange.lte } }),
+      ...(birthdayRange.lte && { lte: { 'members.birthday': birthdayRange.lte, 'members.admission_date' : admissionLTE } }),
     }
 
     const transitionConfig: QueryConfigurationBuilder = {
       eq: {
         'members.sex': reportParams.sex,
-        'is_active': false,
       },
       ...(reportParams.disability.ilike && {ilike: { 'disability_category.name': reportParams.disability.ilike}}),
       ...(birthdayRange.gte ?  { gte: { 'members.birthday': birthdayRange.gte } } : {}),
-      ...(birthdayRange.lte && { lte: { 'members.birthday': birthdayRange.lte } }),
+      ...(birthdayRange.lte && { lte: { 'members.birthday': birthdayRange.lte, 'members.admission_date' : admissionLTE } }),
     }
 
     await Promise.all([
@@ -314,10 +344,10 @@ export class ReportGeneratorInTheProgram extends ReportGenerator {
    * @param {InTheProgramHeaderParams} reportParam - Report parameters to clone.
    * @param {Worksheet} worksheet - ExcelJS worksheet.
    */
-  static SexReportLayer = async (reportParam: InTheProgramHeaderParams, worksheet: Worksheet, mergeOffset: number) => {
+  static SexReportLayer = async (reportParam: InTheProgramHeaderParams, worksheet: Worksheet, mergeOffset: number, newCWDCurrentYear: tableRow<'annual_program'>) => {
     Promise.all(genders.map(async (sex, sexIndex) => {
       const paramClone = { ...reportParam, sex, sexIndex };
-      this.ReportQueryWriter(paramClone, worksheet, mergeOffset);
+      this.ReportQueryWriter(paramClone, worksheet, mergeOffset, newCWDCurrentYear);
     }));
   }
   
@@ -327,10 +357,10 @@ export class ReportGeneratorInTheProgram extends ReportGenerator {
    * @param {InTheProgramHeaderParams} reportParam - Report parameters to clone.
    * @param {Worksheet} worksheet - ExcelJS worksheet.
    */
-  static DisabilityReportLayer = async (reportParam: InTheProgramHeaderParams, worksheet: Worksheet, mergeOffset: number) => {
+  static DisabilityReportLayer = async (reportParam: InTheProgramHeaderParams, worksheet: Worksheet, mergeOffset: number, newCWDCurrentYear: tableRow<'annual_program'>) => {
     Promise.all(disabilities.map(async (disability, disabilityIndex) => {
       const paramClone = { ...reportParam, disability, disabilityIndex };
-      this.SexReportLayer(paramClone, worksheet, mergeOffset);
+      this.SexReportLayer(paramClone, worksheet, mergeOffset, newCWDCurrentYear);
     }));
   }
   
@@ -339,10 +369,10 @@ export class ReportGeneratorInTheProgram extends ReportGenerator {
    *
    * @param {Worksheet} worksheet - ExcelJS worksheet.
    */
-  static writeDataLayer = async (worksheet: Worksheet, mergeOffset: number) => {
+  static writeDataLayer = async (worksheet: Worksheet, mergeOffset: number, newCWDCurrentYear: tableRow<'annual_program'>) => {
     Promise.all(ageGroups.map(async (ageGroup, ageIndex) => {
       const paramClone = { ageGroup, ageIndex } as InTheProgramHeaderParams;
-      this.DisabilityReportLayer(paramClone, worksheet, mergeOffset);
+      this.DisabilityReportLayer(paramClone, worksheet, mergeOffset, newCWDCurrentYear);
     }));
   }
 

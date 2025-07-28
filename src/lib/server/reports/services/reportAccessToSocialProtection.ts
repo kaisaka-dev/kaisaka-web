@@ -2,11 +2,12 @@
 import { ChildrenModel } from '$lib/models/childrenModel.js';
 
 import { getLogSidecar } from '$lib/server/logging/log-sidecar.js';
-import type { QueryConfigurationBuilder } from '$lib/types/manager.js';
+import type { QueryConfigurationBuilder, tableRow } from '$lib/types/manager.js';
 import { type Worksheet } from 'exceljs';
 
 import { getBirthdayRangeForAge } from './reportIntheProgram.js';
 import { ReportGenerator } from './reportTemplate.js';
+import { annualProgramModel } from '$lib/models/annualProgramModel.js';
 
 const MembershipCardParticipation = [
   { age_min: 0  , card: 'has_pwd',          type: 'acquistion'},
@@ -113,13 +114,27 @@ export class ReportGeneratorAccessToSocialProtection extends ReportGenerator {
    * @param {Worksheet} worksheet - ExcelJS worksheet instance.
    */
   static async generateData(startYear: Date, endYear: Date, worksheet: Worksheet) {
+    const newCWDCurrentYearArray = await annualProgramModel.instance.findByStartAndEndYear(startYear.getFullYear(), endYear.getFullYear())
+    
+    if (!newCWDCurrentYearArray)
+      throw Error(`No Annual Program detected from ${startYear} to ${endYear}`)
+
+    const oldCWDPreviousYearArray = await annualProgramModel.instance.findPreviousWorkYear(newCWDCurrentYearArray[0].id)
+    
+
+    if (!oldCWDPreviousYearArray)
+      throw Error(`No previous Annual Program detected from Annual Program ${startYear}-${endYear}`)
+
+    const newCWDCurrentYear = newCWDCurrentYearArray[0]
+    const oldCWDPreviousYear = oldCWDPreviousYearArray[0]
+
     await Promise.all([
-      this.MembershipCardParticipationDataLayer(startYear, endYear, worksheet),
+      this.MembershipCardParticipationDataLayer(startYear, endYear, worksheet, newCWDCurrentYear, oldCWDPreviousYear),
       this.DisabilityParticipationDataLayer(startYear, endYear, worksheet)
     ])
   }
 
-  static async MembershipCardParticipationDataLayer(startYear: Date, endYear:Date, worksheet: Worksheet){
+  static async MembershipCardParticipationDataLayer(startYear: Date, endYear:Date, worksheet: Worksheet,  newCWDCurrentYear: tableRow<'annual_program'>, oldCWDPreviousYear: tableRow<'annual_program'>){
     Promise.all(MembershipCardParticipation.map(async(card, cardIndex)=>{
       Promise.all(disabilities.map(async(disability, disabilityIndex)=>{
         const writer = async (sex: string, sexIndex: number) => {
@@ -129,7 +144,7 @@ export class ReportGeneratorAccessToSocialProtection extends ReportGenerator {
             disability, disabilityIndex, sex: sex, sexIndex: sexIndex, ageIndex: 0
           } as AccessToSocialProtectionHeaderParams
 
-          await this.ReportQueryWriter(reportParams, worksheet)
+          await this.ReportQueryWriter(reportParams, worksheet, newCWDCurrentYear, oldCWDPreviousYear)
         }
 
         await this.genderProgramMapping(writer)
@@ -217,7 +232,7 @@ export class ReportGeneratorAccessToSocialProtection extends ReportGenerator {
    * @param {AccessToSocialProtectionHeaderParams} reportParams - Parameters for the report cell.
    * @param {Worksheet} worksheet - ExcelJS worksheet.
    */
-  static async ReportQueryWriter (reportParams: AccessToSocialProtectionHeaderParams, worksheet: Worksheet) {
+  static async ReportQueryWriter (reportParams: AccessToSocialProtectionHeaderParams, worksheet: Worksheet, newCWDCurrentYear: tableRow<'annual_program'>, oldCWDPreviousYear: tableRow<'annual_program'>) {
     const writeResult = (
       modelSelectClause: string, 
       modelFilter: QueryConfigurationBuilder, 
@@ -265,6 +280,10 @@ export class ReportGeneratorAccessToSocialProtection extends ReportGenerator {
         break
     }
 
+    const newStartDate = this.getEarliestDate(newCWDCurrentYear.start_year, newCWDCurrentYear.end_month, newCWDCurrentYear.end_date).toISOString()
+    const newEndDate = this.getLatestDate(newCWDCurrentYear.end_year, newCWDCurrentYear.end_month, newCWDCurrentYear.end_date).toISOString()
+    const oldEndDate = this.getLatestDate(oldCWDPreviousYear.end_year, oldCWDPreviousYear.end_month, oldCWDPreviousYear.end_date).toISOString()
+
 
     const alreadyAccessedLastYearConfig: QueryConfigurationBuilder = {
       eq: {
@@ -274,7 +293,8 @@ export class ReportGeneratorAccessToSocialProtection extends ReportGenerator {
       ...(reportParams.disability.ilike && {ilike: { 'disability_category.name': reportParams.disability.ilike}}),
       ...(birthdayRange.gte ?  { gte: { 'members.birthday': birthdayRange.gte } } : {}),
       ...(birthdayRange.lte && { lte: { 'members.birthday': birthdayRange.lte } }),
-      ...(uniqueCard && uniqueCard.isNot)
+      ...(uniqueCard && uniqueCard.isNot),
+      ...{lte: {'members.admission_date': oldEndDate}}
     }
 
     const newlyAccessedThisYearConfig: QueryConfigurationBuilder = {
@@ -285,7 +305,9 @@ export class ReportGeneratorAccessToSocialProtection extends ReportGenerator {
       ...(reportParams.disability.ilike && {ilike: { 'disability_category.name': reportParams.disability.ilike}}),
       ...(birthdayRange.gte ?  { gte: { 'members.birthday': birthdayRange.gte } } : {}),
       ...(birthdayRange.lte && { lte: { 'members.birthday': birthdayRange.lte } }),
-      ...(uniqueCard && uniqueCard.isNot)
+      ...(uniqueCard && uniqueCard.isNot),
+      ...{lte: {'members.admission_date': newEndDate}},
+      ...{gte: {'members.admission_date': newStartDate}}
     };  
 
 
