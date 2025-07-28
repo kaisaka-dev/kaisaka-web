@@ -335,18 +335,18 @@
 				const familyId = familyMembers.linkedFamily.family_id;
 
 				// TODO: create new relationships for each child-familyMember relationship which isn't null
-				// if (familyMembers.hasExisting && familyMembers.linkedFamily?.infoLinked) {
-				// 	for (const linkedMember of familyMembers.linkedFamily.infoLinked) {
-				// 		if (linkedMember.relationship && linkedMember.relationship.trim() !== '') {
-				// 			const relationshipData = await safeFetch('/api/relationship_cc', {
-				// 				caregiver: linkedMember.member_id,
-				// 				child: childId,
-				// 				relationship: linkedMember.relationship
-				// 			});
-				// 			console.log(relationshipData.message)
-				// 		}
-				// 	}
-				// }
+				if (familyMembers.hasExisting && familyMembers.linkedFamily?.infoLinked) {
+					for (const linkedMember of familyMembers.linkedFamily.infoLinked) {
+						if (linkedMember.relationship && linkedMember.relationship.trim() !== '') {
+							const relationshipData = await safeFetch('/api/relationship_cc', {
+								caregiver: linkedMember.member_id,
+								child: childId,
+								relationship: linkedMember.relationship
+							});
+							console.log(relationshipData.message)
+						}
+					}
+				}
 
 				// add the child and caregivers to the newly created family
 				await POST_family(childId, memberId, familyId)
@@ -541,7 +541,7 @@
 <section id="family-info">
 	<h1>Family Information</h1>
 
-	<ExistingForm bind:formData={familyMembers} error_msg={linkedFamilyError} members={members} bind:showtable={showtable} />
+	<ExistingForm bind:formData={familyMembers} error_msg={linkedFamilyError} members={members} bind:showtable={showtable} isChildView={url.familyId == null}/>
 
 	{#each familyMembers.newCaregivers as _, index (index)}
 		<CaregiverForm

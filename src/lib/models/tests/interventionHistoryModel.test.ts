@@ -1,10 +1,9 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { InterventionHistoryModel } from '$lib/models/interventionHistoryModel.js';
-import TableManager, { type tableRow } from '$lib/types/manager.js';
-import { InterventionModel } from '$lib/models/interventionModel.js';
-import { supabase } from '$lib/types/supabase.js';
+import { type tableRow } from '$lib/types/manager.js';
 
-type InterventionRow = tableRow<"intervention">
+type InterventionHistoryRow = tableRow<"intervention_history">;
+
 
 // create mock of the supabase client so tests never directly interact with the database
 vi.mock('$lib/types/client', () => {
@@ -21,59 +20,44 @@ describe('InterventionHistoryModel', () => {
         vi.clearAllMocks();
     });
 
-    const sampleInterventionHistory = {
+     const sampleInterventionHistory: InterventionHistoryRow = {
         id: 'uuid-history-id',
-        created_at: '2025-05-01T00:00:00Z',
         intervention_id: 'uuid-intervention-id',
-        intervention_created_at: '2025-04-01T00:00:00Z',
-        intervention_modified_at: '2025-04-01T00:00:00Z',
-        status: 'Neutral',
-        child_id: 'uuid-child-id',
-        remarks: 'Remarks',
-        intervention_text: 'string'
+        improvement: '2025-05-01T00:00:00Z',
+        status: 'Improved',
+        remarks: 'Remarkable progress',
+        date_checked: '2025-05-01'
     };
 
-    const sampleIntervention: InterventionRow = {
-        id: 'uuid-intervention-id',
-        service_category_id: 2,
-        intervention: 'string',
-        date_created: '2025-04-01T00:00:00Z',
-        last_updated: '2025-04-01T00:00:00Z',
-        status: 'Neutral',
-        remarks: 'Remarks',
-        child_id: 'uuid-child-id',
-        type: 'education'
-    };
 
     // Create methods
 
+    // recordInterventionHistory
+    it('recordInterventionHistory should insert and return new history record', async () => {
+        const mockInsert = vi.fn().mockResolvedValue(sampleInterventionHistory);
+        (InterventionHistoryModel.instance as any).insertOne = mockInsert;
 
-    // recordIntervention
-    it('recordIntervention should insert and return new program', async () => {
-        const mockInsert = vi.fn().mockReturnValue({
-            select: () => ({
-                single: () => Promise.resolve({ data: sampleInterventionHistory, error: null })
-            })
-        });
-
-        (supabase.from as any).mockReturnValue({ insert: mockInsert });
-
-        const result = await InterventionHistoryModel.instance.recordIntervention(sampleIntervention);
-
+        const result = await InterventionHistoryModel.instance.recordInterventionHistory(
+            'uuid-intervention-id',
+            '2025-05-01T00:00:00Z',
+            'Improved',
+            'Remarkable progress',
+            '2025-05-01'
+        );
         expect(result).toEqual(sampleInterventionHistory);
     });
 
-    it('recordIntervention should return null on insert error', async () => {
-        const mockInsert = vi.fn().mockReturnValue({
-            select: () => ({
-                single: () => Promise.resolve({ data: null, error: { message: 'Insert failed' } })
-            })
-        });
+    it('recordInterventionHistory should return null on error', async () => {
+        const mockInsert = vi.fn().mockResolvedValue(null);
+        (InterventionHistoryModel.instance as any).insertOne = mockInsert;
 
-        (supabase.from as any).mockReturnValue({ insert: mockInsert });
-
-        const result = await InterventionHistoryModel.instance.recordIntervention(sampleIntervention);
-
+        const result = await InterventionHistoryModel.instance.recordInterventionHistory(
+            'uuid-intervention-id',
+            '2025-05-01T00:00:00Z',
+            'Improved',
+            'Remarkable progress',
+            '2025-05-01'
+        );
         expect(result).toBeNull();
     });
 
@@ -99,28 +83,28 @@ describe('InterventionHistoryModel', () => {
         expect(result).toBeNull();
     });
 
-    // findByChild
-    it('findByChild should return a matching record when found', async () => {
+    // findByInterventionId
+    it('findByInterventionId should return matching records when found', async () => {
         const mockFindMany = vi.fn().mockResolvedValue([sampleInterventionHistory]);
         (InterventionHistoryModel.instance as any).findMany = mockFindMany;
 
-        const result = await InterventionHistoryModel.instance.findByChild('uuid-child-id');
+        const result = await InterventionHistoryModel.instance.findByInterventionId('uuid-intervention-id');
         expect(result).toEqual([sampleInterventionHistory]);
     });
 
-    it('findByChild should return empty array when no record is found', async () => {
+    it('findByInterventionId should return empty array when none are found', async () => {
         const mockFindMany = vi.fn().mockResolvedValue([]);
         (InterventionHistoryModel.instance as any).findMany = mockFindMany;
 
-        const result = await InterventionHistoryModel.instance.findByChild('uuid-child-id');
+        const result = await InterventionHistoryModel.instance.findByInterventionId('uuid-intervention-id');
         expect(result).toEqual([]);
     });
 
-    it('findByChild should return null on error', async () => {
+    it('findByInterventionId should return null on error', async () => {
         const mockFindMany = vi.fn().mockResolvedValue(null);
         (InterventionHistoryModel.instance as any).findMany = mockFindMany;
 
-        const result = await InterventionHistoryModel.instance.findByChild('uuid-child-id');
+        const result = await InterventionHistoryModel.instance.findByInterventionId('uuid-intervention-id');
         expect(result).toBeNull();
     });
 
@@ -129,15 +113,15 @@ describe('InterventionHistoryModel', () => {
         const mockFindMany = vi.fn().mockResolvedValue([sampleInterventionHistory]);
         (InterventionHistoryModel.instance as any).findMany = mockFindMany;
 
-        const result = await InterventionHistoryModel.instance.findByStatus('Regressed');
+        const result = await InterventionHistoryModel.instance.findByStatus('Improved');
         expect(result).toEqual([sampleInterventionHistory]);
     });
 
-    it('findByStatus should return empty array when no record is found', async () => {
+    it('findByStatus should return empty array when none are found', async () => {
         const mockFindMany = vi.fn().mockResolvedValue([]);
         (InterventionHistoryModel.instance as any).findMany = mockFindMany;
 
-        const result = await InterventionHistoryModel.instance.findByStatus('Regressed');
+        const result = await InterventionHistoryModel.instance.findByStatus('Improved');
         expect(result).toEqual([]);
     });
 
@@ -145,54 +129,45 @@ describe('InterventionHistoryModel', () => {
         const mockFindMany = vi.fn().mockResolvedValue(null);
         (InterventionHistoryModel.instance as any).findMany = mockFindMany;
 
-        const result = await InterventionHistoryModel.instance.findByStatus('Regressed');
+        const result = await InterventionHistoryModel.instance.findByStatus('Improved');
         expect(result).toBeNull();
     });
 
 
 
-
+    
     // Update methods
 
-    const sampleInterventionHistoryUpdate = {
-        intervention_id: 'uuid-intervention-id',
-        intervention_created_at: '2025-05-01T00:00:00Z',
-        intervention_modified_at: '2025-06-01T00:00:00Z',
-        status: 'Improved',
-        child_id: 'uuid-children-id',
-        remarks: 'Remarkable',
-        intervention_text: 'string'
-    };
-
-    const sampleInterventionUpdate: InterventionRow = {
-        id: 'uuid-intervention-id',
-        service_category_id: 2,
-        intervention: 'string',
-        date_created: '2025-05-01T00:00:00Z',
-        last_updated: '2025-06-01T00:00:00Z',
-        status: 'Improved',
-        remarks: 'Remarkable',
-        child_id: 'uuid-children-id',
-        type: 'social'
-    };
-
-    // updateRecord
-
-    it('updateRecord should return true on success with multiple fields', async () => {
+    // updateHistoryRecord
+    it('updateHistoryRecord should return true on success', async () => {
         const mockUpdate = vi.fn().mockResolvedValue(true);
         (InterventionHistoryModel.instance as any).updateOne = mockUpdate;
 
-        const result = await InterventionHistoryModel.instance.updateRecord('uuid-history-id', sampleInterventionUpdate);
+        const updates: Partial<InterventionHistoryRow> = {
+            improvement: '2025-06-01T00:00:00Z',
+            status: 'Improved',
+            remarks: 'Great improvement',
+            date_checked: '2025-06-01'
+        };
 
-        expect(mockUpdate).toHaveBeenCalledWith({ id: 'uuid-history-id' }, sampleInterventionHistoryUpdate);
-        expect(result).toBe(true)
+        const result = await InterventionHistoryModel.instance.updateHistoryRecord('uuid-history-id', updates);
+
+        expect(mockUpdate).toHaveBeenCalledWith({ id: 'uuid-history-id' }, updates);
+        expect(result).toBe(true);
     });
 
-    it('updateRecord should return null on failure', async () => {
+    it('updateHistoryRecord should return false on failure', async () => {
         const mockUpdate = vi.fn().mockResolvedValue(false);
         (InterventionHistoryModel.instance as any).updateOne = mockUpdate;
 
-        const result = await InterventionHistoryModel.instance.updateRecord('uuid-history-id', sampleInterventionUpdate);
+        const updates: Partial<InterventionHistoryRow> = {
+            improvement: '2025-06-01T00:00:00Z',
+            status: 'Improved',
+            remarks: 'Great improvement',
+            date_checked: '2025-06-01'
+        };
+
+        const result = await InterventionHistoryModel.instance.updateHistoryRecord('uuid-history-id', updates);
 
         expect(result).toBe(false);
     });
@@ -205,17 +180,17 @@ describe('InterventionHistoryModel', () => {
     // deleteById
     it('deleteById should return true if deletion is successful', async () => {
         const mockDelete = vi.fn().mockResolvedValue(true);
-        (InterventionModel.instance as any).deleteOne = mockDelete;
+        (InterventionHistoryModel.instance as any).deleteOne = mockDelete;
 
-        const result = await InterventionModel.instance.deleteById('uuid-history-id');
+        const result = await InterventionHistoryModel.instance.deleteById('uuid-history-id');
         expect(result).toBe(true);
     });
 
     it('deleteById should return false if deletion fails', async () => {
         const mockDelete = vi.fn().mockResolvedValue(null);
-        (InterventionModel.instance as any).deleteOne = mockDelete;
+        (InterventionHistoryModel.instance as any).deleteOne = mockDelete;
 
-        const result = await InterventionModel.instance.deleteById('uuid-history-id');
+        const result = await InterventionHistoryModel.instance.deleteById('uuid-history-id');
         expect(result).toBe(false);
     });
 });

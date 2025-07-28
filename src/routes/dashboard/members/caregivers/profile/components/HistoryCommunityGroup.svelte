@@ -36,18 +36,28 @@
 	// delete the community group to the caregiver's history
 	function deleteComGroup(index:number): void {
 		data[index].isDeleted = true
+<<<<<<< HEAD
+=======
+		data = data
+>>>>>>> 3b61cf81ba5c685dad0d0c3dfd53f7c1038b1445
 	}
 
 	// adds a community group to the caregiver's history
 	function addComGroup(): void {
 		const newCommunity: Community = {
+<<<<<<< HEAD
 			isDeleted: false,
 			isNew: true,
+=======
+>>>>>>> 3b61cf81ba5c685dad0d0c3dfd53f7c1038b1445
 			name: "",
 			date_joined: new Date().toISOString().split('T')[0], // today
-			date_left: null // null means active
+			date_left: null, // null means active
+			isNew: true,
+			isDeleted: false
 		};
 		data = [...data, newCommunity];
+		console.log(data)
 	}
 
 	async function handleSubmit() {
@@ -70,9 +80,9 @@
 			if (!isUnique) {
 			msg_newComGroup = 'This community group already exists';
 			}
-			modalOpen = false;
 			// If unique, proceed with submission
-			try {
+			else{
+				try {
 				const response = await fetch('/api/community_group_type', {
 				method: 'POST',
 				headers: {
@@ -88,10 +98,12 @@
 				} else {
 				throw new Error('Failed to add community group');
 				}
-		} catch (error) {
-			console.error('Error:', error);
-			alert('Error adding community group');
-		}
+				} catch (error) {
+				console.error('Error:', error);
+				alert('Error adding community group');
+				}
+			}
+			
 		}
 	}
 
@@ -116,9 +128,14 @@
 			</tr>
 			</thead>
 			<tbody>
+<<<<<<< HEAD
 			{#each data as com, index}
 			{#if com.isDeleted == false && editing}
+=======
+			{#each data as com,index}
+>>>>>>> 3b61cf81ba5c685dad0d0c3dfd53f7c1038b1445
 				<tr>
+					{#if com.isDeleted == false}
 					{#if editing}
 						<td><InputRange type="date" bind:valueFrom={com.date_joined} bind:valueTo={com.date_left} /></td>
 						<td><Select bind:value={com.name} options={options_community} required /></td>
@@ -137,6 +154,7 @@
 						</td>
 						<td>{com.name}</td>
 
+					{/if}
 					{/if}
 				</tr>
 			{:else if editing == false}
