@@ -13,6 +13,7 @@
 	let showMultipleResults = false;
 	let foundMembers: { family_id: string, label: string, member: MemberListFamily }[] = [];
 	let selectedFamilyId: string = '';
+	let CWD = "CWD";		// for the disabled text field display
 
 /**
  * function passed to SearchBtn, shows table if the search is valid. else, error messages are shown
@@ -153,7 +154,7 @@ $: onFamilySelect(selectedFamilyId)
 								{#if formData.linkedFamily.infoLinked[linked_i].caregiver_id != null}
 								<td><InputText id="relationship-{linked_i}" bind:value={formData.linkedFamily.infoLinked[linked_i].relationship}/></td>
 								{:else}
-								<td>CWD</td>
+								<td><InputText id="relationship-{linked_i}" bind:value={CWD} disabled/></td>
 								{/if}
 							</tr>
 						{/each}

@@ -43,6 +43,7 @@
 		sex: dropdownOptions.sex
 	});
 	const members = $state(data.members)
+	console.log("members: ", members)
 
 	let familyMembers: FamilyMembers = $state(
 		 {
@@ -103,7 +104,7 @@
 				familyMembers.linkedFamily.family_id = familyId;
 				familyMembers.linkedFamily.infoLinked = familyMembers_found.map(member => ({
 					member_id: member.member_id,
-					caregiver_id: null,						// TODO: fill this with caregiverid
+					caregiver_id: member.caregiver_id,						// TODO: fill this with caregiverid
 					firstName: member.firstName,
 					lastName: member.lastName,
 					contactNo: member.contactNo,
