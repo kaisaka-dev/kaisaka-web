@@ -6,6 +6,7 @@ import type { QueryConfigurationBuilder } from '$lib/types/manager.js';
 import { type Worksheet } from 'exceljs';
 import { reportConversion } from '../types/report-conversion.js';
 import { ReportGenerator } from './reportTemplate.js';
+import type { report_body } from '../../../../routes/api/reports/target_cwds/+server.js';
 
 /** 
  * Returns an ISO date range representing birthdays for a given age range.
@@ -79,7 +80,7 @@ interface cellResults {
   error: string
 };
 
-const logger = getLogSidecar();
+//const logger = getLogSidecar();
 
 const childrenSelectClause            = `*, disability_category!inner(name), members!inner(first_name, last_name, sex, birthday)`
 
@@ -101,24 +102,24 @@ export class ReportGeneratorInTheProgram extends ReportGenerator {
    * @param {number} startYear - Current reporting year.
    * @returns {Promise<Buffer>} - Buffer containing the Excel file.
    */
-  static async generateReport(startYear: number, endYear: number) {
-    logger.info('Started report for In the Program');
+  static async generateReport(startYear: Date, endYear: Date, body: report_body) {
+    //logger.info('Started report for In the Program');
     const {data, error} = await this.generateWorkbook('TEMPLATE_A1-InTheProgram.xlsx');
     
     if (error)
       throw error
-    await this.generateData(startYear, endYear, data.sheet);
+    await this.generateData(startYear, endYear, data.sheet, body);
 
     return await data.workbook.xlsx.writeBuffer();
   }
 
-  static async generateWorkbookReport(startYear: number, endYear: number) {
-    logger.info('Started report for In the Program');
+  static async generateWorkbookReport(startYear: Date, endYear: Date, body: report_body) {
+    //logger.info('Started report for In the Program');
     const {data, error} = await this.generateWorkbook('TEMPLATE_A1-InTheProgram.xlsx');
     
     if (error)
       throw error
-    await this.generateData(startYear, endYear, data.sheet);
+    await this.generateData(startYear, endYear, data.sheet, body);
 
     return await data.workbook;
   }
@@ -129,18 +130,20 @@ export class ReportGeneratorInTheProgram extends ReportGenerator {
    * @param {number} currentYear - Reporting year.
    * @param {Worksheet} worksheet - ExcelJS worksheet instance.
    */
-  static async generateData(startYear: number, endYear: number, worksheet: Worksheet, mergeOffset: number = 0) {
+  static async generateData(startYear: Date, endYear: Date, worksheet: Worksheet, body: report_body, mergeOffset: number = 0) {
     await Promise.all([
-      this.writeCWDLayer(startYear, endYear, worksheet, mergeOffset),
+      this.writeCWDLayer(startYear, endYear, worksheet, mergeOffset, body),
       this.writeDataLayer(worksheet, mergeOffset)
     ])
     await this.getReportSummary(worksheet, mergeOffset)
     await this.getReportDifference(worksheet, mergeOffset)
   }
 
-  static async writeCWDLayer(startYear: number, endYear: number, worksheet: Worksheet, mergeOffset: number) {
-    const row = worksheet.getRow(9 + mergeOffset)
-    const newCWDCurrentYear = await annualProgramModel.instance.findByStartAndEndYear(startYear, endYear)
+  static async writeCWDLayer(startYear: Date, endYear: Date, worksheet: Worksheet, mergeOffset: number, body: report_body) {
+    const oldRow = worksheet.getRow(12 + mergeOffset)
+    const newRow = worksheet.getRow(10 + mergeOffset)
+
+    const newCWDCurrentYear = await annualProgramModel.instance.findByStartAndEndYear(startYear.getFullYear(), endYear.getFullYear())
     if (!newCWDCurrentYear)
       throw Error(`No Annual Program detected from ${startYear} to ${endYear}`)
 
@@ -148,14 +151,31 @@ export class ReportGeneratorInTheProgram extends ReportGenerator {
 
     if (!oldCWDPreviousYear)
       throw Error(`No previous Annual Program detected from Annual Program ${startYear}-${endYear}`)
+
+    const totalActualCWDCell = oldRow.getCell(6);
+    const oldActualCWDPreviousYearCell = oldRow.getCell(8);
+    const newActualCWDCurrentYearCell = oldRow.getCell(11);
+
+    oldActualCWDPreviousYearCell.value = body.old_actual_CWDS ?? oldCWDPreviousYear[0].target_new_cwds 
+    newActualCWDCurrentYearCell.value = body.new_actual_CWDS ?? newCWDCurrentYear[0].target_new_cwds
+    totalActualCWDCell.value = {formula: 'K9 + H9'}
+
     
-    const oldCWDPreviousYearCell = row.getCell(8)
-    const newCWDCurrentYearCell = row.getCell(11)
-    const totalCWDCell = row.getCell(6);
-    oldCWDPreviousYearCell.value = oldCWDPreviousYear[0].target_new_cwds 
-    newCWDCurrentYearCell.value = newCWDCurrentYear[0].target_new_cwds
-    totalCWDCell.value = {formula: 'K9 + H9'}
-    await row.commit();
+
+    
+    body.new_target_CWDS ??= 0
+    body.old_target_CWDS ??= 0
+    const total_target_CWDS = body.new_target_CWDS + body.old_target_CWDS;
+
+    newRow.getCell(6).value = total_target_CWDS ;
+    newRow.getCell(8).value = body.old_target_CWDS;
+    newRow.getCell(11).value = body.new_target_CWDS;
+
+     
+    await Promise.all([
+      oldRow.commit(), 
+      newRow.commit()
+    ])
   }
 
   /**
@@ -200,7 +220,7 @@ export class ReportGeneratorInTheProgram extends ReportGenerator {
       columnOffset: number
     ) => this.writeResultToWorksheet(modelInstance, modelSelectClause, modelFilter, columnOffset, reportParams, worksheet, mergeOffset)
 
-    logger.info(`Cell (${reportParams.ageIndex}, ${reportParams.disabilityIndex}, ${reportParams.sexIndex}) - ${reportParams.ageGroup.label}, ${reportParams.disability.label}, ${reportParams.sex}`)
+    //logger.info(`Cell (${reportParams.ageIndex}, ${reportParams.disabilityIndex}, ${reportParams.sexIndex}) - ${reportParams.ageGroup.label}, ${reportParams.disability.label}, ${reportParams.sex}`)
 
     const birthdayRange = getBirthdayRangeForAge(reportParams.ageGroup.min, reportParams.ageGroup.max);
     
@@ -280,7 +300,7 @@ export class ReportGeneratorInTheProgram extends ReportGenerator {
     
     try {
       const result = await modelInstance.findWithJoinAndCount(modelSelectClause, modelFilter);
-      logger.info(`${JSON.stringify(result.data)} ${JSON.stringify(modelFilter)}`)
+      //logger.info(`${JSON.stringify(result.data)} ${JSON.stringify(modelFilter)}`)
       cell_result.count = (result.count) ?? 0;
     } catch (error) {
       cell_result.error = JSON.stringify(error)

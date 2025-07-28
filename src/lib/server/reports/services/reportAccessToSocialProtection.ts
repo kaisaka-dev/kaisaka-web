@@ -64,7 +64,7 @@ interface cellResults {
   error: string
 };
 
-const logger = getLogSidecar();
+//const logger = getLogSidecar();
 
 const MembershipCardParticipationSelectClause   = `*, disability_category!inner(name), members!inner(sex, birthday)`
 
@@ -78,8 +78,8 @@ export class ReportGeneratorAccessToSocialProtection extends ReportGenerator {
    * @param {number} startYear - Current reporting year.
    * @returns {Promise<Buffer>} - Buffer containing the Excel file.
    */
-  static async generateReport(startYear: number, endYear: number) {
-    logger.info('Started report for In the Program');
+  static async generateReport(startYear: Date, endYear: Date) {
+    //.info('Started report for In the Program');
     const {data, error} = await this.generateWorkbook('TEMPLATE_C2-SocInfo.xlsx');
 
     if (error)
@@ -95,8 +95,8 @@ export class ReportGeneratorAccessToSocialProtection extends ReportGenerator {
    * @param {number} startYear - Current reporting year.
    * @returns {Promise<Buffer>} - Buffer containing the Excel file.
    */
-  static async generateWorkbookReport(startYear: number, endYear: number) {
-    logger.info('Started report for In the Program');
+  static async generateWorkbookReport(startYear: Date, endYear: Date) {
+    //logger.info('Started report for In the Program');
     const {data, error} = await this.generateWorkbook('TEMPLATE_C2-SocInfo.xlsx');
 
     if (error)
@@ -112,14 +112,14 @@ export class ReportGeneratorAccessToSocialProtection extends ReportGenerator {
    * @param {number} currentYear - Reporting year.
    * @param {Worksheet} worksheet - ExcelJS worksheet instance.
    */
-  static async generateData(startYear: number, endYear: number, worksheet: Worksheet) {
+  static async generateData(startYear: Date, endYear: Date, worksheet: Worksheet) {
     await Promise.all([
       this.MembershipCardParticipationDataLayer(startYear, endYear, worksheet),
       this.DisabilityParticipationDataLayer(startYear, endYear, worksheet)
     ])
   }
 
-  static async MembershipCardParticipationDataLayer(startYear:number, endYear:number, worksheet: Worksheet){
+  static async MembershipCardParticipationDataLayer(startYear: Date, endYear:Date, worksheet: Worksheet){
     Promise.all(MembershipCardParticipation.map(async(card, cardIndex)=>{
       Promise.all(disabilities.map(async(disability, disabilityIndex)=>{
         const writer = async (sex: string, sexIndex: number) => {
@@ -137,7 +137,7 @@ export class ReportGeneratorAccessToSocialProtection extends ReportGenerator {
     }))
   }
 
-  static async DisabilityParticipationDataLayer(startYear:number, endYear:number, worksheet: Worksheet){
+  static async DisabilityParticipationDataLayer(startYear:Date, endYear:Date, worksheet: Worksheet){
     Promise.all(DisabilityParticipationDataLayer.flatMap(async(age_min, ageIndex)=>{
       Promise.all(disabilities.flatMap(async(disability, disabilityIndex)=>{
         const writer = async (sex: string, sexIndex: number) => {
@@ -224,7 +224,7 @@ export class ReportGeneratorAccessToSocialProtection extends ReportGenerator {
       columnOffset: number
     ) => this.writeResultToWorksheet(modelSelectClause, modelFilter, columnOffset, reportParams, worksheet)
 
-    logger.info(`Cell (${reportParams.cardIndex}, ${reportParams.disabilityIndex}, ${reportParams.sexIndex}) - ${reportParams.age_min}, ${reportParams.card}, ${reportParams.disability} ${reportParams.sex}`)
+    //logger.info(`Cell (${reportParams.cardIndex}, ${reportParams.disabilityIndex}, ${reportParams.sexIndex}) - ${reportParams.age_min}, ${reportParams.card}, ${reportParams.disability} ${reportParams.sex}`)
 
     const birthdayRange = getBirthdayRangeForAge(reportParams.age_min, null);
     
@@ -323,7 +323,7 @@ export class ReportGeneratorAccessToSocialProtection extends ReportGenerator {
     
     try {
       const result = await ChildrenModel.instance.findWithJoinAndCount(modelSelectClause, modelFilter);
-      logger.info(`${JSON.stringify(result.data)} ${JSON.stringify(modelFilter)}`)
+      //logger.info(`${JSON.stringify(result.data)} ${JSON.stringify(modelFilter)}`)
       cell_result.count = (result.count) ?? 0;
     } catch (error) {
       cell_result.error = JSON.stringify(error)

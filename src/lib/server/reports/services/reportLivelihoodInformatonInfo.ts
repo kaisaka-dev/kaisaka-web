@@ -63,7 +63,7 @@ interface cellResults {
   error: string
 };
 
-const logger = getLogSidecar();
+//const logger = getLogSidecar();
 
 const ParticipationOfCaregiversSelectClause = `
   id,
@@ -120,8 +120,8 @@ export class ReportGeneratorLivelihoodInformation extends ReportGenerator {
    * @param {number} startYear - Current reporting year.
    * @returns {Promise<Buffer>} - Buffer containing the Excel file.
    */
-  static async generateReport(startYear: number, endYear: number) {
-    logger.info('Started report for In the Program');
+  static async generateReport(startYear: Date, endYear: Date) {
+    //logger.info('Started report for In the Program');
     const {data, error} = await this.generateWorkbook('TEMPLATE_D2-LivInfo.xlsx');
 
     if (error) throw error
@@ -130,8 +130,8 @@ export class ReportGeneratorLivelihoodInformation extends ReportGenerator {
     return data.workbook.xlsx.writeBuffer();
   }
 
-  static async generateWorkbookReport(startYear: number, endYear: number) {
-    logger.info('Started report for In the Program');
+  static async generateWorkbookReport(startYear: Date, endYear: Date) {
+    //logger.info('Started report for In the Program');
     const {data, error} = await this.generateWorkbook('TEMPLATE_D2-LivInfo.xlsx');
 
     if (error) throw error
@@ -146,16 +146,16 @@ export class ReportGeneratorLivelihoodInformation extends ReportGenerator {
    * @param {number} currentYear - Reporting year.
    * @param {Worksheet} worksheet - ExcelJS worksheet instance.
    */
-  static async generateData(startYear: number, endYear: number, worksheet: Worksheet) {
+  static async generateData(startYear: Date, endYear: Date, worksheet: Worksheet) {
     await Promise.all([
       this.ParticipationOfCaregivers(startYear, endYear, worksheet),
       this.AccessToLabourMarket(startYear, endYear, worksheet)
     ])
     
-    logger.info("Done")
+    //logger.info("Done")
   }
 
-  static async ParticipationOfCaregivers(startYear:number, endYear:number, worksheet: Worksheet){
+  static async ParticipationOfCaregivers(startYear: Date, endYear: Date, worksheet: Worksheet){
     await Promise.all(groupMembership.map(async (groupMembership, groupMembershipId) => {
       Promise.all(disabilities.map(async (disability, disabilityId) => {
         const rowAddress = 5 + groupMembershipId * 2 + disabilityId;
@@ -212,7 +212,7 @@ export class ReportGeneratorLivelihoodInformation extends ReportGenerator {
     }))
   }
 
-  static async AccessToLabourMarket(startYear:number, endYear:number, worksheet: Worksheet){
+  static async AccessToLabourMarket(startYear: Date, endYear:Date, worksheet: Worksheet){
     await Promise.all(laborMarketAccess.map(async (laborMarket, laborMarketId) => {
       Promise.all(disabilities.map(async (disability, disabilityId) => {
         Promise.all(wageTypes.map(async (wageType)=>{
