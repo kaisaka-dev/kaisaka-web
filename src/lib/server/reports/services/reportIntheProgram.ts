@@ -186,9 +186,7 @@ export class ReportGeneratorInTheProgram extends ReportGenerator {
       ilike: {'disability_category.name': 'down syndrome'},
       lte: {'members.admission_date': newEndDate},
       gte: {'members.admission_date': newStartDate},
-      isNot: {
-        'members.'
-      }
+
     })
      ,
     ChildrenModel.instance.findWithJoinAndCount(dsString, 
