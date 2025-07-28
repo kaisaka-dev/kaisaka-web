@@ -117,6 +117,20 @@ export class CaregiverGroupsModel extends TableManager<"caregiver_groups">('care
   }
 
   /**
+   * Update caregiver group record's community group id
+   * @param id the unique id of the caregiver group record in the DB
+   * @param community_group_id the new community group id
+   * @returns boolean if update is successful or not
+   */
+  async updateCommunityGroupId(id: number, community_group_id: number): Promise<boolean>{
+    const reference: Partial<CaregiverGroupsRow> = { id: id }
+    const updates: Partial<CaregiverGroupsRow> = { community_group_id: community_group_id }
+    const data = await this.updateOne(reference, updates)
+
+    return data
+  }
+
+  /**
    * Mark a caregiver as having left a group
    * @param id the unique id of the caregiver group record in the DB
    * @param date_left the date when caregiver left the group (defaults to current date)
