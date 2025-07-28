@@ -14,8 +14,7 @@
 	let showMultipleResults = false;
 	let foundMembers: { family_id: string, label: string, member: MemberListFamily }[] = [];
 	let selectedFamilyId: string = '';
-	let CWD = "CWD";		// for the disabled text field display
-	let Caregiver = "Caregiver"; // for the disabled text field display
+	let DISABLED = "-";		// for the disabled text field display
 
 /**
  * function passed to SearchBtn, shows table if the search is valid. else, error messages are shown
@@ -71,7 +70,7 @@ function handleSearch() {
 			.filter(m => m.family_id === foundMember.family_id)
 			.map(member => ({
 				member_id: member.member_id,
-				caregiver_id: null,			// TODO: caregiver id
+				caregiver_id: member.caregiver_id,
 				firstName: member.firstName,
 				lastName: member.lastName,
 				contactNo: member.contactNo,
@@ -144,26 +143,26 @@ $: onFamilySelect(selectedFamilyId)
 							<th>First Name</th>
 							<th>Last Name</th>
 							<th>Contact No.</th>
-							<th>Relationship</th>
+							{#if  isChildView }
+							<th class="w-[410px]">Relationship</th>
+							{/if}
 						</tr>
 						</thead>
 						<tbody>
 						{#each formData.linkedFamily.infoLinked as _, linked_i}
 							<tr>
-								<td>{formData.linkedFamily.infoLinked[linked_i].firstName}</td>
-								<td>{formData.linkedFamily.infoLinked[linked_i].lastName}</td>
-								<td>{formData.linkedFamily.infoLinked[linked_i].contactNo}</td>
+									<td>{formData.linkedFamily.infoLinked[linked_i].firstName}</td>
+									<td>{formData.linkedFamily.infoLinked[linked_i].lastName}</td>
+								{#if  formData.linkedFamily.infoLinked[linked_i].caregiver_id != null }
+									<td>{formData.linkedFamily.infoLinked[linked_i].contactNo}</td>
+								{:else}
+									<td>-</td>
+								{/if}
 								{#if  isChildView }
 									{#if formData.linkedFamily.infoLinked[linked_i].caregiver_id != null}
-									<td><InputText id="relationship-{linked_i}" bind:value={formData.linkedFamily.infoLinked[linked_i].relationship}/></td>
+									<td class="w-[410px]"><InputText id="relationship-{linked_i}" bind:value={formData.linkedFamily.infoLinked[linked_i].relationship}/></td>
 									{:else}
-									<td><InputText id="relationship-{linked_i}" bind:value={CWD} disabled/></td>
-									{/if}
-								{:else}
-									{#if formData.linkedFamily.infoLinked[linked_i].caregiver_id != null}
-										<td><InputText id="relationship-{linked_i}" bind:value={formData.linkedFamily.infoLinked[linked_i].relationship} /></td>
-									{:else}
-										<td><InputText id="relationship-{linked_i}" bind:value={formData.linkedFamily.infoLinked[linked_i].relationship} disabled /></td>
+									<td>Child with Disability</td>
 									{/if}
 								{/if}
 							</tr>
