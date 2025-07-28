@@ -1,5 +1,37 @@
-<script>
+<script lang="ts">
 import Header from "$components/Header.svelte";
+import { onMount } from 'svelte';
+
+let loading = false;
+let pendingList =[];
+
+onMount(fetchPendingDocuments)
+
+async function fetchPendingDocuments() {
+    try {
+        loading = true;
+        console.log('Fetching: /api/children?type=pending-documents');
+        const response = await fetch('/api/children?type=pending-documents');
+
+        if (!response.ok) {
+            throw new Error('Failed to fetch pending documents');
+        }
+
+        const result = await response.json();
+
+        // Transform API data to match component expectations
+        pendingList = result.data.map((child: any) => ({
+            id: child.id || '',
+            name: child.members?.first_name + ' ' + child.members?.last_name,
+            link: `/dashboard/members/children/profile?id=${child.id}`
+        }));
+    } catch (err) {
+        console.error('Error fetching pending documents:', err);
+    } finally {
+        loading = false;
+    }
+}
+
 </script>
 <!-- boostrap icons -->
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css">
@@ -40,8 +72,19 @@ import Header from "$components/Header.svelte";
     <div id="notif-column" class="flex flex-col gap-[0.5rem]" style="margin-left:auto;">
         <a class="notif-head" href="/dashboard/members/pending"><i class="bi bi-bell-fill mr-[0.5rem]" style="color: var(--background);"></i> Pending review </a>
         <ul class="!ml-[2rem]">
-            <li><a href="/dashboard/members/caregivers/profile?id=a0b2b9a7-2b3f-4421-8fa4-e8422b044ec8">Mom Amon</a></li>
-            <li><a href="/dashboard/members/caregivers/profile?id=a0b2b9a7-2b3f-4421-8fa4-e8422b044ec8">Mariella Jeans</a></li>
+            {#if loading}
+                <li>Loading...</li>
+            {:else if pendingList.length === 0}
+                <li>No pending members</li>
+            {:else}
+                {#each pendingList.slice(0, 5) as child}
+                    <li><a href={child.link}>{child.name}</a></li>
+                {/each}
+                {#if pendingList.length > 5}
+                    <br>
+                    <a href="/dashboard/members/pending">see more > </a>
+                {/if}
+            {/if}
         </ul>
     </div>
 </section>
