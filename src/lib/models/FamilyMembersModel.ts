@@ -192,6 +192,7 @@ export class FamilyMembersModel extends TableManager<"family_members">('family_m
       member_id, 
       relationship_type,
       is_child,
+      caregiver_id,
       date_added,
       members!inner(
         first_name,
