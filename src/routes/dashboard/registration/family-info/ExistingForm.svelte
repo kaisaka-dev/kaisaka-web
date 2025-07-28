@@ -9,7 +9,7 @@
 	export let formData: FamilyMembers;
 	export let error_msg: string = "";
 	export let members: MemberListFamily[];
-	let showtable = false;
+	export let showtable: false;
 	let showMultipleResults = false;
 	let foundMembers: { family_id: string, label: string, member: MemberListFamily }[] = [];
 	let selectedFamilyId: string = '';
@@ -68,6 +68,7 @@ function handleSearch() {
 			.filter(m => m.family_id === foundMember.family_id)
 			.map(member => ({
 				member_id: member.member_id,
+				caregiver_id: null,			// TODO: caregiver id
 				firstName: member.firstName,
 				lastName: member.lastName,
 				contactNo: member.contactNo,
