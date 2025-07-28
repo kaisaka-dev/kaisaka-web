@@ -31,20 +31,22 @@
 	}
 
 	// delete the community group to the caregiver's history
-	function deleteComGroup(id:number): void {
-		console.log("deleted", id);
-		data = data.filter((item) => item.id != id)
+	function deleteComGroup(index:number): void {
+		data[index].isDeleted = true
+		data = data
 	}
 
 	// adds a community group to the caregiver's history
 	function addComGroup(): void {
 		const newCommunity: Community = {
-			id: null, // left blank for now (cant be left blank though, since deleting is by key, and having 2 nulls would delete both)
 			name: "",
 			date_joined: new Date().toISOString().split('T')[0], // today
-			date_left: null // null means active
+			date_left: null, // null means active
+			isNew: true,
+			isDeleted: false
 		};
 		data = [...data, newCommunity];
+		console.log(data)
 	}
 
 	async function handleSubmit() {
@@ -67,9 +69,9 @@
 			if (!isUnique) {
 			msg_newComGroup = 'This community group already exists';
 			}
-			modalOpen = false;
 			// If unique, proceed with submission
-			try {
+			else{
+				try {
 				const response = await fetch('/api/community_group_type', {
 				method: 'POST',
 				headers: {
@@ -85,10 +87,12 @@
 				} else {
 				throw new Error('Failed to add community group');
 				}
-		} catch (error) {
-			console.error('Error:', error);
-			alert('Error adding community group');
-		}
+				} catch (error) {
+				console.error('Error:', error);
+				alert('Error adding community group');
+				}
+			}
+			
 		}
 	}
 
@@ -112,13 +116,14 @@
 			</tr>
 			</thead>
 			<tbody>
-			{#each data as com}
+			{#each data as com,index}
 				<tr>
+					{#if com.isDeleted == false}
 					{#if editing}
 						<td><InputRange type="date" bind:valueFrom={com.date_joined} bind:valueTo={com.date_left} /></td>
 						<td><Select bind:value={com.name} options={options_community} required /></td>
 						<td style="text-align:center;">
-							<i class="fa-solid fa-trash" on:click={() => deleteComGroup(com.id)}></i>
+							<i class="fa-solid fa-trash" on:click={() => deleteComGroup(index)}></i>
 						</td>
 
 					{:else}
@@ -132,6 +137,7 @@
 						</td>
 						<td>{com.name}</td>
 
+					{/if}
 					{/if}
 				</tr>
 			{/each}

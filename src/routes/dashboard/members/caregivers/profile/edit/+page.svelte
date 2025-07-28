@@ -100,6 +100,7 @@
         else{
             errors.birthday = birthday.trim() === "" ? "Required" : ""
         }
+
         errors.sex = sex == null ? "Required" : ""
         errors.address = address.trim() === "" ? "Required" : ""
         errors.barangay = barangay.trim() === "" ? "Required" : ""
@@ -144,7 +145,10 @@
     }
 
     async function editData(): Promise<void>{
+
+
         if(validateForm()) {
+            console.log(data.caregiver.community_history)
             //PERSONAL INFO UPDATES BEGIN HERE
             const memberUpdate = await fetch('/api/members' , {
                 method: "PUT",
@@ -368,7 +372,7 @@
         </div>
 
         <!--Container for Community Group -->
-        <HistoryCommunityGroup id="Community Group" data= {data.caregiver.community_history} {editing} />
+        <HistoryCommunityGroup id="Community Group" bind:data= {data.caregiver.community_history} {editing} />
 
         <!--Container for Income Type-->
         <HistoryIncomeType id="Income Type" data={data.caregiver?.income_history} {editing} />
