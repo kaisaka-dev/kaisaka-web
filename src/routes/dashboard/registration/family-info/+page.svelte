@@ -27,7 +27,7 @@
 
 	// get the url parameters
 	const url = {
-		familyId: page.url.searchParams.get('family'),
+		caregiverId: page.url.searchParams.get('caregiver'),
 		childId: page.url.searchParams.get('cwd')
 	}
 
@@ -47,10 +47,10 @@
 
 	let familyMembers: FamilyMembers = $state(
 		 {
-			hasExisting: !!url.familyId,
+			hasExisting: false,
 			linkedFamily: {
 				type: 'linked',
-				family_id: url.familyId,
+				family_id: "",
 				firstName: "",
 				lastName: "",
 				contactNo: "",
@@ -78,14 +78,14 @@
 	);
 	let linkedFamilyError = $state('')	// default no errors
 	let showtable: boolean = $state(false); // for the existing family table
-	let childId = url.childId, memberId, familyId = url.familyId;	// for the posts
+	let childId = url.childId, memberId: string, familyId: string, caregiverId = url.caregiverId;	// for the posts
 	$effect(() => console.log("relavent ids: ", childId, memberId, familyId))
 
 	// pre-populate the family information based on URL
 	onMount(async () => {
 		console.log('URL params:', url);
-		if (url.familyId) {
-			await handleFamilyIdParam(url.familyId);		// pre-populate family information
+		if (url.caregiverId) {
+			await handleCaregiverIdParam(url.caregiverId);		// pre-populate family information
 		}
 		if (url.childId) {
 			await handleChildIdParam(url.childId);
@@ -104,7 +104,7 @@
 				familyMembers.linkedFamily.family_id = familyId;
 				familyMembers.linkedFamily.infoLinked = familyMembers_found.map(member => ({
 					member_id: member.member_id,
-					caregiver_id: member.caregiver_id,						// TODO: fill this with caregiverid
+					caregiver_id: member.caregiver_id,
 					firstName: member.firstName,
 					lastName: member.lastName,
 					contactNo: member.contactNo,
@@ -128,6 +128,23 @@
 
 		// get the member id (need for famly)
 		const famMemRes = await fetch(`/api/family_members?member_id=${memberId}`)
+		const famMemberRecord = await famMemRes.json()
+		console.log('familyMemberRecord: ', famMemberRecord)
+		familyId = famMemberRecord.data[0].family_id
+
+		await handleFamilyIdParam(familyId)
+
+	}
+
+	async function handleCaregiverIdParam(caregiverId: string) {
+		// call the api to get the information
+		const caregiverRecRes = await fetch(`/api/caregivers/${caregiverId}`)
+		const caregiverRecord = await caregiverRecRes.json()
+		console.log('childRecord: ', caregiverRecord)
+		memberId = caregiverRecord.member_id
+
+		// get the member id (need for famly)
+		const famMemRes = await fetch(`/api/family_members?caregiver_id=${memberId}`)
 		const famMemberRecord = await famMemRes.json()
 		console.log('familyMemberRecord: ', famMemberRecord)
 		familyId = famMemberRecord.data[0].family_id
@@ -169,6 +186,7 @@
 
 		familyMembers.newCaregivers = [...familyMembers.newCaregivers, newCaregiver];
 		caregiverErrors = [...caregiverErrors, newError];
+		console.log(familyMembers)
 	}
 
 	/**
@@ -266,7 +284,7 @@
 
 			// CODE BLOCK #1: SUBMITTING CWD DATA (of previous page)
 			// bypass if: has family id and has child id
-			if (url.familyId == null && url.childId == null) {
+			if (url.caregiverId == null && url.childId == null) {
 				// insert address
 				const addressData = await safeFetch('/api/addresses', childRegData.address);
 				console.log(addressData.message);
@@ -334,12 +352,12 @@
 				// get the family id of the existing family
 				const familyId = familyMembers.linkedFamily.family_id;
 
-				// TODO: create new relationships for each child-familyMember relationship which isn't null
+				// create new relationships for each child-familyMember relationship which isn't null
 				if (familyMembers.hasExisting && familyMembers.linkedFamily?.infoLinked) {
 					for (const linkedMember of familyMembers.linkedFamily.infoLinked) {
 						if (linkedMember.relationship && linkedMember.relationship.trim() !== '') {
 							const relationshipData = await safeFetch('/api/relationship_cc', {
-								caregiver: linkedMember.member_id,
+								caregiver: linkedMember.caregiver_id,
 								child: childId,
 								relationship: linkedMember.relationship
 							});
@@ -378,63 +396,54 @@
 		}
 
 		async function POST_family(child_id: string | null, member_id: string, family_id: string) {
+			let isChild = child_id != null
+			let child_newfamily = (url.childId != null && familyId != family_id)
+			let caregiver_newfamily = (url.caregiverId != null && familyId != family_id)
 
-			// CODE BLOCK #3: ADD CHILD TO FAMILY MEMBERS RECORD
-			// bypass if: caregiver (has familyid, but no childid)
-			console.log(familyId, family_id)
-			console.log("is caregiver:", !(url.familyId != null && url.childId == null) )
-			console.log("is cwd and famliy diff:", (url.childId != null && familyId  != family_id) )
-			console.log("is cwd and famliy diff:", url.familyId == null && url.childId == null
-				, " || ", !(url.familyId != null && url.childId == null) 		// if not caregiver
-				, " && ", (url.childId != null && familyId  != family_id))
+			// CODE BLOCK #3: ADD MEMBER TO FAMILY MEMBERS RECORD
+			// if currently exists in a family, delete its old family_members record
+			if ((child_newfamily	|| caregiver_newfamily) && familyId != null) {
+				console.log('Child/Caregiver is changing families - deleting old family record');
+				// #1 delete old family first
+				try {
+					const deleteRes = await fetch('/api/family_members', {
+						method: 'DELETE',
+						body: JSON.stringify({
+							family_id: familyId, // old family ID
+							member_id: member_id
+						}),
+						headers: { 'Content-Type': 'application/json' }
+					});
 
-
-			if (url.familyId == null && url.childId == null
-				|| !(url.familyId != null && url.childId == null) 		// if child ..
-				&& (url.childId != null && familyId  != family_id)) {	// .. and its family changed
-				console.log("inserting:", child_id, member_id, family_id);
-
-				// TODO: if existing child, delete its old family_members record
-
-				if (!(url.familyId != null && url.childId == null) 		// if child exists
-					&& (url.childId != null && familyId != family_id)) {	// and family is changing
-
-					console.log('Child is changing families - deleting old family record');
-
-					// Delete the old family_members record
-					try {
-						const deleteRes = await fetch('/api/family_members', {
-							method: 'DELETE',
-							body: JSON.stringify({
-								family_id: familyId, // old family ID
-								member_id: member_id
-							}),
-							headers: { 'Content-Type': 'application/json' }
-						});
-
-						if (deleteRes.ok) {
-							const deleteResult = await deleteRes.json();
-							console.log('Old family record deleted:', deleteResult);
-						} else {
-							console.warn('Failed to delete old family record');
-						}
-					} catch (error) {
-						console.error('Error deleting old family record:', error);
+					if (deleteRes.ok) {
+						const deleteResult = await deleteRes.json();
+						console.log('Old family record deleted:', deleteResult);
+					} else {
+						console.warn('Failed to delete old family record');
 					}
+				} catch (error) {
+					console.error('Error deleting old family record:', error);
 				}
+			}
 
 				// add the child to the existing family (POST to family_members)
-				const famChildData = await safeFetch('/api/family_members', {
-					is_child: true,
+			console.log(
+				{
+					is_child: isChild,
+					member_id: member_id,
+					family_id: family_id
+				}
+			)
+				const famMemData = await safeFetch('/api/family_members', {
+					is_child: isChild,
 					member_id: member_id,
 					family_id: family_id
 				});
-				console.log('Child added to family:', famChildData.message);
-			}
+				console.log('Member added to family:', famMemData.message);
+				familyId = family_id
 
 
 			// CODE BLOCK #4: ADD ALL NEW CAREGIVERS TO THE EXISTING FAMILY
-			// bypass if: [no scenarios]
 			for (const [i, newCaregiver] of familyMembers.newCaregivers.entries()) {
 				// add all the caregivers to the db (POST to member, and POST to caregivers)
 				const caregiverMember = await POST_caregiver(newCaregiver);
@@ -447,9 +456,9 @@
 				});
 				console.log(newCaregiver.firstName, ' added to family: ', famMemData.message)
 
-				// add the relationship of caregivers to child IF NOT EMPTY
-				// bypass if: family view
-				if (url.childId != null && newCaregiver.relationship && newCaregiver.relationship.trim() !== '') {
+				// add the relationship of NEW caregivers to child IF NOT EMPTY
+				// bypass if: caregiver view
+				if (isChild && newCaregiver.relationship && newCaregiver.relationship.trim() !== '') {
 					const relationshipData = await safeFetch('/api/relationship_cc', {
 						caregiver: caregiverMember.caregiver_id,
 						child: child_id,
@@ -541,7 +550,7 @@
 <section id="family-info">
 	<h1>Family Information</h1>
 
-	<ExistingForm bind:formData={familyMembers} error_msg={linkedFamilyError} members={members} bind:showtable={showtable} isChildView={url.familyId == null}/>
+	<ExistingForm bind:formData={familyMembers} error_msg={linkedFamilyError} members={members} bind:showtable={showtable} isChildView={url.caregiverId == null}/>
 
 	{#each familyMembers.newCaregivers as _, index (index)}
 		<CaregiverForm
@@ -559,7 +568,7 @@
 </section>
 
 <section style="text-align: center;">
-	<button onclick={() => location.href = 'child'}>Back</button>
+<!--	<button onclick={() => location.href = 'child'}>Back</button>-->
 
 	<button class="green" onclick="{handleSubmit}">Submit</button>
 </section>
