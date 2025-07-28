@@ -17,7 +17,6 @@ export class FamilyMembersModel extends TableManager<"family_members">('family_m
    * @param family_id the unique id of the family
    * @param member_id the unique id of the member
    * @param is_child boolean indicating if the member is a child
-   * @param caregiver_id the caregiver id (optional, null for children)
    * @param relationship_type the relationship type (optional)
    * @returns created family member record or null
    */
@@ -25,7 +24,6 @@ export class FamilyMembersModel extends TableManager<"family_members">('family_m
     family_id: string, 
     member_id: string, 
     is_child: boolean, 
-    caregiver_id?: string | null,
     relationship_type?: string | null
   ): Promise<FamilyMembersRow | null> {
     const now = new Date().toISOString();
@@ -33,7 +31,6 @@ export class FamilyMembersModel extends TableManager<"family_members">('family_m
       family_id,
       member_id,
       is_child,
-      caregiver_id: caregiver_id || null,
       relationship_type: relationship_type || null,
       date_added: now
     };
