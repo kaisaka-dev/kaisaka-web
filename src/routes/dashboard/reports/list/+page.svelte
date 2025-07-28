@@ -116,8 +116,8 @@
     <span style="color:var(--green)">Results: {filteredData.length}</span>
 
     <ReportPeriodTable data={filteredData} headers={[
-  "Start", "End", "Total Target CWDS", "New Target CWDS", "Old Target CWDS", "Total Actual CWDS", "New Actual CWDS", "Old Actual CWDS"]}
-                       includedKeys={['Start', 'End', 'total_target_CWDS', 'new_target_CWDS', 'old_target_CWDS', 'total_actual_CWDS', 'new_actual_CWDS', 'old_actual_CWDS']} hasLink={true}/>
+  "Start", "End", /*"Total Target CWDS",*/ "New Target CWDS", "Old Target CWDS", /*"Total Actual CWDS",*/ "New Actual CWDS", "Old Actual CWDS"]}
+                       includedKeys={['Start', 'End', /*'total_target_CWDS', */'new_target_CWDS', 'old_target_CWDS', /*'total_actual_CWDS',*/ 'new_actual_CWDS', 'old_actual_CWDS']} hasLink={true}/>
     {/if}
 
 </section>
