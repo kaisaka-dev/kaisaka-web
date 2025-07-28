@@ -25,10 +25,10 @@ export interface QueryConfigurationBuilder{
   where?: Partial<tableRow<tableNames>>;
   eq?: Record<string, string | number | boolean>;
   neq?: Record<string, string | number | boolean>;
-  gt?: Record<string, string | number>;
-  gte?: Record<string, string | number>;
-  lt?: Record<string, string | number>;
-  lte?: Record<string, string | number>;
+  gt?: Record<string, Date | string | number>;
+  gte?: Record<string, Date | string | number>;
+  lt?: Record<string, Date | string | number>;
+  lte?: Record<string, Date | string | number>;
   like?: Record<string, string>;
   ilike?: Record<string, string>;
   in?: Record<string, (string | number)[]>;

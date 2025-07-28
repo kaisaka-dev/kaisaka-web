@@ -35,7 +35,7 @@ export class ReportGeneratorConsolidation extends ReportGenerator {
       worksheet.getRow(6).getCell(2).value = body.general_reflection
       worksheet.getRow(12).getCell(2).value = body.lessons_learned
       worksheet.getRow(18).getCell(4).value = username
-      worksheet.getRow(19).getCell(4).value = (new Date()).toISOString()
+      worksheet.getRow(19).getCell(4).value = (new Date()).toDateString()
 
       await Promise.all([
         worksheet.getRow(6).commit(),
