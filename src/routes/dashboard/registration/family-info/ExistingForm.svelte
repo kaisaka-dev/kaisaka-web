@@ -10,10 +10,12 @@
 	export let error_msg: string = "";
 	export let members: MemberListFamily[];
 	export let showtable: false;
+	export let isChildView: true;
 	let showMultipleResults = false;
 	let foundMembers: { family_id: string, label: string, member: MemberListFamily }[] = [];
 	let selectedFamilyId: string = '';
 	let CWD = "CWD";		// for the disabled text field display
+	let Caregiver = "Caregiver"; // for the disabled text field display
 
 /**
  * function passed to SearchBtn, shows table if the search is valid. else, error messages are shown
@@ -151,10 +153,18 @@ $: onFamilySelect(selectedFamilyId)
 								<td>{formData.linkedFamily.infoLinked[linked_i].firstName}</td>
 								<td>{formData.linkedFamily.infoLinked[linked_i].lastName}</td>
 								<td>{formData.linkedFamily.infoLinked[linked_i].contactNo}</td>
-								{#if formData.linkedFamily.infoLinked[linked_i].caregiver_id != null}
-								<td><InputText id="relationship-{linked_i}" bind:value={formData.linkedFamily.infoLinked[linked_i].relationship}/></td>
+								{#if  isChildView }
+									{#if formData.linkedFamily.infoLinked[linked_i].caregiver_id != null}
+									<td><InputText id="relationship-{linked_i}" bind:value={formData.linkedFamily.infoLinked[linked_i].relationship}/></td>
+									{:else}
+									<td><InputText id="relationship-{linked_i}" bind:value={CWD} disabled/></td>
+									{/if}
 								{:else}
-								<td><InputText id="relationship-{linked_i}" bind:value={CWD} disabled/></td>
+									{#if formData.linkedFamily.infoLinked[linked_i].caregiver_id != null}
+										<td><InputText id="relationship-{linked_i}" bind:value={formData.linkedFamily.infoLinked[linked_i].relationship} /></td>
+									{:else}
+										<td><InputText id="relationship-{linked_i}" bind:value={formData.linkedFamily.infoLinked[linked_i].relationship} disabled /></td>
+									{/if}
 								{/if}
 							</tr>
 						{/each}
