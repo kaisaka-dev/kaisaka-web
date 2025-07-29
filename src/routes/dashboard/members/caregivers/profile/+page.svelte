@@ -15,7 +15,6 @@
     let editing = false
 
     
-    console.log(data.caregiver)
     //below are sample data declarations just to test if the page works, will delete when relevant APIs are complete
     let sampleFamily1: family = {
         members: [{firstName: "Juan", lastName: "De La Cruz", role: "Grandparent"},
@@ -155,9 +154,9 @@
         </div>
 
         <!--Container for Community Group -->
-        <HistoryCommunityGroup id="Community Group" data={sample.community_history} {editing} />
+        <HistoryCommunityGroup id="Community Group" data={data.caregiver.community_history} error ={""} editing = {editing} />
 
         <!--Container for Income Type-->
-        <HistoryIncomeType id="Income Type" data={sample.income_history} {editing} />
+        <HistoryIncomeType id="Income Type" data={data.caregiver.income_history} error = {""}  editing = {editing} />
     </div>
 </div>

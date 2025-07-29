@@ -43,6 +43,7 @@ export type LinkedFamily = {
 // object type used to store information about the searched member
 export type InfoLinked = {
 	member_id: string;
+	caregiver_id: string | null;
 	firstName: string;
 	lastName: string;
 	contactNo: string;

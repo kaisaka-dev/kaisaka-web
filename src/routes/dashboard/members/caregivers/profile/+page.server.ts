@@ -19,7 +19,6 @@ export async function load( {url, fetch} ) {
     }
 
     const memberRecord = await memberRecRes.json()
-    console.log(memberRecord)
 
     //finds the family id of the record with the given member_id in the family table
     const familyRes = await fetch(`/api/family_members?id=${memberRecord.id}&select=*,families(*)&type=memberid`)
@@ -43,7 +42,7 @@ export async function load( {url, fetch} ) {
         familyArray.push(entireFamily)
     }
 
-    const communityres = await fetch(`/api/caregiver_groups/?caregiver_id=${caregiverInfo.id}`)
+    const communityres = await fetch(`/api/caregiver_groups?caregiver_id=${caregiverInfo.id}`)
     let communityHistory = []
 
     if(communityres.ok){
@@ -51,6 +50,17 @@ export async function load( {url, fetch} ) {
         
         for(let i in communityInfo){
             communityHistory.push(communityInfo[i])
+        }
+    }
+
+    communityHistory = communityHistory.flat()
+    console.log(communityHistory)
+
+    for(let i in communityHistory) {
+        const communityTyperes = await fetch(`/api/community_group_type?id=${communityHistory[i].community_group_id}`)
+        if(communityTyperes.ok){
+            const communitytypeRecord = await communityTyperes.json()
+            communityHistory[i]['name'] = communitytypeRecord.data.name
         }
     }
 
@@ -63,6 +73,7 @@ export async function load( {url, fetch} ) {
             incomeHistory.push(incomeInfo[i])
         }
     }
+    
     
     
     let caregiver: Caregiver = {
@@ -82,7 +93,7 @@ export async function load( {url, fetch} ) {
         date_termination: memberRecord.date_termination,
         family: familyArray,
         community_history: communityHistory,
-        income_history: incomeHistory
+        income_history: incomeHistory.flat()
     }
 
 
