@@ -1,8 +1,8 @@
 <script lang="ts">
 	const names = [
-		{ name: "Mariella Jeans", color: "gold", description: "-inf class citizen"},
+		{ name: "Mariella Jeans", color: "gold", },
 		{ name: "Paolo", color: "crimson", description: "my goat btw^ not designer bias" },
-		{ name: "Bea", color: "crimson", description: "upper class citizen" },
+		{ name: "Bea", color: "crimson", description: "-inf class citizen" },
 		{ name: "Gidoen", color: "dodgerblue" },
 		{ name: "Roan", color: "dodgerblue", description: "lowest class citizen" },
 		{ name: "Mika", color: "dodgerblue" },
