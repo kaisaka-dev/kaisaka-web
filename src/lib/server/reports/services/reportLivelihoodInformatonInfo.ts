@@ -283,7 +283,7 @@ export class ReportGeneratorLivelihoodInformation extends ReportGenerator {
 
     
     try {
-      const result = await CaregiversModel.instance.findWithJoinAndCount(modelSelectClause, modelFilter);
+      const result = await CaregiversModel.instance.findWithJoinWithCount(modelSelectClause, modelFilter);
       // logger.info(`${JSON.stringify(result.data)} ${JSON.stringify(modelFilter)} `)
       cell_result.count = (result.count) ?? 0;
     } catch (error) {

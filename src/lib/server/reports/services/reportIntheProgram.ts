@@ -181,7 +181,7 @@ export class ReportGeneratorInTheProgram extends ReportGenerator {
     const newStartDate = this.getEarliestDate(newCWDCurrentYear.start_year, newCWDCurrentYear.end_month, newCWDCurrentYear.end_date).toISOString()
     const newEndDate = this.getLatestDate(newCWDCurrentYear.end_year, newCWDCurrentYear.end_month, newCWDCurrentYear.end_date).toISOString()
     const oldEndDate = this.getLatestDate(oldCWDPreviousYear.end_year, oldCWDPreviousYear.end_month, oldCWDPreviousYear.end_date).toISOString()
-    const [res1, res2] = await Promise.all( [ChildrenModel.instance.findWithJoinAndCount(dsString, 
+    const [res1, res2] = await Promise.all( [ChildrenModel.instance.findWithJoinWithCount(dsString, 
     { 
       ilike: {'disability_category.name': 'down syndrome'},
       lte: {'members.admission_date': newEndDate},
@@ -189,7 +189,7 @@ export class ReportGeneratorInTheProgram extends ReportGenerator {
 
     })
      ,
-    ChildrenModel.instance.findWithJoinAndCount(dsString, 
+    ChildrenModel.instance.findWithJoinWithCount(dsString, 
     { 
       ilike: {'disability_category.name': 'down syndrome'},
       lte: {'members.admission_date': oldEndDate},
@@ -329,7 +329,7 @@ export class ReportGeneratorInTheProgram extends ReportGenerator {
 
     
     try {
-      const result = await modelInstance.findWithJoinAndCount(modelSelectClause, modelFilter);
+      const result = await modelInstance.findWithJoinWithCount(modelSelectClause, modelFilter);
       //logger.info(`${JSON.stringify(result.data)} ${JSON.stringify(modelFilter)}`)
       cell_result.count = (result.count) ?? 0;
     } catch (error) {

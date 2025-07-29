@@ -10,6 +10,7 @@ import ExcelJS from 'exceljs';
 import path from 'path';
 import { fileURLToPath } from 'url';
 import type { Session, User } from '@supabase/supabase-js';
+import { getEarliestDate, getLatestDate } from '$lib/types/dates.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -54,36 +55,6 @@ export interface report_body {
 	old_actual_CWDS?: number | null;
 	general_reflection?: string;
 	lessons_learned?: string;
-}
-/**
- 
-	id: number | null;
-	Start?: string;
-	End?: string;
-	startYYYY: number | null;
-	startMM?: number | null;
-	startDD?: number | null;
-	endYYYY: number | null;
-	endMM?: number | null;
-	endDD?: number | null;
-	total_target_CWDS?: number | null;
-	new_target_CWDS?: number | null;
-	old_target_CWDS?: number | null;
-	total_actual_CWDS?: number | null;
-	new_actual_CWDS?: number | null;
-	old_actual_CWDS?: number | null;
-	general_reflection?: string;
-	lessons_learned?: string;
- */
-
-function getEarliestDate(
-  year: number,
-  month?: number | null,
-  day?: number | null
-): Date {
-  const m = month != null ? month - 1 : 0; // JS Date: month is 0-indexed
-  const d = day != null ? day : 1;
-  return new Date(year, m, d);
 }
 
 interface Session_User {
@@ -154,7 +125,7 @@ export const POST: RequestHandler = async ({request, url, locals, fetch}) => {
 
   type IndexedWorkbook = { index: number; workbook: ExcelJS.Workbook };
   const start_year = getEarliestDate(body.startYYYY)
-  const end_year = getEarliestDate(body.endYYYY)
+  const end_year = getLatestDate(body.endYYYY)
   
 // parallel tasks
   const tasks: Promise<IndexedWorkbook>[] = [
