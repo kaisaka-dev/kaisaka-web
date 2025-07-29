@@ -1,14 +1,19 @@
 import ExcelJS from "exceljs"
 import path from "path"
 import { fileURLToPath } from "url";
-
+import fs from 'fs'
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 export abstract class ReportGenerator {
   protected static async generateWorkbook(reportTemplateName: string) {
-    const pathTemplate = path.resolve(__dirname, '../../../../lib/server/reports/templates/', reportTemplateName) 
+    const pathTemplate = path.resolve(process.cwd(), 'static/templates/', reportTemplateName);
+    
+    // Check if file exists and provide helpful error message
+    if (!fs.existsSync(pathTemplate)) {
+      throw new Error(`Template file not found: ${reportTemplateName} at ${pathTemplate}`);
+    }
     const workbook = new ExcelJS.Workbook()
     await workbook.xlsx.readFile(pathTemplate)
 

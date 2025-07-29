@@ -11,7 +11,7 @@ import path from 'path';
 import { fileURLToPath } from 'url';
 import type { Session, User } from '@supabase/supabase-js';
 import { getEarliestDate, getLatestDate } from '$lib/types/dates.js';
-
+import fs from 'fs'
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
@@ -86,42 +86,50 @@ export const POST: RequestHandler = async ({request, url, locals, fetch}) => {
   
 
 
+
   // const buffer = await ExcelGenerator.generateExcelfromReportArray([AccomplishmentReport, AccomplishmentReport, AccomplishmentReport]);
-  const templateDir = path.resolve(__dirname, '../../../../lib/server/reports/templates/');
-  
-  
-  const workbookArray: ExcelJS.Workbook[] = []
-  const params = parseTemplateParms(url)
-  const fileName: string[] = [
-      'TEMPLATE_A1-InTheProgram.xlsx',
-      'TEMPLATE_A2-Health.xlsx',
-      'TEMPLATE_B1-EduObject.xlsx',
-      'TEMPLATE_B2-EduInfo.xlsx',  
-      'TEMPLATE_C1-SocObject.xlsx',   
-      'TEMPLATE_C2-SocInfo.xlsx',
-      'TEMPLATE_D1-LivObject.xlsx',
-      'TEMPLATE_D2-LivInfo.xlsx',
-      'TEMPLATE_E-Other.xlsx',
-      'TEMPLATE_F-Conc.xlsx',
-    ];
+  // const buffer = await ExcelGenerator.generateExcelfromReportArray([AccomplishmentReport, AccomplishmentReport, AccomplishmentReport]);
 
-  if (params.isTemplate){
-    
+// Updated to use static/templates path
+const templateDir = path.resolve(process.cwd(), 'static/templates/');
 
+const workbookArray: ExcelJS.Workbook[] = []
+const params = parseTemplateParms(url)
+const fileName: string[] = [
+    'TEMPLATE_A1-InTheProgram.xlsx',
+    'TEMPLATE_A2-Health.xlsx',
+    'TEMPLATE_B1-EduObject.xlsx',
+    'TEMPLATE_B2-EduInfo.xlsx',  
+    'TEMPLATE_C1-SocObject.xlsx',   
+    'TEMPLATE_C2-SocInfo.xlsx',
+    'TEMPLATE_D1-LivObject.xlsx',
+    'TEMPLATE_D2-LivInfo.xlsx',
+    'TEMPLATE_E-Other.xlsx',
+    'TEMPLATE_F-Conc.xlsx',
+];
+
+if (params.isTemplate) {
     for (const fileLocation of fileName) {
-      const workbook = new ExcelJS.Workbook();  
-      const readWorkbook = await workbook.xlsx.readFile(path.join(templateDir, fileLocation));
-      workbookArray.push(readWorkbook)
+        const workbook = new ExcelJS.Workbook();  
+        const templatePath = path.join(templateDir, fileLocation);
+        
+        // Add error checking
+        if (!fs.existsSync(templatePath)) {
+            throw new Error(`Template file not found: ${fileLocation} at ${templatePath}`);
+        }
+        
+        const readWorkbook = await workbook.xlsx.readFile(templatePath);
+        workbookArray.push(readWorkbook);
     }
 
     const buffer = await ExcelMerger.mergeWorkbooks(workbookArray);
     return new Response(new Uint8Array(buffer), {
-      headers: {
-        'Content-Type': 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
-        'Content-Disposition': `attachment; filename="sales_report.xlsx"`,
-      },
+        headers: {
+            'Content-Type': 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+            'Content-Disposition': `attachment; filename="sales_report.xlsx"`,
+        },
     });
-  }
+}
 
   type IndexedWorkbook = { index: number; workbook: ExcelJS.Workbook };
   const start_year = getEarliestDate(body.startYYYY)
