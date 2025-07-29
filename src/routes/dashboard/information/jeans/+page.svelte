@@ -1,6 +1,6 @@
 <script lang="ts">
 	const names = [
-		{ name: "Mariella Jeans", color: "gold"},
+		{ name: "Mariella Jeans", color: "gold", description: "-inf class citizen"},
 		{ name: "Paolo", color: "crimson", description: "my goat btw^ not designer bias" },
 		{ name: "Bea", color: "crimson", description: "upper class citizen" },
 		{ name: "Gidoen", color: "dodgerblue" },
