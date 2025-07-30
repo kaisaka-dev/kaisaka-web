@@ -59,7 +59,7 @@
                 {/if}
                 <div class = "-ml-4"> <Select label = "Disability Category" required = {!disabled} msg = {errors.disabilityCat} options = {dropdownOptions.options_disCategory} disabled = {disabled} bind:value = {data.disabilityCategory} margin = {true}/> </div>
                 <div class = "-ml-4"> <Input label = "Disability Nature" required = {!disabled} disabled = {disabled} bind:value = {data.disabilityNature} margin = {true}/> </div>
-                <div class = "-ml-4 mt-10"> <Input label = "Date of Admission" required = {!disabled} disabled = {disabled} bind:value = {data.admissionDate} margin = {true}/> </div>
+                <div class = "-ml-4 mt-10"> <Input type = "date" label = "Date of Admission" msg = {errors.admissionDate} required = {!disabled} disabled = {disabled} bind:value = {data.admissionDate} margin = {true}/> </div>
         </div>
         <div> 
             <div class = "w-full"> <TextArea disabled = {disabled} value = {data.remarks || "N/A"} label = "Remarks" rows = 10/> </div>

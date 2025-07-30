@@ -324,19 +324,20 @@
             errors.employmentType = newchildData.employmentType.trim() === "--" ? "Required" : ""
          }
 
-         
-
-        if(new Date(newchildData.admissionDate) > new Date()){
-            errors.admissionDate = "Date cannot be in the future"
-        }
-         
-        else if(newchildData.admissionDate === ""){
-            errors.admissionDate == "Required"
+          
+        if(newchildData.admissionDate.trim() === ""){
+            errors.admissionDate = "Required"
          }
 
+        else if(new Date(newchildData.admissionDate) > new Date()){
+            errors.admissionDate = "Date cannot be in the future"
+        }
+        
          else{
             errors.admissionDate = ""
          }
+
+         console.log("DATE: " + errors.admissionDate)
 
 
         if(displayEducHistory.length > 0) {

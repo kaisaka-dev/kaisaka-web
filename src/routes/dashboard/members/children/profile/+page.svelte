@@ -10,6 +10,7 @@
 
     //below are functions needed for the page
     let selected = data.child?.schoolYearArray[0]
+    console.log(data.child?.schoolYearArray)
 </script>
 
 
