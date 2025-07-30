@@ -9,10 +9,7 @@
     import Select from '$components/input/Select.svelte';
     import { goto } from '$app/navigation';
     import Validation from '$lib/components/text/Validation.svelte';
-
-
-
-
+    
     export let data
     let editing = true
 
@@ -373,17 +370,17 @@
                 }
 
                 //Deletes existing income history record
-                if(data.caregiver.income_history[i].isNew == false && data.caregiver.income_history[i].isDeleted == true){
-                    const updatecaregiverIncome = await fetch('/api/income_type' , {
-                        method: "DELETE",
-                        body: JSON.stringify({
-                            id: data.caregiver.income_history[i].id
-                        }),
-                        headers: {
-                            "Content-Type" : "applciation/json"
-                        }
-                    })
-                }
+                // if(data.caregiver.income_history[i].isNew == false && data.caregiver.income_history[i].isDeleted == true){
+                //     const updatecaregiverIncome = await fetch('/api/income_type' , {
+                //         method: "DELETE",
+                //         body: JSON.stringify({
+                //             id: data.caregiver.income_history[i].id
+                //         }),
+                //         headers: {
+                //             "Content-Type" : "applciation/json"
+                //         }
+                //     })
+                // }
             }
 
 
@@ -458,7 +455,7 @@
 	    <h2> Information	</h2>
 	    <div class = "border-[var(--border)] border-4 py-4">
 		<InputText   required msg = {errors.first_name} label="First Name" id="first-name" bind:value = {first_name} />
-        <InputText   label="Middle Name" id="middle-name" value={data?.caregiver.middle_name} />
+        <InputText   label="Middle Name" id="middle-name" bind:value={middle_name} />
 		<InputText   required msg = {errors.last_name} label="Last Name" id="last-name" bind:value = {last_name} />
 		<InputText   required msg = {errors.birthday} type = "date" label="Birthday" id="birthday" bind:value = {birthday} />
 		<InputText   label="Age" id="age" disabled bind:value = {age} />

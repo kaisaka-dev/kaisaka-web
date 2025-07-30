@@ -1,34 +1,15 @@
 <script lang="ts">
     import Header from '$components/Header.svelte'
     import Input from '$components/input/InputText.svelte'
-    import TextArea from '$components/input/InputTextarea.svelte'
     import Check from '$components/input/Checkbox.svelte'
     import Select from '$components/input/Select.svelte'
-
     import { goto } from '$app/navigation'
 
     export let data;
+    import PersonalInformation from './components/personalInformation.svelte'
 
     //below are functions needed for the page
-    let selected
-
-    // age is computed
-    let age = "";
-
-
-    function calculateAge() {
-        const birthDate = new Date(data.child?.birthday);
-        const today = new Date();
-        let calculatedAge = today.getFullYear() - birthDate.getFullYear();
-        const hasHadBirthdayThisYear =
-          today.getMonth() > birthDate.getMonth() ||
-          (today.getMonth() === birthDate.getMonth() && today.getDate() >= birthDate.getDate());
-        if (!hasHadBirthdayThisYear) {
-          calculatedAge -= 1;
-        }
-        age = calculatedAge.toString();
-      }
-    calculateAge()
+    let selected = data.child?.schoolYearArray[0]
 </script>
 
 
@@ -39,7 +20,7 @@
        {data.child?.firstName ?? "First Name Missing!"} {data.child?.lastName ?? "Last Name Missing!"}'s Profile 
     </h1>
 </section>
-<div class = "flex flex-row ml-10 m-4 sticky top-20">
+<div class = "flex flex-wrap ml-10 m-4 sticky top-20">
     <div class = "flex flex-col !font-[JSans]">
         <div class = "hover:!text-[var(--green)]">
             <a class = "hover:!text-[var(--green)]" href = "#top">Information </a>
@@ -57,9 +38,6 @@
         <div>
             <a class = "hover:!text-[var(--green)]" href = "#Intervention Info">Interventions </a>
         </div>
-
-
-
         <div>
             <button class="w-40 -ml-5 mt-10" on:click={() => goto(`/dashboard/members/children/profile/edit?id=${data.child.id}`)}>Edit Profile</button>
         </div>
@@ -68,133 +46,51 @@
 </div>
 
 <!-- PERSONAL INFORMATION SECTION BELOW-->
- <div class = "ml-22 -mt-70" id ="Personal Info">
-    <h1 class = "!text-[var(--green)] font-[JSans] ml-33 mt-5 mb-2">
-        Information
-    </h1>
-</div>
-<div class = "border-[var(--border)] border-4 ml-55 mr-10 !font-bold z-2000 w-225 min-w-225" >
-    <div class = "!flex !flex-row !justify-start mt-2">
-        <div class = "flex flex-col">
-            <div class = "flex flex-row">
-                <div class = "ml-4 mt-3 w-40"> First Name</div>
-                <div class = "mt-4"> <Input disabled value = {data.child?.firstName ?? "N/A"}/> </div>
-            </div>
-
-            <div class = "flex flex-row">
-                <div class = "ml-4 mt-3 w-40"> Middle Name</div>
-                <div class = "mt-4"> <Input disabled value = {data.child?.middleName ?? "N/A"}/> </div>
-            </div>
-
-            <div class = "flex flex-row">
-                <div class = "ml-4 mt-3 w-40"> Last Name</div>
-                <div class = "mt-4"> <Input  disabled value = {data.child?.lastName || "N/A"}/> </div>
-            </div>
-
-            <div class = "flex flex-row">
-                <div class = "ml-4 mt-3 w-40"> Birthday</div>
-                <div class = "mr-50 mt-3"> <Input disabled value = {data.child?.birthday || "N/A"} label = ""/> </div>
-            </div>
-
-            <div class = "flex flex-row">
-                <div class = "ml-4 mt-3 w-40"> Age</div>
-                <div class = "mt-4"> <Input disabled value ={age}/> </div>
-            </div>
-
-            <div class = "flex flex-row">
-                <div class = "ml-4 mt-3 w-40"> Sex</div>
-                <div class = "mt-3"> <Input disabled value = {data.child?.sex || "N/A"}/> </div>
-            </div>
-
-            <div class = "flex flex-row">
-                <div class = "ml-4 mt-3 w-40"> Address</div>
-                <div class = "mt-3"> <Input disabled value = {data.child?.address || "N/A"}/> </div>
-            </div>
-
-            <div class = "flex flex-row">
-                <div class = "ml-4 mt-3 w-40"> Barangay</div>
-                <div class = "mt-3"> <Input disabled value = {data.child?.barangay || "N/A"}/> </div>
-            </div>
-
-            {#if data.child?.canWork}
-            <div class = "flex flex-row">
-                <div class = "ml-4 mt-3 w-40"> Employment Status </div>
-                <div class = "mt-7"> <Input value = {data.child.employmentType} disabled /> </div>
-            </div>
-            {/if}
-
-
-            <div class = "flex flex-row mt-10">
-                <div class = "ml-4 mt-3 w-73"> Category of Disability</div>
-                <div class = "mt-4"> <Input value = {data.child?.disabilityCategory || "N/A"} disabled/> </div>
-            </div>
-
-            <div class = "flex flex-row">
-                <div class = "ml-4 mt-3 w-73"> Nature of Disability</div>
-                <div class = "mt-4"> <Input value = {data.child?.disabilityNature || "N/A"} disabled/> </div>
-            </div>
-
-            <div class = "flex flex-row mt-10">
-                <div class = "ml-4 mt-3 w-70"> Date of Admission</div>
-                <div class = "mt-3"> <Input disabled label = "" value = {data.child?.admissionDate || "N/A"}/> </div>
-            </div>
-        </div>
-        
-        
-        <div class = "flex flex-col ml-3"> 
-            <div class = "-ml-45"> <TextArea disabled value = {data.child?.remarks || "N/A"} label = "Remarks" rows = 10/> </div>
-        </div>
-    </div>
-</div>
+ <PersonalInformation data = {data.child} disabled = {true} />
 <!-- PERSONAL INFORMATION SECTION END-->
 
 
-<!--CONTAINER FOR FAMILY AND MEMBERSHIP INFORMATION-->
-<div id ="Family Info" class = "mb-15"></div>
+<!-- CONTAINER FOR FAMILY AND MEMBERSHIP INFORMATION -->
+<div id ="Family Info"></div>
 <div class = "flex flex-row">
     <div class = "mr-64">
-        <h1 class = "!text-[var(--green)] font-[JSans] ml-55 mt-5 -mb-5">
+        <h1 class = "!text-[var(--green)] font-[JSans] ml-55 mt-5  mb-2">
         Family
         </h1>
     </div>
 </div>
-<div class = "flex flex-row mt-10">
-    <div class = "flex flex-col border-[var(--border)] border-4 ml-55 mr-10 p-6 w-170 min-w-150">
-        {#if data.family}
-        {console.log(data.family)}
-        {#each data.family as fammember}
-        <div class = "flex flex-row mb-5">
-            {#if fammember?.is_child == false}
-            <div class = "!bg-[var(--pink)] p-2 w-45 rounded-full text-center !font-bold !text-[var(--background)] mr-20" > {fammember.relationship_type} </div>
+
+<div class = "flex flex-col md:items-left max-w-170 mx-auto border-[var(--border)] border-4 ml-55 mr-10 p-6">
+    {#if data.family.length > 0}
+    {#each data.family as fammember}
+    <div class = "flex flex-col md:flex-row mb-5">
+        {#if fammember?.is_child == false}
+            <div class = "!bg-[var(--pink)] py-4 w-full max-w-45 rounded-full text-center !font-bold !text-[var(--background)] mr-20" > {fammember.relationship_type} </div>
             {:else if fammember?.is_child == true}
                 {#if fammember.members.first_name === data.child.firstName}
-                <div class = "!bg-[var(--green)] p-2 w-45 rounded-full text-center !font-bold !text-[var(--background)] mr-20" > Child </div>
+                <div class = "!bg-[var(--green)] py-4 w-full max-w-45 rounded-full text-center !font-bold !text-[var(--background)] mr-20" > Child </div>
                 {:else}
-                <div class = "!bg-[var(--green)] p-2 w-45 rounded-full text-center !font-bold !text-[var(--background)] mr-20" > Sibling </div>
+                <div class = "!bg-[var(--green)] py-4 w-full max-w-45 rounded-full text-center !font-bold !text-[var(--background)] mr-20" > Sibling </div>
                 {/if}
-            {/if}
-            <div class = "!font-[JSans] mt-2"> {fammember.members.first_name} {fammember.members.last_name}</div>
-        </div>
+        {/if}
+            <div class = " mt-4 !font-[JSans]"> {fammember.members.first_name} {fammember.members.last_name}</div>
+    </div>
         {/each}
         {:else}
             <div> Child is not part of any family </div>
         {/if}
-    </div>
 </div>
-<!--END OF FAMILY AND MEMBERSHIP INFORMATION-->
+<!--END OF FAMILY AND MEMBERSHIP INFORMATION
 
 
-<!--CONTAINER FOR EDUCATION HISTORY-->
-<div id ="Education Info" class = "mb-15"></div>
-<div class = "flex flex-row">
+<--CONTAINER FOR EDUCATION HISTORY-->
+<div id ="Education Info"></div>
     <div class = "mr-64">
-        <h1 class = "!text-[var(--green)] font-[JSans] ml-55 -mb-5">
+        <h1 class = "!text-[var(--green)] font-[JSans] ml-55 mt-5 -mb-6">
         Education History
         </h1>
     </div>
-</div>
-<div class = "flex flex-row mt-10">
-    <div class = "flex flex-col border-[var(--border)] border-4 ml-55 mr-10 p-6 w-170 min-w-150">
+    <div class = "flex flex-col md:items-left max-w-170 border-[var(--border)] border-4 ml-55 mr-10 p-6 mt-10">
         {#if data.child?.schoolYearArray?.length > 0}
         <div> <Select label = "Please select a school year" bind:value = {selected} options = {data.child?.schoolYearArray} /></div>
         <div class = "mt-3 ml-8"> Education Type: {data.child?.educationHistory[data.child.schoolYearArray?.indexOf(selected)]?.education_type || "N/A"}</div>
@@ -206,7 +102,6 @@
         This child has no education history
         {/if}
     </div>
-</div>
 <!--END OF EDUCATION HISTORY -->
 
 <!--BEGINNING OF DOCUMENTS LISTING-->
@@ -214,18 +109,14 @@
 <h1 class = "!text-[var(--green)] font-[JSans] ml-55 mt-5 mb-2">
         Documents and Verification
 </h1>
-<div class = "flex flex-row border-[var(--border)] border-4 ml-55 mr-10 p-6 w-250 min-w-250">
-    <div class = "flex flex-col !font-bold"> 
+<div class = "flex flex-col lg:flex-row border-[var(--border)] border-4 ml-55 mr-10 p-6 max-w-250 mx-auto">
+    <div class = "flex flex-col !font-bold w-full max-w-120 mx-auto"> 
        <div>
             <Check label = "PWD ID" checked = {data.child?.pwd?.has} disabled/>
        </div>
        {#if data.child?.pwd?.has} 
-       <div class = "w-150">
             <Input type = "text" disabled label = "ID #" value = {data.child?.pwd.id} />
-       </div>
-       <div class = "w-150">
             <Input type = "text" disabled  label = "Expiry Date" value = {data.child.pwd.expiry}/>
-       </div>
        {/if}
 
        <div>
@@ -248,10 +139,6 @@
             {/if} 
        </div>
        {/if}
-
-
-
-
        <div class = "mt-5">
             <Check label = "PhilHealth" checked = {data.child?.philHealth} disabled/>
        </div>
@@ -260,7 +147,7 @@
             <Check label = "National ID" checked = {data.child?.national_id} disabled/>
        </div>
     </div>
-    <div class = "flex flex-col !font-bold ml-10">
+    <div class = "flex flex-col !font-bold md:ml-10">
         <div>
             <Check label = "Medical Certificate" checked = {data.child?.med_cert} disabled/>
        </div>
@@ -282,17 +169,17 @@
         Interventions
 </h1>
 
-<div class = "flex flex-col border-[var(--border)] border-4 ml-55 mr-10 p-6 w-275" id ="Intervention Info">
+<div class = "flex flex-col max-w-255 mx-auto border-4 border-[var(--border)] ml-55 mr-10 p-4" id ="Intervention Info">
     {#if data.interventioninfo.length > 0}
-    <div class = "flex flex-col">
+    <div class = "flex flex-col w-full mx-auto max-w-250">
         <div class = "!bg-[var(--green)] p-3 flex flex-row">
-           <div class = "!text-[var(--background)] !font-bold ml-65">Intervention Name </div>
-           <div class = "!text-[var(--background)] !font-bold ml-35">Status History </div>
+           <div class = "!text-[var(--background)] !font-bold lg:ml-55">Intervention Name </div>
+           <div class = "!text-[var(--background)] !font-bold lg:ml-55">Status History </div>
         </div>
 
-        <div class = "border-[var(--border)] border-4 flex flex-col p-3 ">
+        <div class = "flex flex-col p-3 ">
         {#each data.interventioninfo as intervention}
-            <div class = "flex flex-row">
+            <div class = "flex flex-col xl:flex-row">
                 <div>
                     {#if intervention.service_category.name === "Social"}
                      <div class = "!bg-[var(--green)] mt-4 p-2 w-45 rounded-full text-center !font-bold !text-[var(--background)]" > SOCIAL </div>
@@ -305,10 +192,10 @@
                     {/if}
                 </div>
 
-                <div class = "ml-16 mt-5 w-150">
+                <div class = "ml-16 mt-5">
                    {intervention.intervention}
                 </div>
-                <div class =  "collapse">
+                <div class =  "collapse lg:ml-40">
                     <input type="checkbox" />
                     <div class = "collapse-title flex flex-row">
                         {#if intervention.status === "Regressed"}

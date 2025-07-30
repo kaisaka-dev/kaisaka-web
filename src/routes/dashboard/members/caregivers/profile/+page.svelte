@@ -13,43 +13,6 @@
 
     export let data
     let editing = false
-
-    
-    //below are sample data declarations just to test if the page works, will delete when relevant APIs are complete
-    let sampleFamily1: family = {
-        members: [{firstName: "Juan", lastName: "De La Cruz", role: "Grandparent"},
-                  {firstName: "Sample2", lastName: "Name1", role: "Child"},
-                  {firstName: "Paolo", lastName: "Rivera", role: "Caregiver"}
-                ]
-    }
-
-    let sampleFamily2: family = {
-         members: [{firstName: "Sample25", lastName: "Name112", role: "Parent"},
-                  {firstName: "Sample2123", lastName: "Name2311", role: "Child"},
-                  {firstName: "Paolo", lastName: "Rivera", role: "Caregiver"}
-                ]
-    }
-
-    let sampleFamily3: family = {
-         members: [{firstName: "Sample71", lastName: "Name692", role: "Child"},
-                  {firstName: "Sample2123", lastName: "Name692", role: "Child"},
-                  {firstName: "Paolo", lastName: "Rivera", role: "Caregiver"},
-                  {firstName: "Another", lastName: "Caregiver!", role: "Parent"}
-                ]
-    }
-    let sample: Caregiver = {first_name: 'Paolo', last_name: 'Rivera', contact_no: '09171275268',
-                 address:'Hacienda Royale', barangay:'Barangay 218', date_admission:new Date(2023,5, 16), date_termination: new Date(2024,5,12),
-                 family: [sampleFamily1, sampleFamily2, sampleFamily3],
-
-                 community_history: [{id:1, date_joined: new Date(2024,1,5).toISOString().split('T')[0], date_left: new Date(2024,1,5).toISOString().split('T')[0], name: "Parent organization"},
-                     {id:2, date_joined: new Date(2024,2,5).toISOString().split('T')[0], date_left: null, name: "Others"},
-                     {id:3, date_joined: new Date(2024,3,5).toISOString().split('T')[0], date_left: new Date(2024,5,5).toISOString().split('T')[0], name: "Skills training group"}],
-                income_history: [{id:1, date_start: new Date(2024,1,5).toISOString().split('T')[0], date_end: new Date(2024,1,5).toISOString().split('T')[0], name: "Home-based"},
-                    {id:2, date_start: new Date(2024,2,5).toISOString().split('T')[0], date_end: null, name: "Hme-based"},
-                    {id:3, date_start: new Date(2024,3,5).toISOString().split('T')[0], date_end: new Date(2024,5,5).toISOString().split('T')[0], name: "Self-employed"}]
-
-    }
-
     let today = new Date()
 
 
@@ -64,11 +27,6 @@
 
         let familyname = [...new Set(lastnames)]
         return Array.from(familyname).join(', ')
-    }
-
-    let yearsCounter: number[] = []
-    for(let i = sample.date_admission.getFullYear(); i <= today.getFullYear(); i++ ) {
-        yearsCounter.push(i);
     }
 </script>
 
