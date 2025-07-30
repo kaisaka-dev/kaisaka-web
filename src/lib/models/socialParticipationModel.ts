@@ -47,7 +47,7 @@ export class SocialParticipationModel extends TableManager<"social_participation
    * @returns array of social participation records for the given child
    */
   async findByChildId(child_id: string): Promise<SocialParticipationRow[]>{
-    return this.findAll({ child_id: child_id })
+    return this.findMany({ child_id: child_id }) || []
   }
 
   /**
@@ -68,7 +68,7 @@ export class SocialParticipationModel extends TableManager<"social_participation
    * @returns array of social participation records matching the criteria
    */
   async findByParticipationTypeAndYear(participation_type: participation_type_enum, year: number): Promise<SocialParticipationRow[]>{
-    return this.findAll({ participation_type: participation_type, year: year })
+    return this.findMany({ participation_type: participation_type, year: year }) || []
   }
 
   /**
