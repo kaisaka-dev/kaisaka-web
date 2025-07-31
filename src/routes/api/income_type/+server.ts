@@ -2,12 +2,15 @@ import { IncomeTypeModel } from "$lib/models/incomeTypeModel.js";
 import { error, json, type RequestHandler } from "@sveltejs/kit";
 
 /**
- * GET /api/income_type
+ * Income Type API endpoints
  * 
  * Available endpoints:
  * - GET /api/income_type - Get all income types
  * - GET /api/income_type?caregiver_id=uuid - Get income types for specific caregiver
  * - GET /api/income_type?category=Home-based - Get income types by category (Home-based|Self-employed|Wage Earner)
+ * - POST /api/income_type - Create new income type
+ * - PUT /api/income_type - Update existing income type
+ * - DELETE /api/income_type - Delete income type by id
  */
 export const GET: RequestHandler = async({ url }) => {
   const caregiver_id = url.searchParams.get('caregiver_id');
@@ -108,4 +111,24 @@ export const PUT: RequestHandler = async({request}) => {
   }
 
   return json({ message: 'Updated successfully' })
+}
+
+export const DELETE: RequestHandler = async({request}) => {
+  let body: any = {}
+  try {
+    body = await request.json();
+  } catch {
+    throw error(400, 'Invalid JSON body.')
+  }
+
+  if (!body.id) {
+    throw error(400, 'Missing required field: id.')
+  }
+
+  const deleted = await IncomeTypeModel.instance.deleteById(body.id)
+  if (!deleted) {
+    throw error(500, 'Failed to delete income type')
+  }
+
+  return json({ message: 'Deleted successfully' })
 }
