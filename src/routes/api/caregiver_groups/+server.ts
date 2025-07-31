@@ -14,7 +14,7 @@
  * 
  * PUT - Update caregiver group membership
  * • Required: id
- * • Optional: date_joined, date_left
+ * • Optional: date_joined, date_left, community_group_id
  * 
  * DELETE - Remove caregiver group membership
  * • Required: id
@@ -121,6 +121,14 @@ export const PUT: RequestHandler = async({request}) => {
     const updated = await CaregiverGroupsModel.instance.updateDateLeft(body.id, body.date_left)
     if (!updated) {
       throw error(500, 'Failed to update date_left')
+    }
+    hasUpdates = true
+  }
+
+  if (body.community_group_id !== undefined) {
+    const updated = await CaregiverGroupsModel.instance.updateCommunityGroupId(body.id, body.community_group_id)
+    if (!updated) {
+      throw error(500, 'Failed to update community_group_id')
     }
     hasUpdates = true
   }

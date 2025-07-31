@@ -15,7 +15,7 @@ import { error, json, type RequestHandler } from "@sveltejs/kit";
  * 
  * POST - Create family member relationship
  * • Required: family_id, member_id, is_child (boolean)
- * • Optional: relationship_type, caregiver_id (for non-child, non-caregiver members)
+ * • Optional: relationship_type
  * 
  * PUT - Update family member relationship
  * • Required: family_id, member_id
@@ -54,24 +54,12 @@ export const GET: RequestHandler = async ({ url }) => {
     } 
     // Legacy complex join functionality
     else if (id && joinParams.select && type) {
-      // Ensure caregiver_id is included in legacy selects if not already present
-      let selectStatement = joinParams.select;
-      if (!selectStatement.includes('caregiver_id')) {
-        // Add caregiver_id to the select if it's not already there
-        const lines = selectStatement.split('\n').map(line => line.trim()).filter(line => line);
-        // Find where to insert caregiver_id (after basic fields, before joins)
-        let insertIndex = lines.findIndex(line => line.includes('!') || line.includes('('));
-        if (insertIndex === -1) insertIndex = lines.length;
-        lines.splice(insertIndex, 0, 'caregiver_id,');
-        selectStatement = lines.join('\n      ');
-      }
-      
       switch (type) {
         case 'memberid':
-          family_member = await FamilyMembersModel.instance.getMultipleJoin(selectStatement, { eq: { member_id: id } });
+          family_member = await FamilyMembersModel.instance.getMultipleJoin(joinParams.select, { eq: { member_id: id } });
           break;
         case 'familyid':
-          family_member = await FamilyMembersModel.instance.getMultipleJoin(selectStatement, { eq: { family_id: id } });
+          family_member = await FamilyMembersModel.instance.getMultipleJoin(joinParams.select, { eq: { family_id: id } });
           break;
         default:
           throw error(400, 'Invalid type parameter for legacy joins');
@@ -106,29 +94,10 @@ export const POST: RequestHandler = async({request}) => {
     throw error(400, 'Missing required fields: family_id, member_id, is_child.')
   }
 
-  let caregiver_id: string | null = null;
-
-  // If member is a child, caregiver_id should be null
-  if (body.is_child) {
-    caregiver_id = null;
-  } else {
-    // If member is not a child, check if they are a caregiver
-    const caregiverRecord = await CaregiversModel.instance.findByMemberId(body.member_id);
-    
-    if (caregiverRecord) {
-      // If they are a caregiver, use their own caregiver ID
-      caregiver_id = caregiverRecord.id;
-    } else {
-      // If they are not a caregiver, use the provided caregiver_id or null
-      caregiver_id = body.caregiver_id || null;
-    }
-  }
-
   const inserted = await FamilyMembersModel.instance.insertFamilyMember(
     body.family_id,
     body.member_id,
     body.is_child,
-    caregiver_id,
     body.relationship_type
   )
 

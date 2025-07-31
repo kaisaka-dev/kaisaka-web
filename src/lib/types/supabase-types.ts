@@ -1229,8 +1229,31 @@ export type Database = {
         }
         Relationships: []
       }
+      in_the_program_report_view: {
+        Row: {
+          age_group: string | null
+          count: number | null
+          disability: string | null
+          program_type: string | null
+          sex: Database["public"]["Enums"]["sex_enum"] | null
+        }
+        Relationships: []
+      }
     }
     Functions: {
+      get_in_program_report: {
+        Args: { p_start_date: string; p_end_date: string }
+        Returns: {
+          age_group: string
+          disability: string
+          in_program_boys: number
+          in_program_girls: number
+          with_intervention_boys: number
+          with_intervention_girls: number
+          improved_boys: number
+          improved_girls: number
+        }[]
+      }
       user_has_permission: {
         Args:
           | { permission_name: string }

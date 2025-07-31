@@ -1,11 +1,11 @@
-import { supabase } from "./supabase.js";
 import type { Database } from "./supabase-types.js";
+import { supabase } from "./supabase.js";
 
 // All the names in the database
 export type tableNames = keyof Database['public']['Tables'] 
 export type enumNames = keyof Database['public']['Enums']
 export type viewNames = keyof Database['public']['Views']
-
+export type funcNames = keyof Database['public']['Functions']
 
 // A generic row from Table T being object-like
 export type tableRow<T extends tableNames> 
@@ -19,6 +19,12 @@ export type tableUpdate<T extends tableNames>
 
 export type viewRow<T extends viewNames>
 = Database['public']['Views'][T]['Row'] & Record<string, unknown>
+
+export type funcReturns<T extends funcNames>
+= Database['public']['Functions'][T]['Returns'] & Record<string, unknown>
+
+export type funcArgs<T extends funcNames>
+= Database['public']['Functions'][T]['Args'] & Record<string, unknown>
 
 // Database query type for Table T
 export interface QueryConfigurationBuilder{
@@ -37,6 +43,28 @@ export interface QueryConfigurationBuilder{
   order?: { column: string; ascending?: boolean }[];
   limit?: number;
   offset?: number;
+}
+
+export function QueryFunctionManager<T extends funcNames>(func: T){
+  type Args = funcArgs<T>;
+  type Returns = funcReturns<T>;
+
+
+  class QueryFunctionManager {
+    private func = func
+    
+    public async execute(funcArgs: Args): Promise<Returns | null>{
+      const {data, error} =  await supabase.rpc(this.func, funcArgs)
+
+      if (error)
+        return null
+
+      return data as Returns
+    }
+
+  }
+
+  return QueryFunctionManager
 }
 
 /**
@@ -257,7 +285,7 @@ export default function TableManager<T extends tableNames>(table: T){
       return query;
     }
 
-    public async findWithJoinAndCount<R = Record<string, unknown>>(
+    public async findWithJoinWithCount<R = Record<string, unknown>>(
       selectClause: string,
       config: QueryConfigurationBuilder = {}
     ): Promise<{ data: R[] | null; count: number }> {
@@ -272,7 +300,28 @@ export default function TableManager<T extends tableNames>(table: T){
       }
       return { data: data as R[], count: count || 0 };
     }
-  
+    
+    public async findWithJoinCountOnly(
+      selectClause: string,
+      config: QueryConfigurationBuilder = {}
+    ): Promise<{ count: number }> {
+
+      let query = supabase.from(this.table).select(selectClause, { count: 'exact', head: true });
+
+      query = this.applyFilters(query, config);
+
+      const {error, count} = await query;
+
+      if (error) {
+        console.error('Join with count query error:', error);
+        return { count: 0 };
+      }
+
+      return { count: count || 0 };
+    }
+
+
+    
   }
 
 

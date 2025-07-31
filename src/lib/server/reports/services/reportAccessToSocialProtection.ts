@@ -5,9 +5,9 @@ import { getLogSidecar } from '$lib/server/logging/log-sidecar.js';
 import type { QueryConfigurationBuilder, tableRow } from '$lib/types/manager.js';
 import { type Worksheet } from 'exceljs';
 
+import { annualProgramModel } from '$lib/models/annualProgramModel.js';
 import { getBirthdayRangeForAge } from './reportIntheProgram.js';
 import { ReportGenerator } from './reportTemplate.js';
-import { annualProgramModel } from '$lib/models/annualProgramModel.js';
 
 const MembershipCardParticipation = [
   { age_min: 0  , card: 'has_pwd',          type: 'acquistion'},
@@ -344,7 +344,7 @@ export class ReportGeneratorAccessToSocialProtection extends ReportGenerator {
 
     
     try {
-      const result = await ChildrenModel.instance.findWithJoinAndCount(modelSelectClause, modelFilter);
+      const result = await ChildrenModel.instance.findWithJoinWithCount(modelSelectClause, modelFilter);
       //logger.info(`${JSON.stringify(result.data)} ${JSON.stringify(modelFilter)}`)
       cell_result.count = (result.count) ?? 0;
     } catch (error) {
