@@ -1,29 +1,31 @@
 <script lang="ts">
     import Header from '$components/Header.svelte'
     import Input from '$components/input/InputText.svelte'
-    import TextArea from '$components/input/InputTextarea.svelte'
     import Check from '$components/input/Checkbox.svelte'
     import Select from '$components/input/Select.svelte'
     import { goto } from '$app/navigation';
     import { dropdownOptions } from '$lib/types/options.js'
 
+    import PersonalInformation from '../components/personalInformation.svelte'
+    import type { personalInformation } from '../+page.server.js'
+
     export let data;
-
-
-    let firstName: string = data.child?.firstName || "Name Must Be Assigned"
-    let middleName: string = data.child?.middleName || "No Middle Name"
-    let lastName: string = data.child?.lastName || "Last Name Must Be Assigned"
-    let birthday = data.child?.birthday || new Date().toISOString().split('T')[0]
-    let sex: string = data.child?.sex || ""
-    let address: string = data.child?.address || "" 
-    let barangay: string = data.child?.barangay || "" 
-    let canwork: boolean = data.child?.canWork || false
-    let employmentType: string = data.child?.employmentType || ""
-    let disabilityCategory: string = data.child?.disabilityCategory || ""
-    let disabilityNature: string = data.child?.disabilityNature || ""
-    let admissionDate: string = data.child?.admissionDate
-    let remarks: string = data.child?.remarks || ""
-    let age = ""
+    let newchildData: personalInformation = {
+         firstName: data.child?.firstName || "--",
+         middleName: data.child?.middleName || "--",
+         lastName: data.child?.lastName || "--",
+         birthday: data.child?.birthday || "--",
+         sex: data.child?.sex || "--",
+         address: data.child?.address || "--",
+         barangay: data.child?.barangay || "--",
+         canWork: data.child?.canWork || false,
+         employmentType: data.child?.employmentType || "--",
+         disabilityCategory: data.child?.disabilityCategory || "--",
+         disabilityNature: data.child?.disabilityNature || "--",
+         admissionDate:  data.child?.admissionDate || "--",
+         remarks: data.child?.remarks || "--",
+    }   
+    
     
 
     let existingFamily: {
@@ -68,7 +70,6 @@
     let educHistory: educType[] = []
     let displayEducHistory: educType[] = []
     let displaySchoolYear: string[] = []
-
     let selectedIndex: number = 0
 
     for(let i = 0; i < data.child?.educationHistory?.length; i++){
@@ -265,21 +266,6 @@
     let childInterventions: interventions[] = []
     childInterventions.push(healthIntervention, educationIntervention, socialIntervention, livelihoodIntervention)
 
-    
-    const options_disNature = [
-    "Deaf/Hard of Hearing",
-    "Intellectual Disability",
-    "Learning Disability",
-    "Mental Disability",
-    "Physical Disability",
-    "Psychosocial Disability",
-    "Speech and Language Impairment",
-    "Visual Disability",
-    "Cancer",
-    "Rare Disease (RA10747)",
-    "Multiple Disability",
-    ];
-
 
 
     let errors = {
@@ -307,28 +293,7 @@
         interventiondateErrors: ["","","",""],
         interventionstatusErrors: ["","","",""]
     }
-
-    //below are functions needed for the page
-
-    $: if (birthday) {
-        const birthDate = new Date(birthday);
-        const today = new Date();
-        let calculatedAge = today.getFullYear() - birthDate.getFullYear();
-
-        const hasHadBirthdayThisYear =
-        today.getMonth() > birthDate.getMonth() ||
-        (today.getMonth() === birthDate.getMonth() && today.getDate() >= birthDate.getDate());
-
-        if (!hasHadBirthdayThisYear) {
-        calculatedAge -= 1;
-        }
-
-        age = calculatedAge.toString();
-    } else {
-        age = "";
-    }
-
-    
+  
     function validateForm(): boolean{
         let hasErrors = false
         //resets values that can be hidden
@@ -339,36 +304,38 @@
         errors.educstatus = ""
 
 
-        errors.firstName = firstName.trim() === "" ? "Required" : ""
-        errors.lastName = lastName.trim() === "" ? "Required" : ""
-        if(new Date(birthday).getFullYear() > new Date().getFullYear()) {
+        errors.firstName = newchildData.firstName.trim() === "" ? "Required" : ""
+        errors.lastName = newchildData.lastName.trim() === "" ? "Required" : ""
+        if(new Date(newchildData.birthday) > new Date()) {
             errors.birthday = "Birthday cannot be in the future"
         }
         else{
-            errors.birthday = birthday.trim() === "" ? "Required" : ""
+            errors.birthday = newchildData.birthday.trim() === "" ? "Required" : ""
         }
-        errors.sex = sex.trim() === "" ? "Required" : ""
-        errors.address = address.trim() === "" ? "Required" : ""
-        errors.barangay = barangay.trim() === "" ? "Required" : ""
-        errors.disabilityCat = disabilityCategory.trim() === "" ? "Required" : ""
-        errors.disabilityNat = disabilityNature.trim() === "" ? "Required" : ""
-        if(canwork){
-            errors.employmentType = employmentType.trim() === "" ? "Required" : ""
+
+        errors.sex = newchildData.sex.trim() === "" ? "Required" : ""
+        errors.address = newchildData.address.trim() === "" ? "Required" : ""
+        errors.barangay = newchildData.barangay.trim() === "" ? "Required" : ""
+        errors.disabilityCat = newchildData.disabilityCategory.trim() === "--" ? "Required" : ""
+        errors.disabilityNat = newchildData.disabilityNature.trim() === "" ? "Required" : ""
+        if(newchildData.canWork){
+            errors.employmentType = newchildData.employmentType.trim() === "--" ? "Required" : ""
          }
 
-         
+          
+        if(newchildData.admissionDate.trim() === ""){
+            errors.admissionDate = "Required"
+         }
 
-        if(new Date(admissionDate).getFullYear() > new Date().getFullYear()){
+        else if(new Date(newchildData.admissionDate) > new Date()){
             errors.admissionDate = "Date cannot be in the future"
         }
-         
-        else if(admissionDate === ""){
-            errors.admissionDate == "Required"
-         }
-
+        
          else{
             errors.admissionDate = ""
          }
+
+         console.log("DATE: " + errors.admissionDate)
 
 
         if(displayEducHistory.length > 0) {
@@ -387,7 +354,6 @@
             //checks for the name related errors
             if(childInterventions[i].name == "" && (childInterventions[i].dateCreated != null && childInterventions[i].status != null)) {
                 errors.interventionnameErrors[i] = "Required"
-                console.log(childInterventions[i].dateCreated)
             }
 
 
@@ -576,12 +542,12 @@
             method: "PUT",
             body: JSON.stringify({
                 id: data.member?.id,
-                first_name: firstName,
-                middle_name: middleName,
-                last_name: lastName,
-                birthday: birthday,
-                sex: sex,
-                admission_date: admissionDate
+                first_name: newchildData.firstName,
+                middle_name: newchildData.middleName,
+                last_name: newchildData.lastName,
+                birthday: newchildData.birthday,
+                sex: newchildData.sex,
+                admission_date: newchildData.admissionDate
             }),
                 headers: {
                     'Content-Type': 'application/json'
@@ -589,11 +555,10 @@
             });
 
            if(data.child?.addressid == "") { //creates new address if none exists
-                console.log("Creating address: " + address) 
                 const addressres = await fetch('/api/addresses' , {
                     method: "POST", 
                     body: JSON.stringify({
-                        address: address
+                        address: newchildData.address
                     }),
                     headers: {
                         "Content-Type" : "application/json"
@@ -601,7 +566,7 @@
                 })
                 
                 //gets the address
-                const addressquery = await fetch(`/api/addresses?address=${address}`)
+                const addressquery = await fetch(`/api/addresses?address=${newchildData.address}`)
                 const addressrecord = await addressquery.json()
 
                 const updateMember = await fetch("/api/members" , {
@@ -614,13 +579,12 @@
                 })
            }
 
-           else if(data.child?.addressid !== "" && data.child?.address !== address ){ //updates existing address
-            console.log(data.child?.addressid)
+           else if(data.child?.addressid !== "" && data.child?.address !== newchildData.address ){ //updates existing address
                 const addressres = await fetch('/api/addresses' , {
                     method: "PUT",
                     body: JSON.stringify({
                         id: data.child?.addressid,
-                        address: address
+                        address: newchildData.address
                     }),
                     headers: {
                         "Content-Type" : "application/json"
@@ -628,18 +592,18 @@
                 })
            } 
 
-           if(data.child?.barangayid === "" && barangay !== ""){ //creates a new barangay
+           if(data.child?.barangayid === "" && newchildData.barangay !== ""){ //creates a new barangay
                 const barangayres = await fetch("/api/barangays" , {
                     method: "POST",
                     body: JSON.stringify({
-                        name: barangay
+                        name: newchildData.barangay
                     }),
                     headers: {
                         "Content-Type" : "application/json"
                     }
                 })
 
-                const querybarangay = await fetch (`/api/barangays?name=${barangay}`)
+                const querybarangay = await fetch (`/api/barangays?name=${newchildData.barangay}`)
                 const barangayRecord = await querybarangay.json() //gets the barangay record    
 
                 const updateMember = await fetch("/api/members" , {
@@ -657,7 +621,7 @@
                 method: "PUT",
                 body: JSON.stringify({
                 id: data.child?.barangayid,
-                name: barangay
+                name: newchildData.barangay
                 }),
                 headers: {
                     'Content-Type': 'application/json'
@@ -669,37 +633,37 @@
             
             //This should happen if a persons record isnt found 
             const employmentRes = await fetch(`/api/employment_status?id=${data.member.id}`)
-            if(!employmentRes.ok && canwork == true){
-               console.log(await fetch('/api/employment_status', {
+            if(!employmentRes.ok && newchildData.canWork == true){
+                const emplymentstatusRes  = await fetch('/api/employment_status', {
                     method: "POST",
                     body: JSON.stringify({
-                        able_to_work: canwork,
-                        employment_type: employmentType,
+                        able_to_work: newchildData.canWork,
+                        employment_type: newchildData.employmentType,
                         member_id: data.member?.id
                     }),
                      headers: {
                     'Content-Type': 'application/json'
                 }
-                }))   
+                })
             }
 
             //if the persons record is found in the db, we just update
-            else if(employmentRes && canwork == true){
-               console.log(await fetch('/api/employment_status', {
+            else if(employmentRes && newchildData.canWork == true){
+               const emplymentstatusRes = await fetch('/api/employment_status', {
                     method: "PUT",
                     body: JSON.stringify({
                         member_id: data.member?.id,
-                        able_to_work: canwork,
-                        employment_type: employmentType
+                        able_to_work: newchildData.canWork,
+                        employment_type: newchildData.employmentType
                     }),
                      headers: {
                     'Content-Type': 'application/json'
                 }
-                }))
+                })
             }
 
             //if the persons record is found in the db but we want to delete it 
-            else if(employmentRes && canwork == false) {
+            else if(employmentRes && newchildData.canWork == false) {
                 const deleteEmploymentRecord = await fetch(`/api/employment_status?member_id=${data.member?.id}`, {
                     method: 'DELETE'
                 })
@@ -709,7 +673,7 @@
                 method:"PUT",
                 body:JSON.stringify({
                     id: data.child?.disabilitycatID,
-                    name:disabilityCategory
+                    name:newchildData.disabilityCategory
                 }),
                  headers: {
                     'Content-Type': 'application/json'
@@ -774,7 +738,6 @@
             if(displayEducHistory.length > 0) {
             //Update and Post for the selected record
             if(displayEducHistory[selectedIndex].isNew == false) {
-                console.log("Updating Education Record")
                 const updateEducRecord = await fetch('/api/education_status', {
                 method: "PUT",
                 body:JSON.stringify({
@@ -792,7 +755,6 @@
             }
 
             else if(displayEducHistory[selectedIndex].isNew == true) {
-                console.log("Creating education record")
                 const createEducRecord = await fetch('/api/education_status' , {
                     method: "POST",
                     body: JSON.stringify({
@@ -849,8 +811,8 @@
             method: "PUT",
             body:JSON.stringify({
                 id: data.child?.id,
-                remarks:  remarks,
-                disability_nature: disabilityNature,
+                remarks:  newchildData.remarks,
+                disability_nature: newchildData.disabilityNature,
                 has_philhealth: hasPHhealth,
                 has_birth_cert: birthCert,
                 has_medical_cert: medCert,
@@ -960,7 +922,6 @@
     }
 
 }
-
 </script>
  <Header/>
 
@@ -1003,38 +964,7 @@
 </div>
 
 <!-- PERSONAL INFORMATION SECTION BELOW-->
- <div class = "ml-22 -mt-80" id ="Personal Info">
-    <h1 class = "!text-[var(--green)] font-[JSans] ml-33 mt-5 mb-2">
-        Information
-    </h1>
-</div>
-<div class = "border-[var(--border)] border-4 ml-55 mr-10 !font-bold w-250 min-w-225" >
-    <div class = "!flex !flex-row !justify-start mt-2">
-        <div class = "flex flex-col ml-4 mt-2 w-[1200px] z-500">
-          <Input label="First Name" id="first_name" required msg = {errors.firstName} bind:value = {firstName} margin={false} />
-          <Input label="Middle Name" id="middle_name"   bind:value = {middleName} margin={false} />
-          <Input label="Last Name" id="last_name" required msg = {errors.lastName}   bind:value = {lastName} margin={false} />
-          <Input label="Birthday" type="date" id="birthday" bind:value = {birthday} required msg = {errors.birthday}  margin={false} />
-          <Input disabled label="Age" id ="age" bind:value = {age} margin={false} />
-          <Select label="Sex" id="sex" bind:value = {sex} required msg = {errors.sex} options = {['Male','Female','Other']}  margin={false} />
-          <Input  label="Address" id="address"  bind:value = {address} required msg = {errors.address} margin={false} />
-          <Input  label="Barangay" id="barangay"  bind:value = {barangay} required msg = {errors.barangay} margin={false} />
-          <br>
-          <Select label="Disability Category" id="disabilityCategory" bind:value = {disabilityCategory} required msg = {errors.disabilityCat} options = {options_disNature} margin={false} />
-          <Input  label="Disability Nature" id="disabilityNature"  bind:value = {disabilityNature}  required msg = {errors.disabilityNat} margin={false} />
-          <br>
-          <Check  label="Able to work" bind:checked={canwork} margin={false} />
-          {#if canwork}
-          <Select label="Employment Type" id="employment_type" required msg = {errors.employmentType} bind:value = {employmentType} options = {dropdownOptions.employment_type} margin={false}  />
-          <br>
-          {/if}
-          <Input label="Admission Date" type="date" required msg = {errors.admissionDate} bind:value = {admissionDate} margin={false} />
-        </div>
-      <div style="height: fit-content">
-        <TextArea bind:value = {remarks} label="Remarks" rows={10}  margin={false} /></div>
-
-    </div>
-</div>
+ <PersonalInformation disabled = {false} bind:data = {newchildData} bind:errors = {errors} />
 <!-- PERSONAL INFORMATION SECTION END-->
 
 

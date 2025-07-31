@@ -110,11 +110,7 @@
         errors.barangay = barangay.trim() === "" ? "Required" : ""
         errors.occupation = occupation.trim() === "" ? "Required" : ""
 
-<<<<<<< HEAD
-        if(new Date(date_admission).getFullYear() > new Date().getFullYear() || (new Date(date_admission).getMonth() > new Date().getMonth() && new Date(date_admission).getFullYear() < new Date().getMonth()) ||  new Date(date_admission).getDate() > new Date().getDate()){
-=======
         if(new Date(date_admission) > new Date()){
->>>>>>> a3131a7247dfaaf014da6a6cad8725b7997b38e1
             errors.date_admission = "Date cannot be in the future"
         }
          
