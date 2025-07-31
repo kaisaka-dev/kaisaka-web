@@ -1319,10 +1319,10 @@ export type Database = {
         | "user_roles"
       sex_enum: "Male" | "Female" | "Other"
       student_status_enum:
-        | "past_student"
-        | "enrolled"
-        | "dropped_out"
-        | "completed"
+        | "Past_student"
+        | "Enrolled"
+        | "Dropped_out"
+        | "Completed"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -1510,10 +1510,10 @@ export const Constants = {
       ],
       sex_enum: ["Male", "Female", "Other"],
       student_status_enum: [
-        "past_student",
-        "enrolled",
-        "dropped_out",
-        "completed",
+        "Past_student",
+        "Enrolled",
+        "Dropped_out",
+        "Completed",
       ],
     },
   },
