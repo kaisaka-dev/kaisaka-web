@@ -50,7 +50,17 @@ export const load: PageLoad = async ({ fetch }) => {
 		const children: Children[] = childrenData.map((child: any) => {
 			const member = child.members;
 			const disability = child.disability_category;
-			const education = child.education_status;
+			const educationArray = child.education_status;
+			let education = null;
+
+			if (educationArray && Array.isArray(educationArray) && educationArray.length > 0) {
+				// Get the most recent education record (sorted by updated_at)
+				education = educationArray.sort((a: any, b: any) => {
+					if (!a.updated_at) return 1;
+					if (!b.updated_at) return -1;
+					return new Date(b.updated_at).getTime() - new Date(a.updated_at).getTime();
+				})[0];
+			}
 
 			return {
 				id: child.id,
@@ -68,9 +78,13 @@ export const load: PageLoad = async ({ fetch }) => {
 			};
 		});
 
+		const disCatRes = await fetch('/api/disability_category');
+		const options_disCategory = await disCatRes.json();
+
 		return {
 			children,
-			error: null
+			error: null,
+			options: { disCategory: options_disCategory.data }
 		};
 	} catch (error) {
 		return {

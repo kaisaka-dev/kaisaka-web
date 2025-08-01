@@ -8,14 +8,24 @@ import InputRange from '$components/input/InputRange.svelte';
 
 
 import type { PageData } from './$types';
+import { dropdownOptions } from '$lib/types/options.js';
+import Checkbox from '$components/input/Checkbox.svelte';
 
 const { data } = $props<{ data: PageData }>();
 
 // load the data
-
 let childrenData = $state(data.children || []);
 let filteredData = $state(childrenData);
+let options = $state({
+    disability_category: data.options.disCategory,
+    // education_status: dropdownOptions.education_status,
+    education_level: dropdownOptions.education_level,
+    education_type: dropdownOptions.education_type,
+    // employment_type: dropdownOptions.employment_type,
+    sex: dropdownOptions.sex
+});
 
+let showAllColumns = $state(false);
 let filter = $state({
     main: "",
     firstName: "",
@@ -27,28 +37,19 @@ let filter = $state({
     sex: "",
     disNature: "",
     disCategory: "",
-    school: "",
+    educType: "",
     educationLevel: ""
 })
 
-// options for the dropdown
-const options_disCategory = [
-    "Deaf/Hard of Hearing",
-    "Intellectual Disability",
-    "Learning Disability",
-    "Mental Disability",
-    "Physical Disability",
-    "Psychosocial Disability",
-    "Speech and Language Impairment",
-    "Visual Disability",
-    "Cancer",
-    "Rare Disease (RA10747)",
-    "Multiple Disability"
-];  // from KAISAKA's 2024-jan-nov-list-of-children
-const options_school = ["Home program", "Non-formal", "Special (Exclusive school, blind / deaf)", "Integrated / SPED classes", "Inclusive / General education"]
-
 // filter logic
 $effect(() => applyFilter())
+
+console.log("childrenData:" , childrenData)
+$effect(() => (
+  console.log(filteredData)
+))
+
+$effect(()=> console.log("eductype:", filter.educType))
 
 function applyFilter() {
     const search = filter.main?.toLowerCase();
@@ -85,7 +86,8 @@ function applyFilter() {
           (!filter.sex || child.sex === filter.sex) &&
           (!filter.disCategory || child.category === filter.disCategory) &&
           (!filter.disNature || child.nature === filter.disNature) &&
-          (!filter.school || child.educType === filter.school) &&  // Changed from school to educType
+          (!filter.educType || child.educType === filter.educType ||
+            (filter.educType === "Not enrolled" && child.educType === "")) &&
           (!filter.educationLevel || child.gradeLevel?.toLowerCase().includes(filter.educationLevel.toLowerCase()));
 
         return matchesMain && matchesSpecific;
@@ -103,7 +105,7 @@ function resetFilters() {
         sex: "",
         disNature: "",
         disCategory: "",
-        school: "",
+        educType: "",
         educationLevel: ""
     }
     filteredData = childrenData;
@@ -113,7 +115,7 @@ function resetFilters() {
 <Header category="members" page="children" />
 
 <section id="main">
-    <h2 class="!px-0 !text-[var(--pink)]">List of Children with Disability</h2>
+    <h2 class="!px-0 !text-[var(--pink)]">List of Children/Youngsters with Disability</h2>
 
     <FilterSearch bind:searchedValue={filter.main}>
         <!-- to be rendered inside the Filter Search component-->
@@ -126,19 +128,28 @@ function resetFilters() {
             <InputText label="Last name" id="last-name" bind:value={filter.lastName} margin={false}/>
             <InputRange type="date" label="Birthday" id="bday" bind:valueFrom={filter.birthdayFrom} bind:valueTo={filter.birthdayTo} margin={false}/>
             <InputRange type="number" label="Age" id="age" bind:valueFrom={filter.ageFrom} bind:valueTo={filter.ageTo} margin={false}/>
-            <Select label="Sex" id="sex" options={["Male", "Female"]} bind:value={filter.sex} margin={false}/>
-            <Select label="Disability Category" id="dis-category" options={options_disCategory} bind:value={filter.disCategory} margin={false}/>
+            <Select label="Sex" id="sex" options={options.sex} bind:value={filter.sex} margin={false}/>
+            <Select label="Disability Category" id="dis-category" options={options.disability_category} bind:value={filter.disCategory} margin={false}/>
             <InputText label="Disability Nature" id="dis-nature" bind:value={filter.disNature} margin={false}/>
-            <Select label="School" id="" options={options_school} bind:value={filter.school} margin={false}/>
-            <InputText label="Education Level" id="education" bind:value={filter.educationLevel} margin={false}/>
+            <Select label="Education Type" id="education-type" options={options.education_type} bind:value={filter.educType} margin={false}/>
+            <Select label="Education Level" id="education" options={options.education_level} bind:value={filter.educationLevel} margin={false}/>
 
             <div id="reset" class="flex justify-end"><button onclick={resetFilters}>Reset Filters</button></div>
         </div>
     </FilterSearch>
 
     <br>
-    <span style="color:var(--green)">Results: {filteredData.length}</span>
+    <div class="flex flex-row">
+        <span style="color:var(--green)">Results: {filteredData.length}</span>
+        <Checkbox label="Show age, education" id="show-all-columns" bind:checked={showAllColumns}/>
+    </div>
 
-    <Table data={filteredData} headers={['First Name', 'Last Name', 'Birthday', 'Disability Category', 'Disability Nature']}
-           includedKeys={['firstName', 'lastName', 'birthday', 'category', 'nature']} hasLink={true}/>
+
+    {#if showAllColumns}
+        <Table data={filteredData} headers={['First Name', 'Last Name', 'Birthday', 'Age', 'Disability Category', 'Disability Nature', 'Education Level', 'Education Type']}
+               includedKeys={['firstName', 'lastName', 'birthday', 'age', 'category', 'nature', 'gradeLevel', 'educType']} hasLink={true}/>
+    {:else}
+        <Table data={filteredData} headers={['First Name', 'Last Name', 'Birthday', 'Disability Category', 'Disability Nature']}
+               includedKeys={['firstName', 'lastName', 'birthday', 'category', 'nature']} hasLink={true}/>
+    {/if}
 </section>
