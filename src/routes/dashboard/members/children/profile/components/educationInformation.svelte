@@ -18,6 +18,8 @@
 
     export let errors = ""
 
+    console.log(dropdownOptions.education_status)
+    console.log(educStatus)
     function updateField(index:number){     
             educType = displayEducHistory[index].Educationtype
             educLevel = displayEducHistory[index].Educationlevel
@@ -96,7 +98,7 @@
         </div>
         <div class = "mt-3"> <Select disabled = {!editing} required = {editing} msg = {errors.educationtype} label="Education Type:" bind:value = {educType} options = {dropdownOptions.education_type} /></div>
         <div class = "mt-3"> <Select disabled = {!editing} required = {editing} msg = {errors.educationlvl} label="Education Level:" bind:value = {educLevel} options = {dropdownOptions.education_level}/></div>
-        <div class = "mt-3"> <Select disabled = {!editing} required = {editing} msg = {errors.educstatus} label="Education Status:" bind:value = {educStatus} options = {educStatusOptions}/> </div>
+        <div class = "mt-3"> <Select disabled = {!editing} required = {editing} msg = {errors.educstatus} label="Education Status:" bind:value = {educStatus} options = {dropdownOptions.education_status  }/> </div>
         <div class = "mt-3"> <InputText disabled = {!editing} required = {editing} msg = {errors.yearstart} type = "number" label="School Year Start:" bind:value = {yearStart}/> </div>
         <div class = "mt-3"> <InputText disabled = {!editing} type = "number" label="School Year End:" bind:value = {yearEnd}/> </div>
         {:else}
