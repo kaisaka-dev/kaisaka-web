@@ -142,13 +142,14 @@ let socsecComYear: number
 
 
 
-export async function load( { url }  ) {
+export async function load( { url, fetch }  ) {
     
 try{
     //gets record in the child table
     const childRecord = await childrenDB.findOneWithJoin('*, members(*), education_status(*),disability_category(*), pwd_ids(*)' , {
     eq:{id: url.searchParams.get('id')}
     }) as ChildRecord;
+
 
 
     if(!childRecord) { //null check for if the kid doesn't exist
@@ -164,7 +165,6 @@ try{
         throw new Error('Member Info doesn\'t exist!')
     }
 
-        console.log(memberRecord)
 
 
     //gets record in barangay table
@@ -232,8 +232,6 @@ try{
 
     let child: childInformation = {
         id: childRecord.id,
-        
-
         disabilitycatID: childRecord.disability_category?.id,
         addressid: memberRecord.address_id || "",
         barangayid: barangayID || "",
@@ -247,9 +245,9 @@ try{
         canWork: memberRecord.employment_status?.able_to_work || false,
         employmentType: memberRecord.employment_status?.employment_type || "",
         remarks: childRecord.remarks || "",
-        disabilityCategory: childRecord.disability_category?.name  || "",
+        disabilityCategory: childRecord.disability_category?.id  || "",
         disabilityNature: childRecord.disability_nature || "",
-        admissionDate: new Date(memberRecord.admission_date).toISOString().split('T')['0'] || "",
+        admissionDate: memberRecord.admission_date || "",
         philHealth: childRecord.has_philhealth || false,
         med_cert: childRecord.has_medical_cert || false,
         birth_cert: childRecord.has_birth_cert || false,
@@ -308,6 +306,21 @@ try{
         }
     }
 
+    // fetching the (dropdown) options for disability category
+    let options_disCategory = [];
+
+	try {
+		const res = await fetch('/api/disability_category');
+		if (!res.ok) throw new Error('Failed to fetch categories');
+		const json = await res.json();
+		options_disCategory = json.data; 
+	    } catch (e) {
+		console.error('Disability category fetch failed:', e);
+		// optionally fallback to empty
+		options_disCategory = [];
+	}
+
+    
 
 
     return{
@@ -315,8 +328,8 @@ try{
         error: null,
         family: entireFamily,
         member: memberRecord,
-        interventioninfo: interventioninfo || ''
-
+        interventioninfo: interventioninfo || '',
+        discatOptions: options_disCategory
     } 
 }
     catch(error){
@@ -325,4 +338,3 @@ try{
         }
     }
 }
-

@@ -6,9 +6,17 @@
     import type { personalInformation } from '../+page.server.js';
     import { dropdownOptions } from '$lib/types/options.js';
 
+    // fetching the (dropdown) options for disability category
+
+
     export let disabled = false;
     export let data: personalInformation;
     export let errors = ""
+    export let discatOptions: string[] = []
+
+
+    
+
 
     let age = ""
     let headingmargin =  disabled == true? "ml-22 -mt-70": "ml-22 -mt-85"
@@ -30,8 +38,8 @@
     } else {
         age = "";
     }
-    
-    
+
+
 </script>
 
 <!-- PERSONAL INFORMATION SECTION BELOW-->
@@ -57,7 +65,7 @@
                 {#if data.canWork}
                     <div class = "-ml-4"> <Select label = "Employment Type" options = {dropdownOptions.employment_type} required = {!disabled} msg = {errors.employmentType} disabled = {disabled} bind:value = {data.employmentType} margin = {true}/> </div>
                 {/if}
-                <div class = "-ml-4"> <Select label = "Disability Category" required = {!disabled} msg = {errors.disabilityCat} options = {dropdownOptions.options_disCategory} disabled = {disabled} bind:value = {data.disabilityCategory} margin = {true}/> </div>
+                <div class = "-ml-4"> <Select label = "Disability Category" bind:value = {data.disabilityCategoryID} required = {!disabled} options = {discatOptions} msg = {errors.disabilityCat} disabled = {disabled}  margin = {true}/> </div>
                 <div class = "-ml-4"> <Input label = "Disability Nature" required = {!disabled} disabled = {disabled} bind:value = {data.disabilityNature} margin = {true}/> </div>
                 <div class = "-ml-4 mt-10"> <Input type = "date" label = "Date of Admission" msg = {errors.admissionDate} required = {!disabled} disabled = {disabled} bind:value = {data.admissionDate} margin = {true}/> </div>
         </div>
