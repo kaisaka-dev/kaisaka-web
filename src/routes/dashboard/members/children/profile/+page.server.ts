@@ -1,95 +1,3 @@
-//will be used to make data more acceptable for front end modules
-export type childInformation =  {
-    id: string,
-    firstName: string,
-    lastName: string,
-    birthday: string,
-    sex: string,
-    address: string,
-    barangay: string,
-    disabilityCategory: string,
-    disabilityNature: string,
-    canWork:boolean,
-    employmentType: string,
-    remarks:string,
-    admissionDate: string,
-    terminationDate?: string
-    pwd?:{
-        has:boolean
-        id: string,
-        expiry: string
-    }
-
-    socialProtection?:{
-        has:boolean,
-        fam_life: boolean,
-        family_year: number,
-        community_club: boolean,
-        community_year:number
-
-    }
-
-    philHealth: boolean,
-    birth_cert: boolean,
-    med_cert:boolean,
-    barangay_cert: boolean,
-    voter_id: boolean,
-    national_id:boolean
-    educationHistory?: any[]
-    schoolYearArray?: string[]
-}
-
-type MemberRecord = {
-    first_name?: string;
-    middle_name?:string;
-    last_name?: string;
-    birthday?: string;
-    sex?: string;
-    addresses?: {
-        address?: string;
-    };
-    employment_status?: {
-        able_to_work?: boolean;
-        employmentType?: string;
-    };
-    admission_date?: string;
-    barangay_id: number;
-};
-
-type BarangayRecord = {
-    name?: string;
-};
-
-type socsecRecord = {
-    child_id:string,
-    fam_year_accessed: number,
-    participates_family_life: boolean,
-    participates_community_club: boolean,
-    comm_year_accessed: number
-}
-
-type ChildRecord = {
-    id:string
-    member_id: string;
-    remarks?: string;
-    disability_nature?: string;
-    disability_category?: {
-        name?: string;
-    };
-
-    pwd_id?: string;
-    has_philhealth: boolean,
-    has_birth_cert: boolean,
-    has_medical_cert:boolean,
-    has_barangay_cert: boolean,
-    has_vote: boolean,
-    has_national_id:boolean
-};
-
-type familyquery = {
-    family_id: string
-}
-
 let entireFamily = {}
 let pwdHas:boolean
 let pwdID:string
@@ -112,7 +20,7 @@ try{
     if(!childRecRes.ok) { //null check for if the kid doesn't exist
         throw new Error('Failed to get Child!')
     }
-    const childRecord : ChildRecord = await childRecRes.json()
+    const childRecord = await childRecRes.json()
     console.log('childRecord: ', childRecord)
 
     //gets record in the member table
@@ -122,7 +30,7 @@ try{
         throw new Error('Member Info doesn\'t exist!')
     }
 
-    const memberRecord : MemberRecord = await memberRecRes.json()
+    const memberRecord = await memberRecRes.json()
     console.log('memberRecord: ', memberRecord)
 
     //gets record in barangay table
@@ -152,32 +60,20 @@ try{
     }
 
     //gets record in social protection table
-    const socsecRes = await fetch(`/api/social_protection_status?id=${childRecord.id}`)
+    // const socsecRes = await fetch(`/api/social_participation?child_id=${childRecord.id}`)
 
-    const socsecRecord = await socsecRes.json()
-    //console.log('social protection: ', socsecRecord)
-
-    if(!socsecRecord){
-        socsecHas = false;
-        socsecComLife = false;
-        socsecComYear = 0;
-        socsecFamLife = false;
-        socsecFamYear = 0;
-    }
-
-    else{
-        socsecHas = true;
-        socsecComLife = socsecRecord.participates_community_club
-        socsecComYear = socsecRecord.comm_year_accessed
-        socsecFamLife = socsecRecord.participates_family_life
-        socsecFamYear = socsecRecord.fam_year_accessed
-    }
+    // if(socsecRes.ok)
+    // {
+    //         const socsecRecord = await socsecRes.json()
+    //         console.log('social protection: ', socsecRecord)
+    // }
+    
+    
 
     let educationArray = []
     let yearArray = []
 
     const educationRes = await fetch(`/api/education_status?id=${childRecord.id}`)
-    
     const educationHistory = await educationRes.json()
     
     if(educationHistory){
@@ -199,7 +95,7 @@ try{
         canWork: memberRecord.employment_status?.able_to_work  || false,
         employmentType: memberRecord.employment_status?.employment_type || "",
         remarks: childRecord.remarks || "",
-        disabilityCategory: childRecord.disability_category?.name  || "",
+        disabilityCategoryID: childRecord.disability_category?.id || "",
         disabilityNature: childRecord.disability_nature || "",
         admissionDate: new Date(memberRecord.admission_date).toISOString().split('T')['0'] || "",
         philHealth: childRecord.has_philhealth || false,
@@ -225,8 +121,6 @@ try{
         educationHistory: educationArray,
         schoolYearArray: yearArray
     }
-
-    console.log("CHILD: " +child)
     const familyRes = await fetch(`/api/family_members?id=${childRecord.member_id}&select=*,families(*)&type=memberid`)
     if (!familyRes.ok) {
         throw new Error('Failed to fetch family member info');
@@ -257,22 +151,106 @@ try{
         }
     }
 
-    // console.log("Child: ", child)
-    //console.log("family: ", entireFamily.data)
-    // console.log("member: ", memberRecord)
+    /// fetching the (dropdown) options for disability category
+    let options_disCategory = [];
+
+	try {
+		const res = await fetch('/api/disability_category');
+		if (!res.ok) throw new Error('Failed to fetch categories');
+		const json = await res.json();
+		options_disCategory = json.data; 
+	    } catch (e) {
+		console.error('Disability category fetch failed:', e);
+		// optionally fallback to empty
+		options_disCategory = [];
+	}
 
     return{
         child: child,
         error: null,
         family: Array.isArray(entireFamily?.data) ? entireFamily.data : [],
         member: memberRecord,
-        interventioninfo: interventioninfo || ''
+        interventioninfo: interventioninfo || '',
+        discatOptions: options_disCategory
     } 
 }
     catch(error){
         return {
             error: error instanceof Error ? error.message : 'Failed to load children data',
         }
-    }
+    }   
 }
 
+//will be used to make data more acceptable for front end modules
+export type childInformation =  {
+    id: string,
+    firstName: string,
+    middleName: string,
+    lastName: string,
+    birthday: string,
+    sex: string,
+    address: string,
+    barangay: string,
+    disabilityCategoryID: string,
+    disabilityNature: string | null,
+    canWork:boolean,
+    employmentType: string,
+    remarks:string,
+    admissionDate: string,
+    terminationDate?: string
+    pwd?:{
+        has:boolean
+        id: string,
+        expiry: string
+    }
+
+    socialProtection?:{
+        has:boolean,
+        fam_life: boolean,
+        family_year: number,
+        community_club: boolean,
+        community_year:number
+
+    }
+
+    philHealth: boolean,
+    birth_cert: boolean,
+    med_cert:boolean,
+    barangay_cert: boolean,
+    voter_id: boolean,
+    national_id:boolean
+    educationHistory?: any[]
+    schoolYearArray?: string[]
+}
+
+export type personalInformation = {
+    firstName: string,
+    middleName: string,
+    lastName: string,
+    birthday: string,
+    sex: string,
+    address: string,
+    barangay: string,
+    disabilityCategoryID: string,
+    disabilityNature: string | null,
+    canWork:boolean,
+    employmentType: string,
+    remarks:string,
+    admissionDate: string,
+
+
+}
+
+export type documentationInformation = {
+    hasPWD: boolean,
+    pwdID: string,
+    pwdExpiry: string,
+
+    phHealth: boolean,
+    natID: boolean,
+    medCert:boolean,
+    natCert:boolean,
+    birthCert:boolean,
+    barangayCert:boolean,
+    voterID: boolean
+}
