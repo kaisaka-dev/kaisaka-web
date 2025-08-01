@@ -79,12 +79,13 @@ export const load: PageLoad = async ({ fetch }) => {
 		});
 
 		const disCatRes = await fetch('/api/disability_category');
-		const options_disCategory = await disCatRes.json();
+		const disCatData = await disCatRes.json();
+		const options_disCategory = [...new Set(disCatData.data.map((item: any) => item.name))];
 
 		return {
 			children,
 			error: null,
-			options: { disCategory: options_disCategory.data }
+			options: { disCategory: options_disCategory }
 		};
 	} catch (error) {
 		return {

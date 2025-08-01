@@ -44,13 +44,6 @@ let filter = $state({
 // filter logic
 $effect(() => applyFilter())
 
-console.log("childrenData:" , childrenData)
-$effect(() => (
-  console.log(filteredData)
-))
-
-$effect(()=> console.log("eductype:", filter.educType))
-
 function applyFilter() {
     const search = filter.main?.toLowerCase();
 
