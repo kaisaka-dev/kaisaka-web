@@ -296,7 +296,7 @@
 {/if}
 
 <section id="child-info">
-    <h1>Child Registration</h1>
+    <h1>Register Child with Disability</h1>
 
 
 

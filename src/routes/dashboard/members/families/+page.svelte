@@ -204,7 +204,7 @@
 				</div>
 				<div class="family-info" style="display:grid; grid-template-columns: max-content auto; gap: 0 1rem;">
 					<div>Caregivers: </div> <div>{family.caregivers || 'None'}</div>
-					<div>Children: </div> <div>{family.children || 'None'}</div>
+					<div>CWDs: </div> <div>{family.children || 'None'}</div>
 				</div>
 			</div>
 		{/each}

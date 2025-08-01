@@ -113,7 +113,7 @@ function resetFilters() {
 <Header category="members" page="children" />
 
 <section id="main">
-    <h2 class="!px-0 !text-[var(--pink)]">List of Children</h2>
+    <h2 class="!px-0 !text-[var(--pink)]">List of Children with Disability</h2>
 
     <FilterSearch bind:searchedValue={filter.main}>
         <!-- to be rendered inside the Filter Search component-->

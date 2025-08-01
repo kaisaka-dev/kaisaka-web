@@ -13,7 +13,7 @@
     <div class="dropdown dropdown-hover ">
         <div class="navlink" role="button" tabindex="-1">Members</div>
         <ul tabindex="-1" class="dropdown-content menu rounded-box z-1 w-52 p-2 shadow-sm !bg-[var(--header-color)]">
-            <li><a href="/dashboard/members/children">Children</a></li>
+            <li><a href="/dashboard/members/children">CWDs</a></li>
             <li><a href="/dashboard/members/caregivers">Caregivers</a></li>
             <li><a href="/dashboard/members/families">Families</a></li>
             <li><a href="/dashboard/members/pending">Pending</a></li>
@@ -50,7 +50,7 @@
 <div id="subnav">
     {#if category === "members"}
         <ul>
-            <li class={page === "children" ? "active" : ""}><a href="/dashboard/members/children">Children</a></li>
+            <li class={page === "children" ? "active" : ""}><a href="/dashboard/members/children">CWDs</a></li>
             <li class={page === "caregivers" ? "active" : ""}><a href="/dashboard/members/caregivers">Caregivers</a></li>
             <li class={page === "families" ? "active" : ""}><a href="/dashboard/members/families">Families</a></li>
             <li class={page === "pending" ? "active" : ""}><a href="/dashboard/members/pending">Pending</a></li>

@@ -48,20 +48,20 @@ async function fetchPendingDocuments() {
                 111
                 <span id="cwds-total" style="font-size:var(--text-3xl)">/ 120</span></div>
             <div class="!px-[4rem] flex flex-col gap-[2rem]" style="justify-content:space-between">
-                <div class="mt-[1.5rem]">Children registered with intervention plans</div>
-                <a href="/dashboard/members/pending" style="text-align:right">assign children ></a>
+                <div class="mt-[1.5rem]">CWDs registered with intervention plans</div>
+                <a href="/dashboard/members/pending" style="text-align:right">assign CWDs ></a>
             </div>
         </button>
 
         <!-- grid-like navigation info panel-->
         <div class="nav-links flex flex-row gap-[1rem]">
             <div class="nav-column flex flex-col gap-[1rem] w-[50%]">
-                <a class="panel" href="/dashboard/members/children"><i class="bi bi-person-wheelchair"></i>View children<i class="bi bi-chevron-compact-right"></i></a>
+                <a class="panel" href="/dashboard/members/children"><i class="bi bi-person-wheelchair"></i>View CWDs<i class="bi bi-chevron-compact-right"></i></a>
                 <a class="panel" href="/dashboard/members/caregivers"><i class="bi bi-person-hearts"></i>View caregivers<i class="bi bi-chevron-compact-right"></i></a>
                 <a class="panel" href="/dashboard/members/families"><i class="bi bi-people-fill"></i>View families<i class="bi bi-chevron-compact-right"></i></a>
             </div>
             <div class="nav-column flex flex-col gap-[1rem] w-[50%]">
-                <a class="panel" href="/dashboard/registration/child"><i class="bi bi-person-plus-fill"></i>Register new child<i class="bi bi-chevron-compact-right"></i></a>
+                <a class="panel" href="/dashboard/registration/child"><i class="bi bi-person-plus-fill"></i>Register new CWD<i class="bi bi-chevron-compact-right"></i></a>
                 <a class="panel" href="/dashboard/information/how-to-add-caregiver"><i class="bi bi-person-hearts"></i>Register new caregiver<i class="bi bi-chevron-compact-right"></i></a>
                 <a class="panel" href="/dashboard/reports/list"><i class="bi bi-file-earmark-plus-fill"></i>View reports history<i class="bi bi-chevron-compact-right"></i></a>
             </div>
