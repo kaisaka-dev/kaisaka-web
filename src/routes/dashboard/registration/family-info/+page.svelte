@@ -1,4 +1,3 @@
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css" />
 <script lang="ts">
 	/**
 	 * NOTE: THIS PAGE IS EXACTLY THE SAME FOR /dashboard/registration/family-info and /registration/family-info
@@ -16,6 +15,7 @@
 	import type { PageData } from '../../../../../.svelte-kit/types/src/routes/$types.js';
 	import { dropdownOptions } from '$lib/types/options.js';
 	import ExistingForm from './ExistingForm.svelte';
+	import LoadingBtn from '$components/styled-buttons/LoadingBtn.svelte';
 
 
 	/**
@@ -567,8 +567,7 @@
 
 <section style="text-align: center;">
 	{#if loadingSubmission}
-		<div id="disable-cover" class="!fixed !top-0 !left-0 !w-full !h-full !bg-[rgba(0,0,0,0.2)] !z-[9999] !pointer-events-auto"></div>
-		<button class="green" aria-label="Submit" disabled><i class="fa fa-circle-notch fa-spin mr-2 !text-[inherit]"></i>Submit</button>
+		<LoadingBtn label="Submit" />
 	{:else}
 		<button class="green" onclick={handleSubmit}>Submit</button>
 	{/if}
