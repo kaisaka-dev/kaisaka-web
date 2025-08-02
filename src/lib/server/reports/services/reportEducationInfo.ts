@@ -7,8 +7,8 @@ import { ReportGenerator } from "./reportTemplate.js";
 const inserAccessAllCellMap: Record<string, string> = {
   "0-5 yrs old|Male|enrolled": "I6",
   "0-5 yrs old|Female|enrolled": "J6",
-  "0-5 yrs old|Male|dropped_out": "K6",
-  "0-5 yrs old|Female|dropped_out": "L6",
+  "0-5 yrs old|Male|Dropped out": "K6",
+  "0-5 yrs old|Female|Dropped out": "L6",
   "0-5 yrs old|Male|completed": "M6",
   "0-5 yrs old|Female|completed": "N6",
 
@@ -44,8 +44,8 @@ const inserAccessAllCellMap: Record<string, string> = {
 const insertAccessDownsyndromeCellMap: Record<string, string> = {
   "0-5 yrs old|Male|enrolled": "I7",
   "0-5 yrs old|Female|enrolled": "J7",
-  "0-5 yrs old|Male|dropped_out": "K7",
-  "0-5 yrs old|Female|dropped_out": "L7",
+  "0-5 yrs old|Male|Dropped out": "K7",
+  "0-5 yrs old|Female|Dropped out": "L7",
   "0-5 yrs old|Male|completed": "M7",
   "0-5 yrs old|Female|completed": "N7",
 

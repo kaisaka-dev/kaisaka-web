@@ -16,6 +16,7 @@
     import InputRange from '$components/input/InputRange.svelte';
     import type  { PageData } from '../../../../../.svelte-kit/types/src/routes/$types.js';
     import { dropdownOptions } from '$lib/types/options.js';
+    import LoadingBtn from '$components/styled-buttons/LoadingBtn.svelte';
 
 
     // load the data
@@ -39,6 +40,7 @@
      */
     const staffView = /dashboard/i.test(page.url.pathname);
     const thisYear = new Date().getFullYear();  // used to verify participation in family life, community life
+    let loadingNext = $state(false);
 
     // field variables
     let formData = $state({
@@ -207,6 +209,7 @@
     }
 
     function handleNext() {
+        loadingNext = true;
         if (validateForm()) {
             childFormData.update(current => ({
                 ...current,
@@ -285,7 +288,10 @@
 
             goto('family-info');
             console.log("Form submitted")
+        } else {
+            loadingNext = false;
         }
+
     }
     
 
@@ -406,5 +412,10 @@ you may contact them here xxxxx -->
 
 <section style="text-align: center;">
     <Validation msg={errors.overall} style="color:var(--error-color); margin-bottom: 25px; padding: 0 35px;"/>
-    <button onclick={handleNext}>Next</button>
+
+    {#if loadingNext}
+        <LoadingBtn label="Next" btnClass=""/>
+    {:else}
+        <button onclick={handleNext}>Next</button>
+    {/if}
 </section>
