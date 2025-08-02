@@ -24,6 +24,11 @@
           }
     }
 
+    let showSocialParticipation: boolean = false
+    if(socialParticipation.length > 1) {
+      showSocialParticipation = true
+    }
+
 </script>
 
 <!--BEGINNING OF DOCUMENTS LISTING-->
@@ -42,9 +47,9 @@
        {/if}
 
        <div>
-            <Checkbox disabled label = "Social Participation" checked = {socialParticipation}/>
+            <Checkbox disabled = {!editing} label = "Social Participation" bind:checked = {showSocialParticipation}/>
        </div>
-       {#if socialParticipation} 
+       {#if showSocialParticipation} 
           <div class = "flex flex-col md:ml-20 ">
                <div class = "flex flex-col md:flex-row">
                     Participation type
@@ -55,12 +60,12 @@
                </div>
                 <div class = "grid grid-cols-1 gap-5 mt-5">
                     <div> Years of Access: </div>
-                    {#if selectedIndex == 0} 
+                    {#if selectedIndex == 0 && communityLife.length > 0} 
                     <div class = "max-w-50"> <InputText type  = "number" value = {communityLife[0].year} /> </div>
                     <div class = "max-w-50"> <InputText  type = "number" value = {communityLife[0].year} /> </div>
                     <div class = "max-w-50"> <InputText  type = "number" value = {communityLife[0].year} /> </div>
                     <div class = "max-w-50"> <InputText type = "number" value = {communityLife[0].year} /> </div>
-                    {:else if selectedIndex == 1}
+                    {:else if selectedIndex == 1 && familyLife.length > 0}
                     <div class = "max-w-50"> <InputText type = "number" value = {communityLife[0].year} /> </div>
                     {/if}
                </div>

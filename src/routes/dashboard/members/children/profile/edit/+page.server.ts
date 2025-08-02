@@ -97,13 +97,7 @@ type BarangayRecord = {
     name?: string;
 };
 
-type socsecRecord = {
-    child_id:string,
-    fam_year_accessed: number,
-    participates_family_life: boolean,
-    participates_community_club: boolean,
-    comm_year_accessed: number
-}
+
 
 type ChildRecord = {
     id:string
@@ -197,24 +191,14 @@ try{
     }
 
     //gets record in social protection table
-    const socsecRecord = await socsecDB.findOneWithJoin('*',{
-        eq:{child_id: childRecord.id}
-    }) as socsecRecord
+    // gets record in social protection table
+    const socsecRes = await fetch(`/api/social_participation?child_id=${childRecord.id}`)
+    let socsecRecord;
 
-    if(!socsecRecord){
-        socsecHas = false;
-        socsecComLife = false;
-        socsecComYear = 0;
-        socsecFamLife = false;
-        socsecFamYear = 0;
-    }
-
-    else{
-        socsecHas = true;
-        socsecComLife = socsecRecord.participates_community_club
-        socsecComYear = socsecRecord.comm_year_accessed
-        socsecFamLife = socsecRecord.participates_family_life
-        socsecFamYear = socsecRecord.fam_year_accessed
+    if(socsecRes.ok)
+    {
+            socsecRecord = await socsecRes.json()
+            console.log('SOCIAL PROTECTION!!!: ', socsecRecord)
     }
 
     let educationArray = []
@@ -329,7 +313,8 @@ try{
         family: entireFamily,
         member: memberRecord,
         interventioninfo: interventioninfo || '',
-        discatOptions: options_disCategory
+        discatOptions: options_disCategory,
+        social_participation: socsecRecord
     } 
 }
     catch(error){

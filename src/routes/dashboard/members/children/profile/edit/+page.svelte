@@ -33,7 +33,7 @@
         hasPWD: data.child?.pwd?.has,
         pwdID: data.child?.pwd?.id,
         pwdExpiry: data.child?.pwd?.expiry,
-
+        socialParticipation: data.social_participation,
         phHealth: data.child?.philHealth,
         natID: data.child?.national_id,
         medCert: data.child?.med_cert,
