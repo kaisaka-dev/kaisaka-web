@@ -4,6 +4,7 @@ import InputRange from '$components/input/InputRange.svelte';
 import Modal from '$components/Modal.svelte';
 import Textarea from '$components/input/InputTextarea.svelte';
 import type { ReportPeriod, Errors } from './+page.server.js';
+import LoadingBtn from '$components/styled-buttons/LoadingBtn.svelte';
 
 export let modalIsOpen = false;
 export let title = "";
@@ -38,6 +39,7 @@ let errors: Errors = {
 	new_actual_CWDS: "",
 	old_actual_CWDS: ""
 }
+let loadingSubmit = false;
 
 const thisYear = new Date().getFullYear();  // used to verify if year makes sense
 
@@ -97,10 +99,11 @@ function validateForm(): boolean {
 }
 async function handleSubmit() {
 	if (!validateForm()) return;
+	loadingSubmit = true;
 
 	try {
 		const method = formData.id ? 'PUT' : 'POST';
-		const url = formData.id ? `/api/annual_program` : `/api/annual_program`;
+		const url = `/api/annual_program`;
 
 
 		const response = await fetch(url, {
@@ -130,9 +133,11 @@ async function handleSubmit() {
 		}
 
 		modalIsOpen = false;
-		if (method === 'POST') window.location.reload();	// refresh if post, to reload the data.
+		window.location.reload();	// refresh to reload the data.
+		loadingSubmit = false;
 	} catch (error) {
 		console.error('Submission error:', error);
+		loadingSubmit = false;
 	}
 }
 
@@ -174,7 +179,11 @@ $: if (formData.endDD == null) errors.endDD = ""
 			<Textarea label="Lessons Learned" id="lessons" bind:value={formData.lessons_learned} />
 
 			<button type="button" on:click={() => modalIsOpen = false}>Cancel</button>
-			<button class="green" type="submit">Submit</button>
+			{#if loadingSubmit}
+				<LoadingBtn label="Submit" />
+			{:else}
+				<button class="green" type="submit">Submit</button>
+			{/if}
 		</form>
 	</div>
 </Modal>
