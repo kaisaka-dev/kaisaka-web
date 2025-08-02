@@ -1,6 +1,22 @@
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+
 <script lang="ts">
     import Header from '$components/Header.svelte'
-    import { goto } from '$app/navigation'
+    import { goto, beforeNavigate, afterNavigate } from '$app/navigation'
+    import { onMount } from 'svelte'
+    import { writable } from 'svelte/store'
+
+    const isLoading = writable(false)
+
+    onMount(() => {
+        beforeNavigate(() => {
+            isLoading.set(true)
+        });
+
+        afterNavigate(() => {
+            setTimeout(() => isLoading.set(false),300)
+        })
+    })
 
     export let data;
     import PersonalInformation from './components/personalInformation.svelte'
@@ -14,6 +30,7 @@
 
     //below are functions needed for the page
     let selectedIndex = 0
+    
 
     let childData: personalInformation = {
          firstName: data.child?.firstName || "--",
@@ -76,7 +93,10 @@
         showSocialParticipation = true
     }
 </script>
-
+{#if $isLoading}
+    Loading Profile....
+    {console.log("Loading")}
+{/if}
 
 <Header/>
 
@@ -140,7 +160,7 @@
     <div class = "flex flex-col w-full mx-auto max-w-250">
         <div class = "!bg-[var(--green)] p-3 flex flex-row">
            <div class = "!text-[var(--background)] !font-bold lg:ml-55">Intervention Name </div>
-           <div class = "!text-[var(--background)] !font-bold lg:ml-55">Status History </div>
+           <div class = "!text-[var(--background)] !font-bold lg:ml-35">Overall History & Date Created </div>
         </div>
 
         <div class = "flex flex-col p-3 ">
@@ -164,6 +184,8 @@
                 <div class =  "collapse lg:ml-40">
                     <input type="checkbox" />
                     <div class = "collapse-title flex flex-row">
+                        <i class="fa fa-sort-desc mt-2.5 mr-2" aria-hidden="true"></i>
+
                         {#if intervention.status === "Regressed"}
                         <div class = "!bg-[var(--pink)] p-2 w-45 rounded-full text-center !font-bold !text-[var(--background)]" > Regressed </div> 
                         {:else if intervention.status === "Neutral"}
@@ -175,7 +197,7 @@
                     </div>
                     <div class = "collapse-content flex flex-col">
                         {#each intervention.history as status}
-                        <div class= "flex flex-row mb-5">
+                        <div class= "flex flex-row mb-5 ml-5">
                             {#if status.status === "Regressed"}
                             <div class = "!bg-[var(--pink)] p-2 w-45 rounded-full text-center !font-bold !text-[var(--background)]" > Regressed </div> 
                             {:else if status.status === "Neutral"}

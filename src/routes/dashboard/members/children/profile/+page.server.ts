@@ -2,11 +2,6 @@ let entireFamily = {}
 let pwdHas:boolean
 let pwdID:string
 let pwdExpiry:string
-let socsecHas: boolean
-let socsecFamLife: boolean
-let socsecFamYear: number
-let socsecComLife: boolean
-let socsecComYear: number
 
 
 export async function load( { url, fetch}  ) {
@@ -100,7 +95,12 @@ try{
         disabilityNature: childRecord.disability_nature || "",
         admissionDate: new Date(memberRecord.admission_date).toISOString().split('T')['0'] || "",
         educationHistory: educationArray,
-        schoolYearArray: yearArray
+        schoolYearArray: yearArray,
+        pwd:{
+            has: pwdHas,
+            id: pwdID,
+            expiry: pwdExpiry
+        }
     }
     const familyRes = await fetch(`/api/family_members?id=${childRecord.member_id}&select=*,families(*)&type=memberid`)
     if (!familyRes.ok) {
@@ -179,9 +179,14 @@ export type childInformation =  {
     employmentType: string,
     remarks:string,
     admissionDate: string,
-    terminationDate?: string
-    educationHistory?: any[]
-    schoolYearArray?: string[]
+    terminationDate?: string,
+    educationHistory?: any[],
+    schoolYearArray?: string[],
+    pwd: {
+        has: boolean,
+        id: string,
+        expiry: string
+    }
 }
 
 export type personalInformation = {

@@ -1,3 +1,5 @@
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+
 <script lang="ts">
     import Header from '$components/Header.svelte'
     import Input from '$components/input/InputText.svelte'
@@ -17,6 +19,10 @@
         showSocialParticipation = true
     }
 
+    console.log("CHILD --> " , data.child)
+    let showStatusInfo: boolean [] = [false,false,false,false]
+
+
     let newchildData: personalInformation = {
          firstName: data.child?.firstName || "--",
          middleName: data.child?.middleName || "--",
@@ -29,7 +35,7 @@
          employmentType: data.child?.employmentType || "--",
          disabilityCategoryID: data.child?.disabilityCategory || "--",
          disabilityNature: data.child?.disabilityNature || "--",
-         admissionDate:  data.child?.admissionDate || "--",
+         admissionDate:  data.child?.admissionDate.split('T')[0] || "--",
          remarks: data.child?.remarks || "--",
     }   
 
@@ -246,6 +252,7 @@
         educationlvl: "",
         educstatus: "",
         yearstart: "",
+        yearend: "",
         pwdID: "",
         pwdExpiry: "",
         socialParticipation: "",
@@ -306,9 +313,9 @@
             errors.educationtype = educType.trim() === "" ? "Required" : ""
             errors.educationlvl = educLevel.trim() === "" ? "Required" : ""
             errors.educstatus = educStatus == null || educStatus === "" ? "Required" : ""
-            errors.yearstart = yearStart == null ? "Required" : ""
+            errors.yearstart = (yearStart == "" || yearStart < 0 || yearStart > yearEnd) ? "Invalid Date" : ""
+            errors.yearend = yearEnd < 0 ? "Invalid Date" : ""
 
-            console.log(errors.educstatus)
         }
 
         if(documentationData.hasPWD == true) {
@@ -531,8 +538,26 @@
             
             //This should happen if a persons record isnt found 
             const employmentRes = await fetch(`/api/employment_status?id=${data.member.id}`)
+            const employmentRecord = await employmentRes.json()
+
             if(!employmentRes.ok && newchildData.canWork == true){
-                const emplymentstatusRes  = await fetch('/api/employment_status', {
+
+                if(newchildData.employmentType === "") {
+                    const employmentstatusRes  = await fetch('/api/employment_status', {
+                    method: "POST",
+                    body: JSON.stringify({
+                        able_to_work: newchildData.canWork,
+                        employment_type: null,
+                        member_id: data.member?.id
+                    }),
+                     headers: {
+                    'Content-Type': 'application/json'
+                }
+                })
+                }
+
+                else {
+                    const employmentstatusRes  = await fetch('/api/employment_status', {
                     method: "POST",
                     body: JSON.stringify({
                         able_to_work: newchildData.canWork,
@@ -542,15 +567,33 @@
                      headers: {
                     'Content-Type': 'application/json'
                 }
-                })
+                })   
+                }
             }
 
             //if the persons record is found in the db, we just update
             else if(employmentRes.ok && newchildData.canWork == true){
-               const emplymentstatusRes = await fetch('/api/employment_status', {
+                if(newchildData.employmentType === ''){
+                    console.log("nulling")
+                    const emplymentstatusRes = await fetch('/api/employment_status', {
                     method: "PUT",
                     body: JSON.stringify({
-                        member_id: data.member?.id,
+                        id: data.member?.id,
+                        able_to_work: newchildData.canWork,
+                        employment_type: null
+                    }),
+                     headers: {
+                    'Content-Type': 'application/json'
+                }
+                })
+                }
+
+            
+                else{
+                    const emplymentstatusRes = await fetch('/api/employment_status', {
+                    method: "PUT",
+                    body: JSON.stringify({
+                        id: data.member?.id,
                         able_to_work: newchildData.canWork,
                         employment_type: newchildData.employmentType
                     }),
@@ -558,6 +601,8 @@
                     'Content-Type': 'application/json'
                 }
                 })
+                }
+               
             }
 
             //if the persons record is found in the db but we want to delete it 
@@ -615,11 +660,27 @@
                         education_type: educType,
                         grade_level: educLevel,
                         student_status_type: educStatus 
-                    })
+                    }),
+                     headers:{
+                         'Content-Type': 'application/json'
+                     } 
                 })
             }
             }
 
+        //FAMILY UPDATES BEGIN HERE
+        for(let i in data.family){
+           if(data.family[i].isDeleted){
+                const deleteFamilyMember = await fetch('/api/family_members',{
+                    method: "DELETE",
+                    body: JSON.stringify({
+                        family_id: data.family[i].family_id,
+                        member_id: data.family[i].members.id
+                    }),
+                    headers:{'Content-Type': "application/json"}
+                })
+           }
+        }
 
         //DOCUMENT UPDATES BEGIN HERE
         if(data.child?.pwd?.has && documentationData.hasPWD ){ //just updates pwd info
@@ -784,9 +845,9 @@
                         } 
                     })
 
-                    for(let j = 0; j < childInterventions[i].history?.length; j++){ //updates/deletes statuses
-                        if(childInterventions[i].history[j].isDeleted == false){
-                                const statusUpdate = await fetch('/api/intervention_history', {    
+                    for(let j in childInterventions[i].history){ //updates/deletes statuses
+                        if(childInterventions[i].history[j].isDeleted == false && childInterventions[i].history[j].isNew == false){
+                        const statusUpdate = await fetch('/api/intervention_history', {    
                         method: "PUT", 
                         body: JSON.stringify({
                         id: childInterventions[i].history[j].id,
@@ -800,6 +861,23 @@
                                 } 
                             })
                         }
+
+                        else if(childInterventions[i].history[j].isNew == true && childInterventions[i].history[j].isDeleted == false){
+                        const createStatus = await fetch('/api/intervention_history' , {
+                        method: "POST",
+                        body: JSON.stringify({
+                            intervention_id: childInterventions[i].id,
+                            improvement: new Date().toISOString(),
+                            status: childInterventions[i].history[j].status,
+                            date_checked: childInterventions[i].history[j].date
+                        }),
+                        headers: {
+                            'Content-Type': 'application/json'
+                        }
+                        })
+                    }
+
+                        
 
                         else{
                             const deleteStatus = await fetch(`/api/intervention_history?id=${childInterventions[i].history[j].id}`, {
@@ -826,6 +904,11 @@
         goto(`/dashboard/members/children/profile?id=${data.child.id}`);
     }
 
+}
+
+function showStatusHistory(index:number){
+    showStatusInfo[index] = !showStatusInfo[index]
+    showStatusInfo = showStatusInfo
 }
 </script>
  <Header/>
@@ -875,7 +958,7 @@
 
 
 <!--CONTAINER FOR FAMILY AND MEMBERSHIP INFORMATION-->
-<FamilyInformation family = {data.family} firstName = {data.child?.firstName} editing = {true}/>
+<FamilyInformation family = {data.family} firstName = {data.child?.firstName} editing = {true} childID = {data.child.id}/>
 <!--END OF FAMILY AND MEMBERSHIP INFORMATION-->
 
 
@@ -897,57 +980,64 @@
     <div class = "flex flex-col">
         <div class = "!bg-[var(--green)] p-3 flex flex-col md:flex-row">
            <div class = "!text-[var(--background)] !font-bold mt-2">Service Category </div>
-           <div class = "!text-[var(--background)] !font-bold md:ml-20 mt-2">Interventions Performed </div>
-           <div class = "!text-[var(--background)] !font-bold md:ml-25 mt-2">Status History </div>
+           <div class = "!text-[var(--background)] !font-bold md:ml-30 mt-2">Intervention(s) </div>
+           <div class = "!text-[var(--background)] !font-bold md:ml-25 mt-2">Overall Status & Date Created </div>
         </div>
         {#each childInterventions as interventionvar,index}
             <div class = "flex flex-col md:flex-row mt-5 ">
                 <div class = "mt-4.5 -mr-15 max-w-20 md:max-w-50">
                     <Input type = "text" disabled bind:value = {interventionvar.servicecat}/>
                 </div>
-                <div class = "mb-10 mt-4 md:ml-35 max-w-50">
-                   <Input type = "text" bind:value = {interventionvar.name} required msg = {errors.interventionnameErrors[index]}/>
-                </div>
-                <div class =  "collapse">
-                <input type = "checkbox" />
-                    <div class = "collapse-title flex flex-row">
-                        <div class = " z-5000 max-w-30 md:ml-5">
-                           <Select  required msg = {errors.interventionstatusErrors[index]} bind:value = {interventionvar.status} options = {["Regressed" , "Improved", "Neutral"]} />
-                        </div> 
-                        <div class = "max-w-10 md:ml-5 z-5000"><Input type = "date" bind:value = {interventionvar.dateCreated} required msg = {errors.interventiondateErrors[index]} /></div>
-                    </div>
-                    <div class = "collapse-content flex flex-col">
-                        <div class = "flex flex-col">
-                        {#each interventionvar.history as status, statusindex}
-                        {#if status.isDeleted == false}
-                            <div class= "flex flex-row w-100">
-                                <div class = " z-5000 w-30  md:ml-5">
-                                <Select bind:value = {status.status} options = {["Regressed" , "Improved" , "Neutral"]} />
-                                </div> 
-                                <div class ="w-15 ml-5">  <Input type = "Date" bind:value = {status.date}/></div>
-                                <div class = "-mt-2.5 md:ml-20">
-                                <button class = "!bg-[var(--background)] !text-red-500 hover:!text-red-400 hover:!shadow-[var(--background)]"
-                                on:click = {()=>deleteStatus(statusindex, index)}>
-                                    X
-                                </button>
+                <div class = "mb-10 mt-4 md:ml-35">
+                    <div class = "flex flex-row">
+                        <div class ="md:max-w-50">
+                            <Input type = "text" bind:value = {interventionvar.name} required msg = {errors.interventionnameErrors[index]}/>
+                            
+                        </div>
+                        <div class = "md:max-w-30 md:ml-10 flex flex-col md:flex-row mx-auto">
+                            <div class = "mr-2 z-3000"> <i class="fa fa-sort-desc" aria-hidden="true" on:click= {()=>showStatusHistory(index)}></i> </div>
+                           <div class = "md:max-w-30 flex flex-col">
+                                <div><Select  required msg = {errors.interventionstatusErrors[index]} bind:value = {interventionvar.status} options = {["Regressed" , "Improved", "Neutral"]} /> </div>
+                                {#if showStatusInfo[index]}
+                                 <div class = "flex flex-col -ml-6">
+                                    <div class = "md:w-50 md:mt-5 md:ml-25"> Status History</div>
+                                    {#each interventionvar.history as status, statusindex}
+                                    {#if status.isDeleted == false}
+                                    <div class= "flex flex-row w-100">
+                                        <div class = " z-500 w-30  md:ml-5">
+                                            <Select bind:value = {status.status} options = {["Regressed" , "Improved" , "Neutral"]} />
+                                        </div> 
+                                        <div class ="w-15 ml-5">  
+                                        <Input type = "Date" bind:value = {status.date}/>
+                                        </div>
+                                        <div class = "-mt-2.5 md:ml-25 z-600">
+                                            <button class = "!bg-[var(--background)] !text-red-500 hover:!text-red-400 hover:!shadow-[var(--background)]"
+                                            on:click = {()=>deleteStatus(statusindex, index)}>
+                                                X
+                                            </button>
+                                        </div>
+                                    </div>
+                                    {/if}
+                                    {/each}
                                 </div>
+                                <button on:click = {() => addStatus(index)} class = "green w-50 ml-10 z-500 mt-5"> Add Status</button>
+                                {/if}
                             </div>
-                        {/if}
-                        {/each}
-                        <button on:click = {() => addStatus(index)} class = "green w-50 ml-15 mt-5"> Add Status</button>
+                            <div class = "md:max-w-15 md:ml-5"><Input type = "date" bind:value = {interventionvar.dateCreated} required msg = {errors.interventiondateErrors[index]} /></div>
+                           <div class = "-mt-2 z-500 md:ml-25">
+                            <button class = "!bg-[var(--background)] !text-red-500 hover:!text-red-400 hover:!shadow-[var(--background)]"
+                                    on:click = {()=>deleteIntervention(index)}>
+                                        X
+                            </button>
+                            </div>
                         </div>
                     </div>
-                </div>
-                <div class = "mt-1.5 z-500">
-                <button
-                        class = "!bg-[var(--background)] !text-red-500 hover:!text-red-400 hover:!shadow-[var(--background)]"
-                        on:click = {()=>deleteIntervention(index)}>
-                        X
-                </button>
-                </div>
+                </div>    
             </div>
         {/each}
     </div>
+
+
     
 </div>
 

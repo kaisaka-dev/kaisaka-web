@@ -63,10 +63,10 @@
                 <div class = "-ml-4 z-300"> <Check label = "Able to Work" bind:checked = {data.canWork} margin = {true}/> </div>
                 {/if}
                 {#if data.canWork}
-                    <div class = "-ml-4"> <Select label = "Employment Type" options = {dropdownOptions.employment_type} required = {!disabled} msg = {errors.employmentType} disabled = {disabled} bind:value = {data.employmentType} margin = {true}/> </div>
+                    <div class = "-ml-4"> <Select label = "Employment Type" options = {['','Self-Employed','Sheltered Workshop','Wage Employed']} required = {!disabled} msg = {errors.employmentType} disabled = {disabled} bind:value = {data.employmentType} margin = {true}/> </div>
                 {/if}
                 <div class = "-ml-4"> <Select label = "Disability Category" bind:value = {data.disabilityCategoryID} required = {!disabled} options = {discatOptions} msg = {errors.disabilityCat} disabled = {disabled}  margin = {true}/> </div>
-                <div class = "-ml-4"> <Input label = "Disability Nature" required = {!disabled} disabled = {disabled} bind:value = {data.disabilityNature} margin = {true}/> </div>
+                <div class = "-ml-4"> <Input label = "Disability Nature"  disabled = {disabled} bind:value = {data.disabilityNature} margin = {true}/> </div>
                 <div class = "-ml-4 mt-10"> <Input type = "date" label = "Date of Admission" msg = {errors.admissionDate} required = {!disabled} disabled = {disabled} bind:value = {data.admissionDate} margin = {true}/> </div>
         </div>
         <div> 

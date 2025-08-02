@@ -65,7 +65,7 @@ export const POST: RequestHandler = async ({ request }) => {
     throw error(400, 'Missing required field: intervention object')
   }
 
-  const inserted = await InterventionHistoryModel.instance.recordInterventionHistory(body.intervention_id, body.improvment, body.status, body.remarks, body.date_checked);
+  const inserted = await InterventionHistoryModel.instance.recordInterventionHistory(body.intervention_id, body.improvement, body.status, body.remarks, body.date_checked);
 
   if (!inserted) {
     throw error(500, 'Failed to record intervention history');
