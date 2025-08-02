@@ -1,7 +1,5 @@
 <script lang="ts">
     import Header from '$components/Header.svelte'
-    import Input from '$components/input/InputText.svelte'
-    import Check from '$components/input/Checkbox.svelte'
     import { goto } from '$app/navigation'
 
     export let data;
@@ -11,7 +9,7 @@
     import DocumentationInformation from './components/documentationInformation.svelte'
 
 
-    import type { personalInformation } from './+page.server.js'
+    import type { educationInformation, personalInformation } from './+page.server.js'
     import type { documentationInformation } from './+page.server.js'
 
     //below are functions needed for the page
@@ -46,6 +44,20 @@
         voterID: data.child?.voter_id
     }
 
+    let educationData: educationInformation[] = []
+
+    for(let i in data.child?.educationHistory) {
+        educationData.push({
+            Educationtype: data.child.educationHistory[i].education_type,
+            Educationlevel: data.child.educationHistory[i].grade_level,
+            Educationstatus: data.child.educationHistory[i].student_status_type,
+            yearStart: data.child?.educationHistory[i].year_start,
+            yearEnd: data.child?.educationHistory[i].year_end,
+            isDeleted: false,
+            isNew: false
+        })
+    }
+
 
     let educType: string = data.child?.educationHistory[0].education_type
     let educStatus: string = data.child?.educationHistory[0].student_status_type
@@ -54,7 +66,6 @@
     let yearEnd: number = data.child?.educationHistory[0]?.year_end
 
 
-    console.log(data.child?.educationHistory)
 
 </script>
 
@@ -102,12 +113,13 @@
 
 
 <--CONTAINER FOR EDUCATION HISTORY-->
-<EducationInformation editing = {false} displayEducHistory = {data.child?.educationHistory} schoolYearArray = {data.child?.schoolYearArray} educLevel = {educLevel} educStatus = {educStatus} educType = {educType} 
+{console.log(data.child?.educationHistory)}
+<EducationInformation editing = {false} displayEducHistory = {educationData} schoolYearArray = {data.child?.schoolYearArray} educLevel = {educLevel} educStatus = {educStatus} educType = {educType} 
  bind:yearStart = {yearStart} bind:yearEnd = {yearEnd} bind:selectedIndex = {selectedIndex}/>  
 <!--END OF EDUCATION HISTORY -->
 
 <!--BEGINNING OF DOCUMENTS LISTING-->
-<DocumentationInformation data = {documentationData} editing = {false}/>
+<DocumentationInformation data = {documentationData} editing = {false}, socialParticipation = {data.social_participation}/>
 <!--END OF DOCUMENTS LISTING-->
 
 <!--INTERVENTIONS LIST BEGINS HERE-->

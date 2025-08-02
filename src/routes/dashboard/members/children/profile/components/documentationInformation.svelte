@@ -5,8 +5,25 @@
     import type { documentationInformation } from "../+page.server.js";
 
     export let data: documentationInformation
+    export let socialParticipation;
     export let editing: boolean = true
     export let errors = ""
+
+    let familyLife: string[] = []
+    let communityLife: string[] = []
+
+    let selectedIndex = 0
+
+    for(let i in socialParticipation){
+          if(socialParticipation[i].participation_type === "Community Life") {
+               communityLife.push(socialParticipation[i])
+          }
+
+          else{
+               familyLife.push(socialParticipation[i])
+          }
+    }
+
 </script>
 
 <!--BEGINNING OF DOCUMENTS LISTING-->
@@ -21,35 +38,40 @@
        </div>
        {#if data.hasPWD} 
             <InputText type = "text" disabled = {!editing} required = {editing} msg = {errors.pwdID} label = "ID #" bind:value = {data.pwdID} />
-            <InputText type = "text" disabled = {!editing} required = {editing} msg = {errors.pwdExpiry} label = "Expiry Date" bind:value = {data.pwdExpiry}/>
+            <InputText type = "date" disabled = {!editing} required = {editing} msg = {errors.pwdExpiry} label = "Expiry Date" bind:value = {data.pwdExpiry}/>
        {/if}
 
-       <!-- <div>
-            <Checkbox disabled label = "Social Security" checked = {data.child?.socialProtection?.has}/>
+       <div>
+            <Checkbox disabled label = "Social Participation" checked = {socialParticipation}/>
        </div>
-       {#if data.child?.socialProtection?.has} 
-       <div class = "w-150">
-            {#if data.child?.socialProtection?.community_club}
-            <Checkbox checked disabled label = "Participation in Community Life" />
-            <div class = "w-150">
-            <InputText disabled type = "text" label = "Year of Community Access" value = {data.child.socialProtection.community_year}/>
-            </div>
-            {/if}
-
-            {#if data.child?.socialProtection?.fam_life}
-            <Checkbox checked disabled label = "Participation in Family Life" />
-            <div class = "w-150">
-            <InputText disabled type = "text" label = "Year of Family Access" value = {data.child.socialProtection.family_year}/>
-            </div>
-            {/if} 
-       </div>
-       {/if} -->
+       {#if socialParticipation} 
+          <div class = "flex flex-col md:ml-20 ">
+               <div class = "flex flex-col md:flex-row">
+                    Participation type
+                     <div> <select class = "ml-5 w-full md:w-50" on:change = {(e)=>selectedIndex = e.target.selectedIndex}>
+                         <option> Community Life </option>
+                         <option> Family Life</option>
+                     </select> </div>
+               </div>
+                <div class = "grid grid-cols-1 gap-5 mt-5">
+                    <div> Years of Access: </div>
+                    {#if selectedIndex == 0} 
+                    <div class = "max-w-50"> <InputText type  = "number" value = {communityLife[0].year} /> </div>
+                    <div class = "max-w-50"> <InputText  type = "number" value = {communityLife[0].year} /> </div>
+                    <div class = "max-w-50"> <InputText  type = "number" value = {communityLife[0].year} /> </div>
+                    <div class = "max-w-50"> <InputText type = "number" value = {communityLife[0].year} /> </div>
+                    {:else if selectedIndex == 1}
+                    <div class = "max-w-50"> <InputText type = "number" value = {communityLife[0].year} /> </div>
+                    {/if}
+               </div>
+          </div>
+       {/if}
        <div class = "mt-5">
             <Checkbox label = "PhilHealth" bind:checked = {data.phHealth} disabled = {!editing}/>
        </div>
 
        <div class = "mt-5">
-            <Checkbox label = "National ID" bind:checked = {data.natCert} disabled = {!editing}/>
+            <Checkbox label = "National ID" bind:checked = {data.natID} disabled = {!editing}/>
        </div>
     </div>
     <div class = "flex flex-col !font-bold md:ml-10">

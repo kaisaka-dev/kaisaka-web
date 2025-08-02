@@ -59,14 +59,15 @@ try{
         pwdExpiry = childRecord.pwd_ids.expiry_date   
     }
 
-    //gets record in social protection table
-    // const socsecRes = await fetch(`/api/social_participation?child_id=${childRecord.id}`)
+    // gets record in social protection table
+    const socsecRes = await fetch(`/api/social_participation?child_id=${childRecord.id}`)
+    let socsecRecord;
 
-    // if(socsecRes.ok)
-    // {
-    //         const socsecRecord = await socsecRes.json()
-    //         console.log('social protection: ', socsecRecord)
-    // }
+    if(socsecRes.ok)
+    {
+            socsecRecord = await socsecRes.json()
+            console.log('SOCIAL PROTECTION!!!: ', socsecRecord)
+    }
     
     
 
@@ -98,26 +99,6 @@ try{
         disabilityCategoryID: childRecord.disability_category?.id || "",
         disabilityNature: childRecord.disability_nature || "",
         admissionDate: new Date(memberRecord.admission_date).toISOString().split('T')['0'] || "",
-        philHealth: childRecord.has_philhealth || false,
-        med_cert: childRecord.has_medical_cert || false,
-        birth_cert: childRecord.has_birth_cert || false,
-        barangay_cert: childRecord.has_barangay_cert || false,
-        pwd:{
-            has: pwdHas,
-            id: pwdID  || "",
-            expiry: pwdExpiry || ""
-        },
-
-        socialProtection:{
-            has: socsecHas,
-            community_club:socsecComLife,
-            fam_life: socsecFamLife,
-            family_year: socsecFamYear,
-            community_year: socsecComYear
-        },
-
-        voter_id: childRecord.has_vote || false,
-        national_id: childRecord.has_national_id || false,
         educationHistory: educationArray,
         schoolYearArray: yearArray
     }
@@ -171,7 +152,8 @@ try{
         family: Array.isArray(entireFamily?.data) ? entireFamily.data : [],
         member: memberRecord,
         interventioninfo: interventioninfo || '',
-        discatOptions: options_disCategory
+        discatOptions: options_disCategory,
+        social_participation: socsecRecord
     } 
 }
     catch(error){
@@ -198,27 +180,6 @@ export type childInformation =  {
     remarks:string,
     admissionDate: string,
     terminationDate?: string
-    pwd?:{
-        has:boolean
-        id: string,
-        expiry: string
-    }
-
-    socialProtection?:{
-        has:boolean,
-        fam_life: boolean,
-        family_year: number,
-        community_club: boolean,
-        community_year:number
-
-    }
-
-    philHealth: boolean,
-    birth_cert: boolean,
-    med_cert:boolean,
-    barangay_cert: boolean,
-    voter_id: boolean,
-    national_id:boolean
     educationHistory?: any[]
     schoolYearArray?: string[]
 }
@@ -245,12 +206,22 @@ export type documentationInformation = {
     hasPWD: boolean,
     pwdID: string,
     pwdExpiry: string,
-
+    socialParticipation: [],
     phHealth: boolean,
     natID: boolean,
     medCert:boolean,
-    natCert:boolean,
     birthCert:boolean,
     barangayCert:boolean,
     voterID: boolean
 }
+
+export type educationInformation = {
+    Educationtype: string,
+    Educationstatus: string,
+    Educationlevel: string,
+    yearStart: string,
+    yearEnd: string,
+    isNew: boolean,
+    isDeleted: boolean
+}
+

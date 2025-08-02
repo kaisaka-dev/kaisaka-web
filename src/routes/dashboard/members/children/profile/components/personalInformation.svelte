@@ -52,7 +52,7 @@
     <div class = "flex flex-col xl:flex-row !justify-start mt-2">
         <div class = "flex flex-col w-full max-w-280">
                 <div class = "mt-4 -ml-4"> <Input label = "First Name" disabled = {disabled} required = {!disabled} msg = {errors.firstName} bind:value = {data.firstName} margin = {true}/> </div>
-                <div class = "-ml-4"> <Input label = "Middle Name" disabled = {disabled} required = {!disabled}  bind:value = {data.middleName} margin = {true}/> </div>
+                <div class = "-ml-4"> <Input label = "Middle Name" disabled = {disabled} required = {false} bind:value = {data.middleName} margin = {true}/> </div>
                 <div class = "-ml-4"> <Input label = "Last Name" disabled = {disabled} required = {!disabled} msg = {errors.lastName} bind:value = {data.lastName} margin = {true}/> </div>
                 <div class = "-ml-4"> <Input type = "date" label = "Birthday" required = {!disabled} msg = {errors.birthday} disabled = {disabled} bind:value = {data.birthday} margin = {true}/> </div>
                 <div class = "-ml-4"> <Input label = "Age" disabled bind:value = {age} margin = {true}/> </div>

@@ -3,7 +3,7 @@
     import Input from '$components/input/InputText.svelte'
     import Select from '$components/input/Select.svelte'
     import { goto } from '$app/navigation';
-    import type { personalInformation } from '../+page.server.js'
+    import type { educationInformation, personalInformation } from '../+page.server.js'
     import type { documentationInformation } from '../+page.server.js';
 
     import PersonalInformation from '../components/personalInformation.svelte'
@@ -42,19 +42,9 @@
         voterID: data.child?.voter_id
     }
 
-    type educType = {
-        Educationtype: string,
-        Educationlevel: string,
-        Educationstatus: string,
-        yearStart: number,
-        yearEnd: number,
-        isNew: boolean,
-        isDeleted: boolean,
-        index?: number
-    }
 
-    let educHistory: educType[] = []
-    let displayEducHistory: educType[] = []
+    let educHistory = []
+    let displayEducHistory: educationInformation[] = []
     let displaySchoolYear: string[] = []
     let selectedIndex: number = 0
 
@@ -67,7 +57,6 @@
             yearEnd: data.child?.educationHistory[i]?.year_end,
             isNew:false,
             isDeleted: false
-
         })
 
         displayEducHistory.push({
@@ -286,7 +275,7 @@
         errors.sex = newchildData.sex.trim() === "" ? "Required" : ""
         errors.address = newchildData.address.trim() === "" ? "Required" : ""
         errors.barangay = newchildData.barangay.trim() === "" ? "Required" : ""
-        errors.disabilityCat = newchildData.disabilityCategory == null ? "Required" : ""
+        errors.disabilityCat = newchildData.disabilityCategoryID == null ? "Required" : ""
         errors.disabilityNat = newchildData.disabilityNature.trim() === "" ? "Required" : ""
         if(newchildData.canWork){
             errors.employmentType = newchildData.employmentType.trim() === "--" ? "Required" : ""
@@ -545,7 +534,7 @@
             }
 
             //if the persons record is found in the db, we just update
-            else if(employmentRes && newchildData.canWork == true){
+            else if(employmentRes.ok && newchildData.canWork == true){
                const emplymentstatusRes = await fetch('/api/employment_status', {
                     method: "PUT",
                     body: JSON.stringify({
@@ -560,24 +549,14 @@
             }
 
             //if the persons record is found in the db but we want to delete it 
-            else if(employmentRes && newchildData.canWork == false) {
+            else if(employmentRes.ok && newchildData.canWork == false) {
                 const deleteEmploymentRecord = await fetch(`/api/employment_status?member_id=${data.member?.id}`, {
                     method: 'DELETE'
                 })
             }
 
-            const disabilityCategoryres = await fetch('/api/disability_category', {
-                method:"PUT",
-                body:JSON.stringify({
-                    id: data.child?.disabilitycatID,
-                    name:newchildData.disabilityCategory
-                }),
-                 headers: {
-                    'Content-Type': 'application/json'
-                }
-            })
-
             //EDUCATION RECORD UPDATES BEGIN HERE
+
             //goes through old history to determine if any existing records need to be deleted
             if(educHistory.length > 0) {
                 for(let i = 0; i < educHistory?.length; i++){
@@ -601,12 +580,12 @@
                 const updateEducRecord = await fetch('/api/education_status', {
                 method: "PUT",
                 body:JSON.stringify({
-                    id: data.child.educationHistory[selectedIndex]?.id,
+                    id: data.child?.educationHistory[selectedIndex]?.id,
                     education_type: educType,
-                    education_status: educStatus,
+                    student_status_type: educStatus,
                     grade_level: educLevel,
                     year_start: yearStart,
-                    year_end:yearEnd
+                    year_end: yearEnd
                 }),
                 headers:{
                          'Content-Type': 'application/json'
@@ -628,14 +607,16 @@
                 })
             }
             }
+
+
         //DOCUMENT UPDATES BEGIN HERE
-        if(data.child?.pwd?.has && hasPWD ){ //just updates pwd info
+        if(data.child?.pwd?.has && documentationData.hasPWD ){ //just updates pwd info
             const updatePWDrecord = await fetch('/api/pwd_ids', {
                method: "PUT",
                 body:JSON.stringify({
                     id: data.child.pwd.recordid,
-                    pwd_id: pwdID,
-                    expiry_date:pwdExpiry
+                    pwd_id: documentationData.pwdID,
+                    expiry_date: documentationData.pwdExpiry
                 }),
                 headers:{
                          'Content-Type': 'application/json'
@@ -643,19 +624,19 @@
             })
         }
 
-        else if(!data.child?.pwd?.has && hasPWD){ //for when a new PWD record needs to be created
+        else if(!data.child?.pwd?.has && documentationData.hasPWD){ //for when a new PWD record needs to be created
              const createPWDrecord = await fetch('/api/pwd_ids', {
                method: "POST",
                 body:JSON.stringify({
-                    pwd_id: pwdID,
-                    expiry_date:pwdExpiry
+                    pwd_id: documentationData.pwdID,
+                    expiry_date: documentationData.pwdExpiry
                 }),
                 headers:{
                          'Content-Type': 'application/json'
                      } 
                 })
 
-                const getPWD = await fetch(`/api/pwd_ids?pwd_id=${pwdID}`)
+                const getPWD = await fetch(`/api/pwd_ids?pwd_id=${documentationData.pwdID}`)
                 let pwdRecord = await getPWD.json()
 
                 const updateChild = await fetch('/api/children' , {
@@ -665,20 +646,30 @@
                         pwd_id: pwdRecord.data[0].id
                     })
                 })
+            }
+        else if(data.child?.pwd.has && documentationData.hasPWD == false) {
+                const deletePWDrecord = await fetch('/api/pwd_ids' , {
+                method: "DELETE",
+                body: JSON.stringify({
+                    childID:data.child.id
+                }),
+                headers:{ 'Content-Type': 'application/json'}
+            })
         }
           
-        const documentationUpdate = await fetch('/api/children', {
+        const childUpdate = await fetch('/api/children', {
             method: "PUT",
             body:JSON.stringify({
                 id: data.child?.id,
+                disability_id: newchildData.disabilityCategoryID,
                 remarks:  newchildData.remarks,
                 disability_nature: newchildData.disabilityNature,
-                has_philhealth: hasPHhealth,
-                has_birth_cert: birthCert,
-                has_medical_cert: medCert,
-                has_barangay_cert: barangayCert,
-                has_vote: voterID,
-                has_national_id: natID
+                has_philhealth: documentationData.phHealth,
+                has_birth_cert: documentationData.birthCert,
+                has_medical_cert: documentationData.medCert,
+                has_barangay_cert: documentationData.barangayCert,
+                has_vote: documentationData.voterID,
+                has_national_id: documentationData.natID
             }),
              headers:{
                          'Content-Type': 'application/json'
@@ -848,12 +839,12 @@
         Interventions
 </h1>
 
-<div class = "flex flex-col  max-w-275 mx-auto border-4 border-[var(--border)] ml-55 mr-10 p-4" id ="Intervention Info">
+<div class = "flex flex-col  max-w-250 mx-auto border-4 border-[var(--border)] ml-55 mr-10 p-4" id ="Intervention Info">
     <div class = "flex flex-col">
         <div class = "!bg-[var(--green)] p-3 flex flex-col md:flex-row">
            <div class = "!text-[var(--background)] !font-bold mt-2">Service Category </div>
            <div class = "!text-[var(--background)] !font-bold md:ml-20 mt-2">Interventions Performed </div>
-           <div class = "!text-[var(--background)] !font-bold md:ml-55 mt-2">Status History </div>
+           <div class = "!text-[var(--background)] !font-bold md:ml-25 mt-2">Status History </div>
         </div>
         {#each childInterventions as interventionvar,index}
             <div class = "flex flex-col md:flex-row mt-5 ">
@@ -866,30 +857,30 @@
                 <div class =  "collapse">
                 <input type = "checkbox" />
                     <div class = "collapse-title flex flex-row">
-                        <div class = " z-5000 max-w-50 md:ml-15">
+                        <div class = " z-5000 max-w-30 md:ml-5">
                            <Select  required msg = {errors.interventionstatusErrors[index]} bind:value = {interventionvar.status} options = {["Regressed" , "Improved", "Neutral"]} />
                         </div> 
-                        <div class = "max-w-50 md:ml-5 z-5000"><Input type = "date" bind:value = {interventionvar.dateCreated} required msg = {errors.interventiondateErrors[index]} /></div>
+                        <div class = "max-w-10 md:ml-5 z-5000"><Input type = "date" bind:value = {interventionvar.dateCreated} required msg = {errors.interventiondateErrors[index]} /></div>
                     </div>
                     <div class = "collapse-content flex flex-col">
                         <div class = "flex flex-col">
                         {#each interventionvar.history as status, statusindex}
                         {#if status.isDeleted == false}
                             <div class= "flex flex-row w-100">
-                                <div class = " z-5000 w-50 ml-15">
+                                <div class = " z-5000 w-30  md:ml-5">
                                 <Select bind:value = {status.status} options = {["Regressed" , "Improved" , "Neutral"]} />
                                 </div> 
                                 <div class ="w-15 ml-5">  <Input type = "Date" bind:value = {status.date}/></div>
-                                <div class = "-mt-2.5 -ml-5">
+                                <div class = "-mt-2.5 md:ml-20">
                                 <button class = "!bg-[var(--background)] !text-red-500 hover:!text-red-400 hover:!shadow-[var(--background)]"
                                 on:click = {()=>deleteStatus(statusindex, index)}>
-                                    x
+                                    X
                                 </button>
                                 </div>
                             </div>
                         {/if}
                         {/each}
-                        <button on:click = {() => addStatus(index)} class = "green w-50 ml-45 mt-5"> Add Status</button>
+                        <button on:click = {() => addStatus(index)} class = "green w-50 ml-15 mt-5"> Add Status</button>
                         </div>
                     </div>
                 </div>
@@ -897,7 +888,7 @@
                 <button
                         class = "!bg-[var(--background)] !text-red-500 hover:!text-red-400 hover:!shadow-[var(--background)]"
                         on:click = {()=>deleteIntervention(index)}>
-                        x
+                        X
                 </button>
                 </div>
             </div>
