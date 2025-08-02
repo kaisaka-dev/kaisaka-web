@@ -191,6 +191,7 @@ export const DELETE: RequestHandler = async ({ url }) => {
       yearNum
     );
   } else if (child_id) {
+    console.log("childID found!")
     deleted = await SocialParticipationModel.instance.deleteByChildId(child_id);
   }
 

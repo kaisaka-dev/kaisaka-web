@@ -2,11 +2,12 @@
     import Select from "$lib/components/input/Select.svelte";
     import InputText from "$lib/components/input/InputText.svelte";
     import { dropdownOptions } from '$lib/types/options.js'
+	import type { educationInformation } from "../+page.server.js";
 
     export let selectedIndex = 0
 
     export let educHistory = []
-    export let displayEducHistory = []
+    export let displayEducHistory: educationInformation[] = []
     export let schoolYearArray: string[] = []
     export let editing: boolean = true;
 
@@ -18,9 +19,7 @@
 
     export let errors = ""
 
-    console.log(dropdownOptions.education_status)
-    console.log(educStatus)
-    function updateField(index:number){     
+   function updateField(index:number){     
             educType = displayEducHistory[index].Educationtype
             educLevel = displayEducHistory[index].Educationlevel
             educStatus = displayEducHistory[index].Educationstatus

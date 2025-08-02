@@ -1,13 +1,57 @@
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+
+
 <script lang="ts">
     import Checkbox from "$lib/components/input/Checkbox.svelte";
     import InputText from "$lib/components/input/InputText.svelte";
 
     import type { documentationInformation } from "../+page.server.js";
+    import Validation from "$lib/components/text/Validation.svelte";
 
     export let data: documentationInformation
+    export let socialParticipation = [];
     export let editing: boolean = true
-    export let errors = ""
+    export let errors = {}
+
+    let selectedIndex = 0
+
+   
+    export let showSocialParticipation: boolean = false
+    if(showSocialParticipation) {
+      for(let i in socialParticipation) {
+          socialParticipation[i].isDeleted = false
+          socialParticipation[i].isNew = false
+
+      }
+    }
+
+    function addParticipationRecord(): void {
+          if(selectedIndex == 0) {
+               socialParticipation.push({
+                    isNew: true,
+                    isDeleted: false,
+                    participation_type: "Community Life",
+               })
+          }
+
+          else{
+               socialParticipation.push({
+                    isNew: true,
+                    isDeleted: false,
+                    participation_type: "Family Life",
+               })
+          }
+
+          socialParticipation = socialParticipation
+    }
+
+    function deleteParticipationRecord(index:number): void {
+          socialParticipation[index].isDeleted = true
+          socialParticipation = socialParticipation
+    }
+
 </script>
+
 
 <!--BEGINNING OF DOCUMENTS LISTING-->
 <div id ="Documentation Info" class = "mb-15"></div>
@@ -21,38 +65,56 @@
        </div>
        {#if data.hasPWD} 
             <InputText type = "text" disabled = {!editing} required = {editing} msg = {errors.pwdID} label = "ID #" bind:value = {data.pwdID} />
-            <InputText type = "text" disabled = {!editing} required = {editing} msg = {errors.pwdExpiry} label = "Expiry Date" bind:value = {data.pwdExpiry}/>
+            <InputText type = "date" disabled = {!editing} required = {editing} msg = {errors.pwdExpiry} label = "Expiry Date" bind:value = {data.pwdExpiry}/>
        {/if}
 
-       <!-- <div>
-            <Checkbox disabled label = "Social Security" checked = {data.child?.socialProtection?.has}/>
+       <div>
+            <Checkbox disabled = {!editing} label = "Social Participation" bind:checked = {showSocialParticipation}/>
+             {#if editing }<div class = "ml-7"> <Validation msg = {errors.socialParticipation} /> </div> {/if}
        </div>
-       {#if data.child?.socialProtection?.has} 
-       <div class = "w-150">
-            {#if data.child?.socialProtection?.community_club}
-            <Checkbox checked disabled label = "Participation in Community Life" />
-            <div class = "w-150">
-            <InputText disabled type = "text" label = "Year of Community Access" value = {data.child.socialProtection.community_year}/>
-            </div>
-            {/if}
-
-            {#if data.child?.socialProtection?.fam_life}
-            <Checkbox checked disabled label = "Participation in Family Life" />
-            <div class = "w-150">
-            <InputText disabled type = "text" label = "Year of Family Access" value = {data.child.socialProtection.family_year}/>
-            </div>
-            {/if} 
-       </div>
-       {/if} -->
-       <div class = "mt-5">
+       {#if showSocialParticipation} 
+          <div class = "flex flex-col md:ml-20 ">
+               <div class = "flex flex-col md:flex-row">
+                    Participation type
+                     <div> <select class = "ml-5 w-full md:w-50" on:change = {(e)=>selectedIndex = e.target.selectedIndex}>
+                         <option> Community Life </option>
+                         <option> Family Life</option>
+                     </select> </div>
+               </div>
+               <div class = "grid grid-cols-1 gap-5 mt-5">
+                    <div> Years of Access: </div>
+                    {#if selectedIndex == 0} 
+                    {#each socialParticipation as social_participation,index}
+                      {#if social_participation.participation_type == "Community Life" && social_participation.isDeleted == false}
+                         <div class ="flex flex-col md:flex-row"> 
+                              <div class = "max-w-50">  <InputText type = "number" disabled = {!editing} bind:value = {social_participation.year} /> </div>
+                              {#if editing} <div><i class="fa-solid fa-trash ml-2 mt-1 z-300" on:click = {() => deleteParticipationRecord(index)}></i> </div> {/if} 
+                         </div> 
+                      {/if}
+                    {/each}
+                    {:else}
+                    {#each socialParticipation as social_participation,index}
+                    {#if social_participation.participation_type == "Family Life"  && social_participation.isDeleted == false} 
+                         <div class ="flex flex-col md:flex-row"> 
+                              <div class = "max-w-50">  <InputText type = "number" disabled = {!editing} bind:value = {social_participation.year} /> </div>
+                              {#if editing} <div><i class="fa-solid fa-trash ml-2 mt-1 z-300" on:click = {() => deleteParticipationRecord(index)}></i> </div> {/if} 
+                         </div> 
+                    {/if}
+                    {/each}
+                    {/if}
+                   {#if editing} <i class = "!text-[var(--pink)] hover:underline hover: cursor-pointer" on:click = {() => addParticipationRecord()}>+Add Record</i> {/if}
+               </div>
+          </div>
+       {/if}
+       <div class = "mt-5 z-500">
             <Checkbox label = "PhilHealth" bind:checked = {data.phHealth} disabled = {!editing}/>
        </div>
 
-       <div class = "mt-5">
-            <Checkbox label = "National ID" bind:checked = {data.natCert} disabled = {!editing}/>
+       <div class = "mt-5 z-500">
+            <Checkbox label = "National ID" bind:checked = {data.natID} disabled = {!editing}/>
        </div>
     </div>
-    <div class = "flex flex-col !font-bold md:ml-10">
+    <div class = "flex flex-col !font-bold md:ml-10 z-500">
         <div>
             <Checkbox label = "Medical Certificate" bind:checked = {data.medCert} disabled = {!editing}/>
        </div>

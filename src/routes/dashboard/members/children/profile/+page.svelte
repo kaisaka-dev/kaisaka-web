@@ -1,7 +1,5 @@
 <script lang="ts">
     import Header from '$components/Header.svelte'
-    import Input from '$components/input/InputText.svelte'
-    import Check from '$components/input/Checkbox.svelte'
     import { goto } from '$app/navigation'
 
     export let data;
@@ -11,7 +9,7 @@
     import DocumentationInformation from './components/documentationInformation.svelte'
 
 
-    import type { personalInformation } from './+page.server.js'
+    import type { educationInformation, personalInformation } from './+page.server.js'
     import type { documentationInformation } from './+page.server.js'
 
     //below are functions needed for the page
@@ -46,16 +44,37 @@
         voterID: data.child?.voter_id
     }
 
+    let educationData: educationInformation[] = []
+    let yearStart: string;
+    let yearEnd: string;
+    let educType: string;
+    let educStatus: string;
+    let educLevel: string;
 
-    let educType: string = data.child?.educationHistory[0].education_type
-    let educStatus: string = data.child?.educationHistory[0].student_status_type
-    let educLevel: string = data.child?.educationHistory[0]?.grade_level
-    let yearStart: number = data.child?.educationHistory[0]?.year_start
-    let yearEnd: number = data.child?.educationHistory[0]?.year_end
+    if(data.child?.educationHistory.length > 0) {
+        for(let i in data.child?.educationHistory) {
+            educationData.push({
+            Educationtype: data.child.educationHistory[i].education_type,
+            Educationlevel: data.child.educationHistory[i].grade_level,
+            Educationstatus: data.child.educationHistory[i].student_status_type,
+            yearStart: data.child?.educationHistory[i].year_start,
+            yearEnd: data.child?.educationHistory[i].year_end,
+            isDeleted: false,
+            isNew: false
+        })
+        }
 
+     educType  = data.child?.educationHistory[0].education_type ?? ""
+     educStatus = data.child?.educationHistory[0].student_status_type ?? ""
+     educLevel = data.child?.educationHistory[0]?.grade_level ?? ""
+     yearStart  = data.child?.educationHistory[0]?.year_start ?? ""
+     yearEnd = data.child?.educationHistory[0]?.year_end ?? ""
+    }
 
-    console.log(data.child?.educationHistory)
-
+    let showSocialParticipation: boolean = false
+    if(data.social_participation.length>0){
+        showSocialParticipation = true
+    }
 </script>
 
 
@@ -102,12 +121,13 @@
 
 
 <--CONTAINER FOR EDUCATION HISTORY-->
-<EducationInformation editing = {false} displayEducHistory = {data.child?.educationHistory} schoolYearArray = {data.child?.schoolYearArray} educLevel = {educLevel} educStatus = {educStatus} educType = {educType} 
+{console.log(data.child?.educationHistory)}
+<EducationInformation editing = {false} displayEducHistory = {educationData} schoolYearArray = {data.child?.schoolYearArray} educLevel = {educLevel} educStatus = {educStatus} educType = {educType} 
  bind:yearStart = {yearStart} bind:yearEnd = {yearEnd} bind:selectedIndex = {selectedIndex}/>  
 <!--END OF EDUCATION HISTORY -->
 
 <!--BEGINNING OF DOCUMENTS LISTING-->
-<DocumentationInformation data = {documentationData} editing = {false}/>
+<DocumentationInformation data = {documentationData} editing = {false} socialParticipation = {data.social_participation} showSocialParticipation = {showSocialParticipation} />
 <!--END OF DOCUMENTS LISTING-->
 
 <!--INTERVENTIONS LIST BEGINS HERE-->
