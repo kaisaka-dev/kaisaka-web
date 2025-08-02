@@ -3,6 +3,7 @@
 <script lang="ts">
 	import ReportPeriodModal from './ReportPeriodModal.svelte';
 	import type { ReportPeriod } from './+page.server.js';
+	import LoadingBtn from '$components/styled-buttons/LoadingBtn.svelte';
 
 
 	/**
@@ -39,6 +40,8 @@
 	let formIdx = -1;
 	let sortKey: string = '';
 	let sortAsc: boolean = true;
+	let loadingExport: boolean = false;
+	let exportIndex = -1;
 
 
 	function editModalOpen(idx: number) {
@@ -78,6 +81,7 @@
 	}));
 
 	async function downloadExcel(row: ReportPeriod) {
+		loadingExport = true;
 		try {
 			const response = await fetch('/api/reports/target_cwds', {
 				method: 'POST',
@@ -104,6 +108,7 @@
 			console.error(err);
 			alert('Error generating report.');
 		}
+		loadingExport = false;
 	}
 
 </script>
@@ -155,7 +160,11 @@
 					<button onclick={() => editModalOpen(index)}>Edit</button>
 				</td>
 				<td>
-					<button class="green" onclick={downloadExcel(row)}>Export</button>
+					{#if loadingExport && index === exportIndex}
+						<LoadingBtn label="Export" disableCover={false}/>
+					{:else}
+						<button class="green" onclick={() => {downloadExcel(row); exportIndex = index}}>Export</button>
+					{/if}
 				</td>
 			</tr>
 		{/each}

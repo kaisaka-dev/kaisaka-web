@@ -55,12 +55,12 @@ export const load: PageLoad = async ({fetch}) => {
 				endYYYY: period.end_year,
 				endMM: period.end_month || null,
 				endDD: period.end_date || null,
-				total_target_CWDS: null,
+				total_target_CWDS: period.target_new_cwds + period.target_old_cwds,
 				new_target_CWDS: period.target_new_cwds,
-				old_target_CWDS: period.target_old_cwds,		// missing field in the database
-				total_actual_CWDS: null,	// missing field in the database
-				new_actual_CWDS: period.actual_new_cwds,		// missing field in the database
-				old_actual_CWDS: period.actual_old_cwds,		// missing field in the database
+				old_target_CWDS: period.target_old_cwds,
+				total_actual_CWDS: period.actual_new_cwds + period.actual_old_cwds,
+				new_actual_CWDS: period.actual_new_cwds,
+				old_actual_CWDS: period.actual_old_cwds,
 				general_reflection: period.general_reflection || "",
 				lessons_learned: period.lessons_learned || ""
 			}
