@@ -1,3 +1,4 @@
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css" />
 <script lang="ts">
 	/**
 	 * NOTE: THIS PAGE IS EXACTLY THE SAME FOR /dashboard/registration/family-info and /registration/family-info
@@ -80,6 +81,7 @@
 	let showTable: boolean = $state(false); // for the existing family table
 	let childId = url.childId, memberId: string, familyId: string, caregiverId = url.caregiverId;	// for the posts
 	let isNewChild = url.childId == null && url.caregiverId == null;
+	let loadingSubmission = $state(false);
 	$effect(() => console.log("relavent ids: ", childId, memberId, familyId))
 
 	// pre-populate the family information based on URL
@@ -265,9 +267,11 @@
 
 	// handles the submission of both child-info and family-info
 	async function handleSubmit() {
+		loadingSubmission = true;
 		try {
 			if (!validateForm()) {
 				goto('#family-info');    // scrolls to top
+				loadingSubmission = false;
 				return;
 			}
 			console.log("NEW CWD: ", childRegData)
@@ -390,6 +394,7 @@
 			else goto('/'); // back to main page if previous view is main page
 
 		} catch (err) {
+			loadingSubmission = false;
 			console.error('Submission failed:', err);
 			alert('Submission failed')
 		}
@@ -561,7 +566,9 @@
 </section>
 
 <section style="text-align: center;">
-<!--	<button onclick={() => location.href = 'child'}>Back</button>-->
-
-	<button class="green" onclick="{handleSubmit}">Submit</button>
+	{#if loadingSubmission}
+		<button class="green" aria-label="Submit" disabled><i class="fa fa-circle-notch fa-spin mr-2 !text-[inherit]"></i>Submit</button>
+	{:else}
+		<button class="green" onclick={handleSubmit}>Submit</button>
+	{/if}
 </section>
