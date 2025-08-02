@@ -447,8 +447,11 @@
                     Save Changes 
                 </button>
             </div>
+            <div>
+            <button class="w-40 -ml-5 mt-5" on:click={() => goto(`/dashboard/members/caregivers/profile?id=${data.caregiver.id}`)} >Back</button>
+            </div>
         </div>
-        <div class = "!bg-[var(--green)] w-[4px] h-[275px] rounded-full ml-5"></div>
+        <div class = "!bg-[var(--green)] w-[4px] h-[450px] rounded-full ml-5"></div>
     </div>
 
     <form method = "GET">

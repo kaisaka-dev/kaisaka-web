@@ -4,6 +4,7 @@
 <script lang="ts">
     import type { Caregiver} from './+page.server.js';
     import type { family } from '$lib/types/family.ts'
+    import { goto } from '$app/navigation';
 
     import Header from '$components/Header.svelte'
 
@@ -114,6 +115,8 @@
             <div>
                 <button class="w-40 -ml-5 mt-10" onclick={() => location.href=`profile/edit?id=${data.caregiver.id}`}>Edit Profile</button>
             </div>
+
+            
         </div>
         <div class = "!bg-[var(--green)] w-[4px] h-[275px] rounded-full ml-5"></div>
     </div>

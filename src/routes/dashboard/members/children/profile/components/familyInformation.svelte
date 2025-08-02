@@ -45,7 +45,7 @@
                 {/if}
         {/if}
             <div class = "flex flex-col md:flex-row">
-            <div class = " mt-4 !font-[JSans] max-w-50 md:w-50"> {fammember.members.first_name} {fammember.members.last_name}</div>
+                    <div class = " mt-4 !font-[JSans] max-w-50 md:w-50 hover:underline"> <a href = "/dashboard/members/children/profile?id=${fammember.members.id}"> {fammember.members.first_name} {fammember.members.last_name} </a></div>
             {#if editing}
             <div class = "z-500"><i class="fa-solid fa-trash ml-2 mt-5" on:click ={()=>deleteFamily(index)}></i> </div> 
             {/if}
