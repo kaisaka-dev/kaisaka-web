@@ -25,7 +25,7 @@
     }
 
     let showSocialParticipation: boolean = false
-    if(socialParticipation.length > 1) {
+    if(socialParticipation) {
       showSocialParticipation = true
     }
 
