@@ -70,17 +70,11 @@
      yearStart  = data.child?.educationHistory[0]?.year_start ?? ""
      yearEnd = data.child?.educationHistory[0]?.year_end ?? ""
     }
-    
 
-
-     
-    
-     
-    
-    
-
-
-
+    let showSocialParticipation: boolean = false
+    if(data.social_participation.length>0){
+        showSocialParticipation = true
+    }
 </script>
 
 
@@ -133,7 +127,7 @@
 <!--END OF EDUCATION HISTORY -->
 
 <!--BEGINNING OF DOCUMENTS LISTING-->
-<DocumentationInformation data = {documentationData} editing = {false}, socialParticipation = {data.social_participation}/>
+<DocumentationInformation data = {documentationData} editing = {false} socialParticipation = {data.social_participation} showSocialParticipation = {showSocialParticipation} />
 <!--END OF DOCUMENTS LISTING-->
 
 <!--INTERVENTIONS LIST BEGINS HERE-->

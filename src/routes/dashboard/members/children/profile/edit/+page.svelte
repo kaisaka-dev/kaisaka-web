@@ -12,6 +12,10 @@
 	import DocumentationInformation from '../components/documentationInformation.svelte';
 
     export let data;
+    let showSocialParticipation: boolean = false
+    if(data.social_participation.length>0){
+        showSocialParticipation = true
+    }
 
     let newchildData: personalInformation = {
          firstName: data.child?.firstName || "--",
@@ -244,6 +248,7 @@
         yearstart: "",
         pwdID: "",
         pwdExpiry: "",
+        socialParticipation: "",
         healthIntervention: "",
         socialIntervention: "",
         livelihoodIntervention: "",
@@ -261,6 +266,7 @@
         errors.educationtype = ""
         errors.educationlvl = ""
         errors.educstatus = ""
+        errors.socialParticipation = ""
 
 
         errors.firstName = newchildData.firstName.trim() === "" ? "Required" : ""
@@ -363,10 +369,16 @@
                 errors.interventionnameErrors[i] = ""
                 errors.interventiondateErrors[i] = ""
                 errors.interventionstatusErrors[i] = ""
-            }
-            
-        }        
+            }            
+        }    
 
+        if(data.social_participation.length > 0) {
+            for(let i in data.social_participation) {
+                if((data.social_participation[i].year == null || data.social_participation[i].year < 0 || data.social_participation[i].year > new Date().getFullYear()) && data.social_participation[i].isDeleted == false) {
+                    errors.socialParticipation = "Invalid Date!"
+                }
+            }
+        }
         
         for (let i of Object.values(errors)) {
             if(Array.isArray(i)) {
@@ -676,6 +688,48 @@
                      } 
         })
 
+        if(!showSocialParticipation && data.social_participation.length > 0){
+            const deleteAllSocialParticipation = await fetch(`/api/social_participation?child_id=${data.child.id}`, {
+                method: "DELETE"
+            })
+        }
+
+        else{
+            for(let i in data.social_participation){
+            //POST new social_participation data
+            if(data.social_participation[i].isNew && !data.social_participation[i].isDeleted){
+                const createSocialParticipation = await fetch(`/api/social_participation` , {
+                    method:"POST",
+                    body:JSON.stringify({
+                        child_id: data.child?.id,
+                        participation_type: data.social_participation[i].participation_type,
+                        year: data.social_participation[i].year
+                    }),
+                    headers:{ "Content-type":"application/json"}
+                })
+            }
+            //DELETE existing social_participation data
+            else if(!data.social_participation[i].isNew && data.social_participation[i].isDeleted){
+                const deleteSocialParticipation = await fetch(`/api/social_participation?id=${data.social_participation[i].id}` , {
+                    method: "DELETE"
+                })
+            }
+            //PUT existing social_participation data
+            else if(!data.social_participation[i].isNew && !data.social_participation[i].isDeleted){
+                const createSocialParticipation = await fetch(`/api/social_participation` , {
+                    method:"PUT",
+                    body:JSON.stringify({
+                        id: data.social_participation[i].id,
+                        participation_type: data.social_participation[i].participation_type,
+                        year: data.social_participation[i].year
+                    }),
+                    headers:{ "Content-type":"application/json"}
+                })
+            }
+        }
+        }
+        
+
         //INTERVENTION UPDATES BEGIN HERE
         for(let i = 0; i < childInterventions.length; i++) {
             if(childInterventions[i].isNew == true && childInterventions[i].name !== "" && childInterventions[i].isDeleted == false) { //for when interventions need to be created
@@ -831,7 +885,7 @@
 <!--END OF EDUCATION HISTORY -->
 
 <!--BEGINNING OF DOCUMENTS LISTING-->
-<DocumentationInformation bind:data = {documentationData} editing = {true} bind:errors = {errors}/>
+<DocumentationInformation bind:data = {documentationData} bind:socialParticipation = {data.social_participation} editing = {true} bind:errors = {errors} bind:showSocialParticipation = {showSocialParticipation}/>
 <!--END OF DOCUMENTS LISTING-->
 
 <!--INTERVENTIONS LIST BEGINS HERE-->
