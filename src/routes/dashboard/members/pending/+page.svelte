@@ -5,22 +5,14 @@
     import InputText from '$components/input/InputText.svelte';
     import Select from '$components/input/Select.svelte';
     import { onMount } from 'svelte';
+    import type { PageData } from '../../../../../.svelte-kit/types/src/routes/dashboard/members/families/$types.js';
 
-    type PendingDocument = {
-        id: string;
-        firstName: string;
-        lastName: string;
-        medCert: string;
-        birthCert: string;
-        brgyCert: string;
-        interventionPlan: string;
-        link: string;
-    };
+    // load data
+    const { data } = $props<{ data: PageData }>();
 
-    let pendingList: PendingDocument[] = $state([]);
-    let filteredData: PendingDocument[] = $state([]);
-    let loading = $state(true);
-    let error = $state('');
+    let pendingList: PendingDocument[] = $state(data.pendingList || []);
+    let filteredData: PendingDocument[] = $state(pendingList);
+
     
     let filter = $state({
         main: "",
@@ -34,43 +26,6 @@
 
     const documentStatusOptions = ["All", "❌", "✅"];
 
-    onMount(async () => {
-        await fetchPendingDocuments();
-    });
-
-    async function fetchPendingDocuments() {
-        try {
-            loading = true;
-            console.log('Fetching: /api/children?type=pending-documents');
-            const response = await fetch('/api/children?type=pending-documents');
-            
-            if (!response.ok) {
-                throw new Error('Failed to fetch pending documents');
-            }
-            
-            const result = await response.json();
-            
-            // Transform API data to match component expectations
-            pendingList = result.data.map((child: any) => ({
-                id: child.id || '',
-                firstName: child.members?.first_name || '',
-                lastName: child.members?.last_name || '',
-                medCert: child.has_medical_cert ? "✅" : "❌",
-                birthCert: child.has_birth_cert ? "✅" : "❌",
-                brgyCert: child.has_barangay_cert ? "✅" : "❌",
-                interventionPlan: child.intervention?.intervention ? "✅" : "❌",
-                link: `/dashboard/members/children/profile?id=${child.id}`
-            }));
-            
-            filteredData = pendingList;
-            error = '';
-        } catch (err) {
-            error = err instanceof Error ? err.message : 'An error occurred';
-            console.error('Error fetching pending documents:', err);
-        } finally {
-            loading = false;
-        }
-    }
 
     $effect(() => applyFilter());
 
@@ -148,15 +103,11 @@
     </FilterSearch>
 
     <br>
-    
-    {#if loading}
-        <div class="flex justify-center items-center py-8">
-            <p>Loading pending documents...</p>
-        </div>
-    {:else if error}
+
+    {#if data.error}
         <div class="flex justify-center items-center py-8">
             <div class="text-red-500">
-                <p>Error: {error}</p>
+                <p>Error: {data.error}</p>
                 <button onclick={fetchPendingDocuments} class="mt-2 px-4 py-2 bg-blue-500 text-white rounded">
                     Retry
                 </button>
