@@ -1,5 +1,6 @@
 import TableManager, { type tableRow } from '../types/manager.js';
 import type { Database } from '../types/supabase-types.ts';
+import { supabase } from '../types/supabase.js';
 
 type participation_type_enum = Database['public']['Enums']['participation_type_enum'];
 type SocialParticipationRow = tableRow<"social_participation">
@@ -105,8 +106,11 @@ export class SocialParticipationModel extends TableManager<"social_participation
    * @returns boolean if deleted successfully
    */
   async deleteByChildId(child_id: string): Promise<boolean>{
-    const result = await this.deleteMany({ child_id: child_id });
-    return result !== null;
+    const { error } = await supabase
+      .from('social_participation')
+      .delete()
+      .eq('child_id', child_id);
+    return !error;
   }
 
   /**
