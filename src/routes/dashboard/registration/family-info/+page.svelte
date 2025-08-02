@@ -567,6 +567,7 @@
 
 <section style="text-align: center;">
 	{#if loadingSubmission}
+		<div id="disable-cover" class="!fixed !top-0 !left-0 !w-full !h-full !bg-[rgba(0,0,0,0.2)] !z-[9999] !pointer-events-auto"></div>
 		<button class="green" aria-label="Submit" disabled><i class="fa fa-circle-notch fa-spin mr-2 !text-[inherit]"></i>Submit</button>
 	{:else}
 		<button class="green" onclick={handleSubmit}>Submit</button>
