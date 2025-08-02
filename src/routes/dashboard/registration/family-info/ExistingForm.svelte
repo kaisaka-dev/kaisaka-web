@@ -9,18 +9,16 @@
 	export let formData: FamilyMembers;
 	export let error_msg: string = "";
 	export let members: MemberListFamily[];
-	export let showtable: false;
-	export let isChildView: true;
+	export let showTable: false;
 	let showMultipleResults = false;
 	let foundMembers: { family_id: string, label: string, member: MemberListFamily }[] = [];
 	let selectedFamilyId: string = '';
-	let DISABLED = "-";		// for the disabled text field display
 
 /**
  * function passed to SearchBtn, shows table if the search is valid. else, error messages are shown
  */
 function handleSearch() {
-	showtable = false;
+	showTable = false;
 	showMultipleResults = false;
 	foundMembers = [];
 	selectedFamilyId = '';
@@ -77,7 +75,7 @@ function handleSearch() {
 				relationship: member.relationship || ''
 			}));
 
-		showtable = true;
+		showTable = true;
 		showMultipleResults = false;
 	}
 
@@ -134,7 +132,7 @@ $: onFamilySelect(selectedFamilyId)
 			{/if}
 
 
-			{#if showtable}
+			{#if showTable}
 				<br>
 				<div class="input-container">
 					<table>
@@ -143,9 +141,7 @@ $: onFamilySelect(selectedFamilyId)
 							<th>First Name</th>
 							<th>Last Name</th>
 							<th>Contact No.</th>
-							{#if  isChildView }
 							<th class="w-[410px]">Relationship</th>
-							{/if}
 						</tr>
 						</thead>
 						<tbody>
@@ -158,13 +154,7 @@ $: onFamilySelect(selectedFamilyId)
 								{:else}
 									<td>-</td>
 								{/if}
-								{#if  isChildView }
-									{#if formData.linkedFamily.infoLinked[linked_i].caregiver_id != null}
 									<td class="w-[410px]"><InputText id="relationship-{linked_i}" bind:value={formData.linkedFamily.infoLinked[linked_i].relationship}/></td>
-									{:else}
-									<td>Child with Disability</td>
-									{/if}
-								{/if}
 							</tr>
 						{/each}
 						</tbody>
