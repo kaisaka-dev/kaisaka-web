@@ -45,9 +45,15 @@
     }
 
     let educationData: educationInformation[] = []
+    let yearStart: string;
+    let yearEnd: string;
+    let educType: string;
+    let educStatus: string;
+    let educLevel: string;
 
-    for(let i in data.child?.educationHistory) {
-        educationData.push({
+    if(data.child?.educationHistory.length > 0) {
+        for(let i in data.child?.educationHistory) {
+            educationData.push({
             Educationtype: data.child.educationHistory[i].education_type,
             Educationlevel: data.child.educationHistory[i].grade_level,
             Educationstatus: data.child.educationHistory[i].student_status_type,
@@ -56,14 +62,22 @@
             isDeleted: false,
             isNew: false
         })
+        }
+
+     educType  = data.child?.educationHistory[0].education_type ?? ""
+     educStatus = data.child?.educationHistory[0].student_status_type ?? ""
+     educLevel = data.child?.educationHistory[0]?.grade_level ?? ""
+     yearStart  = data.child?.educationHistory[0]?.year_start ?? ""
+     yearEnd = data.child?.educationHistory[0]?.year_end ?? ""
     }
+    
 
 
-    let educType: string = data.child?.educationHistory[0].education_type
-    let educStatus: string = data.child?.educationHistory[0].student_status_type
-    let educLevel: string = data.child?.educationHistory[0]?.grade_level
-    let yearStart: number = data.child?.educationHistory[0]?.year_start
-    let yearEnd: number = data.child?.educationHistory[0]?.year_end
+     
+    
+     
+    
+    
 
 
 
