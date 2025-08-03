@@ -1,4 +1,5 @@
 import TableManager, { type tableRow } from '../types/manager.js';
+import { supabase } from '../types/supabase.js';
 
 type SocialProtectionStatusRow = tableRow<"social_protection_status">
 
@@ -168,5 +169,18 @@ export class socialProtectionStatusModel extends TableManager<"social_protection
       updated_at: new Date().toISOString()
     };
     return this.updateOne(references, fullUpdates);
+  }
+
+  /**
+   * Deletes all social protection status records for a specific child
+   * @param child_id Child's UUID
+   * @returns boolean success indicator
+   */
+  async deleteByChildId(child_id: string): Promise<boolean> {
+    const { error } = await supabase
+      .from('social_protection_status')
+      .delete()
+      .eq('child_id', child_id);
+    return !error;
   }
 }

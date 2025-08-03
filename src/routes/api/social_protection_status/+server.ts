@@ -90,3 +90,19 @@ export const PUT: RequestHandler = async({request}) => {
 
   return json({ message: 'Updated successfully' })
 }
+
+export const DELETE: RequestHandler = async ({ url }) => {
+  const child_id = url.searchParams.get('child_id');
+  
+  if (!child_id) {
+    throw error(400, 'Missing required parameter: child_id');
+  }
+
+  const deleted = await socialProtectionStatusModel.instance.deleteByChildId(child_id);
+
+  if (!deleted) {
+    throw error(500, 'Failed to delete social protection status records');
+  }
+
+  return json({ message: 'Social protection status records deleted successfully' });
+}
