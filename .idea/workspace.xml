@@ -5,16 +5,9 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="12237686-5a37-4f4c-b35a-ebe8cb09a864" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/components/Header.svelte" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/Header.svelte" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/lib/models/MemberShipAnnualRenewalModel.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/lib/models/MemberShipAnnualRenewalModel.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/lib/models/MembershipPaymentModel.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/lib/models/MembershipPaymentModel.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/lib/models/annualProgramModel.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/lib/models/annualProgramModel.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/lib/models/serviceObjectiveModel.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/lib/models/serviceObjectiveModel.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/routes/dashboard/reports/annual/+page.server.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/routes/dashboard/reports/list/+page.server.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/routes/dashboard/reports/annual/+page.svelte" beforeDir="false" afterPath="$PROJECT_DIR$/src/routes/dashboard/reports/list/+page.svelte" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/routes/dashboard/reports/annual/ReportPeriodModal.svelte" beforeDir="false" afterPath="$PROJECT_DIR$/src/routes/dashboard/reports/list/ReportPeriodModal.svelte" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/routes/dashboard/reports/annual/ReportPeriodTable.svelte" beforeDir="false" afterPath="$PROJECT_DIR$/src/routes/dashboard/reports/list/ReportPeriodTable.svelte" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/routes/dashboard/members/children/profile/+page.server.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/routes/dashboard/members/children/profile/+page.server.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/routes/dashboard/members/children/profile/edit/+page.server.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/routes/dashboard/members/children/profile/edit/+page.server.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/routes/dashboard/members/children/profile/edit/+page.svelte" beforeDir="false" afterPath="$PROJECT_DIR$/src/routes/dashboard/members/children/profile/edit/+page.svelte" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -41,29 +34,24 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent">{
-  &quot;keyToString&quot;: {
-    &quot;ModuleVcsDetector.initialDetectionPerformed&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,
-    &quot;git-widget-placeholder&quot;: &quot;frontend/main&quot;,
-    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
-    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
-    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
-    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
-    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
-    &quot;prettierjs.PrettierConfiguration.Package&quot;: &quot;C:\\Users\\beaan\\Downloads\\CSSWENG\\kaisaka-web\\node_modules\\prettier&quot;,
-    &quot;ts.external.directory.path&quot;: &quot;C:\\Users\\beaan\\Downloads\\CSSWENG\\kaisaka-web\\node_modules\\typescript\\lib&quot;,
-    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "ModuleVcsDetector.initialDetectionPerformed": "true",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "RunOnceActivity.git.unshallow": "true",
+    "git-widget-placeholder": "frontend/main",
+    "kotlin-language-version-configured": "true",
+    "node.js.detected.package.eslint": "true",
+    "node.js.detected.package.tslint": "true",
+    "node.js.selected.package.eslint": "(autodetect)",
+    "node.js.selected.package.tslint": "(autodetect)",
+    "nodejs_package_manager_path": "npm",
+    "prettierjs.PrettierConfiguration.Package": "C:\\Users\\beaan\\Downloads\\CSSWENG\\kaisaka-web\\node_modules\\prettier",
+    "ts.external.directory.path": "C:\\Users\\beaan\\Downloads\\CSSWENG\\kaisaka-web\\node_modules\\typescript\\lib",
+    "vue.rearranger.settings.migration": "true"
   }
-}</component>
-  <component name="SharedIndexes">
-    <attachedChunks>
-      <set>
-        <option value="bundled-js-predefined-d6986cc7102b-f27c65a3e318-JavaScript-WS-251.23774.424" />
-      </set>
-    </attachedChunks>
-  </component>
+}]]></component>
+  <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
   <component name="TaskManager">
     <task active="true" id="Default" summary="Default task">
       <changelist id="12237686-5a37-4f4c-b35a-ebe8cb09a864" name="Changes" comment="" />

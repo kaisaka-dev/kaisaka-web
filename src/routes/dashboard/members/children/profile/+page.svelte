@@ -2,21 +2,7 @@
 
 <script lang="ts">
     import Header from '$components/Header.svelte'
-    import { goto, beforeNavigate, afterNavigate } from '$app/navigation'
-    import { onMount } from 'svelte'
-    import { writable } from 'svelte/store'
-
-    const isLoading = writable(false)
-
-    onMount(() => {
-        beforeNavigate(() => {
-            isLoading.set(true)
-        });
-
-        afterNavigate(() => {
-            setTimeout(() => isLoading.set(false),300)
-        })
-    })
+    import { goto } from '$app/navigation'
 
     export let data;
     import PersonalInformation from './components/personalInformation.svelte'
@@ -93,10 +79,6 @@
         showSocialParticipation = true
     }
 </script>
-{#if $isLoading}
-    Loading Profile....
-    {console.log("Loading")}
-{/if}
 
 <Header/>
 
@@ -141,7 +123,6 @@
 
 
 <--CONTAINER FOR EDUCATION HISTORY-->
-{console.log(data.child?.educationHistory)}
 <EducationInformation editing = {false} displayEducHistory = {educationData} schoolYearArray = {data.child?.schoolYearArray} educLevel = {educLevel} educStatus = {educStatus} educType = {educType} 
  bind:yearStart = {yearStart} bind:yearEnd = {yearEnd} bind:selectedIndex = {selectedIndex}/>  
 <!--END OF EDUCATION HISTORY -->

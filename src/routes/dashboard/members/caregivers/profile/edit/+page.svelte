@@ -8,8 +8,9 @@
     import InputText from '$components/input/InputText.svelte';
     import Select from '$components/input/Select.svelte';
     import { goto } from '$app/navigation';
-    import Validation from '$lib/components/text/Validation.svelte';
     import LoadingBtn from '$components/styled-buttons/LoadingBtn.svelte';
+
+    import FamilyInformation from '../components/familyInformation.svelte';
 
 
 
@@ -41,32 +42,12 @@
         contact_no: "",
         address: "",
         barangay: "",
-        occupation: "",
         date_admission: "",
-        family_errors: [],
         community_overall:"",
         income_overall: ""
     }
 
-    let families = data.caregiver.family
-    for(let i in families) {
-        for(let j in families[i].data) {
-            families[i].data[j]["isDeleted"] = false
-            if(families[i].data[j].is_child){
-                families[i].data[j]['membershipStatus'] = "Beneficiary"
-            }
-            else{
-                families[i].data[j]['membershipStatus'] = "Member"
-            }
-        }
-    }
-
-    for(let i in families) {
-        errors.family_errors.push("")
-    }
-
-
-
+    
     $: if (birthday) {
         const birthDate = new Date(birthday);
         const today = new Date();
@@ -90,44 +71,34 @@
 //below are essential functions for the page to work
     function validateForm(): boolean{
         let hasErrors = false
-        for(let i in errors.family_errors){
-            errors.family_errors[i] = ""
-        }
+
         errors.community_overall = ""
         errors.income_overall = ""
 
         errors.first_name = first_name.trim() === "" ? "Required" : ""
         errors.last_name = last_name.trim() === "" ? "Required" : ""
         
-        if(new Date(birthday).getFullYear() > new Date().getFullYear()) {
+        if(new Date(birthday) > new Date()) {
             errors.birthday = "Birthday cannot be in the future"
         }
 
         else{
-            errors.birthday = birthday.trim() === "" ? "Required" : ""
+            errors.birthday = birthday == null ||  birthday.trim() === "" ? "Required" : ""
         }
 
         errors.sex = sex == null ? "Required" : ""
         errors.address = address.trim() === "" ? "Required" : ""
         errors.barangay = barangay.trim() === "" ? "Required" : ""
-        errors.occupation = occupation.trim() === "" ? "Required" : ""
 
         if(new Date(date_admission) > new Date()){
             errors.date_admission = "Date cannot be in the future"
         }
          
         else {
-            errors.date_admission = date_admission.trim() === "" ? "Required" : ""
+            errors.date_admission = date_admission == null || date_admission.trim() === ""  ? "Required" : ""
          }
 
-         for(let i in families){
-            for(let j in families[i].data) {
-                if(families[i].data[j].members.first_name === "" || families[i].data[j].members.last_name === "" || families[i].data[j].members.relationship_type === "" ) {
-                    errors.family_errors[i] = "Missing Information!"
-                }
-            }
-         }
-
+         
          if(data.caregiver.community_history.length > 0) {
             for(let i in data.caregiver.community_history) {
             if(data.caregiver.community_history[i].isDeleted == false){
@@ -137,7 +108,7 @@
 
                 if(data.caregiver.community_history[i].date_joined === "" || new Date(data.caregiver.community_history[i].date_joined) > new Date(data.caregiver.community_history[i].date_left) && data.caregiver.community_history[i].date_left !== null) {
                     if(errors.community_overall !== "") {
-                        errors.community_overall = errors.community_overall + " and a there is an invalid date!"
+                        errors.community_overall = errors.community_overall + " and there is an invalid date!"
                     }
 
                     else {
@@ -195,11 +166,8 @@
     }
 
     async function editData(): Promise<void>{
-
-
         if(validateForm()) {
             loadingSave = true;
-            console.log(data.caregiver.community_history)
             //PERSONAL INFO UPDATES BEGIN HERE
             const memberUpdate = await fetch('/api/members' , {
                 method: "PUT",
@@ -251,45 +219,21 @@
                         }    
             })
             //FAMILY INFO UPDATES BEGIN HERE
-            for(let i in families){
-                for(let j in families[i].data){
-                    const memberUpdate = await fetch('/api/members' , {
-                        method: "PUT",
+            for(let i in data.caregiver.family){
+                for(let j in data.caregiver.family[i].data){
+                   //DELETES INDIVIDUAL MEMBER RECORDS
+                    if(data.caregiver.family[i].data[j].isDeleted){
+                        console.log(data.caregiver.family[i].data[j])
+                         const deleteFamilyRecord = await fetch("/api/family_members" , {
+                        method: 'DELETE',
                         body: JSON.stringify({
-                            id: families[i].data[j].members.id,
-                            first_name: families[i].data[j].members.first_name,
-                            last_name: families[i].data[j].members.last_name
+                            family_id: data.caregiver.family[i].data[j].family_id,
+                            member_id: data.caregiver.family[i].data[j].member_id
                         }),
-                        
-                        headers: {
-                            'Content-Type' : 'application/json'
-                        }
-                    })
-
-                    let ischildValue: boolean
-                    if(families[i].data[j].membershipStatus === "Beneficiary"){
-                        ischildValue = true
+                        headers: {'Content-Type':'application/json'}
+                        })
                     }
-
-                    else{
-                        ischildValue = false
-                    }
-
                    
-
-                    const familymemberUpdate = await fetch('/api/family_members', {
-                        method: 'PUT', 
-                        body: JSON.stringify({
-                            family_id: families[i].data[j].family_id,
-                            member_id: families[i].data[j].members.id,
-                            relationship_type: families[i].data[j].relationship_type,
-                            is_child: ischildValue
-                        }),
-                        headers: {
-                            'Content-Type' : 'application/json'
-                        }
-                    })
-
                 }
             }
 
@@ -396,26 +340,9 @@
         loadingSave = false;
     }
 
-    function familyName(family:object): string {
-        let lastnames: string[] = []
-
-        for(const mem of family){
-            lastnames.push(mem.members.last_name)
-        }
-
-        let familyname = [...new Set(lastnames)]
-        return Array.from(familyname).join(', ')
-    }
 </script>
 
 <style>
-    .information{
-        display: flex;
-        flex-direction: row;
-        margin-top: 15px;
-        margin-left:10px;
-    }
-
     #sidebar {
         align-self: flex-start;
     }
@@ -464,8 +391,6 @@
         </div>
         <div class = "!bg-[var(--green)] w-[4px] h-[450px] rounded-full ml-5"></div>
     </div>
-
-    <form method = "GET">
     <!--Container for profile information-->
     <div>
         <!--Container for the personal information portion of the profile-->
@@ -492,47 +417,9 @@
 								 value={data.caregiver.date_termination ? new Date(data.date_termination).toISOString().split('T')[0] : ''} />
 		{/if}
 	</div>
-</div>
-
+    </div>
         <!--Container for the families of the caregiver-->
-        <div class = "mt-10">
-            <div id = "Family Info">
-                <h2> Families </h2>
-                <div class = "grid grid-cols-2 gap-y-10 gap-x-120 mt-2" >
-                {#each families as family,index}
-                    <div class = "flex flex-col min-w-150 w-220">
-                        <div class =  "!bg-[var(--green)] w-220 min-w-150 flex flex-row" >
-                            <div class = " w-300 mt-2.5 ml-3 flex flex-col">    
-                                <div class = "!text-white"> {familyName(family.data)}</div>
-                                <div><Validation msg = {errors.family_errors[index]} /></div>
-                            </div>
-                        </div>
-                       <div class = "border-4 border-[var(--border)]">
-                            <div class = "!bg-[var(--green)] p-3 flex flex-row mb-10">
-                            <div class = "!text-[var(--background)] !font-bold ">Membership Status </div>
-                            <div class = "!text-[var(--background)] !font-bold ml-10">Relationship </div>
-                            <div class = "!text-[var(--background)] !font-bold ml-20">Last Name </div>
-                            <div class = "!text-[var(--background)] !font-bold ml-25">First Name </div>
-                        </div>
-                        {#each family.data as member}
-                            <div class = "information"> 
-                                <div class = "w-45"> <Select required bind:value = {member.membershipStatus} options = {['Beneficiary' , 'Member']}/> </div>
-                                <div class = "w-45 ml-5"> <InputText required bind:value = {member.relationship_type}/> </div>
-                                <div class = "w-45 ml-5"> <InputText required bind:value = {member.members.last_name}/> </div>
-                                <div class = "w-45 ml-5"> <InputText required bind:value = {member.members.first_name}/> </div>
-                                <div>
-                                <button  class = "!bg-[var(--background)] -mt-20 !text-red-500 hover:!text-red-400 hover:!shadow-[var(--background)]">
-                                x
-                                </button> 
-                            </div>
-                            </div>
-                        {/each}
-                        </div>
-                    </div>        
-                {/each}
-                </div>
-            </div>
-        </div>
+        <FamilyInformation {editing} bind:family = {data.caregiver.family} caregiverID = {data.caregiver.id}/>
 
         <!--Container for Community Group -->
         <HistoryCommunityGroup id="Community Group" bind:data= {data.caregiver.community_history} bind:error = {errors.community_overall} {editing} />
@@ -540,5 +427,4 @@
         <!--Container for Income Type-->
         <HistoryIncomeType id="Income Type" bind:data={data.caregiver.income_history} bind:error = {errors.income_overall} {editing} />
     </div>
-    </form>
 </div>

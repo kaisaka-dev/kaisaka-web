@@ -276,6 +276,8 @@
         errors.educationlvl = ""
         errors.educstatus = ""
         errors.socialParticipation = ""
+        errors.yearstart = ""
+        errors.yearend = ""
 
 
         errors.firstName = newchildData.firstName.trim() === "" ? "Required" : ""
