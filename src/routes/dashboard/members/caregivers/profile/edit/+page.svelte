@@ -9,12 +9,14 @@
     import Select from '$components/input/Select.svelte';
     import { goto } from '$app/navigation';
     import Validation from '$lib/components/text/Validation.svelte';
+    import LoadingBtn from '$components/styled-buttons/LoadingBtn.svelte';
 
 
 
 
     export let data
     let editing = true
+    let loadingSave = false;
 
     let first_name: string = data.caregiver.first_name;
     let middle_name: string = data.caregiver.middle_name;
@@ -196,6 +198,7 @@
 
 
         if(validateForm()) {
+            loadingSave = true;
             console.log(data.caregiver.community_history)
             //PERSONAL INFO UPDATES BEGIN HERE
             const memberUpdate = await fetch('/api/members' , {
@@ -390,6 +393,7 @@
 
             goto(`/dashboard/members/caregivers/profile?id=${data.caregiver.id}`);
         }
+        loadingSave = false;
     }
 
     function familyName(family:object): string {
@@ -428,6 +432,9 @@
 <!--Container for page content-->
 <div class = "flex flex row">
     <!--Container for side bar-->
+    {#if loadingSave}
+        <LoadingBtn showBtn={false} />
+    {/if}
     <div class = "flex flex-row ml-10 m-4 sticky top-20" id = "sidebar">
         <div class = "flex flex-col !font-[JSans]">
             <div class = "hover:!text-[var(--green)]">
@@ -443,9 +450,13 @@
                 <a class = "hover:!text-[var(--green)]" href = "#Income Type">Income Type </a>
             </div>
             <div>
-                <button class = "green w-40 -ml-5 mt-10"  on:click={() => editData()}>
-                    Save Changes 
-                </button>
+                {#if loadingSave}
+                    <LoadingBtn label="Save Changes" btnClass="green w-40 -ml-5 mt-10" disableCover={false} />
+                {:else}
+                    <button class = "green w-40 -ml-5 mt-10"  on:click={() => editData()}>
+                        Save Changes
+                    </button>
+                {/if}
             </div>
             <div>
             <button class="w-40 -ml-5 mt-5" on:click={() => goto(`/dashboard/members/caregivers/profile?id=${data.caregiver.id}`)} >Back</button>
