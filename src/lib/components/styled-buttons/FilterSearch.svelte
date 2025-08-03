@@ -33,7 +33,7 @@
               id="search"
               class="input"
               bind:value={searchedValue}
-              style="height: auto; width: 30rem;"
+              style="height: auto; width: 28.6rem;"
             />
             <i class="fa fa-search" style="color: var(--background); margin-top: 1rem; margin-right: 1rem"></i>
 
