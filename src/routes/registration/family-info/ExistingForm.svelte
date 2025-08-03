@@ -9,7 +9,7 @@
 	export let formData: FamilyMembers;
 	export let error_msg: string = "";
 	export let members: MemberListFamily[];
-	let showtable = false;
+	export let showTable: false;
 	let showMultipleResults = false;
 	let foundMembers: { family_id: string, label: string, member: MemberListFamily }[] = [];
 	let selectedFamilyId: string = '';
@@ -18,7 +18,7 @@
  * function passed to SearchBtn, shows table if the search is valid. else, error messages are shown
  */
 function handleSearch() {
-	showtable = false;
+	showTable = false;
 	showMultipleResults = false;
 	foundMembers = [];
 	selectedFamilyId = '';
@@ -68,13 +68,14 @@ function handleSearch() {
 			.filter(m => m.family_id === foundMember.family_id)
 			.map(member => ({
 				member_id: member.member_id,
+				caregiver_id: member.caregiver_id,
 				firstName: member.firstName,
 				lastName: member.lastName,
 				contactNo: member.contactNo,
 				relationship: member.relationship || ''
 			}));
 
-		showtable = true;
+		showTable = true;
 		showMultipleResults = false;
 	}
 
@@ -131,7 +132,7 @@ $: onFamilySelect(selectedFamilyId)
 			{/if}
 
 
-			{#if showtable}
+			{#if showTable}
 				<br>
 				<div class="input-container">
 					<table>
@@ -140,16 +141,20 @@ $: onFamilySelect(selectedFamilyId)
 							<th>First Name</th>
 							<th>Last Name</th>
 							<th>Contact No.</th>
-							<th>Relationship</th>
+							<th class="w-[410px]">Relationship</th>
 						</tr>
 						</thead>
 						<tbody>
 						{#each formData.linkedFamily.infoLinked as _, linked_i}
 							<tr>
-								<td>{formData.linkedFamily.infoLinked[linked_i].firstName}</td>
-								<td>{formData.linkedFamily.infoLinked[linked_i].lastName}</td>
-								<td>{formData.linkedFamily.infoLinked[linked_i].contactNo}</td>
-								<td><InputText id="relationship-{linked_i}" bind:value={formData.linkedFamily.infoLinked[linked_i].relationship}/></td>
+									<td>{formData.linkedFamily.infoLinked[linked_i].firstName}</td>
+									<td>{formData.linkedFamily.infoLinked[linked_i].lastName}</td>
+								{#if  formData.linkedFamily.infoLinked[linked_i].caregiver_id != null }
+									<td>{formData.linkedFamily.infoLinked[linked_i].contactNo}</td>
+								{:else}
+									<td>-</td>
+								{/if}
+									<td class="w-[410px]"><InputText id="relationship-{linked_i}" bind:value={formData.linkedFamily.infoLinked[linked_i].relationship}/></td>
 							</tr>
 						{/each}
 						</tbody>

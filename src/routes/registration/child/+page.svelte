@@ -16,6 +16,7 @@
     import InputRange from '$components/input/InputRange.svelte';
     import type  { PageData } from '../../../../../.svelte-kit/types/src/routes/$types.js';
     import { dropdownOptions } from '$lib/types/options.js';
+    import LoadingBtn from '$components/styled-buttons/LoadingBtn.svelte';
 
 
     // load the data
@@ -39,6 +40,7 @@
      */
     const staffView = /dashboard/i.test(page.url.pathname);
     const thisYear = new Date().getFullYear();  // used to verify participation in family life, community life
+    let loadingNext = $state(false);
 
     // field variables
     let formData = $state({
@@ -99,10 +101,6 @@
     }
 
 
-    let educType = $state("");
-
-
-
     /* special fields */
     $effect (() => {
           const birthDate = new Date(formData.birthday);
@@ -152,7 +150,7 @@
         errors.address = formData.address.trim() === "" ? "Required" : "";
         errors.barangay = formData.barangay === "" ? "Required" : "";
         errors.disCategory = formData.disability.category_id == null ? "Required" : "";
-        errors.disNature = formData.disability.nature.trim() === "" ? "Required" : "";
+        // errors.disNature = formData.disability.nature.trim() === "" ? "Required" : "";   // not required na raw
         errors.educType = formData.educ.type.trim() === "" ? "Required" : "";
 
         // throws an error if the admission date is blank or is the future
@@ -211,6 +209,7 @@
     }
 
     function handleNext() {
+        loadingNext = true;
         if (validateForm()) {
             childFormData.update(current => ({
                 ...current,
@@ -289,7 +288,10 @@
 
             goto('family-info');
             console.log("Form submitted")
+        } else {
+            loadingNext = false;
         }
+
     }
     
 
@@ -300,7 +302,7 @@
 {/if}
 
 <section id="child-info">
-    <h1>Child Registration</h1>
+    <h1>Register Child/Youngster with Disability</h1>
 
 
 
@@ -313,7 +315,7 @@
     <InputText label="Address" id="address" bind:value={formData.address} required msg={errors.address}/>
     <InputText label="Barangay" id="barangay" bind:value={formData.barangay} required msg={errors.barangay}/>
     <Select label="Disability Category" id="dis-category" options={options.disability_category} bind:value={formData.disability.category_id} required msg={errors.disCategory}/>
-    <Textarea label="Disability Nature" id="dis-nature" bind:value={formData.disability.nature} required msg={errors.disNature}/>
+    <Textarea label="Disability Nature" id="dis-nature" bind:value={formData.disability.nature} />
 
     <Textarea label="Remarks" id="remarks" bind:value={formData.remarks}/>
 
@@ -410,5 +412,10 @@ you may contact them here xxxxx -->
 
 <section style="text-align: center;">
     <Validation msg={errors.overall} style="color:var(--error-color); margin-bottom: 25px; padding: 0 35px;"/>
-    <button onclick={handleNext}>Next</button>
+
+    {#if loadingNext}
+        <LoadingBtn label="Next" btnClass=""/>
+    {:else}
+        <button onclick={handleNext}>Next</button>
+    {/if}
 </section>

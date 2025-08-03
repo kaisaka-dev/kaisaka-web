@@ -10,10 +10,12 @@
 	import { goto } from '$app/navigation';
 	import { page } from '$app/state';
 	import type { FamilyMembers, CaregiverError, NewCaregiver } from '$lib/types/registrationForm.js';
+	import { onMount } from 'svelte';
 
 	import type { PageData } from '../../../../../.svelte-kit/types/src/routes/$types.js';
 	import { dropdownOptions } from '$lib/types/options.js';
 	import ExistingForm from './ExistingForm.svelte';
+	import LoadingBtn from '$components/styled-buttons/LoadingBtn.svelte';
 
 
 	/**
@@ -23,6 +25,13 @@
 	 * staffView = true if it is the staff who is accessing the page
 	 */
 	const staffView = /dashboard/i.test(page.url.pathname);
+
+	// get the url parameters
+	const url = {
+		caregiverId: page.url.searchParams.get('caregiver'),
+		childId: page.url.searchParams.get('cwd')
+	}
+
 	const childRegData = get(childFormData)
 	console.log(childRegData);
 
@@ -35,13 +44,14 @@
 		sex: dropdownOptions.sex
 	});
 	const members = $state(data.members)
+	console.log("members: ", members)
 
 	let familyMembers: FamilyMembers = $state(
 		 {
 			hasExisting: false,
 			linkedFamily: {
 				type: 'linked',
-				family_id: null,
+				family_id: "",
 				firstName: "",
 				lastName: "",
 				contactNo: "",
@@ -68,6 +78,84 @@
 		}))
 	);
 	let linkedFamilyError = $state('')	// default no errors
+	let showTable: boolean = $state(false); // for the existing family table
+	let childId = url.childId, memberId: string, familyId: string, caregiverId = url.caregiverId;	// for the posts
+	let isNewChild = url.childId == null && url.caregiverId == null;
+	let loadingSubmission = $state(false);
+	$effect(() => console.log("relavent ids: ", childId, memberId, familyId))
+
+	// pre-populate the family information based on URL
+	onMount(async () => {
+		console.log('URL params:', url);
+		if (url.caregiverId) {
+			await handleCaregiverIdParam(url.caregiverId);		// pre-populate family information
+		}
+		if (url.childId) {
+			await handleChildIdParam(url.childId);
+		}
+	})
+
+	async function handleFamilyIdParam(familyId: string) {
+		console.log('handleFamilyIdParam called with:', familyId);
+		try {
+			// find all the members with the family id from the URL
+			const familyMembersFound = members.filter(m => m.family_id === familyId);
+
+			// set family as existing and populate the linked info
+			if (familyMembersFound.length > 0) {
+				familyMembers.hasExisting = true;
+				familyMembers.linkedFamily.family_id = familyId;
+				familyMembers.linkedFamily.infoLinked = familyMembersFound.map(member => ({
+					member_id: member.member_id,
+					caregiver_id: member.caregiver_id,
+					firstName: member.firstName,
+					lastName: member.lastName,
+					contactNo: member.contactNo,
+					relationship: member.relationship || ''
+				}))
+
+				console.log(`loaded ${familyMembers.linkedFamily.infoLinked.length}`)
+				showTable = true;
+			}
+		} catch (error) {
+			console.error('Error handling familyid parameter:', error)
+		}
+	}
+
+	async function handleChildIdParam(childId: string) {
+		// call the api to get the information
+		const childRecRes = await fetch(`/api/children/${childId}`)
+		const childRecord = await childRecRes.json()
+		console.log('childRecord: ', childRecord)
+		memberId = childRecord.member_id
+
+		// get the member id (need for famly)
+		const famMemRes = await fetch(`/api/family_members?member_id=${memberId}`)
+		const famMemberRecord = await famMemRes.json()
+		console.log('familyMemberRecord: ', famMemberRecord)
+		familyId = famMemberRecord.data[0].family_id
+
+		await handleFamilyIdParam(familyId)
+
+	}
+
+	async function handleCaregiverIdParam(caregiverId: string) {
+		// call the api to get the information
+		const caregiverRecRes = await fetch(`/api/caregivers/${caregiverId}`)
+		const caregiverRecord = await caregiverRecRes.json()
+		console.log('caregiverRecord: ', caregiverRecord)
+		memberId = caregiverRecord.member_id
+
+		// get the member id (need for famly)
+		const famMemRes = await fetch(`/api/family_members?member_id=${memberId}`)
+		const famMemberRecord = await famMemRes.json()
+		console.log('familyMemberRecord: ', famMemberRecord)
+		familyId = famMemberRecord.data[0].family_id
+
+		await handleFamilyIdParam(familyId)
+
+	}
+
 
 	function addNewCaregiver() {
 		const newCaregiver = {
@@ -101,6 +189,7 @@
 
 		familyMembers.newCaregivers = [...familyMembers.newCaregivers, newCaregiver];
 		caregiverErrors = [...caregiverErrors, newError];
+		console.log(familyMembers)
 	}
 
 	/**
@@ -163,128 +252,139 @@
 	}
 
 	// called by handle submit whenever calling the POST api
-	async function safeFetch<T = any>(url: string, payload: any): Promise<T> {
+	async function safeFetch<T = any>(method: 'POST' | 'PUT', url: string, payload: any): Promise<T> {
 		const res = await fetch(url, {
-			method: 'POST',
+			method,
 			body: JSON.stringify(payload),
 			headers: { 'Content-Type': 'application/json' }
 		});
 		if (!res.ok) {
 			const error = await res.text();
-			throw new Error(`Failed to POST ${url}: ${error}`);
+			throw new Error(`Failed to ${method} ${url}: ${error}`);
 		}
 		return await res.json();
 	}
 
 	// handles the submission of both child-info and family-info
 	async function handleSubmit() {
+		loadingSubmission = true;
 		try {
 			if (!validateForm()) {
 				goto('#family-info');    // scrolls to top
+				loadingSubmission = false;
 				return;
 			}
-			console.log(childRegData)
+			console.log("NEW CWD: ", childRegData)
+			console.log("INFO ON FAMILY: ", familyMembers)
 
-			// insert address
-			const addressData = await safeFetch('/api/addresses', childRegData.address);
-			console.log(addressData.message)
-			childRegData.member!.address_id = addressData.data.id;
+			/*
+			note there are 3 views,
+			0. url without family id nor child id: default, register new cwd
+			1. url with family id: it is the caregiver view, autofill the linked family, there is no "new" child
+					purpose: to link caregiver to family
+			2. url with child id (also needs family id): old child, already has linked family,
+					purpose: to add new caregiver and edit the relationship_cc
+			 */
 
-			// insert barangay
-			const barangayData = await safeFetch('/api/barangays', childRegData.barangay);
-			console.log("Barangay ", barangayData.message)
-			childRegData.member!.barangay_id = barangayData.data.id;
 
-			// insert member
-			const memberData = await safeFetch('/api/members', childRegData.member);
-			console.log(memberData.message)
-			const memberId = memberData.data.id;
+			// CODE BLOCK #1: SUBMITTING CWD DATA (of previous page)
+			// bypass if: has family id and has child id
+			if (url.caregiverId == null && url.childId == null) {
+				// insert address
+				const addressData = await safeFetch('POST', '/api/addresses', childRegData.address);
+				console.log(addressData.message);
+				childRegData.member!.address_id = addressData.data.id;
 
-			var pwdId = null;
+				// insert barangay
+				const barangayData = await safeFetch('POST', '/api/barangays', childRegData.barangay);
+				console.log('Barangay ', barangayData.message);
+				childRegData.member!.barangay_id = barangayData.data.id;
 
-			// insert PWD ID
-			if(childRegData.pwd_id !== undefined){
-				const pwdIdData = await safeFetch('/api/pwd_ids', childRegData.pwd_id);
-				console.log(pwdIdData.message)
-				pwdId = pwdIdData.data.id;
-			}
+				// insert member
+				const memberData = await safeFetch('POST', '/api/members', childRegData.member);
+				console.log(memberData.message);
+				memberId = memberData.data.id;
 
-			// insert child info
-			childRegData.child!.member_id = memberId;
-			childRegData.child!.pwd_id = pwdId;
-			const childData = await safeFetch('/api/children', childRegData.child);
-			console.log(childData.message)
-			const childId = childData.data.id;
+				var pwdId = null;
 
-			// insert education status
-			if(childRegData.education_status !== undefined) {
-				childRegData.education_status!.child_id = childId;
-				const eduStatusData = await safeFetch('/api/education_status', childRegData.education_status);
-				console.log(eduStatusData.message)
-			}
+				// insert PWD ID
+				if (childRegData.pwd_id !== undefined) {
+					const pwdIdData = await safeFetch('POST', '/api/pwd_ids', childRegData.pwd_id);
+					console.log(pwdIdData.message);
+					pwdId = pwdIdData.data.id;
+				}
 
-			// insert social protection status (for community group)
-			if(childRegData.social_participation_com !== undefined) {
-				childRegData.social_participation_com!.child_id = childId;
-				const socProtStatusDataCom = await safeFetch('/api/social_participation', childRegData.social_participation_com);
-				console.log(socProtStatusDataCom.message)
-			}
+				// insert child info
+				childRegData.child!.member_id = memberId;
+				childRegData.child!.pwd_id = pwdId;
+				const childData = await safeFetch('POST', '/api/children', childRegData.child);
+				console.log(childData.message);
+				childId = childData.data.id;
 
-			// insert social participation status (for family life)
-			if(childRegData.social_participation_fam !== undefined) {
-				childRegData.social_participation_fam!.child_id = childId;
-				const socProtStatusDataFam = await safeFetch('/api/social_participation', childRegData.social_participation_fam);
-				console.log(socProtStatusDataFam.message)
-			}
+				// insert education status
+				if (childRegData.education_status !== undefined) {
+					childRegData.education_status!.child_id = childId;
+					const eduStatusData = await safeFetch('POST', '/api/education_status', childRegData.education_status);
+					console.log(eduStatusData.message);
+				}
 
-			// insert employment status
-			if(childRegData.employment_status !== undefined) {
-				childRegData.employment_status!.member_id = memberId;
-				const empStatusData = await safeFetch('/api/employment_status', childRegData.employment_status);
-				console.log(empStatusData.message)
+				// insert social protection status (for community group)
+				if (childRegData.social_participation_com !== undefined) {
+					childRegData.social_participation_com!.child_id = childId;
+					const socProtStatusDataCom = await safeFetch('POST', '/api/social_participation', childRegData.social_participation_com);
+					console.log(socProtStatusDataCom.message);
+				}
+
+				// insert social participation status (for family life)
+				if (childRegData.social_participation_fam !== undefined) {
+					childRegData.social_participation_fam!.child_id = childId;
+					const socProtStatusDataFam = await safeFetch('POST', '/api/social_participation', childRegData.social_participation_fam);
+					console.log(socProtStatusDataFam.message);
+				}
+
+				// insert employment status
+				if (childRegData.employment_status !== undefined) {
+					childRegData.employment_status!.member_id = memberId;
+					const empStatusData = await safeFetch('POST', '/api/employment_status', childRegData.employment_status);
+					console.log(empStatusData.message);
+				}
 			}
 
 			// for family
 
-			// if linked family exists
+			// CODE BLOCK #2.0: REUSING FAMILY ID FROM LINKED MEMBERS
 			if (familyMembers.hasExisting && familyMembers.linkedFamily != null) {
 				// get the family id of the existing family
 				const familyId = familyMembers.linkedFamily.family_id;
 
-				// create new relationships for each child-familyMember relationship which isn't null
-				// if (familyMembers.hasExisting && familyMembers.linkedFamily?.infoLinked) {
-				// 	for (const linkedMember of familyMembers.linkedFamily.infoLinked) {
-				// 		if (linkedMember.relationship && linkedMember.relationship.trim() !== '') {
-				// 			const relationshipData = await safeFetch('/api/relationship_cc', {
-				// 				caregiver: linkedMember.member_id,
-				// 				child: childId,
-				// 				relationship: linkedMember.relationship
-				// 			});
-				// 			console.log(relationshipData.message)
-				// 		}
-				// 	}
-				// }
+				// update relationships in family_members
+				if (familyMembers.hasExisting && familyMembers.linkedFamily?.infoLinked) {
+					for (const linkedMember of familyMembers.linkedFamily.infoLinked) {
+							const relationshipData = await safeFetch('PUT', '/api/family_members', {
+								member_id: linkedMember.member_id,
+								family_id: familyId,
+								relationship_type: linkedMember.relationship
+							});
+							console.log(relationshipData.message)
+					}
+				}
 
 				// add the child and caregivers to the newly created family
-				await POST_family(childId, memberId, familyId)
+				await POST_family(familyId)
 
 
-			} // if registering a new family
+			} // CODE BLOCK #2.1: CREATING NEW FAMILY ID
 			else {
 				// create a new family
-				const familyData = await safeFetch('/api/families', null);
+				const familyData = await safeFetch('POST', '/api/families', null);
 
 				console.log(familyData.message, familyData.data.id)
 				const familyId = familyData.data.id
 
 				// add the child and caregivers to the newly created family
-				await POST_family(childId, memberId, familyId)
-
+				await POST_family(familyId)
 
 			}
-
-
-
 
 
 			console.log('All data successfully inserted!');
@@ -294,69 +394,108 @@
 			else goto('/'); // back to main page if previous view is main page
 
 		} catch (err) {
+			loadingSubmission = false;
 			console.error('Submission failed:', err);
 			alert('Submission failed')
 		}
 
-		async function POST_family(child_id: string, member_id: string, family_id: string) {
-			// add the child to the existing family (POST to family_members)
-			const famChildData = await safeFetch('/api/family_members', {
-				is_child: true,
-				member_id: member_id,
-				family_id: family_id
-			});
-			console.log('Child added to family:', famChildData.message);
+		async function POST_family(newFamilyId: string) {
+			let isChild = childId != null
+			let oldChildNewFamily = (url.childId != null && familyId != newFamilyId)
+			let oldCareNewFamily = (url.caregiverId != null && familyId != newFamilyId)
+
+			// CODE BLOCK #3: ADD MEMBER TO FAMILY MEMBERS RECORD
+			// if currently exists in a family, delete its old family_members record
+			if ((oldChildNewFamily	|| oldCareNewFamily) && familyId != null) {
+				console.log('Child/Caregiver is changing families - deleting old family record');
+				// #1 delete old family first
+				try {
+					const deleteRes = await fetch('/api/family_members', {
+						method: 'DELETE',
+						body: JSON.stringify({
+							family_id: familyId, // old family ID
+							member_id: memberId
+						}),
+						headers: { 'Content-Type': 'application/json' }
+					});
+
+					if (deleteRes.ok) {
+						const deleteResult = await deleteRes.json();
+						console.log('Old family record deleted:', deleteResult);
+					} else {
+						console.warn('Failed to delete old family record');
+					}
+				} catch (error) {
+					console.error('Error deleting old family record:', error);
+				}
+
+				// update the record in family_members
+				const famMemData = await safeFetch('PUT', '/api/family_members', {
+					is_child: isChild,
+					member_id: memberId,
+					family_id: newFamilyId
+				});
+				console.log('Member updated to family:', famMemData.message);
+				familyId = newFamilyId
+			}
+			// add the child to the existing family (POST to family_members) if new registration
+			else if (isNewChild) {
+				const famMemData = await safeFetch('POST', '/api/family_members', {
+					is_child: isChild,
+					member_id: memberId,
+					family_id: newFamilyId,
+					relationship_type: isChild ? "CWD" : "Caregiver"
+				});
+				console.log('Member added to family:', famMemData.message);
+				familyId = newFamilyId
+			}
 
 
-			// add the other caregivers to the existing family
+			// CODE BLOCK #4: ADD ALL NEW CAREGIVERS TO THE EXISTING FAMILY
 			for (const [i, newCaregiver] of familyMembers.newCaregivers.entries()) {
 				// add all the caregivers to the db (POST to member, and POST to caregivers)
 				const caregiverMember = await POST_caregiver(newCaregiver);
 
 				// add the caregivers to the existing family
-				const famMemData = await safeFetch('/api/family_members', {
+				const famMemData = await safeFetch('POST', '/api/family_members', {
 					is_child: false,
-					member_id: caregiverMember.id,
-					family_id: family_id
+					member_id: caregiverMember.member_id,
+					family_id: newFamilyId,
+					relationship_type: newCaregiver.relationship.trim() !== "" ? newCaregiver.relationship : "Caregiver"
 				});
 				console.log(newCaregiver.firstName, ' added to family: ', famMemData.message)
-
-				// add the relationship of caregivers to child IF NOT EMPTY
-				// console.log("the relationship: ", {
-				// 	caregiver: caregiverMember.id,
-				// 	child: child_id,
-				// 	relationship: newCaregiver.relationship
-				// })
-				// if (newCaregiver.relationship && newCaregiver.relationship.trim() !== '') {
-				// 	const relationshipData = await safeFetch('/api/relationship_cc', {
-				// 		caregiver: caregiverMember.id,
-				// 		child: child_id,
-				// 		relationship: newCaregiver.relationship
-				// 	});
-				// 	console.log(relationshipData.message)
-				// }
 			}
 		}
 
+		// CODE BLOCK #5: INSERT NEW CAREGIVER
 		async function POST_caregiver(caregiver: NewCaregiver) {
-			console.log("... inserting: ", caregiver)
+			console.log("... inserting: ", $state.snapshot(caregiver))
 			// insert address
-			const addressData = await safeFetch('/api/addresses', { address: caregiver.address });
+			const addressData = await safeFetch('POST', '/api/addresses', { address: caregiver.address });
 			console.log(addressData.message)
 			const address_id = addressData.data.id;
 
 			// insert barangay
-			const barangayData = await safeFetch('/api/barangays', { name: caregiver.brgy });
+			const barangayData = await safeFetch('POST', '/api/barangays', { name: caregiver.brgy });
 			console.log("Barangay ", barangayData.message)
 			const barangay_id = barangayData.data.id;
 
 			// create the member record for caregiver
-			const memberData = await safeFetch('/api/members', {
+			console.log("member:" , {
 				first_name: caregiver.firstName,
 				last_name: caregiver.lastName,
 				birthday: caregiver.bday || null,
 				sex: caregiver.sex,
-				admission_date: childRegData.member.admission_date ?? `${new Date()}-01T00:00:00Z`, 	// makes it the same as the child
+				admission_date: childRegData?.member?.admission_date ??  new Date().toISOString(), 	// makes it the same as the child
+				address_id: address_id,
+				barangay_id: barangay_id
+			})
+			const memberData = await safeFetch('POST', '/api/members', {
+				first_name: caregiver.firstName,
+				last_name: caregiver.lastName,
+				birthday: caregiver.bday || null,
+				sex: caregiver.sex,
+				admission_date: childRegData?.member?.admission_date ?? new Date(new Date().getFullYear(), new Date().getMonth(), 1).toISOString(), 	// makes it the same as the child
 				address_id: address_id,
 				barangay_id: barangay_id
 			});
@@ -364,7 +503,7 @@
 			const member_id = memberData.data.id;
 
 			// create the caregiver record for the caregiver
-			const caregiverData = await safeFetch('/api/caregivers', {
+			const caregiverData = await safeFetch('POST', '/api/caregivers', {
 				contact_number: caregiver.contactNo.replace(/\s/g, ''),
 				facebook_link: caregiver.fbLink,
 				email: caregiver.email,
@@ -376,25 +515,28 @@
 
 			// create the caregiver_groups record
 			if (caregiver.communityGrp_id != null) {
-				const comGrpData = await safeFetch('/api/caregiver_groups', {
+				const comGrpData = await safeFetch('POST', '/api/caregiver_groups', {
 					date_joined: new Date(caregiver.communityYr, 0, 1),	// converts year into january
 					community_group_id: caregiver.communityGrp_id,
 					caregiver_id: caregiver_id
 				})
-				console.log(comGrpData.message)
+				console.log("Community group: ", comGrpData.message)
 			}
 
 			// create the income type record
 			if (caregiver.income != null && caregiver.income !== "") {
-				const incomeData = await safeFetch('/api/income_type', {
+				const incomeData = await safeFetch('POST', '/api/income_type', {
 					income_category: caregiver.income,
 					date_start: new Date(),
 					caregiver_id: caregiver_id
 				})
-				console.log(incomeData.message)
+				console.log("Income: ", incomeData.message)
 			}
 
-			return memberData.data;
+			return {
+				member_id: memberData.data.id,
+				caregiver_id: caregiver_id
+			};
 		}
 
 
@@ -406,9 +548,9 @@
 <section id="family-info">
 	<h1>Family Information</h1>
 
-	<ExistingForm bind:formData={familyMembers} error_msg={linkedFamilyError} members={members} />
+	<ExistingForm bind:formData={familyMembers} error_msg={linkedFamilyError} members={members} bind:showTable={showTable} isChildView={url.caregiverId == null}/>
 
-	{#each familyMembers.newCaregivers as caregiver, index (index)}
+	{#each familyMembers.newCaregivers as _, index (index)}
 		<CaregiverForm
 			bind:formData={familyMembers.newCaregivers[index]}
 			errors={caregiverErrors[index]}
@@ -424,7 +566,9 @@
 </section>
 
 <section style="text-align: center;">
-	<button onclick={() => location.href = 'child'}>Back</button>
-
-	<button class="green" onclick="{handleSubmit}">Submit</button>
+	{#if loadingSubmission}
+		<LoadingBtn label="Submit" />
+	{:else}
+		<button class="green" onclick={handleSubmit}>Submit</button>
+	{/if}
 </section>

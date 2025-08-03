@@ -1,4 +1,4 @@
-import type { PageLoad } from '../../../../../.svelte-kit/types/src/routes/$types.js';
+import type { PageLoad } from '../../../../.svelte-kit/types/src/routes/$types.js';
 import type { MemberListFamily } from '$lib/types/registrationForm.js';
 
 export const load: PageLoad = async({fetch}) => {
@@ -15,6 +15,9 @@ export const load: PageLoad = async({fetch}) => {
 	const members: MemberListFamily[] = familyMembersData.data.map((item: any) => ({
 		family_id: item.family_id,
 		member_id: item.member_id,
+		caregiver_id: item.members.caregivers.length > 0
+			? item.members.caregivers[0].id
+			: null,
 		firstName: item.members.first_name,
 		lastName: item.members.last_name,
 		contactNo: item.members.caregivers.length > 0
