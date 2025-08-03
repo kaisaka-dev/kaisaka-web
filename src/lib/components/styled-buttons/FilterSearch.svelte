@@ -20,7 +20,13 @@
         <div style="display: flex; flex-direction: row; background-color: lightgray; border-radius: 5px;
         width: fit-content;">
 
-            <button onclick={filter}>Filter</button>
+            <button onclick={filter}>Filter
+                {#if showModal}
+                    <i class="fa-solid fa-caret-up ml-[5px]   !text-inherit relative top-[2px]"></i>
+                {:else}
+                    <i class="fa-solid fa-caret-down ml-[5px] !text-inherit relative top-[0px]"></i>
+                {/if}
+            </button>
 
             <input
               type="text"
