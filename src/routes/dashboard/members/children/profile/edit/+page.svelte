@@ -12,8 +12,10 @@
 	import FamilyInformation from '../components/familyInformation.svelte';
     import EducationInformation from '../components/educationInformation.svelte';
 	import DocumentationInformation from '../components/documentationInformation.svelte';
+    import LoadingBtn from '$components/styled-buttons/LoadingBtn.svelte';
 
     export let data;
+    let loadingSave = false;
     let showSocialParticipation: boolean = false
     if(data.social_participation.length>0){
         showSocialParticipation = true
@@ -442,6 +444,7 @@
     
         async function editData(): Promise<void> {
            if(validateForm()) {
+             loadingSave = true;
             //PERSONAL INFORMATION EDITS BEGIN HERE
             const memberres = await fetch('/api/members', {
             method: "PUT",
@@ -903,6 +906,7 @@
             
         goto(`/dashboard/members/children/profile?id=${data.child.id}`);
     }
+     loadingSave = false;
 
 }
 
@@ -922,6 +926,9 @@ function showStatusHistory(index:number){
      {data.child?.firstName ?? "First Name Missing!"} {data.child?.lastName ?? "Last Name Missing!"}'s Profile 
     </h1>
 </section>
+{#if loadingSave}
+  <LoadingBtn showBtn={false} />
+{/if}
 <div class = "flex flex-row ml-10 m-4 sticky top-20 ">
     <div class = "flex flex-col !font-[JSans]">
         <div class = "hover:!text-[var(--green)]">
@@ -940,8 +947,12 @@ function showStatusHistory(index:number){
             <a class = "hover:!text-[var(--green)]" href = "#Intervention Info">Interventions </a>
         </div>
         <div>
+          {#if loadingSave}
+            <LoadingBtn label="Save Changes" btnClass="green w-40 -ml-5 mt-5" disableCover={false} />
+          {:else}
             <button class = "green w-40 -ml-5 mt-5" on:click= {() => editData()}>
                 Save Changes </button>
+          {/if}
         </div>
         
         <div>
