@@ -113,7 +113,7 @@
                 <a class = "hover:!text-[var(--green)]" href = "#Income Type">Income Type </a>
             </div>
             <div>
-                <button class="w-40 -ml-5 mt-10" onclick={() => location.href=`profile/edit?id=${data.caregiver.id}`}>Edit Profile</button>
+                <button class="w-40 -ml-5 mt-10" onclick={() => goto(`profile/edit?id=${data.caregiver.id}`)}>Edit Profile</button>
             </div>
 
             

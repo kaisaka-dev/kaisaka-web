@@ -10,6 +10,7 @@ import InputRange from '$components/input/InputRange.svelte';
 import type { PageData } from './$types';
 import { dropdownOptions } from '$lib/types/options.js';
 import Checkbox from '$components/input/Checkbox.svelte';
+import { goto } from '$app/navigation';
 
 const { data } = $props<{ data: PageData }>();
 
@@ -113,7 +114,7 @@ function resetFilters() {
     <FilterSearch bind:searchedValue={filter.main}>
         <!-- to be rendered inside the Filter Search component-->
         <div slot="button-list">
-            <button onclick={() => location.href="/dashboard/registration/child"}>Register</button>
+            <button onclick={() => goto("/dashboard/registration/child")}>Register</button>
             <button onclick={() => console.log("Export")}  class="green">Export</button>
         </div>
         <div slot="modal">
