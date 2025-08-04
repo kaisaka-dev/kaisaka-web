@@ -1,9 +1,13 @@
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css" />
+
 <script lang="ts">
 import Header from "$components/Header.svelte";
 import { onMount } from 'svelte';
 
 let loading = false;
 let pendingList =[];
+let totalCwds: number;
+let pendingCwds: number;
 
 onMount(fetchPendingDocuments)
 
@@ -11,20 +15,44 @@ async function fetchPendingDocuments() {
     try {
         loading = true;
         console.log('Fetching: /api/children?type=pending-documents');
-        const response = await fetch('/api/children?type=pending-documents');
 
-        if (!response.ok) {
+        const [response, allChildRes] = await Promise.all([
+            fetch('/api/children?type=pending-documents'),
+            fetch('/api/children')
+        ]);
+
+        if (!response.ok || !allChildRes.ok) {
             throw new Error('Failed to fetch pending documents');
         }
 
-        const result = await response.json();
+        const [result, childResult] = await Promise.all([
+            response.json(),
+            allChildRes.json()
+        ]);
 
-        // Transform API data to match component expectations
-        pendingList = result.data.map((child: any) => ({
+        // transform API data to match component expectations
+        const transformedList = result.data.map((child: any) => ({
             id: child.id || '',
             name: child.members?.first_name + ' ' + child.members?.last_name,
+            medCert: child.has_medical_cert ? "✅" : "❌",
+            birthCert: child.has_birth_cert ? "✅" : "❌",
+            brgyCert: child.has_barangay_cert ? "✅" : "❌",
+            interventionPlan: child.intervention?.[0]?.intervention ? "✅" : "❌",
             link: `/dashboard/members/children/profile?id=${child.id}`
         }));
+
+        // filters the list (removes records which has ✅ for all records
+        pendingList = transformedList.filter((child) =>
+          child.medCert !== "✅" ||
+          child.birthCert !== "✅" ||
+          child.brgyCert !== "✅" ||
+          child.interventionPlan !== "✅"
+        );
+
+        console.log(pendingList)
+
+        pendingCwds = pendingList.length;
+        totalCwds = childResult.data.length;
     } catch (err) {
         console.error('Error fetching pending documents:', err);
     } finally {
@@ -45,8 +73,13 @@ async function fetchPendingDocuments() {
                         !rounded-2xl flex flex-row"
                 onclick={() => location.href="/dashboard/members/children"}>
             <div id="cwds-w-intervention" class=" !px-[4rem]" style="font-size:var(--text-8xl); border-right:1px solid var(--background)">
-                111
-                <span id="cwds-total" style="font-size:var(--text-3xl)">/ 120</span></div>
+                {#if loading}
+                    <i class="fa fa-circle-notch fa-spin mr-2 !text-[var(--background)] !text-[150px] !mx-auto !my-auto"></i>
+                {:else}
+                    {totalCwds-pendingCwds}
+                    <span id="cwds-total" style="font-size:var(--text-3xl)">/ {totalCwds}</span>
+                {/if}
+            </div>
             <div class="!px-[4rem] flex flex-col gap-[2rem]" style="justify-content:space-between">
                 <div class="mt-[1.5rem]">CWDs registered with intervention plans</div>
                 <a href="/dashboard/members/pending" style="text-align:right">assign CWDs ></a>
