@@ -398,7 +398,7 @@
 	    <h2> Information	</h2>
 	    <div class = "border-[var(--border)] border-4 py-4">
 		<InputText   required msg = {errors.first_name} label="First Name" id="first-name" bind:value = {first_name} />
-        <InputText   label="Middle Name" id="middle-name" value={data?.caregiver.middle_name} />
+        <InputText   label="Middle Name" id="middle-name" bind:value={middle_name} />
 		<InputText   required msg = {errors.last_name} label="Last Name" id="last-name" bind:value = {last_name} />
 		<InputText   required msg = {errors.birthday} type = "date" label="Birthday" id="birthday" bind:value = {birthday} />
 		<InputText   label="Age" id="age" disabled bind:value = {age} />
@@ -408,7 +408,7 @@
 		<InputText   label="Email" id="email" bind:value = {email}/>
 		<InputText   required msg = {errors.address} label="Address" id="address" bind:value={address} />
 		<InputText   required msg = {errors.barangay} label="Barangay" id="barangay" bind:value = {barangay} />
-		<InputText   required msg = {errors.occupation} label="Occupation" id="occupation" bind:value = {occupation} />
+		<InputText   label="Occupation" id="occupation" bind:value = {occupation} />
 
 		<br>
 		<InputText required msg = {errors.date_admission} label="Date of Admission" type="date" id="admission" bind:value = {date_admission} />
