@@ -312,7 +312,7 @@
             errors.educationtype = educType.trim() === "" ? "Required" : ""
             errors.educationlvl = educLevel.trim() === "" ? "Required" : ""
             errors.educstatus = educStatus == null || educStatus === "" ? "Required" : ""
-            errors.yearstart = (yearStart == "" || yearStart < 0 || yearStart > yearEnd || yearStart == 'e') ? "Invalid Date" : ""
+            errors.yearstart = (yearStart == "" || yearStart < 0 || (yearStart > yearEnd && yearEnd != null) || yearStart == 'e') ? "Invalid Date" : ""
             errors.yearend = yearEnd < 0 ? "Invalid Date" : ""
 
         }
