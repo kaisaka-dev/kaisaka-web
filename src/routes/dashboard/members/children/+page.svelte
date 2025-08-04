@@ -104,6 +104,35 @@ function resetFilters() {
     }
     filteredData = childrenData;
 }
+
+async function exportChildList() {
+		try {
+			const response = await fetch('/api/reports/childList', {
+				method: 'GET',
+			});
+
+			if (!response.ok) {
+				throw new Error(`Failed to generate report: ${response.status}`);
+			}
+
+			const blob = await response.blob();
+
+			const url = URL.createObjectURL(blob);
+
+			const a = document.createElement('a');
+			a.href = url;
+			a.download = `Kaisaka Child List ${new Date().toISOString()}.xlsx`;
+			document.body.appendChild(a);
+			a.click();
+
+			document.body.removeChild(a);
+			URL.revokeObjectURL(url);
+		} catch (err) {
+			console.error(err);
+			alert('Error generating report.');
+		}
+	}
+
 </script>
 
 <Header category="members" page="children" />
@@ -115,7 +144,7 @@ function resetFilters() {
         <!-- to be rendered inside the Filter Search component-->
         <div slot="button-list">
             <button onclick={() => goto("/dashboard/registration/child")}>Register</button>
-            <button onclick={() => console.log("Export")}  class="green">Export</button>
+            <button onclick={() => exportChildList()}  class="green">Export</button>
         </div>
         <div slot="modal">
             <InputText label="First name" id="first-name" bind:value={filter.firstName} margin={false}/>
