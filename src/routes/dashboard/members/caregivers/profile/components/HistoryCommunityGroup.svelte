@@ -15,6 +15,7 @@
 	
 
 
+	console.log(data)
 
 	let modalOpen = false; 	// modal for creating new community group
 	let newComGroup = "";
@@ -105,8 +106,6 @@
 
 
 <div class = "mt-10">
-				{console.log(data)}
-
 	<div id = {id} class = "w-240 min-w-240">
 		<h2> Community Group </h2>
 		<Validation msg = {error}/>
@@ -127,7 +126,7 @@
 					{#if com.isDeleted == false}
 					{#if editing}
 						<td><InputRange type="date" bind:valueFrom={com.date_joined} bind:valueTo={com.date_left} /></td>
-						<td><Select bind:value={com.name} options={options_community} required /></td>
+						<td><Select bind:value={com.community_group_id} options={options_community} required /></td>
 						<td style="text-align:center;">
 							<i class="fa-solid fa-trash" on:click={() => deleteComGroup(index)}></i>
 						</td>

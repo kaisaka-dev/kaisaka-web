@@ -72,13 +72,13 @@ export async function load( {url, fetch} ) {
     }
 
     communityHistory = communityHistory.flat()
-    console.log(communityHistory)
 
     for(let i in communityHistory) {
         const communityTyperes = await fetch(`/api/community_group_type?id=${communityHistory[i].community_group_id}`)
         if(communityTyperes.ok){
             const communitytypeRecord = await communityTyperes.json()
             communityHistory[i]['name'] = communitytypeRecord.data.name
+            communityHistory[i]['commID'] = communitytypeRecord.data.community_group_id
         }
     }
 
@@ -143,6 +143,7 @@ export type Caregiver = {
 
 export type Community = {
 	id: number;
+    communityID: number;
 	date_joined: string;
 	date_left: string;
 	name: string;
