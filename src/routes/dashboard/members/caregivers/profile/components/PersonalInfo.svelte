@@ -15,6 +15,7 @@ let required = editing;        	// false since this is view, but placing it here
 	<h2> Information	</h2>
 	<div class = "border-[var(--border)] border-4 py-4">
 		<InputText {disabled} {required} label="First Name" id="first-name" value={data?.first_name} />
+		<InputText  {disabled} {required} label="Middle Name" id="last-name" value={data?.middle_name} />
 		<InputText  {disabled} {required} label="Last Name" id="last-name" value={data?.last_name} />
 		<InputText  {disabled} label="Birthday" id="birthday" value={data?.birthday} />
 		<Select     {disabled} {required} label="Sex" id="sex" value={data?.sex} options={dropdownOptions.sex}/>
@@ -23,7 +24,7 @@ let required = editing;        	// false since this is view, but placing it here
 		<InputText  {disabled} label="Email" id="email" value={data?.email}/>
 		<InputText  {disabled} {required} label="Address" id="address" value={data?.address ?? '-'} />
 		<InputText  {disabled} {required} label="Barangay" id="barangay" value={data?.barangay ?? '-'} />
-		<InputText  {disabled} {required} label="Occupation" id="occupation" value={data?.occupation ?? '-'} />
+		<InputText  {disabled} label="Occupation" id="occupation" value={data?.occupation ?? '-'} />
 
 		<br>
 		<InputText {disabled} label="Date of Admission" type="date" id="admission" value={data.date_admission} />

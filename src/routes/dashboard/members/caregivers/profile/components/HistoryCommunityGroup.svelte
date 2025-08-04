@@ -50,7 +50,6 @@
 			isDeleted: false
 		};
 		data = [...data, newCommunity];
-		console.log(data)
 	}
 
 	async function handleSubmit() {
@@ -88,6 +87,7 @@
 				// Refresh options if successful
 				options_community = await getOptions();
 				newComGroup = "";
+				modalOpen = false
 				} else {
 				throw new Error('Failed to add community group');
 				}
