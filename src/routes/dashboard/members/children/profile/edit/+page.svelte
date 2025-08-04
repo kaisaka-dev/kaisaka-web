@@ -249,7 +249,6 @@
         disabilityCat:"",
         disabilityNat: "",
         admissionDate: "",
-        employmentType: "",
         educationtype: "",
         educationlvl: "",
         educstatus: "",
@@ -294,10 +293,6 @@
         errors.barangay = newchildData.barangay.trim() === "" ? "Required" : ""
         errors.disabilityCat = newchildData.disabilityCategoryID == null ? "Required" : ""
         errors.disabilityNat = newchildData.disabilityNature.trim() === "" ? "Required" : ""
-        if(newchildData.canWork){
-            errors.employmentType = newchildData.employmentType.trim() === "--" ? "Required" : ""
-         }
-
           
         if(newchildData.admissionDate.trim() === ""){
             errors.admissionDate = "Required"
@@ -317,7 +312,7 @@
             errors.educationtype = educType.trim() === "" ? "Required" : ""
             errors.educationlvl = educLevel.trim() === "" ? "Required" : ""
             errors.educstatus = educStatus == null || educStatus === "" ? "Required" : ""
-            errors.yearstart = (yearStart == "" || yearStart < 0 || yearStart > yearEnd) ? "Invalid Date" : ""
+            errors.yearstart = (yearStart == "" || yearStart < 0 || yearStart > yearEnd || yearStart == 'e') ? "Invalid Date" : ""
             errors.yearend = yearEnd < 0 ? "Invalid Date" : ""
 
         }

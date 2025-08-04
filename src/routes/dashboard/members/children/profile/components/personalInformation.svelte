@@ -68,7 +68,7 @@
                 <div class = "-ml-4 z-300"> <Check label = "Able to Work" bind:checked = {data.canWork} margin = {true}/> </div>
                 {/if}
                 {#if data.canWork}
-                    <div class = "-ml-4"> <Select label = "Employment Type" options = {['','Self-Employed','Sheltered Workshop','Wage Employed']} required = {!disabled} msg = {errors.employmentType} disabled = {inputDisabled} bind:value = {data.employmentType} margin = {true}/> </div>
+                    <div class = "-ml-4"> <Select label = "Employment Type" options = {['Self-Employed','Sheltered Workshop','Wage Employed']} disabled = {inputDisabled} bind:value = {data.employmentType} margin = {true}/> </div>
                 {/if}
                 <div class = "-ml-4"> <Select label = "Disability Category" bind:value = {data.disabilityCategoryID} required = {!disabled} options = {discatOptions} msg = {errors.disabilityCat} disabled = {inputDisabled}  margin = {true}/> </div>
                 <div class = "-ml-4"> <Input label = "Disability Nature"  disabled = {inputDisabled} bind:value = {data.disabilityNature} margin = {true}/> </div>
