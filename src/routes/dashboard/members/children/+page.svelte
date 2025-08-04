@@ -11,6 +11,7 @@ import type { PageData } from './$types';
 import { dropdownOptions } from '$lib/types/options.js';
 import Checkbox from '$components/input/Checkbox.svelte';
 import { goto } from '$app/navigation';
+import LoadingBtn from '$components/styled-buttons/LoadingBtn.svelte';
 
 const { data } = $props<{ data: PageData }>();
 
@@ -26,6 +27,7 @@ let options = $state({
     sex: dropdownOptions.sex
 });
 
+let loadingExport = $state(false);
 let showAllColumns = $state(false);
 let filter = $state({
     main: "",
@@ -106,7 +108,8 @@ function resetFilters() {
 }
 
 async function exportChildList() {
-		try {
+    loadingExport = true;
+    try {
 			const response = await fetch('/api/reports/childList', {
 				method: 'GET',
 			});
@@ -131,6 +134,7 @@ async function exportChildList() {
 			console.error(err);
 			alert('Error generating report.');
 		}
+    loadingExport = false;
 	}
 
 </script>
@@ -144,7 +148,11 @@ async function exportChildList() {
         <!-- to be rendered inside the Filter Search component-->
         <div slot="button-list">
             <button onclick={() => goto("/dashboard/registration/child")}>Register</button>
-            <button onclick={() => exportChildList()}  class="green">Export</button>
+            {#if loadingExport}
+                <LoadingBtn label="Export" disableCover={false}/>
+            {:else}
+                <button onclick={() => exportChildList()}  class="green">Export</button>
+            {/if}
         </div>
         <div slot="modal">
             <InputText label="First name" id="first-name" bind:value={filter.firstName} margin={false}/>
