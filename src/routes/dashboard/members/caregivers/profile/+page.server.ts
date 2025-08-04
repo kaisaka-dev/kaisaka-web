@@ -1,3 +1,4 @@
+
 export async function load( {url, fetch} ) {
     //gets record in the member table
     const id = url.searchParams.get('id')
@@ -40,6 +41,23 @@ export async function load( {url, fetch} ) {
         const entireFamily = await entireFamilyRes.json()
 
         familyArray.push(entireFamily)
+
+        const childQuery = await fetch('/api/children')
+        const childTable = await childQuery.json()
+
+
+        for(let i in familyArray){
+            for(let j in familyArray[i].data){
+                if(familyArray[i].data[j].is_child == true){
+                    for(let k in childTable.data){
+                        if(familyArray[i].data[j].member_id == childTable.data[k].member_id){
+                            familyArray[i].data[j]['linkID'] = childTable.data[k].id
+                        }
+                    }
+                }
+            }
+        }
+
     }
 
     const communityres = await fetch(`/api/caregiver_groups?caregiver_id=${caregiverInfo.id}`)

@@ -14,6 +14,7 @@
     import type { educationInformation, personalInformation } from './+page.server.js'
     import type { documentationInformation } from './+page.server.js'
 
+    
     //below are functions needed for the page
     let selectedIndex = 0
     
@@ -75,7 +76,7 @@
     }
 
     let showSocialParticipation: boolean = false
-    if(data.social_participation.length>0){
+    if(data.social_participation.length > 0){
         showSocialParticipation = true
     }
 </script>

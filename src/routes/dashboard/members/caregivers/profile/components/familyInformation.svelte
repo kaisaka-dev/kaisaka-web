@@ -7,7 +7,6 @@
     export let editing: boolean = false
     export let caregiverID: string = ""
 
-
      //below are essential functions for the page to work
     function familyName(family:object): string {
         let lastnames: string[] = []
@@ -67,7 +66,12 @@
                                 {:else}
                                 <div class ="!bg-[var(--green)] w-35 p-2 rounded-full text-center !font-bold !text-white"> {member.relationship_type}</div>
                                 {/if}
+                                {#if member.is_child}
+                                {console.log(member.members.first_name + " " + member.linkID)}
+                                <div class = "mt-2 ml-10 w-50 hover:underline hover:cursor-pointer"><a href = "/dashboard/members/children/profile?id={member.linkID}" > {member.members.first_name} {member.members.last_name} </a></div>
+                                {:else}
                                 <div class = "mt-2 ml-10 w-50"> {member.members.first_name} {member.members.last_name}</div>
+                                {/if}
                                 {#if editing}
                                     <div class = "z-500 -mt-2"><i class="fa-solid fa-trash ml-2 mt-5" on:click = {()=>deleteFamily(familyIndex,memberIndex)}></i> </div> 
                                 {/if}

@@ -1,14 +1,16 @@
-let entireFamily = {}
+let entireFamily = []
 let pwdHas:boolean
 let pwdID:string
 let pwdExpiry:string
+
+
 
 
 export async function load( { url, fetch}  ) {
     
 try{
     //gets record in the child table
-    const childID = url.searchParams.get('id');
+	const childID = url.searchParams.get('id');
     if (!childID) throw new Error("Missing child ID in query params");
     const childRecRes = await fetch(`/api/children/${childID}?select=full-profile`)
 
@@ -16,7 +18,6 @@ try{
         throw new Error('Failed to get Child!')
     }
     const childRecord = await childRecRes.json()
-    console.log('childRecord: ', childRecord)
 
     //gets record in the member table
     const memberRecRes = await fetch(`/api/members/${childRecord.member_id}?select=*, addresses(*), employment_status(*)`)
@@ -26,7 +27,6 @@ try{
     }
 
     const memberRecord = await memberRecRes.json()
-    console.log('memberRecord: ', memberRecord)
 
     //gets record in barangay table
     let barangayInfo = {}
@@ -61,7 +61,6 @@ try{
     if(socsecRes.ok)
     {
             socsecRecord = await socsecRes.json()
-            console.log('SOCIAL PROTECTION!!!: ', socsecRecord)
     }
     
     
@@ -109,7 +108,7 @@ try{
     const familyInfo = await familyRes.json()
 
     if (!familyInfo || familyInfo.length === 0 || !familyInfo.data[0]?.family_id) {
-        entireFamily = {}
+        entireFamily = []
     } else {
         const familyID = familyInfo.data[0].family_id
         const entireFamilyRes = await fetch(`/api/family_members?id=${familyID}&select=*,members(*)&type=familyid`)
@@ -118,7 +117,25 @@ try{
             throw new Error('Failed to fetch family members');
         }
 
-        entireFamily = await entireFamilyRes.json()
+        else{
+            entireFamily = await entireFamilyRes.json()
+        
+            const caregiverQuery = await fetch('/api/caregivers')
+            const caregiverTable = await caregiverQuery.json()
+
+
+            for(let i in entireFamily.data){
+                if(entireFamily.data[i].is_child == false){
+                    for(let j in caregiverTable.data){
+                        if(entireFamily.data[i].member_id == caregiverTable.data[j].member_id){
+                            entireFamily.data[i]['linkID'] = caregiverTable.data[j].id
+                            console.log(entireFamily.data[i].linkID)
+                        }
+                    }
+                }
+            }
+
+        }
     }
 
 
@@ -149,9 +166,9 @@ try{
     return{
         child: child,
         error: null,
-        family: Array.isArray(entireFamily?.data) ? entireFamily.data : [],
+        family: entireFamily.data,
         member: memberRecord,
-        interventioninfo: interventioninfo || '',
+        interventioninfo: interventioninfo || [],
         discatOptions: options_disCategory,
         social_participation: socsecRecord
     } 

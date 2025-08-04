@@ -17,7 +17,8 @@ export const GET: RequestHandler = async ({ url }) => {
         first_name,
         last_name
       ),
-      contact_number
+      contact_number,
+      member_id
     `);
   }
   

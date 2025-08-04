@@ -2,8 +2,9 @@
 
 <script lang="ts">
 	import { goto } from "$app/navigation";
+	import { fa } from "zod/v4/locales";
 
-
+    
     export let family = [];
     export let firstName;
     export let editing = false;
@@ -45,7 +46,11 @@
                 {/if}
         {/if}
             <div class = "flex flex-col md:flex-row">
-                    <div class = " mt-4 !font-[JSans] max-w-50 md:w-50 hover:underline"> <a href = "/dashboard/members/children/profile?id=${fammember.members.id}"> {fammember.members.first_name} {fammember.members.last_name} </a></div>
+                    {#if fammember.is_child == false}
+                    <div class = " mt-4 !font-[JSans] max-w-50 md:w-50 hover:underline hover:cursor-pointer"> <a href = "/dashboard/members/caregivers/profile?id={fammember.linkID}"> {fammember.members.first_name} {fammember.members.last_name} </a></div>
+                    {:else}
+                    <div class = " mt-4 !font-[JSans] max-w-50 md:w-50">{fammember.members.first_name} {fammember.members.last_name}</div>
+                    {/if}
             {#if editing}
             <div class = "z-500"><i class="fa-solid fa-trash ml-2 mt-5" on:click ={()=>deleteFamily(index)}></i> </div> 
             {/if}
