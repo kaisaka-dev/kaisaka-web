@@ -16,6 +16,7 @@
 
 
     export let data
+
     let editing = true
     let loadingSave = false;
 
@@ -77,6 +78,7 @@
 
         errors.first_name = first_name.trim() === "" ? "Required" : ""
         errors.last_name = last_name.trim() === "" ? "Required" : ""
+        errors.contact_no = contact_no.trim() === "" ? "Required" : ""
         
         if(new Date(birthday) > new Date()) {
             errors.birthday = "Birthday cannot be in the future"
@@ -102,11 +104,12 @@
          if(data.caregiver.community_history.length > 0) {
             for(let i in data.caregiver.community_history) {
             if(data.caregiver.community_history[i].isDeleted == false){
-                if(data.caregiver.community_history[i].name === ""){
+                if(data.caregiver.community_history[i].community_group_id == null){
                 errors.community_overall = errors.community_overall + "A Community Group has a missing name"
                 }
 
-                if(data.caregiver.community_history[i].date_joined === "" || new Date(data.caregiver.community_history[i].date_joined) > new Date(data.caregiver.community_history[i].date_left) && data.caregiver.community_history[i].date_left !== null) {
+                if(data.caregiver.community_history[i].date_joined === "" || new Date(data.caregiver.community_history[i].date_joined) > new Date(data.caregiver.community_history[i].date_left) && data.caregiver.community_history[i].date_left !== null
+                    || new Date(data.caregiver.community_history[i].date_joined) > new Date()) {
                     if(errors.community_overall !== "") {
                         errors.community_overall = errors.community_overall + " and there is an invalid date!"
                     }
@@ -246,7 +249,7 @@
                         method: "POST",
                         body: JSON.stringify({
                             caregiver_id: data.caregiver.id,
-                            community_group_id: data.caregiver.community_history[i].name,
+                            community_group_id: data.caregiver.community_history[i].community_group_id,
                             date_joined: data.caregiver.community_history[i].date_joined,
                             date_left: data.caregiver.community_history[i].date_left
                         }),
@@ -257,11 +260,27 @@
                 }
                 //Editing exisitng record
                 if(data.caregiver.community_history[i].isNew == false && data.caregiver.community_history[i].isDeleted == false) {
-                    const updateCaregiverMembership = await fetch('/api/caregiver_groups' , {
+                    if(data.caregiver.community_history[i].date_left == ''){
+                        const updateCaregiverMembership = await fetch('/api/caregiver_groups' , {
                         method: "PUT" ,
                         body: JSON.stringify({
                             id: data.caregiver.community_history[i].id,
-                            community_group_id: data.caregiver.community_history[i].name,
+                            community_group_id: data.caregiver.community_history[i].community_group_id,
+                            date_joined: data.caregiver.community_history[i].date_joined,
+                            date_left: null
+                        }),
+                        headers:{
+                            "Content-Type":"application/json"
+                        }
+                    })
+                    }
+
+                    else {
+                        const updateCaregiverMembership = await fetch('/api/caregiver_groups' , {
+                        method: "PUT" ,
+                        body: JSON.stringify({
+                            id: data.caregiver.community_history[i].id,
+                            community_group_id: data.caregiver.community_history[i].community_group_id,
                             date_joined: data.caregiver.community_history[i].date_joined,
                             date_left: data.caregiver.community_history[i].date_left
                         }),
@@ -269,6 +288,8 @@
                             "Content-Type":"application/json"
                         }
                     })
+                    }
+                    
                 }
 
                 //Deleting existing record
@@ -276,7 +297,7 @@
                     const updateCaregiverMembership = await fetch('/api/caregiver_groups' , {
                         method: "DELETE" ,
                         body: JSON.stringify({
-                            id: data.caregiver.community_history[i].id
+                            id: data.caregiver.community_history[i].community_group_id
                         }),
                         headers:{
                             "Content-Type":"application/json"
@@ -398,7 +419,7 @@
 	    <h2> Information	</h2>
 	    <div class = "border-[var(--border)] border-4 py-4">
 		<InputText   required msg = {errors.first_name} label="First Name" id="first-name" bind:value = {first_name} />
-        <InputText   label="Middle Name" id="middle-name" value={data?.caregiver.middle_name} />
+        <InputText   label="Middle Name" id="middle-name" bind:value={middle_name} />
 		<InputText   required msg = {errors.last_name} label="Last Name" id="last-name" bind:value = {last_name} />
 		<InputText   required msg = {errors.birthday} type = "date" label="Birthday" id="birthday" bind:value = {birthday} />
 		<InputText   label="Age" id="age" disabled bind:value = {age} />
@@ -408,7 +429,7 @@
 		<InputText   label="Email" id="email" bind:value = {email}/>
 		<InputText   required msg = {errors.address} label="Address" id="address" bind:value={address} />
 		<InputText   required msg = {errors.barangay} label="Barangay" id="barangay" bind:value = {barangay} />
-		<InputText   required msg = {errors.occupation} label="Occupation" id="occupation" bind:value = {occupation} />
+		<InputText   label="Occupation" id="occupation" bind:value = {occupation} />
 
 		<br>
 		<InputText required msg = {errors.date_admission} label="Date of Admission" type="date" id="admission" bind:value = {date_admission} />

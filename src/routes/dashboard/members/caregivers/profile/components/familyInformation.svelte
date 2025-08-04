@@ -81,7 +81,7 @@
                         {#if editing}
                             <div class = "flex flex-row">
                                 <div class = "mt-5 z-500"> <i class = "!text-[var(--green)] hover:underline hover:cursor-pointer" on:click = {() => goto('/dashboard/registration/child')}> + Add New CYWD </i></div>
-                                <div class = "mt-5 ml-10 z-500"> <i class = "!text-[var(--pink)] hover:underline hover:cursor-pointer" on:click = {() => goto(`/dashboard/registration/family-info?family=${family.data[0].family_id}`)}> + Add/Edit Caregivers </i></div>
+                                <div class = "mt-5 ml-10 z-500"> <i class = "!text-[var(--pink)] hover:underline hover:cursor-pointer" on:click = {() => goto(`/dashboard/registration/family-info?caregiver=${caregiverID}`)}> + Add/Edit Caregivers </i></div>
                             </div>
                         {/if}
                         </div>

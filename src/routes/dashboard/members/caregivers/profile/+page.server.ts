@@ -72,7 +72,6 @@ export async function load( {url, fetch} ) {
     }
 
     communityHistory = communityHistory.flat()
-    console.log(communityHistory)
 
     for(let i in communityHistory) {
         const communityTyperes = await fetch(`/api/community_group_type?id=${communityHistory[i].community_group_id}`)
