@@ -78,7 +78,6 @@ export async function load( {url, fetch} ) {
         if(communityTyperes.ok){
             const communitytypeRecord = await communityTyperes.json()
             communityHistory[i]['name'] = communitytypeRecord.data.name
-            communityHistory[i]['commID'] = communitytypeRecord.data.community_group_id
         }
     }
 
@@ -143,7 +142,6 @@ export type Caregiver = {
 
 export type Community = {
 	id: number;
-    communityID: number;
 	date_joined: string;
 	date_left: string;
 	name: string;
