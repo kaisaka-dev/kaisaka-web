@@ -3,11 +3,15 @@ import { error, json, type RequestHandler } from "@sveltejs/kit";
 
 export const GET: RequestHandler = async ({ url }) => {
   const id = url.searchParams.get('id');
+  const member_id = url.searchParams.get('member_id');
   
   let result;
   if (id) {
     // Get specific caregiver by ID
     result = await CaregiversModel.instance.getCaregiverList(id);
+  } else if (member_id) {
+    // Get caregiver by member_id
+    result = await CaregiversModel.instance.findByMemberId(member_id);
   } else {
     // Get all caregivers
     result = await CaregiversModel.instance.findWithJoin(`

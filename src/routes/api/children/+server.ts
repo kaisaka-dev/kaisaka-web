@@ -3,6 +3,7 @@
  * 
  * GET - Retrieve children records
  * • Get all children: GET /api/children
+ * • Get child by member_id: GET /api/children?member_id=member-123
  * • Get pending documents: GET /api/children?type=pending-documents&id=child-123
  * • Get children list with joins: GET /api/children?type=list (or type=joined)
  * 
@@ -24,10 +25,21 @@ export const GET: RequestHandler = async ({ url }) => {
   try {
     const type = url.searchParams.get('type');
     const id = url.searchParams.get('id');
+    const member_id = url.searchParams.get('member_id');
     
     let children;
     
-    if (type === 'pending-documents') {
+    if (member_id) {
+      // Get child by member_id
+      console.log('Fetching child by member_id...');
+      try {
+        children = await ChildrenModel.instance.findByMemberId(member_id);
+        console.log('Child by member_id result:', children ? 'found' : 'null');
+      } catch (dbError) {
+        console.error('Database error in findByMemberId:', dbError);
+        throw error(500, 'Database query failed');
+      }
+    } else if (type === 'pending-documents') {
       // Get children with pending documents data
       console.log('Fetching pending documents...');
       try {
