@@ -22,19 +22,27 @@ export const load: PageLoad = async ({ fetch }) => {
 
 		const result = await response.json();
 
-		// Transform API data to match component expectations
-		const pendingList: PendingDocument[] = result.data.map((child: any) => ({
+		// transform API data to match component expectations
+		const transformedList: PendingDocument[] = result.data.map((child: any) => ({
 			id: child.id || '',
 			firstName: child.members?.first_name || '',
 			lastName: child.members?.last_name || '',
 			medCert: child.has_medical_cert ? "✅" : "❌",
 			birthCert: child.has_birth_cert ? "✅" : "❌",
 			brgyCert: child.has_barangay_cert ? "✅" : "❌",
-			interventionPlan: child.intervention?.intervention ? "✅" : "❌",
+			interventionPlan: child.intervention?.[0]?.intervention ? "✅" : "❌",
 			link: `/dashboard/members/children/profile?id=${child.id}`
 		}));
 
-		return { pendingList: pendingList }
+		// filters the list (removes records which has ✅ for all records
+		const filteredPendingList = transformedList.filter((child) =>
+			child.medCert !== "✅" ||
+			child.birthCert !== "✅" ||
+			child.brgyCert !== "✅" ||
+			child.interventionPlan !== "✅"
+		);
+
+		return { pendingList: filteredPendingList };
 
 	} catch (error) {
 		console.error('Error fetching pending documents:', error);

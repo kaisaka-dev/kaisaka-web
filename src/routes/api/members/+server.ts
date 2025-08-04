@@ -197,6 +197,15 @@ export const PUT: RequestHandler = async({request}) => {
     hasUpdates = true
   }
 
+  // Handle date of termination update
+  if (body.date_of_termination !== undefined) {
+    const updated = await membersModel.instance.updateDateOfTermination(body.id, body.date_of_termination)
+    if (!updated) {
+      throw error(500, 'Failed to update date_of_termination')
+    }
+    hasUpdates = true
+  }
+
   if (!hasUpdates) {
     throw error(400, 'No valid fields to update.')
   }

@@ -106,6 +106,19 @@ export class membersModel extends TableManager<"members">('members') {
   }
 
   /**
+   * Updates date of termination
+   * @param id member ID (UUID)
+   * @param date_of_termination new termination date
+   * @returns boolean if update is successful
+   */
+  async updateDateOfTermination(id: string, date_of_termination: string | null): Promise<boolean> {
+    const references: Partial<MembersRow> = { id };
+    const updates: Partial<MembersRow> = { date_of_termination };
+    const data = await this.updateOne(references, updates);
+    return data;
+  }
+
+  /**
    * Finds a member by ID
    * @param id member ID (UUID)
    * @returns member record or null
