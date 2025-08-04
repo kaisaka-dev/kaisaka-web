@@ -99,7 +99,14 @@ try{
             has: pwdHas,
             id: pwdID,
             expiry: pwdExpiry
-        }
+        },
+
+        philHealth: childRecord.has_philhealth,
+        birth_cert: childRecord.has_birth_cert,
+        national_id: childRecord.has_national_id,
+        voter_id: childRecord.has_vote,
+        med_cert: childRecord.has_medical_cert,
+        barangay_cert: childRecord.has_barangay_cert
     }
     const familyRes = await fetch(`/api/family_members?id=${childRecord.member_id}&select=*,families(*)&type=memberid`)
     if (!familyRes.ok) {
@@ -203,7 +210,13 @@ export type childInformation =  {
         has: boolean,
         id: string,
         expiry: string
-    }
+    },
+    philHealth: boolean,
+    national_id: boolean,
+    med_cert: boolean,
+    birth_cert: boolean,
+    voter_id: boolean,
+    barangay_cert: boolean
 }
 
 export type personalInformation = {

@@ -267,6 +267,7 @@
     }
   
     function validateForm(): boolean{
+        console.log(yearStart)
         let hasErrors = false
         //resets values that can be hidden
         errors.pwdID = ""
@@ -312,7 +313,7 @@
             errors.educationtype = educType.trim() === "" ? "Required" : ""
             errors.educationlvl = educLevel.trim() === "" ? "Required" : ""
             errors.educstatus = educStatus == null || educStatus === "" ? "Required" : ""
-            errors.yearstart = (yearStart == "" || yearStart < 0 || (yearStart > yearEnd && yearEnd != null) || yearStart == 'e') ? "Invalid Date" : ""
+            errors.yearstart = (yearStart == "" || yearStart < 0 || (yearStart > yearEnd && yearEnd != null) || yearStart == null) ? "Invalid Date" : ""
             errors.yearend = yearEnd < 0 ? "Invalid Date" : ""
 
         }
@@ -729,6 +730,8 @@
                 headers:{ 'Content-Type': 'application/json'}
             })
         }
+
+        console.log(documentationData.phHealth)
           
         const childUpdate = await fetch('/api/children', {
             method: "PUT",

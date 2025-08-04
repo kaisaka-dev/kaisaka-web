@@ -48,6 +48,8 @@
         voterID: data.child?.voter_id
     }
 
+    console.log(documentationData)
+
     let educationData: educationInformation[] = []
     let yearStart: string;
     let yearEnd: string;
