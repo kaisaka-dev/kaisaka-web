@@ -23,29 +23,10 @@
 </section>
 
 <!-- container for profile content-->
-<div class = "border-4 border-[var(--border)] w-300 min-w-150 ml-25 p-6">
-    <div class = "flex flex-col">
-        <div class = "information">
-            <div class = "w-50"> Account Name: </div>
-            <div class = "ml-3"> <Input  disabled label = "" value = {user.accountName}/> </div>
-        </div>
-
-        <!-- <div class = "information mt-5">
-            <div class = "w-50"> Account Password: </div>
-            <div class = "ml-3"> <Input disabled label = "" value = {user.password}/> </div>
-        </div>
-
-        <div class = "information mt-5">
-            <div class = "w-50"> Account Role: </div>
-            <div class = "ml-3"> <Input disabled label = "" value = {user.role}/> </div>
-        </div> -->
-
-        <div class = "information mt-5">
-            <div class = "w-50"> Account Email: </div>
-            <div class = "ml-3"> <Input disabled label = "" value = {user.email}/> </div>
-        </div>
-    </div>
-</div>
+<section class = "border-4 border-[var(--border)] min-w-150 p-6">
+    <Input id='name' label="Account name" bind:value={user.accountName} disabled/>
+    <Input id='email' label="Account email" bind:value={user.email} disabled/>
+</section>
 
 <div class = "mt-5 ml-25">
     <button onclick = {() => goto('/dashboard/staff-profile/edit')}> Edit Profile</button>
