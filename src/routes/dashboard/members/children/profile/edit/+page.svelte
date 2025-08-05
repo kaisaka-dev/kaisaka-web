@@ -89,7 +89,7 @@
     let educStatus: string = displayEducHistory[0]?.Educationstatus
     let educLevel: string = displayEducHistory[0]?.Educationlevel
     let yearStart: number = displayEducHistory[0]?.yearStart
-    let yearEnd: number = displayEducHistory[0]?.yearEnd
+    let yearEnd: string = displayEducHistory[0]?.yearEnd    
 
 
     
@@ -310,11 +310,12 @@
 
 
         if(displayEducHistory.length > 0) {
+            console.log(yearEnd)
             errors.educationtype = educType.trim() === "" ? "Required" : ""
             errors.educationlvl = educLevel.trim() === "" ? "Required" : ""
             errors.educstatus = educStatus == null || educStatus === "" ? "Required" : ""
-            errors.yearstart = (yearStart == "" || yearStart < 0 || (yearStart > yearEnd && yearEnd != null) || yearStart == null) ? "Invalid Date" : ""
-            errors.yearend = yearEnd < 0 ? "Invalid Date" : ""
+            errors.yearstart = yearStart == null || yearStart < 0 || yearStart > parseInt(yearEnd) ? "Invalid Date" : ""
+            errors.yearend = parseInt(yearEnd) < 0 || isNaN(parseInt(yearEnd)) || yearEnd == "" ||  yearEnd == null ? "Invalid Date" : ""
 
         }
 
@@ -360,8 +361,7 @@
             }
 
             for(let j = 0; j < childInterventions[i].history?.length; j++){
-                if(childInterventions[i]?.history[j]?.status == "" || childInterventions[i]?.history[j]?.date == ""){
-                    childInterventions[i].status = ""
+                if((childInterventions[i]?.history[j]?.status == "" || childInterventions[i]?.history[j]?.date == "") && childInterventions[i].history[j].isDeleted == false){
                     errors.interventionstatusErrors[i] = "Missing Status Information!"
                 }
             }
