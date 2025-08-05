@@ -11,7 +11,6 @@
     import LoadingBtn from '$components/styled-buttons/LoadingBtn.svelte';
 
     import FamilyInformation from '../components/familyInformation.svelte';
-	import { fi } from 'zod/v4/locales';
 
 
 
@@ -105,11 +104,6 @@
          }
 
 
-        if(new Date(date_termination) > new Date()) {
-            errors.date_termination = "Invalid Date!"
-            console.log(date_termination)
-        }
-
          
          if(data.caregiver.community_history.length > 0) {
             for(let i in data.caregiver.community_history) {
@@ -184,8 +178,7 @@
             loadingSave = true;
             //PERSONAL INFO UPDATES BEGIN HERE
 
-            if(date_termination == null) {
-                console.log("nulling")
+            if(date_termination == null || date_termination == "") {
                 const memberUpdate = await fetch('/api/members' , {
                 method: "PUT",
                 body: JSON.stringify({
@@ -205,7 +198,6 @@
             }
 
             else{
-                console.log("not nulling...")
                 const memberUpdate = await fetch('/api/members' , {
                 method: "PUT",
                 body: JSON.stringify({
