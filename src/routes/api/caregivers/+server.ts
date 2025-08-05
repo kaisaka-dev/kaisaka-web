@@ -19,7 +19,8 @@ export const GET: RequestHandler = async ({ url }) => {
       members!inner(
         updated_at,
         first_name,
-        last_name
+        last_name,
+        date_of_termination
       ),
       contact_number,
       member_id
