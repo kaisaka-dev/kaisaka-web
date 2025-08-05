@@ -1,5 +1,4 @@
-import type { PageServerLoad } from '../../../../../.svelte-kit/types/src/routes/$types.js';
-import { redirect } from "@sveltejs/kit";
+import type { PageLoad } from './$types';
 
 /**
  * surnames: all unique surnames in a family, separated by comma
@@ -15,37 +14,27 @@ type FamiliesList = {
 	yrLastPaid: number;
 };
 
-export const load: PageServerLoad = async ({ locals})=>{
-    if (!locals.user) {
-        throw redirect(303, '/');
-    }
+export const load: PageLoad = async ({ fetch }) => {
 	try {
 		const response = await fetch('/api/families');
 
-		if (response.status === 401){
-                throw new Error('401 Not Authorized.');
-            }
-			
 		if (!response.ok) {
-			throw new Error('Failed to fetch families');
+			throw new Error(`Failed to fetch families: ${response.status}`);
 		}
-		
+
 		const familiesRaw = await response.json();
 		const families = transformFamilyData(familiesRaw.data);
 
-		return { families: families }
-
+		return { families };
 	} catch (error) {
 		return {
 			families: [],
 			error: error instanceof Error ? error.message : 'Failed to load families data'
 		};
 	}
-
-}
+};
 
 function transformFamilyData(rawData: any[]): FamiliesList[] {
-	// Group by family ID and process each family
 	const familyMap = new Map<string, any>();
 
 	rawData.forEach(item => {
@@ -61,14 +50,10 @@ function transformFamilyData(rawData: any[]): FamiliesList[] {
 
 		const family = familyMap.get(item.id);
 
-		// Process family members
 		item.family_members?.forEach((member: any) => {
 			const memberInfo = member.members;
 			if (memberInfo) {
-				// Add surname to set
 				family.surnames.add(memberInfo.last_name);
-
-				// Add to appropriate list based on is_child flag
 				const fullName = `${memberInfo.first_name} ${memberInfo.last_name}`;
 				if (member.is_child) {
 					family.children.push(fullName);
@@ -78,7 +63,6 @@ function transformFamilyData(rawData: any[]): FamiliesList[] {
 			}
 		});
 
-		// Get latest membership year from last_updated
 		item.membership_annual_renewal?.forEach((renewal: any) => {
 			if (renewal.updated_at) {
 				const year = new Date(renewal.updated_at).getFullYear();
@@ -89,7 +73,6 @@ function transformFamilyData(rawData: any[]): FamiliesList[] {
 		});
 	});
 
-	// Convert to final format
 	return Array.from(familyMap.values()).map(family => ({
 		id: family.id,
 		surnames: Array.from(family.surnames).join(', '),
