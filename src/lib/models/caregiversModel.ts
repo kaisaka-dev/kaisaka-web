@@ -253,7 +253,8 @@ export class CaregiversModel extends TableManager<"caregivers">('caregivers') {
         members!inner(
           updated_at,
           first_name,
-          last_name
+          last_name,
+          date_of_termination
         ),
         contact_number
       `
