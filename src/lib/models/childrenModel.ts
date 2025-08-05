@@ -275,7 +275,8 @@ export class ChildrenModel extends TableManager<"children">('children') {
         first_name,
         last_name,
         birthday,
-        sex
+        sex,
+        date_of_termination
       ),
       disability_category!left(
         name

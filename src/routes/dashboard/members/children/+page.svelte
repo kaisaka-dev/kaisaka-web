@@ -20,11 +20,15 @@ let childrenData = $state(data.children || []);
 let filteredData = $state(childrenData);
 let options = $state({
     disability_category: data.options.disCategory,
-    // education_status: dropdownOptions.education_status,
     education_level: dropdownOptions.education_level,
     education_type: dropdownOptions.education_type,
+    sex: dropdownOptions.sex,
+    active_status: [
+        { id: "🟩", name: "🟩 Active" },
+        { id: "⬛", name: "⬛ Inactive" }
+    ]
+    // education_status: dropdownOptions.education_status,
     // employment_type: dropdownOptions.employment_type,
-    sex: dropdownOptions.sex
 });
 
 let loadingExport = $state(false);
@@ -41,7 +45,8 @@ let filter = $state({
     disNature: "",
     disCategory: "",
     educType: "",
-    educationLevel: ""
+    educationLevel: "",
+    active: ""
 })
 
 // filter logic
@@ -84,7 +89,8 @@ function applyFilter() {
           (!filter.disNature || child.nature === filter.disNature) &&
           (!filter.educType || child.educType === filter.educType ||
             (filter.educType === "Not enrolled" && child.educType === "")) &&
-          (!filter.educationLevel || child.gradeLevel?.toLowerCase().includes(filter.educationLevel.toLowerCase()));
+          (!filter.educationLevel || child.gradeLevel?.toLowerCase().includes(filter.educationLevel.toLowerCase())) &&
+          (!filter.active || child.active === filter.active);
 
         return matchesMain && matchesSpecific;
     });
@@ -102,7 +108,8 @@ function resetFilters() {
         disNature: "",
         disCategory: "",
         educType: "",
-        educationLevel: ""
+        educationLevel: "",
+        active: ""
     }
     filteredData = childrenData;
 }
@@ -164,6 +171,7 @@ async function exportChildList() {
             <InputText label="Disability Nature" id="dis-nature" bind:value={filter.disNature} margin={false}/>
             <Select label="Education Type" id="education-type" options={options.education_type} bind:value={filter.educType} margin={false}/>
             <Select label="Education Level" id="education" options={options.education_level} bind:value={filter.educationLevel} margin={false}/>
+            <Select label="Active" id="active-status" options={options.active_status} bind:value={filter.active} margin={false}/>
 
             <div id="reset" class="flex justify-end"><button onclick={resetFilters}>Reset Filters</button></div>
         </div>
@@ -177,10 +185,10 @@ async function exportChildList() {
 
 
     {#if showAllColumns}
-        <Table data={filteredData} headers={['First Name', 'Last Name', 'Birthday', 'Age', 'Disability Category', 'Disability Nature', 'Education Level', 'Education Type']}
-               includedKeys={['firstName', 'lastName', 'birthday', 'age', 'category', 'nature', 'gradeLevel', 'educType']} hasLink={true}/>
+        <Table data={filteredData} headers={['First Name', 'Last Name', 'Birthday', 'Age', 'Disability Category', 'Disability Nature', 'Education Level', 'Education Type', 'Active']}
+               includedKeys={['firstName', 'lastName', 'birthday', 'age', 'category', 'nature', 'gradeLevel', 'educType', 'active']} hasLink={true}/>
     {:else}
-        <Table data={filteredData} headers={['First Name', 'Last Name', 'Birthday', 'Disability Category', 'Disability Nature']}
-               includedKeys={['firstName', 'lastName', 'birthday', 'category', 'nature']} hasLink={true}/>
+        <Table data={filteredData} headers={['First Name', 'Last Name', 'Birthday', 'Disability Category', 'Disability Nature', 'Active']}
+               includedKeys={['firstName', 'lastName', 'birthday', 'category', 'nature', 'active']} hasLink={true}/>
     {/if}
 </section>

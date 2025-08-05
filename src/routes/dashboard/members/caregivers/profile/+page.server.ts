@@ -94,6 +94,8 @@ export async function load( {url, fetch, locals}){
             incomeHistory.push(incomeInfo[i])
         }
     }
+
+    console.log(memberRecord)
     
     
     
@@ -111,7 +113,7 @@ export async function load( {url, fetch, locals}){
         barangay: memberRecord.barangays?.name,
         occupation: caregiverInfo.occupation,
         date_admission: memberRecord.admission_date.split('T')[0],
-        date_termination: memberRecord.date_termination,
+        date_termination: memberRecord.date_of_termination,
         family: familyArray,
         community_history: communityHistory,
         income_history: incomeHistory.flat()
