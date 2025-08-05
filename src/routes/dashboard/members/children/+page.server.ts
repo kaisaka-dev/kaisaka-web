@@ -13,6 +13,7 @@ export type Children = {
 	gradeLevel: string;     // from children table: id -> child_id from education_status: grade_level
 	lastUpdated: string;    // from members table: last_updated
 	link: string;           // /dashboard/members/children/profile/{child.id}
+	active: string;
 };
 
 export const load: PageLoad = async ({ fetch }) => {
@@ -74,7 +75,8 @@ export const load: PageLoad = async ({ fetch }) => {
 				educType: education?.education_type || '',
 				gradeLevel: education?.grade_level || '',
 				lastUpdated: formatDate(education?.updated_at || null),
-				link: `/dashboard/members/children/profile?id=${child.id}`
+				link: `/dashboard/members/children/profile?id=${child.id}`,
+				active: member.date_of_termination == null ? "🟩" : "⬛"
 			};
 		});
 
