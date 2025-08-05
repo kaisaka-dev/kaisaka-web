@@ -10,6 +10,8 @@ export let editing = true;
 let disabled = !editing;        // for the input component (restricts from editing if true)
 let required = editing;        	// false since this is view, but placing it here for easier copy pasting to the EDIT counterpart of this module
 
+console.log(data)
+
 </script>
 <div id={id} class = "w-240 min-w-240">
 	<h2> Information	</h2>

@@ -11,6 +11,7 @@
     import LoadingBtn from '$components/styled-buttons/LoadingBtn.svelte';
 
     import FamilyInformation from '../components/familyInformation.svelte';
+	import { fi } from 'zod/v4/locales';
 
 
 
@@ -44,6 +45,7 @@
         address: "",
         barangay: "",
         date_admission: "",
+        date_termination: "",
         community_overall:"",
         income_overall: ""
     }
@@ -75,6 +77,7 @@
 
         errors.community_overall = ""
         errors.income_overall = ""
+        errors.date_termination = ""
 
         errors.first_name = first_name.trim() === "" ? "Required" : ""
         errors.last_name = last_name.trim() === "" ? "Required" : ""
@@ -92,13 +95,20 @@
         errors.address = address.trim() === "" ? "Required" : ""
         errors.barangay = barangay.trim() === "" ? "Required" : ""
 
-        if(new Date(date_admission) > new Date()){
-            errors.date_admission = "Date cannot be in the future"
+
+        if(new Date(date_admission) > new Date() || (new Date(date_admission) > new Date(date_termination) && date_termination !== "")){
+            errors.date_admission = "Invalid Date!"
         }
          
         else {
             errors.date_admission = date_admission == null || date_admission.trim() === ""  ? "Required" : ""
          }
+
+
+        if(new Date(date_termination) > new Date()) {
+            errors.date_termination = "Invalid Date!"
+            console.log(date_termination)
+        }
 
          
          if(data.caregiver.community_history.length > 0) {
@@ -131,7 +141,8 @@
                     errors.income_overall =  "An income entry is missing a category"
                 }
 
-                if(data.caregiver.income_history[i].date_start === "" || new Date(data.caregiver.income_history[i].date_start) > new Date(data.caregiver.income_history[i].date_end) && data.caregiver.income_history[i].date_end !== null) {
+                if(data.caregiver.income_history[i].date_start === "" || new Date(data.caregiver.income_history[i].date_start) > new Date() || ( new Date(data.caregiver.income_history[i].date_start) > new Date(data.caregiver.income_history[i].date_end) && data.caregiver.income_history[i].date_end != null )) {
+                    console.log(data.caregiver.income_history[i].date_end)
                     if(errors.income_overall !== "") {
                         errors.income_overall = errors.income_overall + " and a there is an invalid date!"
                     }
@@ -172,7 +183,10 @@
         if(validateForm()) {
             loadingSave = true;
             //PERSONAL INFO UPDATES BEGIN HERE
-            const memberUpdate = await fetch('/api/members' , {
+
+            if(date_termination == null) {
+                console.log("nulling")
+                const memberUpdate = await fetch('/api/members' , {
                 method: "PUT",
                 body: JSON.stringify({
                     id:data.memberRecord.id,
@@ -181,12 +195,36 @@
                     last_name: last_name,
                     birthday: birthday,
                     sex: sex,
-                    admission_date: date_admission
+                    admission_date: date_admission,
+                    date_of_termination: null
                 }),
                 headers:{
                         'Content-Type': 'application/json'
                         }             
                 })
+            }
+
+            else{
+                console.log("not nulling...")
+                const memberUpdate = await fetch('/api/members' , {
+                method: "PUT",
+                body: JSON.stringify({
+                    id:data.memberRecord.id,
+                    first_name: first_name,
+                    middle_name: middle_name,
+                    last_name: last_name,
+                    birthday: birthday,
+                    sex: sex,
+                    admission_date: date_admission,
+                    date_of_termination: date_termination
+                }),
+                headers:{
+                        'Content-Type': 'application/json'
+                        }             
+                })
+            }
+            
+            
             const caregiverUpdate = await fetch('/api/caregivers' , {
                 method: "PUT",
                 body: JSON.stringify({
@@ -327,7 +365,23 @@
 
                 //Updates existing income history record
                 if(data.caregiver.income_history[i].isNew == false && data.caregiver.income_history[i].isDeleted == false){
-                    const updatecaregiverIncome = await fetch('/api/income_type' , {
+                    if(data.caregiver.income_history[i].date_end == false){
+                        const updatecaregiverIncome = await fetch('/api/income_type' , {
+                        method: "PUT",
+                        body: JSON.stringify({
+                            id: data.caregiver.income_history[i].id,
+                            income_category: data.caregiver.income_history[i].income_category,
+                            date_start: data.caregiver.income_history[i].date_start,
+                            date_end: null
+                        }),
+                        headers: {
+                            "Content-Type" : "applciation/json"
+                        }
+                    })
+                    }
+
+                    else{
+                        const updatecaregiverIncome = await fetch('/api/income_type' , {
                         method: "PUT",
                         body: JSON.stringify({
                             id: data.caregiver.income_history[i].id,
@@ -339,6 +393,7 @@
                             "Content-Type" : "applciation/json"
                         }
                     })
+                    }  
                 }
 
                 //Deletes existing income history record
@@ -434,8 +489,8 @@
 		<br>
 		<InputText required msg = {errors.date_admission} label="Date of Admission" type="date" id="admission" bind:value = {date_admission} />
 		{#if data.caregiver.date_termination || editing}
-			<InputText  label="Date of Termination" type="date" id="termination"
-								 value={data.caregiver.date_termination ? new Date(data.date_termination).toISOString().split('T')[0] : ''} />
+			<InputText msg ={errors.date_termination}  label="Date of Termination" type="date" id="termination"
+								 bind:value={date_termination} />
 		{/if}
 	</div>
     </div>
