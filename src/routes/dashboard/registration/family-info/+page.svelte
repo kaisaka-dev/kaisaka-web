@@ -71,6 +71,7 @@
 			firstName: '',
 			lastName: '',
 			sex: '',
+			bday: '',
 			contactNo: '',
 			email: '',
 			address: '',
@@ -187,6 +188,7 @@
 			firstName: '',
 			lastName: '',
 			sex: '',
+			bday: '',
 			contactNo: '',
 			email: '',
 			brgy: '',
@@ -254,6 +256,13 @@
 			const cleanNumber = cleanContactNumber(contactNo); // Remove spaces, dashes, parentheses
 			return mobileRegex.test(cleanNumber) || landlineRegex.test(cleanNumber);
 		};
+		// new caregiver helper function: for birthday (no future birthdays)
+		const isValidBirthday = (birthday: string): boolean => {
+			if (!birthday.trim()) return true; // Birthday is optional, so empty is valid
+			const birthdayDate = new Date(birthday);
+			const today = new Date();
+			return !isNaN(birthdayDate.getTime()) && birthdayDate <= today;
+		};
 
 
 		// validation for new caregivers
@@ -262,6 +271,7 @@
 				firstName: !caregiver.firstName.trim() ? 'Required' : '',
 				lastName: !caregiver.lastName.trim() ? 'Required' : '',
 				sex: !caregiver.sex ? 'Required' : '',
+				bday: !isValidBirthday(caregiver.bday) ? 'Birthday cannot be in the future' : '',
 				contactNo: !caregiver.contactNo.trim() ? 'Required' :
 					!isValidContactNumber(caregiver.contactNo) ? 'Invalid phone number format' : '',
 				email: !isValidEmail(caregiver.email) ? 'Invalid email format' : '',

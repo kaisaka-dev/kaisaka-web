@@ -21,7 +21,7 @@
 
 			<InputText label="First name" id={`first-name-${index}`} bind:value={formData.firstName} required msg={errors.firstName} />
 			<InputText label="Last name" id={`last-name-${index}`} bind:value={formData.lastName} required msg={errors.lastName} />
-			<InputText label="Birthday" id="bday" bind:value={formData.bday} type="date" />
+			<InputText label="Birthday" id="bday" bind:value={formData.bday} type="date" msg={errors.bday} />
 			<Select label="Sex" id={`sex-${index}`} options={options.sex} required bind:value={formData.sex} msg={errors.sex} />
 			<InputText label="Contact No." id={`contact-no-${index}`} bind:value={formData.contactNo} required msg={errors.contactNo} />
 			<InputText label="Facebook Link" id={`fb-link-${index}`} bind:value={formData.fbLink} />
