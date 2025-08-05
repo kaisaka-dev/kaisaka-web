@@ -57,7 +57,7 @@ export async function POST({ request, locals }) {
     const { data, error } = await supabase.auth.admin.updateUserById( current_profile.id, { 
       email: email,
       password: password,
-      data: {
+      user_metadata: {
         username: username
       }
     });
@@ -71,6 +71,18 @@ export async function POST({ request, locals }) {
       );
     }
 
+    if(username){
+      const { data, error } = await supabase
+        .from('user_profiles')
+        .update({ username: username }) // Fields to update
+        .eq('user_id', current_profile.id); // Match condition
+
+      if (error) {
+        console.error('Error updating user:', error);
+      } else {
+        console.log('Updated user:', data);
+      }
+    }
     return json({ success: true });
 
   } catch (error) {
