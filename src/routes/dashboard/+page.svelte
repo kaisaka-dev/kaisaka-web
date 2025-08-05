@@ -115,7 +115,7 @@ async function fetchPendingDocuments() {
                 {/each}
                 {#if pendingList.length > 5}
                     <br>
-                    <a href="/dashboard/members/pending">see more > </a>
+                    <a href="/dashboard/members/pending">See more ({pendingCwds}) > </a>
                 {/if}
             {/if}
         </ul>

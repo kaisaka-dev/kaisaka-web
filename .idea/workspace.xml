@@ -5,9 +5,10 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="12237686-5a37-4f4c-b35a-ebe8cb09a864" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/src/routes/dashboard/members/children/profile/+page.server.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/routes/dashboard/members/children/profile/+page.server.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/routes/dashboard/members/children/profile/edit/+page.server.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/routes/dashboard/members/children/profile/edit/+page.server.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/routes/dashboard/members/children/profile/edit/+page.svelte" beforeDir="false" afterPath="$PROJECT_DIR$/src/routes/dashboard/members/children/profile/edit/+page.svelte" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/routes/dashboard/+page.svelte" beforeDir="false" afterPath="$PROJECT_DIR$/src/routes/dashboard/+page.svelte" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/routes/dashboard/members/children/+page.server.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/routes/dashboard/members/children/+page.server.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/routes/dashboard/members/children/+page.svelte" beforeDir="false" afterPath="$PROJECT_DIR$/src/routes/dashboard/members/children/+page.svelte" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -51,6 +52,13 @@
     "vue.rearranger.settings.migration": "true"
   }
 }]]></component>
+  <component name="SharedIndexes">
+    <attachedChunks>
+      <set>
+        <option value="bundled-js-predefined-d6986cc7102b-f27c65a3e318-JavaScript-WS-251.23774.424" />
+      </set>
+    </attachedChunks>
+  </component>
   <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
   <component name="TaskManager">
     <task active="true" id="Default" summary="Default task">
@@ -62,6 +70,7 @@
       <workItem from="1752307664496" duration="13221000" />
       <workItem from="1752413800965" duration="2000" />
       <workItem from="1752475584327" duration="1464000" />
+      <workItem from="1754321476463" duration="14485000" />
     </task>
     <servers />
   </component>
