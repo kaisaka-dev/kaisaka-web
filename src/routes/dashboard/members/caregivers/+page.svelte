@@ -4,18 +4,24 @@
     import Table from "$components/text/Table.svelte";
     import InputText from '$components/input/InputText.svelte';
     import type { PageData } from './$types';
+    import Select from '$components/input/Select.svelte';
 
     // load the data
     const { data } = $props<{ data: PageData }>();
-    let caregiverList: CaregiverListItem[] = $state(data.caregiverList);
-    let filteredData: CaregiverListItem[] = $state(data.caregiverList);
+    let caregiverList = $state(data.caregiverList);
+    let filteredData = $state(data.caregiverList);
     let error = $state(data.error || '');
+    const options = { active_status: [
+            { id: "🟩", name: "🟩 Active" },
+            { id: "⬛", name: "⬛ Inactive" }
+        ]}
     
     let filter = $state({
         main: "",
         firstName: "",
         lastName: "",
-        contact: ""
+        contact: "",
+        active: ""
     });
 
     $effect(() => applyFilter());
@@ -32,7 +38,8 @@
             const matchesSpecific =
               (!filter.firstName || caregiver.firstName.toLowerCase().includes(filter.firstName.toLowerCase())) &&
               (!filter.lastName || caregiver.lastName.toLowerCase().includes(filter.lastName.toLowerCase())) &&
-              (!filter.contact || caregiver.contact.includes(filter.contact));
+              (!filter.contact || caregiver.contact.includes(filter.contact)) &&
+              (!filter.active || caregiver.active === filter.active);
 
             return matchesMain && matchesSpecific;
         });
@@ -43,7 +50,8 @@
             main: "",
             firstName: "",
             lastName: "",
-            contact: ""
+            contact: "",
+            active: ""
         }
         filteredData = caregiverList;
     }
@@ -59,6 +67,7 @@
             <InputText label="First name" id="first-name" bind:value={filter.firstName} margin={false} />
             <InputText label="Last name" id="last-name" bind:value={filter.lastName} margin={false} />
             <InputText label="Contact" id="contact" bind:value={filter.contact} margin={false} />
+            <Select label="Active" id="active-status" options={options.active_status} bind:value={filter.active} margin={false}/>
 
             <div id="reset" class="flex justify-end">
                 <button onclick={resetFilters}>Reset Filters</button>
@@ -81,7 +90,7 @@
 
         <Table
           data={filteredData}
-          includedKeys={['firstName', 'lastName', 'contact']}
+          includedKeys={['firstName', 'lastName', 'contact', 'active']}
           hasLink={true}
         />
     {/if}
