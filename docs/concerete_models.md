@@ -1,7 +1,7 @@
 
 # Concrete Models
 
-Inside the models folder, you will find all concrete
+Inside the models folder, you will find all concrete models
 
 ```zsh
 activityModel.ts
@@ -14,7 +14,6 @@ caregiversModel.ts
 childrenModel.ts
 citiesModel.ts
 communityGroupTypeModel.ts
-db.md
 disabilityCategoryModel.ts
 educationStatusModel.ts
 employmentStatusModel.ts

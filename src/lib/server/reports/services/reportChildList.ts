@@ -394,8 +394,6 @@ export class ReportGeneratorChildList extends ReportGenerator {
 
     return await data.workbook;
   }
-
-
   
   /**
    * Populates the Excel worksheet with all layers of report data.
