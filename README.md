@@ -1,60 +1,77 @@
-# Svelte library
+
+# Kaisaka Web
 
 [![Bun](https://img.shields.io/badge/Bun-000?logo=bun&logoColor=fff)](#) [![Figma](https://img.shields.io/badge/Figma-F24E1E?logo=figma&logoColor=white)](#) [![Jira](https://img.shields.io/badge/Jira-0052CC?logo=jira&logoColor=fff)](#) [![SvelteKit](https://img.shields.io/badge/SvelteKit-%23f1413d.svg?logo=svelte&logoColor=white)](#) [![TailwindCSS](https://img.shields.io/badge/Tailwind%20CSS-%2338B2AC.svg?logo=tailwind-css&logoColor=white)](#)
 
-Everything you need to build a Svelte library, powered by [`sv`](https://npmjs.com/package/sv).
+Kaisaka Web is a social welfare management platform for organizations supporting children with disabilities and their families. It provides tools for registration, record management, activity tracking, reporting, and analytics, built with SvelteKit, Supabase, and PostgreSQL.
 
-Read more about creating a library [in the docs](https://svelte.dev/docs/kit/packaging).
+---
 
-## Creating a project
+## Features
 
-If you're seeing this, you've probably already done this step. Congrats!
+- **Authentication**: Secure login and registration for staff and caregivers.
+- **Children Management**: Register, view, and manage child records, including certificates and disability info.
+- **Caregivers Management**: Register and manage caregiver profiles, occupations, and income.
+- **Family Management**: Link children and caregivers, view family structures, and manage relationships.
+- **Membership Payments**: Track membership payments and annual renewals.
+- **Interventions & History**: Plan, record, and review interventions for children and families.
+- **Attendance Tracking**: Log attendance for events and activities.
+- **Service Objectives & Activities**: Organize, categorize, and track program objectives and activities.
+- **Reporting**: Generate, view, and export annual/quarterly reports with auto-generated statistics.
+- **Dashboard**: Visual summaries of key metrics, including intervention coverage and activity progress.
+- **Logging**: Audit trails and error tracking for reliability.
+- **Testing**: Integrated unit and UI tests for quality assurance.
 
+---
+
+## Architecture
+
+- **Client Layer**: SvelteKit frontend with DaisyUI for responsive, accessible UI.
+- **API Layer**: SvelteKit API routes for business logic, validation, and data exchange.
+- **Domain Layer**: Models and repositories encapsulate business logic and data access.
+- **Infrastructure Layer**: Supabase/PostgreSQL for data storage, Supabase Auth for authentication, Logger for audit and error tracking, Report Generator for exports.
+- **Deployment Layer**: Hosted on Vercel for fast, scalable delivery.
+
+See [docs/media/Kaisaka Technical Map.png](docs/media/Kaisaka%20Technical%20Map.png) for a visual overview.
+
+---
+
+## Getting Started
+
+1. **Clone the repository**
 ```bash
-# create a new project in the current directory
-npx sv create
-
-# create a new project in my-app
-npx sv create my-app
+git clone https://github.com/your-org/kaisaka-web.git
+cd kaisaka-web
+```
+2. Install dependencies
+```bash
+npm install
 ```
 
-## Developing
+3. Configure environment
 
-Once you've created a project and installed dependencies with `npm install` (or `pnpm install` or `yarn`), start a development server:
+Copy .env.example to .env and fill in Supabase and other secrets.
 
+4. Run locally
 ```bash
 npm run dev
-
-# or start the server and open the app in a new browser tab
-npm run dev -- --open
 ```
-
-Everything inside `src/lib` is part of your library, everything inside `src/routes` can be used as a showcase or preview app.
-
-## Building
-
-To build your library:
-
+5. Run tests
 ```bash
-npm run package
+npm run test
 ```
 
-To create a production version of your showcase app:
+## Documentation
 
-```bash
-npm run build
-```
+- Home
+- API Routes
+- Database Models
+- Testing
+- Reports
+- Contributing
 
-You can preview the production build with `npm run preview`.
+## Contributing
 
-> To deploy your app, you may need to install an [adapter](https://svelte.dev/docs/kit/adapters) for your target environment.
+See CONTRIBUTING.md for coding standards, design patterns, and workflow.
 
-## Publishing
 
-Go into the `package.json` and give your package the desired name through the `"name"` option. Also consider adding a `"license"` field and point it to a `LICENSE` file which you can create from a template (one popular option is the [MIT license](https://opensource.org/license/mit/)).
-
-To publish your library to [npm](https://www.npmjs.com):
-
-```bash
-npm publish
-```
