@@ -25,7 +25,7 @@
 			<Select label="Sex" id={`sex-${index}`} options={options.sex} required bind:value={formData.sex} msg={errors.sex} />
 			<InputText label="Contact No." id={`contact-no-${index}`} bind:value={formData.contactNo} required msg={errors.contactNo} />
 			<InputText label="Facebook Link" id={`fb-link-${index}`} bind:value={formData.fbLink} />
-			<InputText label="Email" id={`email-${index}`} bind:value={formData.email} />
+			<InputText label="Email" id={`email-${index}`} bind:value={formData.email} msg={errors.email}/>
 			<InputText label="Address" id={`address-${index}`} bind:value={formData.address} required msg={errors.address} />
 			<InputText label="Barangay" id={`brgy-${index}`} required bind:value={formData.brgy} msg={errors.brgy} />
 			<InputText label="Occupation" id={`occupation-${index}`} bind:value={formData.occupation} />

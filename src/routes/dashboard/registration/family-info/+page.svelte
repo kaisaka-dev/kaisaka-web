@@ -72,6 +72,7 @@
 			lastName: '',
 			sex: '',
 			contactNo: '',
+			email: '',
 			address: '',
 			brgy: '',
 			communityYr: '',
@@ -158,6 +159,10 @@
 
 	}
 
+	// cleans the contact number, used for validation and posting the data
+	const cleanContactNumber = (contactNo: string): string => {
+		return contactNo.replace(/[\s\-\(\)]/g, ''); // Remove spaces, dashes, parentheses
+	};
 
 	function addNewCaregiver() {
 		const newCaregiver = {
@@ -183,6 +188,7 @@
 			lastName: '',
 			sex: '',
 			contactNo: '',
+			email: '',
 			brgy: '',
 			address: '',
 			communityYr: '',
@@ -234,14 +240,31 @@
 			linkedFamilyError = "Please select at least one family member from the existing family";
 		}
 
-		// validation for new caregivers
+		// new caregiver helper function: for email validation
+		const isValidEmail = (email: string): boolean => {
+			if (!email.trim()) return true; // Email is optional, so empty is valid
+			const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+			return emailRegex.test(email);
+		};
+		// new caregiver helper function: for contact no validation
+		const isValidContactNumber = (contactNo: string): boolean => {
+			if (!contactNo.trim()) return false; 			// Contact number is required
+			const mobileRegex = /^09\d{9}$/; 					// Philippine mobile number format: starts with 09 and has 11 digits total
+			const landlineRegex = /^0\d{1,2}\d{7}$/; 	// Or landline format: area code + 7 digits
+			const cleanNumber = cleanContactNumber(contactNo); // Remove spaces, dashes, parentheses
+			return mobileRegex.test(cleanNumber) || landlineRegex.test(cleanNumber);
+		};
 
+
+		// validation for new caregivers
 		caregiverErrors = familyMembers.newCaregivers.map((caregiver) => {
 			const errors = {
 				firstName: !caregiver.firstName.trim() ? 'Required' : '',
 				lastName: !caregiver.lastName.trim() ? 'Required' : '',
 				sex: !caregiver.sex ? 'Required' : '',
-				contactNo: !caregiver.contactNo.trim() ? 'Required' : '',
+				contactNo: !caregiver.contactNo.trim() ? 'Required' :
+					!isValidContactNumber(caregiver.contactNo) ? 'Invalid phone number format' : '',
+				email: !isValidEmail(caregiver.email) ? 'Invalid email format' : '',
 				address: !caregiver.address.trim() ? 'Required' : '',
 				brgy: !caregiver.brgy ? 'Required' : '',
 				communityYr: '',
@@ -512,7 +535,7 @@
 
 			// create the caregiver record for the caregiver
 			const caregiverData = await safeFetch('POST', '/api/caregivers', {
-				contact_number: caregiver.contactNo.replace(/\s/g, ''),
+				contact_number: cleanContactNumber(caregiver.contactNo),
 				facebook_link: caregiver.fbLink,
 				email: caregiver.email,
 				occupation: caregiver.occupation,

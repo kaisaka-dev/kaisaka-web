@@ -55,6 +55,7 @@ export type CaregiverError = {
 	lastName: string;
 	sex: string;
 	contactNo: string;
+	email: string;
 	address: string;
 	brgy: string;
 	communityYr: string;
