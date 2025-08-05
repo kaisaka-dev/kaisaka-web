@@ -7,6 +7,7 @@ export type CaregiverListItem = {
 	lastName: string;
 	contact: string;
 	link: string;
+	active: string;
 };
 
 export const load: PageServerLoad = async ({locals, fetch}) => {
@@ -22,6 +23,7 @@ export const load: PageServerLoad = async ({locals, fetch}) => {
 		}
 
 		const result = await response.json();
+		console.log(result.data)
 
 		// Transform API data to match component expectations
 		const caregiverList: CaregiverListItem[] = result.data.map((caregiver: any) => {
@@ -31,7 +33,8 @@ export const load: PageServerLoad = async ({locals, fetch}) => {
 				firstName: caregiver.members?.first_name || '',
 				lastName: caregiver.members?.last_name || '',
 				contact: caregiver.contact_number || '',
-				link: `/dashboard/members/caregivers/profile?id=${caregiver.id}`
+				link: `/dashboard/members/caregivers/profile?id=${caregiver.id}`,
+				active: caregiver.members?.date_of_termination == null ? "🟩" : "⬛"
 			};
 
 		});
