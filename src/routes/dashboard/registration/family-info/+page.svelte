@@ -16,6 +16,7 @@
 	import { dropdownOptions } from '$lib/types/options.js';
 	import ExistingForm from './ExistingForm.svelte';
 	import LoadingBtn from '$components/styled-buttons/LoadingBtn.svelte';
+	import Validation from '$components/text/Validation.svelte';
 
 
 	/**
@@ -77,7 +78,8 @@
 			msg: ''
 		}))
 	);
-	let linkedFamilyError = $state('')	// default no errors
+	let linkedFamilyError = $state('');	// default no errors
+	let mainError = $state('');
 	let showTable: boolean = $state(false); // for the existing family table
 	let childId = url.childId, memberId: string, familyId: string, caregiverId = url.caregiverId;	// for the posts
 	let isNewChild = url.childId == null && url.caregiverId == null;
@@ -215,15 +217,21 @@
 	function validateForm(): boolean {
 		let isValid = true;
 
+		// base submission requirements: must have (1) existing family w/ 1+ members, (2) 1+ new caregiver
+		const hasExistingFamily = familyMembers.hasExisting && (familyMembers.linkedFamily?.infoLinked?.length ?? 0) > 0;
+		const hasNewCaregivers = familyMembers.newCaregivers.length > 0;
+
+		if (!hasExistingFamily && !hasNewCaregivers) {
+			isValid = false;
+			mainError = "Please either select an existing family member or add at least one new caregiver";
+		} else {
+			mainError = "";
+		}
+
 		// validation for existing
-		if (familyMembers.hasExisting) {
-			const hasLinkedMembers = (familyMembers.linkedFamily?.infoLinked?.length ?? 0) > 0;
-			if (!hasLinkedMembers) {
-				isValid = false;
-				linkedFamilyError = "Please have at least one family member";
-			} else {
-				linkedFamilyError = "";
-			}
+		if (familyMembers.hasExisting && !hasExistingFamily) {
+			isValid = false;
+			linkedFamilyError = "Please select at least one family member from the existing family";
 		}
 
 		// validation for new caregivers
@@ -569,6 +577,7 @@
 	{#if loadingSubmission}
 		<LoadingBtn label="Submit" />
 	{:else}
+		<Validation msg={mainError} />
 		<button class="green" onclick={handleSubmit}>Submit</button>
 	{/if}
 </section>
