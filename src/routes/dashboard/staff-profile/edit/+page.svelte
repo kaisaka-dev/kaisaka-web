@@ -47,6 +47,11 @@
            state = "Missing Information!"
         }
 
+        else if(/[!@#$%^&*+-]/.test(account.name)){
+            style = "mt-5 ml-25 !text-red-500"
+            state = "Invalid Username!"
+        }
+
         else if(changePass && !isStrongPassword(account.pass)) {
             style = "mt-5 ml-25 !text-red-500"
             state = "Password does not meet requirements!"
