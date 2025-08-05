@@ -5,6 +5,7 @@
     import LoadingBtn from '$components/styled-buttons/LoadingBtn.svelte';
     import { goto } from '$app/navigation';
     import InputPassword from '$components/input/InputPassword.svelte';
+    import Checkbox from '$components/input/Checkbox.svelte';
 
     export let data;
 
@@ -16,6 +17,7 @@
     let style = ""
     let state = ""
     let loadingSave = false
+    let changePass = false
 
     let account = {
         name: user.accountName,
@@ -38,17 +40,19 @@
 
     async function handleSubmit() {
         state = ""
-        if(account.name === "" || account.pass === "" || account.confirmPass === "" || account.email === "") {
+        let passFieldInvalid = (account.pass === "" || account.confirmPass === "") && changePass
+
+        if(account.name === "" || account.email === "" || passFieldInvalid) {
            style = "mt-5 ml-25 !text-red-500"
            state = "Missing Information!"
         }
 
-        else if(!isStrongPassword(account.pass)) {
+        else if(changePass && !isStrongPassword(account.pass)) {
             style = "mt-5 ml-25 !text-red-500"
             state = "Password does not meet requirements!"
         }
 
-        else if(account.pass !== account.confirmPass) {
+        else if(changePass && account.pass !== account.confirmPass) {
             style = "mt-5 ml-25 !text-red-500"
             state = "Password Mismatch!"
          }
@@ -94,8 +98,15 @@
 <section class = "border-4 border-[var(--border)] min-w-150 p-6">
     <Input id='name' label="Account name" bind:value={account.name}/>
     <Input id='email' label="Account email" bind:value={account.email}/>
-    <InputPassword id='pass' label="Account password" bind:value={account.pass} msg={errors.pass}/>
-    <InputPassword id='confirmPass' label="Confirm password" bind:value={account.confirmPass} msg={errors.confirmPass}/>
+
+    <br>
+    <Checkbox id="edit-pass" label="Change Password" bind:checked={changePass}/>
+    {#if changePass}
+        <div class="ml-[1.5rem]">
+            <InputPassword id='pass' label="Account password" bind:value={account.pass} msg={errors.pass}/>
+            <InputPassword id='confirm-pass' label="Confirm password" bind:value={account.confirmPass} msg={errors.confirmPass}/>
+        </div>
+    {/if}
 </section>
 
 <div class = "mt-5 ml-25 flex flex-row">
