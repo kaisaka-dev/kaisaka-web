@@ -52,6 +52,11 @@
             state = "Invalid Username!"
         }
 
+        else if (!/@/.test(account.email)){
+            style = "mt-5 ml-25 !text-red-500"
+            state = "Invalid Email!"
+        }
+
         else if(changePass && !isStrongPassword(account.pass)) {
             style = "mt-5 ml-25 !text-red-500"
             state = "Password does not meet requirements!"
