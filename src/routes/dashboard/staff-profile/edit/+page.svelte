@@ -70,6 +70,7 @@
         else {
             account.email = account.email.trim()
             loadingSave = true;
+
             const updateRes = await fetch('/auth/update', {
                 method: 'POST',
                 headers: {
@@ -83,8 +84,9 @@
                 });
 
             if(!updateRes.ok){
+                const result = await updateRes.json()
                 style = "mt-5 ml-25 !text-red-500"
-                state = updateRes.statusText
+                state = result.error
             }
             else{
                 style = "mt-5 ml-25 !text-[var(--green)]"
