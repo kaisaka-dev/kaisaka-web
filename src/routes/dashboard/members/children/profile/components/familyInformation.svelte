@@ -2,7 +2,6 @@
 
 <script lang="ts">
 	import { goto } from "$app/navigation";
-	import { fa } from "zod/v4/locales";
 
     
     export let family = [];
@@ -38,12 +37,8 @@
     <div class = "flex flex-col md:flex-row mb-5">
         {#if fammember?.is_child == false}
             <div class = "!bg-[var(--pink)] py-4 w-full max-w-45 rounded-full text-center !font-bold !text-[var(--background)] mr-20" > {fammember.relationship_type} </div>
-            {:else if fammember?.is_child == true}
-                {#if fammember.members.first_name === firstName}
-                <div class = "!bg-[var(--green)] py-4 w-full max-w-45 rounded-full text-center !font-bold !text-[var(--background)] mr-20" > Child </div>
-                {:else}
-                <div class = "!bg-[var(--green)] py-4 w-full max-w-45 rounded-full text-center !font-bold !text-[var(--background)] mr-20" > Sibling </div>
-                {/if}
+        {:else if fammember?.is_child == true}
+            <div class = "!bg-[var(--green)] py-4 w-full max-w-45 rounded-full text-center !font-bold !text-[var(--background)] mr-20" > {fammember.relationship_type} </div>
         {/if}
             <div class = "flex flex-col md:flex-row">
                     {#if fammember.is_child == false}
