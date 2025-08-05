@@ -107,13 +107,8 @@ export const POST: RequestHandler = async({ request }) => {
   return json({ message: 'Inserted family_member', data: inserted})
 }
 
-export const PUT: RequestHandler = async({request, locals }) => {
-  const { session, user } = await locals.safeGetSession();
+export const PUT: RequestHandler = async({request }) => {
 
-  if (!session) {
-    return new Response('Unauthorized', { status: 401 });
-  }
-  
   let body: any = {}
   try {
     body = await request.json();
