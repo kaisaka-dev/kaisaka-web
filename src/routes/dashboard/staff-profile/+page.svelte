@@ -2,6 +2,7 @@
     import Input from '$components/input/InputText.svelte'
     import Header from '$components/Header.svelte'
     import type { staff } from '$lib/types/staff.js'
+    import { goto } from '$app/navigation';
     export let data;
 
     //below are test data needed for the page to work, this will be deleted once the relevant APIs are completed
@@ -47,5 +48,5 @@
 </div>
 
 <div class = "mt-5 ml-25">
-    <button onclick = {() => location.href = '/dashboard/staff-profile/edit'}> Edit Profile</button>
+    <button onclick = {() => goto('/dashboard/staff-profile/edit')}> Edit Profile</button>
 </div>

@@ -4,6 +4,7 @@
     import Select from '$components/input/Select.svelte'
     import type { staff } from '$lib/types/staff.js'
 	import { userEvent } from '@storybook/test';
+    import LoadingBtn from '$components/styled-buttons/LoadingBtn.svelte';
 
     export let data;
 
@@ -24,6 +25,8 @@
 
     let style = ""
     let state = ""
+    let loadingsave = false
+
     async function handleSubmit(account: string, pass: string,confirmpass: string, email: string) {
         if(account === "" || pass === "" || confirmpass === "" || email === "") {
            style = "mt-5 ml-25 !text-red-500"
@@ -36,6 +39,7 @@
          }
 
         else {
+            loadingsave = true;
             const updateRes = await fetch('/auth/update', {
                 method: 'POST',
                 headers: {
@@ -56,6 +60,7 @@
                 style = "mt-5 ml-25 !text-[var(--green)]"
                 state = "Changes saved!"
             }
+            loadingsave = false;
         }
     }
 </script>
@@ -97,7 +102,11 @@
 
 <div class = "mt-5 ml-25 flex flex-row">
     <button class =  "mr-5" type = "submit" onclick = {()=> location.href="/dashboard/staff-profile"}> Back</button>
-    <button class = "!bg-[var(--green)]" onclick = {() => handleSubmit(testacc, testpass,confirmpass, testemail)}> Save Changes</button>
+    {#if loadingsave}
+        <LoadingBtn label="Save Changes" />
+    {:else}
+        <button class = "green" onclick = {() => handleSubmit(testacc, testpass,confirmpass, testemail)}> Save Changes</button>
+    {/if}
 
 </div>
 
