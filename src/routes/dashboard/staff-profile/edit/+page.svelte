@@ -42,7 +42,7 @@
         state = ""
         let passFieldInvalid = (account.pass === "" || account.confirmPass === "") && changePass
 
-        if(account.name === "" || account.email === "" || passFieldInvalid) {
+        if(account.name.trim() === "" || account.email.trim() === "" || passFieldInvalid) {
            style = "mt-5 ml-25 !text-red-500"
            state = "Missing Information!"
         }
