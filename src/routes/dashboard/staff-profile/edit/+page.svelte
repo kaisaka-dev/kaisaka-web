@@ -68,6 +68,7 @@
          }
 
         else {
+            account.email = account.email.trim()
             loadingSave = true;
             const updateRes = await fetch('/auth/update', {
                 method: 'POST',
