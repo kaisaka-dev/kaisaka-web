@@ -179,9 +179,8 @@
 			brgy: '',
 			occupation: '',
 			relationship: '',
-			communityGrp_id: null,
-			income: '',
-			communityYr: new Date().getFullYear()
+			communityGrp: [],
+			income: []
 		};
 
 		const newError = {
@@ -554,24 +553,30 @@
 			console.log(caregiverData.message)
 			const caregiver_id = caregiverData.data.id;
 
-			// create the caregiver_groups record
-			if (caregiver.communityGrp_id != null) {
-				const comGrpData = await safeFetch('POST', '/api/caregiver_groups', {
-					date_joined: new Date(caregiver.communityYr, 0, 1),	// converts year into january
-					community_group_id: caregiver.communityGrp_id,
-					caregiver_id: caregiver_id
-				})
-				console.log("Community group: ", comGrpData.message)
+			// create the caregiver_groups records
+			for (const communityGroup of caregiver.communityGrp) {
+				if (communityGroup.id != null) {
+					const comGrpData = await safeFetch('POST', '/api/caregiver_groups', {
+						date_joined: communityGroup.yrFrom,
+						date_left: communityGroup.yrTo || null,
+						community_group_id: communityGroup.id,
+						caregiver_id: caregiver_id
+					})
+					console.log("Community group: ", comGrpData.message)
+				}
 			}
 
-			// create the income type record
-			if (caregiver.income != null && caregiver.income !== "") {
-				const incomeData = await safeFetch('POST', '/api/income_type', {
-					income_category: caregiver.income,
-					date_start: new Date(),
-					caregiver_id: caregiver_id
-				})
-				console.log("Income: ", incomeData.message)
+			// create the income type records
+			for (const incomeSource of caregiver.income) {
+				if (incomeSource.type && incomeSource.type !== "") {
+					const incomeData = await safeFetch('POST', '/api/income_type', {
+						income_category: incomeSource.type,
+						date_start: incomeSource.yrFrom,
+						date_end: incomeSource.yrTo || null,
+						caregiver_id: caregiver_id
+					})
+					console.log("Income: ", incomeData.message)
+				}
 			}
 
 			return {
