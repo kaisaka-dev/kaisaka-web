@@ -41,11 +41,9 @@
 	// adds a community group to the caregiver's history
 	function addComGroup(): void {
 		const newCommunity: Community = {
-			isDeleted: false,
-			isNew: true,
 			name: "",
 			date_joined: new Date().toISOString().split('T')[0], // today
-			date_left: null, // null means active
+			date_left: "", // empty means active
 			isNew: true,
 			isDeleted: false
 		};
@@ -138,7 +136,7 @@
 					{:else}
 						<td>{com.date_joined}
 							<i class="fa-solid fa-arrow-right !text-[var(--green)]"></i>
-							{#if com.date_left === null}
+							{#if com.date_left === ""}
 								<span class="!text-[var(--green)]"> Present </span>
 							{:else}
 								{com.date_left}
@@ -166,7 +164,7 @@
 					{:else}
 						<td>{com.date_joined}
 							<i class="fa-solid fa-arrow-right !text-[var(--green)]"></i>
-							{#if com.date_left === null}
+							{#if com.date_left === ""}
 								<span class="!text-[var(--green)]"> Present </span>
 							{:else}
 								{com.date_left}

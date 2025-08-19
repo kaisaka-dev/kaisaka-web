@@ -17,9 +17,9 @@
 	}
 	function addInc(): void {
 		const newIncome: Income = {
-			income_category: "",
+			name: "",
 			date_start: new Date().toISOString().split('T')[0], // today
-			date_end: null, // null means active,
+			date_end: "", // empty means active,
 			isDeleted: false,
 			isNew: true
 		};
@@ -51,7 +51,7 @@
 					{#if editing}
 						{#if inc.isDeleted == false}
 						<td><InputRange type="date" bind:valueFrom={inc.date_start} bind:valueTo={inc.date_end} /></td>
-						<td><Select bind:value={inc.income_category} options={dropdownOptions.income_category} required /></td>
+						<td><Select bind:value={inc.name} options={dropdownOptions.income_category} required /></td>
 						<td style="text-align:center;">
 							<i class="fa-solid fa-trash" on:click={() => deleteInc(index)}></i>
 						</td>
@@ -65,7 +65,7 @@
 								{inc.date_end}
 							{/if}
 						</td>
-						<td>{inc.income_category}</td>
+						<td>{inc.name}</td>
 
 					{/if}
 				</tr>
