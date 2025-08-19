@@ -7,6 +7,10 @@ export const load: PageLoad = async({fetch}) => {
 	const response = await fetch('/api/community_group_type');
 	const options_comGroupType = await response.json();
 
+	// fetch (dropdown) options for disability category
+	const disabilityResponse = await fetch('/api/disability_category');
+	const options_disCategory = await disabilityResponse.json();
+
 	// fetch list of members
 	const familyMembersResponse = await fetch('/api/family_members?details=true');
 	const familyMembersData = await familyMembersResponse.json();
@@ -28,7 +32,8 @@ export const load: PageLoad = async({fetch}) => {
 
 	return {
 		options: {
-			comGroupType: options_comGroupType.data
+			comGroupType: options_comGroupType.data,
+			disCategory: options_disCategory.data
 		},
 		members: members
 	};
