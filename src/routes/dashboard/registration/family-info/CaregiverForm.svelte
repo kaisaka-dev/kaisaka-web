@@ -62,7 +62,6 @@
 </script>
 
 
-	<h1>Caregiver {index + 1}</h1>
 
 			<InputText label="First name" id={`first-name-${index}`} bind:value={formData.firstName} required msg={errors.firstName} />
 			<InputText label="Last name" id={`last-name-${index}`} bind:value={formData.lastName} required msg={errors.lastName} />
