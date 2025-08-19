@@ -61,7 +61,13 @@
 
 </script>
 
-
+<section>
+	<h1 class="flex justify-between items-center">
+		Caregiver Information
+		<button class="green" onclick={() => deleteCaregiver(index)}>
+			<i class="fa-solid fa-trash"></i>
+		</button>
+	</h1>
 
 			<InputText label="First name" id={`first-name-${index}`} bind:value={formData.firstName} required msg={errors.firstName} />
 			<InputText label="Last name" id={`last-name-${index}`} bind:value={formData.lastName} required msg={errors.lastName} />
@@ -74,8 +80,8 @@
 			<InputText label="Barangay" id={`brgy-${index}`} required bind:value={formData.brgy} msg={errors.brgy} />
 			<InputText label="Occupation" id={`occupation-${index}`} bind:value={formData.occupation} />
 			<InputText label="Family role" id={`relationship-${index}`} bind:value={formData.relationship} />
-			
 
+</section>
 
 <section class="ml-[2rem]">
 	<HistoryCommunityGroup
@@ -97,10 +103,18 @@
 
 
 
-
-		<div class="input-container">
-			<button on:click={() => deleteCaregiver(index)}>Delete</button>
-		</div>
-
+<style>
+    i {
+        color: var(--error-color);
+    }
+    i:hover {
+        cursor: pointer;
+        transition-duration: 0.2s;
+        color: var(--background);
+    }
+    h1 button:hover {
+        background-color: transparent;
+    }
+</style>
 
 
