@@ -18,6 +18,7 @@
 	import LoadingBtn from '$components/styled-buttons/LoadingBtn.svelte';
 	import Validation from '$components/text/Validation.svelte';
 	import CaregiverForm from './family-info/CaregiverForm.svelte';
+	import ChildForm from './child/ChildForm.svelte';
 
 
 	/**
@@ -43,7 +44,12 @@
 	const options = $state({
 		comGroupType: data.options.comGroupType,
 		incomeType: dropdownOptions.income_category,
-		sex: dropdownOptions.sex
+		sex: dropdownOptions.sex,
+		disability_category: data.options.disCategory,
+		education_status: dropdownOptions.education_status,
+		education_level: dropdownOptions.education_level,
+		education_type: dropdownOptions.education_type,
+		employment_type: dropdownOptions.employment_type
 	});
 	const members = $state(data.members)
 	console.log("members: ", members)
@@ -64,6 +70,11 @@
 			newCaregivers: []
 		}
 	)
+
+	// Children data structure
+	let children = $state([]);
+	let childrenErrors = $state([]);
+	const thisYear = new Date().getFullYear();
 
 	// $inspect(familyMembers)
 
@@ -236,6 +247,108 @@
 			form.idx = form.idx - 1;
 		}
 		// If form.idx < index, no change needed
+	}
+
+	// Child management functions
+	function addNewChild() {
+		const newChild = {
+			first_name: '',
+			middle_name: '',
+			last_name: '',
+			birthday: '',
+			age: '',
+			sex: '',
+			address: '',
+			barangay: '',
+			remarks: '',
+			date_admission: new Date().toISOString().slice(0, 7),
+			disability: {
+				category_id: null,
+				nature: ''
+			},
+			educ: {
+				type: "",
+				year_start: thisYear,
+				year_end: thisYear + 1,
+				grade_level: "",
+				status: ""
+			},
+			has: {
+				birth_cert: false,
+				medical_cert: false,
+				barangay_cert: false,
+				philhealth: false,
+				pwd_id: false,
+				pwd: {
+					expiry_date: '',
+					id: ''
+				},
+				vote: false,
+				national_id: false,
+			},
+			employment: {
+				able_to_work: false,
+				type: ''
+			},
+			part: {
+				family_life: false,
+				fam_year: thisYear,
+				community: false,
+				com_year: thisYear
+			}
+		};
+
+		const newError = {
+			overall: "",
+			firstName: "",
+			lastName: "",
+			birthday: "",
+			sex: "",
+			address: "",
+			barangay: "",
+			disCategory: "",
+			disNature: "",
+			educType: "",
+			educLvl: "",
+			educStatus: "",
+			pwdId: "",
+			pwdExpy: "",
+			admissionDate: "",
+			partFamilyYear: "",
+			ayStart: "",
+			ayEnd: "",
+			partCommunityYear: ""
+		};
+
+		children = [...children, newChild];
+		childrenErrors = [...childrenErrors, newError];
+		
+		// Set to the newly added child
+		form = {idx: children.length - 1, type: "CHILD"};
+	}
+
+	function deleteChild(index: number) {
+		const newChildren = [];
+		const newErrors = [];
+
+		for (let i = 0; i < children.length; i++) {
+			if (i !== index) {
+				newChildren.push(children[i]);
+				newErrors.push(childrenErrors[i]);
+			}
+		}
+
+		children = newChildren;
+		childrenErrors = newErrors;
+		
+		// Update form.idx after deletion
+		if (form.idx === index && form.type === "CHILD") {
+			// If we deleted the currently selected child, reset to no selection
+			form.idx = -1;
+		} else if (form.idx > index && form.type === "CHILD") {
+			// If we deleted a child before the current selection, adjust the index
+			form.idx = form.idx - 1;
+		}
 	}
 
 	// validates the caregiver form data
@@ -639,23 +752,19 @@
 
 			<div class="step-item p-2 bg-white rounded shadow-sm border-l-4 border-[var(--green)]">
 				<i class="bi bi-person-wheelchair mr-2"></i>
-				Beneficiaries
-
+				Children
 
 				<ul>
-					<!--{#each familyMembers.newCaregivers as _, idx (idx)}-->
-					<!--<li class="cursor-pointer hover:bg-gray-200 p-1 rounded" onclick={() => index = idx}>-->
-					<!--	{familyMembers.newCaregivers[idx].firstName}-->
-					<!--</li>-->
-					<!--{/each}-->
+					{#each children as _, idx (idx)}
+						<li class="cursor-pointer hover:!underline p-1 rounded {form.idx === idx && form.type === 'CHILD' ? '!text-[var(--green)]' : ''}" onclick={() => form = {idx, type: 'CHILD'}}>
+							{children[idx].first_name || `Child ${idx + 1}`}
+						</li>
+					{/each}
 				</ul>
 
-				<button class="green !text-[0.9rem] !p-0 !px-[6px]" aria-label="add" onclick={addNewCaregiver}>
+				<button class="green !text-[0.9rem] !p-0 !px-[6px]" aria-label="add" onclick={addNewChild}>
 					<i class="bi bi-plus-lg"></i>
 				</button>
-
-
-
 			</div>
 			<div class="step-item p-2 bg-green-100 rounded shadow-sm border-l-4 border-[var(--green)]">
 				<i class="bi bi-person-hearts mr-2"></i>
@@ -664,7 +773,7 @@
 				<ul>
 					{#each familyMembers.newCaregivers as _, idx (idx)}
 						<li class="cursor-pointer hover:!underline p-1 rounded {form.idx === idx ? '!text-[var(--green)]' : ''}" onclick={() => form = {idx, type: 'CAREGIVER'}}>
-							{familyMembers.newCaregivers[idx].firstName}
+							{familyMembers.newCaregivers[idx].firstName || `Caregiver ${idx + 1}`}
 						</li>
 					{/each}
 				</ul>
@@ -691,13 +800,20 @@
 		{#if form.idx === -1}
 			Add a family member on the left
 		{:else if form.type === "CAREGIVER"}
-			<h2 class="text-2xl font-bold mb-6">Caregiver Information</h2>
 
 			<CaregiverForm
 				bind:formData={familyMembers.newCaregivers[form.idx]}
 				errors={caregiverErrors[form.idx]}
 				index={form.idx}
 				deleteCaregiver={deleteCaregiver}
+				{options}
+			/>
+		{:else if form.type === "CHILD"}
+			<ChildForm
+				bind:formData={children[form.idx]}
+				errors={childrenErrors[form.idx]}
+				index={form.idx}
+				deleteChild={deleteChild}
 				{options}
 			/>
 		{/if}
