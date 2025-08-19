@@ -67,32 +67,32 @@
 
     <FilterSearch bind:searchedValue={filter.main}>
         <div slot="modal" class="pending-filters">
-            <InputText label="First name" id="first-name" bind:value={filter.firstName} margin={false} />
-            <InputText label="Last name" id="last-name" bind:value={filter.lastName} margin={false} />
+            <InputText label="First name" id="first-name" bind:value={filter.firstName} />
+            <InputText label="Last name" id="last-name" bind:value={filter.lastName} />
 
             <Select
               label="Medical Certificate"
               id="med-cert"
               options={documentStatusOptions}
-              bind:value={filter.medCert} margin={false}
+              bind:value={filter.medCert}
             />
             <Select
               label="Birth Certificate"
               id="birth-cert"
               options={documentStatusOptions}
-              bind:value={filter.birthCert} margin={false}
+              bind:value={filter.birthCert}
             />
             <Select
               label="Barangay Certificate"
               id="brgy-cert"
               options={documentStatusOptions}
-              bind:value={filter.brgyCert} margin={false}
+              bind:value={filter.brgyCert}
             />
             <Select
               label="Intervention Plan"
               id="intervention-plan"
               options={documentStatusOptions}
-              bind:value={filter.interventionPlan} margin={false}
+              bind:value={filter.interventionPlan}
             />
 
             <div id="reset" class="flex justify-end">

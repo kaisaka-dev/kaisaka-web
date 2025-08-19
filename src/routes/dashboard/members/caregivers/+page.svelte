@@ -64,10 +64,10 @@
 
     <FilterSearch bind:searchedValue={filter.main}>
         <div slot="modal">
-            <InputText label="First name" id="first-name" bind:value={filter.firstName} margin={false} />
-            <InputText label="Last name" id="last-name" bind:value={filter.lastName} margin={false} />
-            <InputText label="Contact" id="contact" bind:value={filter.contact} margin={false} />
-            <Select label="Active" id="active-status" options={options.active_status} bind:value={filter.active} margin={false}/>
+            <InputText label="First name" id="first-name" bind:value={filter.firstName} />
+            <InputText label="Last name" id="last-name" bind:value={filter.lastName} />
+            <InputText label="Contact" id="contact" bind:value={filter.contact} />
+            <Select label="Active" id="active-status" options={options.active_status} bind:value={filter.active}/>
 
             <div id="reset" class="flex justify-end">
                 <button onclick={resetFilters}>Reset Filters</button>

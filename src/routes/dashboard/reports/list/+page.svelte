@@ -92,7 +92,7 @@
                                formData={newPeriod} />
         </div>
         <div slot="modal">
-            <InputRange type="number" label="Year" id="year" bind:valueFrom={filter.yrStart} bind:valueTo={filter.yrEnd} margin={false} />
+            <InputRange type="number" label="Year" id="year" bind:valueFrom={filter.yrStart} bind:valueTo={filter.yrEnd} />
 
             <div id="reset" class="flex justify-end">
                 <button onclick={resetFilters}>Reset Filters</button>

@@ -73,21 +73,22 @@ button.green:hover {
 }
 
 section {
-    margin: 30px;
+    margin: 2rem;
 }
 
 section h1 {
     width: 100%;
-    padding: 12px 35px;
+    padding: 0.5rem 1rem;
     background-color: var(--green);
     font-size: var(--large-text);
     font-weight: bold;
     color: var(--background);
     margin-bottom: 25px;
+    margin-left: -1rem;
 }
 
 section h2 {
-    padding: 0.75rem 2rem;
+    padding: 0.75rem 0;
 }
 h2 {
     color: var(--green);
@@ -109,7 +110,7 @@ input:focus, select:focus, textarea:focus {
     box-shadow: 0 2px 4px rgba(0,0,0,0.2);
 }
 .input-container {
-    margin:  0 0 0.3rem 2rem;
+    margin:  0 0 0.3rem 0;
     padding: 0;
     line-height: 1rem;
     display: flex;
@@ -118,10 +119,6 @@ input:focus, select:focus, textarea:focus {
 
 ::-webkit-calendar-picker-indicator {
     filter: invert(1);
-}
-
-.no-margin {    /* mainly for input */
-    margin-left: 0 !important;
 }
 
 
