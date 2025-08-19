@@ -38,10 +38,10 @@
 		<table>
 			<thead>
 			<tr>
-				<th>Date</th>
-				<th>Income Type</th>
+				<th class="w-[435px]">Date</th>
+				<th class="w-[435px]">Income Type</th>
 				{#if editing}
-				<th>Delete</th>
+				<th class="w-[100px]">Delete</th>
 				{/if}
 			</tr>
 			</thead>
