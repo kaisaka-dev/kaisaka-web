@@ -28,8 +28,20 @@ import LoginModal from '$components/LoginModal.svelte'
 </script>
 
 <!-- Below is the code that formats the main login screen-->
-<div class="hero min-h-screen" style = "background-image: url(/img/bgimage.png);">
-  <div class = "absolute inset-x-0 bottom-10 grid grid-cols-1 grid-rows-2 gap-5 sm:mx-auto" style="margin-inline: clamp(1rem, 10vw, 220px)" >
+<div class="hero min-h-screen">
+
+  <div id="logo-main" class="flex flex-col items-center text-center !mb-[8rem]">
+    <img src="/img/logo.png" alt="kaisala-logo.png" class="h-[250px]"/>
+    <div id="title" class="font-bold -mb-6 !text-[var(--pink)]" style="font-family: 'Arial Rounded MT Bold', Arial, sans-serif; font-size: 150px;">
+      KAISAKA Inc.
+    </div>
+    <div id="subtitle" class="font-bold -mt-2 !text-[var(--green)]" style="font-family: 'Arial Rounded MT Bold', Arial, sans-serif; font-size: 35px;">
+      Kaisahan ng Magulang at Anak na may Kapansanan
+    </div>
+  </div>
+
+
+  <div class = "absolute inset-x-0 bottom-18 grid grid-cols-1 grid-rows-2 gap-5 mx-auto !mb-2rem" style="max-width: 50vw; width: 100%;" >
 
     <LoginOption ButtonText="Register a Child"  buttonFunction={gotoChildRegister}/>
     {#if !data.session}

@@ -8,6 +8,12 @@
     src: url("/PlusJakartaSans-VariableFont_wght.ttf") format("truetype");
     font-weight: bold;
 }
+
+@font-face {
+    font-family: "Arial Rounded MT Bold";
+    src: url("/arial-rounded-mt-bold.ttf") format("truetype");
+    font-weight: bold;
+}
 :root {
     --pink: rgb(247, 176, 205);
     /*--background: rgb(59, 46, 40);*/
