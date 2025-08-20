@@ -94,7 +94,7 @@ async function fetchPendingDocuments() {
                 <a class="panel" href="/dashboard/members/families"><i class="bi bi-people-fill"></i>View families<i class="bi bi-chevron-compact-right"></i></a>
             </div>
             <div class="nav-column flex flex-col gap-[1rem] w-[50%]">
-                <a class="panel" href="/dashboard/registration/child"><i class="bi bi-person-plus-fill"></i>Register new CWD<i class="bi bi-chevron-compact-right"></i></a>
+                <a class="panel" href="/dashboard/registration"><i class="bi bi-person-plus-fill"></i>Register new CWD<i class="bi bi-chevron-compact-right"></i></a>
                 <a class="panel" href="/dashboard/information/how-to-add-caregiver"><i class="bi bi-person-hearts"></i>Register new caregiver<i class="bi bi-chevron-compact-right"></i></a>
                 <a class="panel" href="/dashboard/reports/list"><i class="bi bi-file-earmark-plus-fill"></i>View reports history<i class="bi bi-chevron-compact-right"></i></a>
             </div>

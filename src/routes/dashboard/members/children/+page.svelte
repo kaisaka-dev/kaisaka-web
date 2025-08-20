@@ -154,7 +154,7 @@ async function exportChildList() {
     <FilterSearch bind:searchedValue={filter.main}>
         <!-- to be rendered inside the Filter Search component-->
         <div slot="button-list">
-            <button onclick={() => goto("/dashboard/registration/child")}>Register</button>
+            <button onclick={() => goto("/dashboard/registration")}>Register</button>
             {#if loadingExport}
                 <LoadingBtn label="Export" disableCover={false}/>
             {:else}
