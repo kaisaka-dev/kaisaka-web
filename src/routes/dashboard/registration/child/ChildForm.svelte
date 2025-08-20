@@ -54,6 +54,31 @@
         if (formData.education.length === 0) {
             addEducationRecord();
         }
+        
+        // Initialize participation array if it doesn't exist
+        if (!formData.participation) {
+            formData.participation = [];
+        }
+        if (formData.participation.length === 0) {
+            addParticipationRecord();
+        }
+    }
+    
+    // Participation management functions
+    function addParticipationRecord() {
+        const thisYear = new Date().getFullYear();
+        const newParticipation = {
+            year_start: thisYear,
+            year_end: thisYear + 1,
+            social_protection: false,
+            family_life: false,
+            community_life: false
+        };
+        formData.participation = [...formData.participation, newParticipation];
+    }
+
+    function deleteParticipationRecord(index: number) {
+        formData.participation = formData.participation.filter((_, i) => i !== index);
     }
 </script>
 
@@ -83,33 +108,56 @@
     <section id="education-info">
         <h1>Education Information</h1>
 
-        {#each formData.education as educRecord, educIndex (educIndex)}
-            <div class="education-record p-4 mb-4 border-b border-gray-300">
-                <div class="flex justify-between items-start mb-3">
-                    <div>
-                        <Select label="Education Type" options={options.education_type} required bind:value={educRecord.type} msg={errors.educType} {disabled}/>
-
-                        {#if educRecord.type !== "Not enrolled" && educRecord.type !== ""}
-                            <Select label="Education Level" options={options.education_level} bind:value={educRecord.grade_level} required msg={errors.educLvl} {disabled}/>
-                            <Select label="Education Status" options={options.education_status} required bind:value={educRecord.status} msg={errors.educStatus} {disabled}/>
-                            <InputRange label="School Year" bind:valueFrom={educRecord.year_start} bind:valueTo={educRecord.year_end} type="number" required msg={errors.ayStart + " " + errors.ayEnd} {disabled}/>
+        <div class="overflow-x-auto">
+            <table class="w-full border-collapse">
+                <thead class="minor">
+                    <tr class="bg-gray-100">
+                        <th class="w-48">School Year</th>
+                        <th class="">Education Details</th>
+                        {#if formData.education.length > 1}
+                            <th class="w-20">Actions</th>
                         {/if}
-                    </div>
-                    {#if formData.education.length > 1}
-                        <button class="delete !-mt-4" onclick={() => deleteEducationRecord(educIndex)} {disabled} aria-label="delete">
-                            <i class="fa-solid fa-trash"></i>
-                        </button>
-                    {/if}
-                </div>
-                
-
-            </div>
-        {/each}
-
-        <button class="green !text-[1rem] !p-0 !px-[12px]" aria-label="add education record" onclick={addEducationRecord} {disabled}>
-            <i class="bi bi-plus-lg mr-1 !text-[inherit]"></i>
-            Add Education Record
-        </button>
+                    </tr>
+                </thead>
+                <tbody>
+                    {#each formData.education as educRecord, educIndex (educIndex)}
+                        <tr>
+                            <td>
+                                {#if educRecord.type !== "Not enrolled" && educRecord.type !== ""}
+                                    <InputRange bind:valueFrom={educRecord.year_start} bind:valueTo={educRecord.year_end} type="number" required msg={errors.ayStart + " " + errors.ayEnd} {disabled}/>
+                                {:else}
+                                    -
+                                {/if}
+                            </td>
+                            <td>
+                                <div class="space-y-2">
+                                    <Select label="Education Type" options={options.education_type} required bind:value={educRecord.type} msg={errors.educType} {disabled}/>
+                                    {#if educRecord.type !== "Not enrolled" && educRecord.type !== ""}
+                                        <Select label="Education Level" options={options.education_level} bind:value={educRecord.grade_level} required msg={errors.educLvl} {disabled}/>
+                                        <Select label="Education Status" options={options.education_status} required bind:value={educRecord.status} msg={errors.educStatus} {disabled}/>
+                                    {/if}
+                                </div>
+                            </td>
+                            {#if formData.education.length > 1}
+                                <td class="text-center">
+                                    <button class="delete" onclick={() => deleteEducationRecord(educIndex)} {disabled} aria-label="delete">
+                                        <i class="fa-solid fa-trash"></i>
+                                    </button>
+                                </td>
+                            {/if}
+                        </tr>
+                    {/each}
+                    <tr>
+                        <td colspan="{formData.education.length > 1 ? 3 : 2}">
+                            <button class="green !text-[1rem] !p-0 !px-[12px]" aria-label="add education record" onclick={addEducationRecord} {disabled}>
+                                <i class="bi bi-plus-lg mr-1 !text-[inherit]"></i>
+                                Add Education Record
+                            </button>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
     </section>
 
     <section id="documents">
@@ -128,18 +176,51 @@
 
     <section id="social-participation-status">
         <h1>Social Participation</h1>
-        <Checkbox label="Participation in family life" id="participation-family" style="width: 30rem" bind:checked={formData.part.family_life} {disabled}/>
-        {#if formData.part.family_life}
-            <div style="margin-left: 35px">
-                <InputText label="Year accessed" id="part-family-accessed" bind:value={formData.part.fam_year} type="number" required msg={errors.partFamilyYear}  {disabled}/>
-            </div>
-        {/if}
-        <Checkbox label="Participation in community life / clubs" id="participation-community" style="width: 30rem" bind:checked={formData.part.community} {disabled}/>
-        {#if formData.part.community}
-            <div style="margin-left: 35px">
-                <InputText label="Year accessed" id="part-community-accessed" bind:value={formData.part.com_year} type="number" required msg={errors.partCommunityYear}  {disabled}/>
-            </div>
-        {/if}
+
+        <div class="overflow-x-auto">
+            <table class="w-full border-collapse">
+                <thead class="minor">
+                    <tr class="bg-gray-100">
+                        <th class="w-48">Time Period</th>
+                        <th class="">Participated In</th>
+                        {#if formData.participation.length > 1}
+                            <th class="w-20">Actions</th>
+                        {/if}
+                    </tr>
+                </thead>
+                <tbody>
+                    {#each formData.participation as partRecord, partIndex (partIndex)}
+                        <tr>
+                            <td>
+                                <InputRange bind:valueFrom={partRecord.year_start} bind:valueTo={partRecord.year_end} type="number" {disabled}/>
+                            </td>
+                            <td>
+                                <div class="space-y-2">
+                                    <Checkbox label="Social Protection" id="part-social-{partIndex}" bind:checked={partRecord.social_protection} {disabled}/>
+                                    <Checkbox label="Family Life" id="part-family-{partIndex}" bind:checked={partRecord.family_life} {disabled}/>
+                                    <Checkbox label="Community Life" id="part-community-{partIndex}" bind:checked={partRecord.community_life} {disabled}/>
+                                </div>
+                            </td>
+                            {#if formData.participation.length > 1}
+                                <td class="text-center">
+                                    <button class="delete" onclick={() => deleteParticipationRecord(partIndex)} {disabled} aria-label="delete">
+                                        <i class="fa-solid fa-trash"></i>
+                                    </button>
+                                </td>
+                            {/if}
+                        </tr>
+                    {/each}
+                    <tr>
+                        <td colspan="{formData.participation.length > 1 ? 3 : 2}">
+                            <button class="green !text-[1rem] !p-0 !px-[12px]" aria-label="add participation record" onclick={addParticipationRecord} {disabled}>
+                                <i class="bi bi-plus-lg mr-1 !text-[inherit]"></i>
+                                Add Participation Record
+                            </button>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
     </section>
 
     <section id="labour-market-status">
@@ -187,5 +268,13 @@
     }
     .delete > i:hover {
         color: var(--error-color);
+    }
+    .fa-plus {
+        color: var(--green);
+        cursor: pointer;
+    }
+    .fa-plus:hover {
+        cursor: pointer;
+        transition-duration: 0.2s;
     }
 </style>

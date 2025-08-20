@@ -153,6 +153,12 @@ th {
     padding: 0.5rem;
 }
 
+thead.minor th {
+    color: var(--green);
+    border: 3px solid var(--green);
+    background-color: transparent;
+}
+
 ul {
     list-style-type: circle;
     padding-left: 1.5rem;
