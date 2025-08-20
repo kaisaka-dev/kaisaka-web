@@ -2,7 +2,6 @@
 	import InputText from '$components/input/InputText.svelte';
 	import Select from '$components/input/Select.svelte';
 	import type {  NewCaregiver, CaregiverError } from '$lib/types/registrationForm.js';
-	import InputRange from '$components/input/InputRange.svelte';
 	import HistoryCommunityGroup from '../../members/caregivers/profile/components/HistoryCommunityGroup.svelte';
 	import HistoryIncomeType from '../../members/caregivers/profile/components/HistoryIncomeType.svelte';
 
@@ -12,6 +11,7 @@
 	export let index: number;
 	export let deleteCaregiver: (index: number) => void;
 	export let options;
+	export let disabled: boolean = false;
 
 	// Transform NewCaregiver communityGrp to Community format for HistoryCommunityGroup component
 	let communityData;
@@ -69,17 +69,17 @@
 		</button>
 	</h1>
 
-			<InputText label="First name" id={`first-name-${index}`} bind:value={formData.firstName} required msg={errors.firstName} />
-			<InputText label="Last name" id={`last-name-${index}`} bind:value={formData.lastName} required msg={errors.lastName} />
-			<InputText label="Birthday" id="bday" bind:value={formData.bday} type="date" msg={errors.bday} />
-			<Select label="Sex" id={`sex-${index}`} options={options.sex} required bind:value={formData.sex} msg={errors.sex} />
-			<InputText label="Contact No." id={`contact-no-${index}`} bind:value={formData.contactNo} required msg={errors.contactNo} />
-			<InputText label="Facebook Link" id={`fb-link-${index}`} bind:value={formData.fbLink} />
-			<InputText label="Email" id={`email-${index}`} bind:value={formData.email} msg={errors.email}/>
-			<InputText label="Address" id={`address-${index}`} bind:value={formData.address} required msg={errors.address} />
-			<InputText label="Barangay" id={`brgy-${index}`} required bind:value={formData.brgy} msg={errors.brgy} />
-			<InputText label="Occupation" id={`occupation-${index}`} bind:value={formData.occupation} />
-			<InputText label="Family role" id={`relationship-${index}`} bind:value={formData.relationship} />
+			<InputText label="First name" id={`first-name-${index}`} bind:value={formData.firstName} required msg={errors.firstName} {disabled}/>
+			<InputText label="Last name" id={`last-name-${index}`} bind:value={formData.lastName} required msg={errors.lastName} {disabled}/>
+			<InputText label="Birthday" id="bday" bind:value={formData.bday} type="date" msg={errors.bday} {disabled}/>
+			<Select label="Sex" id={`sex-${index}`} options={options.sex} required bind:value={formData.sex} msg={errors.sex} {disabled}/>
+			<InputText label="Contact No." id={`contact-no-${index}`} bind:value={formData.contactNo} required msg={errors.contactNo} {disabled}/>
+			<InputText label="Facebook Link" id={`fb-link-${index}`} bind:value={formData.fbLink} {disabled}/>
+			<InputText label="Email" id={`email-${index}`} bind:value={formData.email} msg={errors.email} {disabled}/>
+			<InputText label="Address" id={`address-${index}`} bind:value={formData.address} required msg={errors.address} {disabled}/>
+			<InputText label="Barangay" id={`brgy-${index}`} required bind:value={formData.brgy} msg={errors.brgy} {disabled}/>
+			<InputText label="Occupation" id={`occupation-${index}`} bind:value={formData.occupation} {disabled}/>
+			<InputText label="Family role" id={`relationship-${index}`} bind:value={formData.relationship} {disabled}/>
 
 </section>
 
@@ -87,7 +87,7 @@
 	<HistoryCommunityGroup
 		id={`community-${index}`}
 		bind:data={communityData}
-		editing={true}
+		editing={!disabled}
 		error=""
 	/>
 </section>
@@ -96,7 +96,7 @@
 	<HistoryIncomeType
 		id={`income-${index}`}
 		bind:data={incomeData}
-		editing={true}
+		editing={!disabled}
 		error=""
 	/>
 </section>
