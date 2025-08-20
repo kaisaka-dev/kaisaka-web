@@ -782,64 +782,65 @@
 <!--</section>-->
 
 <div id="page" class="flex flex-row" style="height: calc(100vh - 90px);">
-	<div id="sidebar" class="w-[18vw]  min-w-[270px] shadow-lg h-full bg-gray-50 p-4">
-		<nav class="space-y-2">
-			<h2 class="!text-[var(--green)]">Registration</h2>
+	<div id="sidebar" class="w-[18vw] min-w-[270px] shadow-lg h-full bg-gray-50 flex flex-col">
+		<!-- Scrollable navigation area -->
+		<div class="flex-1 overflow-y-auto p-4">
+			<nav class="space-y-2">
+				<h2 class="!text-[var(--green)]">Registration</h2>
 
+				<div class="step-item p-2 bg-white rounded shadow-sm border-l-4 border-[var(--green)]">
+					<i class="bi bi-person-wheelchair mr-2"></i>
+					Beneficiaries
 
-
-
-			<div class="step-item p-2 bg-white rounded shadow-sm border-l-4 border-[var(--green)]">
-				<i class="bi bi-person-wheelchair mr-2"></i>
-				Beneficiaries
-
-				<ul>
-					{#each children as _, idx (idx)}
-						<li class="cursor-pointer hover:!underline p-1 rounded {form.idx === idx && form.type === 'CHILD' ? '!text-[var(--green)]' : ''}" onclick={() => form = {idx, type: 'CHILD'}}>
-							{children[idx].first_name || `Child ${idx + 1}`}
-						</li>
-					{/each}
-				</ul>
-
-				<button class="green !text-[0.9rem] !p-0 !px-[6px]" aria-label="add" onclick={addNewChild}>
-					<i class="bi bi-plus-lg"></i>
-				</button>
-			</div>
-			<div class="step-item p-2 bg-green-100 rounded shadow-sm border-l-4 border-[var(--green)]">
-				<i class="bi bi-person-hearts mr-2"></i>
-				Caregivers
-
-				<ul>
-					{#each familyMembers.newCaregivers as _, idx (idx)}
-						<li class="cursor-pointer hover:!underline p-1 rounded {form.idx === idx && form.type === 'CAREGIVER' ? '!text-[var(--green)]' : ''}" onclick={() => form = {idx, type: 'CAREGIVER'}}>
-							{familyMembers.newCaregivers[idx].firstName || `Caregiver ${idx + 1}`}
-						</li>
-					{/each}
-				</ul>
-
-				<button class="green !text-[0.9rem] !p-0 !px-[6px]" aria-label="add" onclick={addNewCaregiver}>
-					<i class="bi bi-plus-lg"></i>
-				</button>
-			</div>
-
-			{#if familyMembers.hasExisting && familyMembers.linkedFamily.infoLinked.length > 0}
-				<div class="step-item p-2 bg-blue-100 rounded shadow-sm border-l-4 border-[var(--pink)] cursor-pointer hover:bg-blue-200 {form.type === 'FAMILY' ? 'bg-blue-200' : ''}" onclick={() => form = {idx: -1, type: 'FAMILY'}}>
-					<i class="bi bi-link-45deg mr-2"></i>
-					Linked Family Members
-					
 					<ul>
-						{#each familyMembers.linkedFamily.infoLinked as member, idx}
-							<li class="text-sm p-1">
-								{member.firstName} {member.lastName}
-								{#if member.contactNo}- {member.contactNo}{/if}
+						{#each children as _, idx (idx)}
+							<li class="cursor-pointer hover:!underline p-1 rounded {form.idx === idx && form.type === 'CHILD' ? '!text-[var(--green)]' : ''}" onclick={() => form = {idx, type: 'CHILD'}}>
+								{children[idx].first_name || `Child ${idx + 1}`}
 							</li>
 						{/each}
 					</ul>
+
+					<button class="green !text-[0.9rem] !p-0 !px-[6px]" aria-label="add" onclick={addNewChild}>
+						<i class="bi bi-plus-lg"></i>
+					</button>
 				</div>
-			{/if}
+				<div class="step-item p-2 bg-green-100 rounded shadow-sm border-l-4 border-[var(--green)]">
+					<i class="bi bi-person-hearts mr-2"></i>
+					Caregivers
 
-			<br>
+					<ul>
+						{#each familyMembers.newCaregivers as _, idx (idx)}
+							<li class="cursor-pointer hover:!underline p-1 rounded {form.idx === idx && form.type === 'CAREGIVER' ? '!text-[var(--green)]' : ''}" onclick={() => form = {idx, type: 'CAREGIVER'}}>
+								{familyMembers.newCaregivers[idx].firstName || `Caregiver ${idx + 1}`}
+							</li>
+						{/each}
+					</ul>
 
+					<button class="green !text-[0.9rem] !p-0 !px-[6px]" aria-label="add" onclick={addNewCaregiver}>
+						<i class="bi bi-plus-lg"></i>
+					</button>
+				</div>
+
+				{#if familyMembers.hasExisting && familyMembers.linkedFamily.infoLinked.length > 0}
+					<div class="step-item p-2 bg-blue-100 rounded shadow-sm border-l-4 border-[var(--pink)] cursor-pointer hover:bg-blue-200 {form.type === 'FAMILY' ? 'bg-blue-200' : ''}" onclick={() => form = {idx: -1, type: 'FAMILY'}}>
+						<i class="bi bi-link-45deg mr-2"></i>
+						Linked Family Members
+						
+						<ul>
+							{#each familyMembers.linkedFamily.infoLinked as member, idx}
+								<li class="text-sm p-1">
+									{member.firstName} {member.lastName}
+									{#if member.contactNo}- {member.contactNo}{/if}
+								</li>
+							{/each}
+						</ul>
+					</div>
+				{/if}
+			</nav>
+		</div>
+
+		<!-- Fixed bottom buttons -->
+		<div class="p-4 border-t border-gray-200 space-y-2">
 			<button class="!text-[1rem] !p-[2px] !px-[12px] w-full" onclick={showModalLink = true}>
 				<i class="bi bi-link-45deg mr-2"></i> Link existing family
 			</button>
@@ -850,7 +851,7 @@
 				<button class="green !text-[0.95rem] !p-[2px] !px-[12px] w-full" onclick={handleSubmit}>Submit</button>
 				<Validation msg={mainError} />
 			{/if}
-		</nav>
+		</div>
 	</div>
 
 	<div id="form" class="h-full flex-1 p-6 overflow-y-auto">
