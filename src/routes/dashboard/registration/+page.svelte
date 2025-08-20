@@ -269,13 +269,7 @@
 				category_id: null,
 				nature: ''
 			},
-			educ: {
-				type: "",
-				year_start: thisYear,
-				year_end: thisYear + 1,
-				grade_level: "",
-				status: ""
-			},
+			education: [],
 			has: {
 				birth_cert: false,
 				medical_cert: false,
@@ -495,11 +489,23 @@
 				console.log(childData.message);
 				childId = childData.data.id;
 
-				// insert education status
-				if (childRegData.education_status !== undefined) {
-					childRegData.education_status!.child_id = childId;
-					const eduStatusData = await safeFetch('POST', '/api/education_status', childRegData.education_status);
-					console.log(eduStatusData.message);
+				// insert education records from children array
+				for (const child of children) {
+					if (child.education && child.education.length > 0) {
+						for (const educRecord of child.education) {
+							if (educRecord.type && educRecord.type !== "" && educRecord.type !== "Not enrolled") {
+								const eduStatusData = await safeFetch('POST', '/api/education_status', {
+									child_id: childId,
+									education_type: educRecord.type,
+									education_level: educRecord.grade_level,
+									education_status: educRecord.status,
+									year_start: educRecord.year_start,
+									year_end: educRecord.year_end
+								});
+								console.log('Education record added:', eduStatusData.message);
+							}
+						}
+					}
 				}
 
 				// insert social protection status (for community group)
@@ -530,16 +536,24 @@
 			if (familyMembers.hasExisting && familyMembers.linkedFamily != null) {
 				// get the family id of the existing family
 				const familyId = familyMembers.linkedFamily.family_id;
+				console.log('Using existing family ID:', familyId, 'with', familyMembers.linkedFamily.infoLinked.length, 'linked members');
 
-				// update relationships in family_members
+				// update relationships in family_members - only if relationship was modified
 				if (familyMembers.hasExisting && familyMembers.linkedFamily?.infoLinked) {
 					for (const linkedMember of familyMembers.linkedFamily.infoLinked) {
-						const relationshipData = await safeFetch('PUT', '/api/family_members', {
-							member_id: linkedMember.member_id,
-							family_id: familyId,
-							relationship_type: linkedMember.relationship
-						});
-						console.log(relationshipData.message)
+						// Only update if relationship was actually set/modified
+						if (linkedMember.relationship && linkedMember.relationship.trim() !== '') {
+							try {
+								const relationshipData = await safeFetch('PUT', '/api/family_members', {
+									member_id: linkedMember.member_id,
+									family_id: familyId,
+									relationship_type: linkedMember.relationship
+								});
+								console.log('Updated relationship for', linkedMember.firstName, ':', relationshipData.message);
+							} catch (error) {
+								console.error('Failed to update relationship for', linkedMember.firstName, ':', error);
+							}
+						}
 					}
 				}
 
@@ -578,11 +592,11 @@
 			let oldChildNewFamily = (url.childId != null && familyId != newFamilyId)
 			let oldCareNewFamily = (url.caregiverId != null && familyId != newFamilyId)
 
-			// CODE BLOCK #3: ADD MEMBER TO FAMILY MEMBERS RECORD
-			// if currently exists in a family, delete its old family_members record
-			if ((oldChildNewFamily	|| oldCareNewFamily) && familyId != null) {
+			// CODE BLOCK #3: ADD NEW MEMBER TO FAMILY MEMBERS RECORD
+			// Case 1: Existing child/caregiver is changing families
+			if ((oldChildNewFamily || oldCareNewFamily) && familyId != null) {
 				console.log('Child/Caregiver is changing families - deleting old family record');
-				// #1 delete old family first
+				// Delete old family record first
 				try {
 					const deleteRes = await fetch('/api/family_members', {
 						method: 'DELETE',
@@ -603,7 +617,7 @@
 					console.error('Error deleting old family record:', error);
 				}
 
-				// update the record in family_members
+				// Update the record to new family
 				const famMemData = await safeFetch('PUT', '/api/family_members', {
 					is_child: isChild,
 					member_id: memberId,
@@ -612,15 +626,37 @@
 				console.log('Member updated to family:', famMemData.message);
 				familyId = newFamilyId
 			}
-			// add the child to the existing family (POST to family_members) if new registration
-			else if (isNewChild) {
+			// Case 2: New registration - add NEW member to family (existing or new family)
+			else if (isNewChild || (memberId && !familyMembers.hasExisting)) {
+				console.log('Adding new member to family');
 				const famMemData = await safeFetch('POST', '/api/family_members', {
 					is_child: isChild,
 					member_id: memberId,
 					family_id: newFamilyId,
 					relationship_type: isChild ? "CWD" : "Caregiver"
 				});
-				console.log('Member added to family:', famMemData.message);
+				console.log('New member added to family:', famMemData.message);
+				familyId = newFamilyId
+			}
+			// Case 3: New registration with existing family - only add NEW member, don't re-add existing ones
+			else if (memberId && familyMembers.hasExisting) {
+				console.log('Adding new member to existing linked family');
+				// Check if this member is already in the family (avoid duplicates)
+				const isAlreadyInFamily = familyMembers.linkedFamily?.infoLinked?.some(
+					linked => linked.member_id === memberId
+				);
+				
+				if (!isAlreadyInFamily) {
+					const famMemData = await safeFetch('POST', '/api/family_members', {
+						is_child: isChild,
+						member_id: memberId,
+						family_id: newFamilyId,
+						relationship_type: isChild ? "CWD" : "Caregiver"
+					});
+					console.log('New member added to existing family:', famMemData.message);
+				} else {
+					console.log('Member already in family, skipping duplicate add');
+				}
 				familyId = newFamilyId
 			}
 
@@ -847,7 +883,7 @@
 <!-- Modal to get an existing family -->
 <Modal buttonText="" bind:isOpen={showModalLink}>
 	<div slot="modal">
-		<ExistingForm bind:formData={familyMembers} error_msg={linkedFamilyError} members={members} bind:showTable={showTable} isChildView={url.caregiverId == null} disabled/>
+		<ExistingForm bind:formData={familyMembers} error_msg={linkedFamilyError} members={members} bind:showTable={showTable} isChildView={url.caregiverId == null}/>
 		<button class="green" onclick={() => {
 			if (familyMembers.linkedFamily.infoLinked.length > 0) {
 				showModalLink = false;

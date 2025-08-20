@@ -28,6 +28,33 @@
         }
         formData.age = calculatedAge.toString();
     }
+
+    // Education management functions
+    function addEducationRecord() {
+        const thisYear = new Date().getFullYear();
+        const newEducation = {
+            type: "",
+            year_start: thisYear,
+            year_end: thisYear + 1,
+            grade_level: "",
+            status: ""
+        };
+        formData.education = [...formData.education, newEducation];
+    }
+
+    function deleteEducationRecord(index: number) {
+        formData.education = formData.education.filter((_, i) => i !== index);
+    }
+
+    // Initialize education array if it doesn't exist, and add first record if empty
+    $: {
+        if (!formData.education) {
+            formData.education = [];
+        }
+        if (formData.education.length === 0) {
+            addEducationRecord();
+        }
+    }
 </script>
 
 <div class="child-form">
@@ -55,12 +82,33 @@
 
     <section id="education-info">
         <h1>Education Information</h1>
-        <Select label="Education" options={options.education_type} required bind:value={formData.educ.type} msg={errors.educType} {disabled}/>
-        {#if formData.educ.type !== "Not enrolled" && formData.educ.type !== ""}
-            <Select label="Education Level" options={options.education_level} bind:value={formData.educ.grade_level} required msg={errors.educLvl} {disabled}/>
-            <Select label="Education Status" options={options.education_status} required bind:value={formData.educ.status} msg={errors.educStatus} {disabled}/>
-            <InputRange label="School Year" bind:valueFrom={formData.educ.year_start} bind:valueTo={formData.educ.year_end} type="number" required msg={errors.ayStart + " " + errors.ayEnd}  {disabled}/>
-        {/if}
+
+        {#each formData.education as educRecord, educIndex (educIndex)}
+            <div class="education-record p-4 mb-4 border-b border-gray-300">
+                <div class="flex justify-between items-start mb-3">
+                    <div>
+                        <Select label="Education Type" options={options.education_type} required bind:value={educRecord.type} msg={errors.educType} {disabled}/>
+
+                        {#if educRecord.type !== "Not enrolled" && educRecord.type !== ""}
+                            <Select label="Education Level" options={options.education_level} bind:value={educRecord.grade_level} required msg={errors.educLvl} {disabled}/>
+                            <Select label="Education Status" options={options.education_status} required bind:value={educRecord.status} msg={errors.educStatus} {disabled}/>
+                            <InputRange label="School Year" bind:valueFrom={educRecord.year_start} bind:valueTo={educRecord.year_end} type="number" required msg={errors.ayStart + " " + errors.ayEnd} {disabled}/>
+                        {/if}</div>
+                    {#if formData.education.length > 1}
+                        <button class="delete !-mt-4" onclick={() => deleteEducationRecord(educIndex)} {disabled} aria-label="delete">
+                            <i class="fa-solid fa-trash"></i>
+                        </button>
+                    {/if}
+                </div>
+                
+
+            </div>
+        {/each}
+
+        <button class="green !text-[1rem] !p-0 !px-[12px]" aria-label="add education record" onclick={addEducationRecord} {disabled}>
+            <i class="bi bi-plus-lg mr-1 !text-[inherit]"></i>
+            Add Education Record
+        </button>
     </section>
 
     <section id="documents">
@@ -132,5 +180,11 @@
     }
     h1 button:hover {
         background-color: transparent;
+    }
+    .delete {
+        background-color: transparent;
+    }
+    .delete > i:hover {
+        color: var(--error-color);
     }
 </style>
