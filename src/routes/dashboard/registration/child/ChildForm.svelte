@@ -67,14 +67,14 @@
             </button>
         </h1>
 
-        <InputText label="First name" bind:value={formData.first_name} required msg={errors.firstName} {disabled}/>
-        <InputText label="Middle name" bind:value={formData.middle_name} {disabled}/>
-        <InputText label="Last name" bind:value={formData.last_name} required msg={errors.lastName} {disabled}/>
-        <InputText label="Birthday" bind:value={formData.birthday} type="date" required msg={errors.birthday} {disabled}/>
-        <InputText label="Age" value={formData.age} disabled />
+        <InputText label="First name" id="first-name" bind:value={formData.first_name} required msg={errors.firstName} {disabled}/>
+        <InputText label="Middle name" id="middle-name" bind:value={formData.middle_name} {disabled}/>
+        <InputText label="Last name" id="last-name" bind:value={formData.last_name} required msg={errors.lastName} {disabled}/>
+        <InputText label="Birthday" id="bday" bind:value={formData.birthday} type="date" required msg={errors.birthday} {disabled}/>
+        <InputText label="Age" id="age" value={formData.age} disabled />
         <Select label="Sex" options={options.sex} bind:value={formData.sex} required msg={errors.sex} {disabled}/>
-        <InputText label="Address" bind:value={formData.address} required msg={errors.address} {disabled}/>
-        <InputText label="Barangay" bind:value={formData.barangay} required msg={errors.barangay} {disabled}/>
+        <InputText label="Address" id="address" bind:value={formData.address} required msg={errors.address} {disabled}/>
+        <InputText label="Barangay" id="barangay" bind:value={formData.barangay} required msg={errors.barangay} {disabled}/>
         <Select label="Disability Category" options={options.disability_category} bind:value={formData.disability.category_id} required msg={errors.disCategory} {disabled}/>
         <Textarea label="Disability Nature" bind:value={formData.disability.nature} {disabled}/>
         <Textarea label="Remarks" bind:value={formData.remarks} {disabled}/>
@@ -93,7 +93,8 @@
                             <Select label="Education Level" options={options.education_level} bind:value={educRecord.grade_level} required msg={errors.educLvl} {disabled}/>
                             <Select label="Education Status" options={options.education_status} required bind:value={educRecord.status} msg={errors.educStatus} {disabled}/>
                             <InputRange label="School Year" bind:valueFrom={educRecord.year_start} bind:valueTo={educRecord.year_end} type="number" required msg={errors.ayStart + " " + errors.ayEnd} {disabled}/>
-                        {/if}</div>
+                        {/if}
+                    </div>
                     {#if formData.education.length > 1}
                         <button class="delete !-mt-4" onclick={() => deleteEducationRecord(educIndex)} {disabled} aria-label="delete">
                             <i class="fa-solid fa-trash"></i>
@@ -113,37 +114,37 @@
 
     <section id="documents">
         <h1>Documents</h1>
-        <Checkbox label="PWD ID" bind:checked={formData.has.pwd_id} {disabled}/>
+        <Checkbox label="PWD ID" id="pwd" bind:checked={formData.has.pwd_id} {disabled}/>
         {#if formData.has.pwd_id}
             <div style="margin-left: 35px">
-                <InputText label="ID #" required msg={errors.pwdId} bind:value={formData.has.pwd.id} {disabled}/>
-                <InputText label="Expiry Date" type="date" required msg={errors.pwdExpy} bind:value={formData.has.pwd.expiry_date} {disabled}/>
+                <InputText label="ID #" id="pwd-id" required msg={errors.pwdId} bind:value={formData.has.pwd.id} {disabled}/>
+                <InputText label="Expiry Date" id="pwd-expiry" type="date" required msg={errors.pwdExpy} bind:value={formData.has.pwd.expiry_date} {disabled}/>
             </div>
         {/if}
-        <Checkbox label="PhilHealth" bind:checked={formData.has.philhealth} {disabled}/>
-        <Checkbox label="Voters Registration" bind:checked={formData.has.vote} {disabled}/>
-        <Checkbox label="National ID" bind:checked={formData.has.national_id} {disabled}/>
+        <Checkbox label="PhilHealth" id="ph-id" bind:checked={formData.has.philhealth} {disabled}/>
+        <Checkbox label="Voters Registration" id="vote-id" bind:checked={formData.has.vote} {disabled}/>
+        <Checkbox label="National ID" id="nat-id" bind:checked={formData.has.national_id} {disabled}/>
     </section>
 
     <section id="social-participation-status">
         <h1>Social Participation</h1>
-        <Checkbox label="Participation in family life" style="width: 30rem" bind:checked={formData.part.family_life} {disabled}/>
+        <Checkbox label="Participation in family life" id="participation-family" style="width: 30rem" bind:checked={formData.part.family_life} {disabled}/>
         {#if formData.part.family_life}
             <div style="margin-left: 35px">
-                <InputText label="Year accessed" bind:value={formData.part.fam_year} type="number" required msg={errors.partFamilyYear}  {disabled}/>
+                <InputText label="Year accessed" id="part-family-accessed" bind:value={formData.part.fam_year} type="number" required msg={errors.partFamilyYear}  {disabled}/>
             </div>
         {/if}
-        <Checkbox label="Participation in community life / clubs" style="width: 30rem" bind:checked={formData.part.community} {disabled}/>
+        <Checkbox label="Participation in community life / clubs" id="participation-community" style="width: 30rem" bind:checked={formData.part.community} {disabled}/>
         {#if formData.part.community}
             <div style="margin-left: 35px">
-                <InputText label="Year accessed" bind:value={formData.part.com_year} type="number" required msg={errors.partCommunityYear}  {disabled}/>
+                <InputText label="Year accessed" id="part-community-accessed" bind:value={formData.part.com_year} type="number" required msg={errors.partCommunityYear}  {disabled}/>
             </div>
         {/if}
     </section>
 
     <section id="labour-market-status">
         <h1>Labor Market Status</h1>
-        <Checkbox label="Able to work" bind:checked={formData.employment.able_to_work} {disabled}/>
+        <Checkbox label="Able to work" id="able-to-work" bind:checked={formData.employment.able_to_work} {disabled}/>
         {#if formData.employment.able_to_work}
             <div style="margin-left: 35px">
                 <Select label="Employment Type" options={options.employment_type} bind:value={formData.employment.type} {disabled}/>
@@ -154,15 +155,15 @@
     <section id="certificate-verification">
         <h1 style="margin-bottom: 0.5rem;">Certificate Verification</h1>
         <Validation msg="Let the officer-in-charge verify the portion below" style="color:var(--text-color); margin-bottom: 25px;"/>
-        <Checkbox label="Medical Certificate" bind:checked={formData.has.medical_cert} {disabled}/>
-        <Checkbox label="Birth Certificate" bind:checked={formData.has.birth_cert} {disabled}/>
-        <Checkbox label="Barangay Certificate" bind:checked={formData.has.barangay_cert} {disabled}/>
+        <Checkbox label="Medical Certificate" id="med-cert" bind:checked={formData.has.medical_cert} {disabled}/>
+        <Checkbox label="Birth Certificate" id="birth-cert" bind:checked={formData.has.birth_cert} {disabled}/>
+        <Checkbox label="Barangay Certificate" id="brgy-cert" bind:checked={formData.has.barangay_cert} {disabled}/>
     </section>
 
     <section id="staff-only">
         <h1 style="margin-bottom: 0.5rem;">Other Information</h1>
         <Validation msg="Let the officer-in-charge verify the portion below" style="color:var(--text-color); margin-bottom: 25px;"/>
-        <InputText type="month" label="Admission Date" bind:value={formData.date_admission} msg={errors.admissionDate}  {disabled}/>
+        <InputText type="month" id="admission" label="Admission Date" bind:value={formData.date_admission} msg={errors.admissionDate}  {disabled}/>
     </section>
 </div>
 
