@@ -349,7 +349,7 @@
 </section>
 
 <section id="social-participation-status">
-    <h1 style="margin-bottom: 0.5rem;">Social Participation</h1>
+    <h1>Social Participation</h1>
     <Checkbox label="Participation in family life" style="width:30rem" id="participation-family" bind:checked={formData.part.family_life}/>
         {#if formData.part.family_life}
             <div style="margin-left: 35px">
@@ -365,7 +365,7 @@
 </section>
 
 <section id="labour-market-status">
-    <h1 style="margin-bottom: 0.5rem;">Labor Market Status</h1>
+    <h1>Labor Market Status</h1>
     <Checkbox label="Able to work" id="able-to-work" bind:checked={formData.employment.able_to_work}/>
     {#if formData.employment.able_to_work}
         <div style="margin-left: 35px">
@@ -378,7 +378,7 @@
 you may contact them here xxxxx -->
 {#if staffView}
 <section id="certificate-verification">
-    <h1 style="margin-bottom: 0.5rem;">Certificate Verification</h1>
+    <h1>Certificate Verification</h1>
     <Validation msg="Let the officer-in-charge verify the portion below" style="color:var(--text-color); margin-bottom: 25px; padding: 0 35px;"/>
     <Checkbox label="Medical Certificate" id="med-cert" bind:checked={formData.has.medical_cert}/>
     <Checkbox label="Birth Certificate" id="birth-cert" bind:checked={formData.has.birth_cert}/>
@@ -387,14 +387,14 @@ you may contact them here xxxxx -->
 
 <!-- also hide this if not signed in -->
 <section id="staff-only">
-    <h1 style="margin-bottom: 0.5rem;">Other Information</h1>
+    <h1>Other Information</h1>
     <Validation msg="Let the officer-in-charge verify the portion below" style="color:var(--text-color); margin-bottom: 25px; padding: 0 35px;"/>
     <InputText type="month" label="Admission Date" id="admission" bind:value={formData.date_admission} msg={errors.admissionDate} />
 
 </section>
 {:else}
     <section id="certificate-verification">
-        <h1 style="margin-bottom: 0.5rem;">Certificate Verification</h1>
+        <h1>Certificate Verification</h1>
 
         <div class="!mx-[35px]">
             For your registration to be confirmed, <span style="color:var(--green)"> please schedule a visit to KAISAKA </span>, and

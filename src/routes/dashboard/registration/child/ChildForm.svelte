@@ -63,7 +63,7 @@
     </section>
 
     <section id="documents">
-        <h1 class="text-lg font-bold mb-4">Documents</h1>
+        <h1>Documents</h1>
         <Checkbox label="PWD ID" bind:checked={formData.has.pwd_id}/>
         {#if formData.has.pwd_id}
             <div style="margin-left: 35px">
@@ -77,7 +77,7 @@
     </section>
 
     <section id="social-participation-status">
-        <h1 class="text-lg font-bold mb-4">Social Participation</h1>
+        <h1>Social Participation</h1>
         <Checkbox label="Participation in family life" bind:checked={formData.part.family_life}/>
         {#if formData.part.family_life}
             <div style="margin-left: 35px">
@@ -93,7 +93,7 @@
     </section>
 
     <section id="labour-market-status">
-        <h1 class="text-lg font-bold mb-4">Labor Market Status</h1>
+        <h1>Labor Market Status</h1>
         <Checkbox label="Able to work" bind:checked={formData.employment.able_to_work}/>
         {#if formData.employment.able_to_work}
             <div style="margin-left: 35px">
@@ -103,16 +103,16 @@
     </section>
 
     <section id="certificate-verification">
-        <h1 class="text-lg font-bold mb-4">Certificate Verification</h1>
-        <Validation msg="Let the officer-in-charge verify the portion below" style="color:var(--text-color); margin-bottom: 25px; padding: 0 35px;"/>
+        <h1 style="margin-bottom: 0.5rem;">Certificate Verification</h1>
+        <Validation msg="Let the officer-in-charge verify the portion below" style="color:var(--text-color); margin-bottom: 25px;"/>
         <Checkbox label="Medical Certificate" bind:checked={formData.has.medical_cert}/>
         <Checkbox label="Birth Certificate" bind:checked={formData.has.birth_cert}/>
         <Checkbox label="Barangay Certificate" bind:checked={formData.has.barangay_cert}/>
     </section>
 
     <section id="staff-only">
-        <h1 class="text-lg font-bold mb-4">Other Information</h1>
-        <Validation msg="Let the officer-in-charge verify the portion below" style="color:var(--text-color); margin-bottom: 25px; padding: 0 35px;"/>
+        <h1 style="margin-bottom: 0.5rem;">Other Information</h1>
+        <Validation msg="Let the officer-in-charge verify the portion below" style="color:var(--text-color); margin-bottom: 25px;"/>
         <InputText type="month" label="Admission Date" bind:value={formData.date_admission} msg={errors.admissionDate} />
     </section>
 </div>

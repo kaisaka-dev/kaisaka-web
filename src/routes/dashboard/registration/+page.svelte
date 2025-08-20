@@ -720,7 +720,7 @@
 	}
 </script>
 {#if staffView}
-	<Header category="members" page="children" />
+	<Header />
 {/if}
 <!--<section id="family-info">-->
 <!--	<h1>Family Information</h1>-->
@@ -742,7 +742,7 @@
 
 <!--</section>-->
 
-<div id="page" class="flex flex-row" style="height: calc(100vh - 120px);">
+<div id="page" class="flex flex-row" style="height: calc(100vh - 90px);">
 	<div id="sidebar" class="w-[18vw]  min-w-[270px] shadow-lg h-full bg-gray-50 p-4">
 		<nav class="space-y-2">
 			<h2 class="!text-[var(--green)]">Registration</h2>
