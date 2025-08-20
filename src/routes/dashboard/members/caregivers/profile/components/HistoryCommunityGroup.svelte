@@ -106,6 +106,7 @@
 	<div id = {id} class = "w-240 min-w-240">
 		<h2> Community Group </h2>
 		<Validation msg = {error}/>
+		{#if editing || data.filter(com => !com.isDeleted).length > 0}
 		<table>
 			<thead>
 			<tr>
@@ -185,6 +186,10 @@
 			{/if}
 			</tbody>
 		</table>
+		{:else}
+			<div style="color: var(--text-color); font-style: italic; border: 3px solid var(--border);
+    padding: 0.8rem;">None</div>
+		{/if}
 
 	</div>
 </div>

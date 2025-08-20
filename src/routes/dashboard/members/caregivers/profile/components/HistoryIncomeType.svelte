@@ -8,7 +8,7 @@
 
 	export let id: string;
 	export let data: Income[];
-	export let editing;
+	export let editing: boolean;
 	export let error: string;
 
 
@@ -35,6 +35,7 @@
 	<div id = {id} class = "w-240 min-w-240">
 		<h2> Income Type </h2>
 		<Validation msg = {error} />
+		{#if editing || data.filter(inc => !inc.isDeleted).length > 0}
 		<table>
 			<thead>
 			<tr>
@@ -57,16 +58,17 @@
 						</td>
 						{/if}
 					{:else}
-						<td>{inc.date_start}
-							<i class="fa-solid fa-arrow-right !text-[var(--green)]"></i>
-							{#if inc.date_end === null}
-								<span class="!text-[var(--green)]"> Present </span>
-							{:else}
-								{inc.date_end}
-							{/if}
-						</td>
-						<td>{inc.name}</td>
-
+						{#if !inc.isDeleted}
+							<td>{inc.date_start}
+								<i class="fa-solid fa-arrow-right !text-[var(--green)]"></i>
+								{#if inc.date_end === null}
+									<span class="!text-[var(--green)]"> Present </span>
+								{:else}
+									{inc.date_end}
+								{/if}
+							</td>
+							<td>{inc.name}</td>
+						{/if}
 					{/if}
 				</tr>
 			{/each}
@@ -79,6 +81,10 @@
 			{/if}
 			</tbody>
 		</table>
+		{:else}
+			<div style="color: var(--text-color); font-style: italic; border: 3px solid var(--border);
+    padding: 0.8rem;">None</div>
+		{/if}
 	</div>
 </div>
 
