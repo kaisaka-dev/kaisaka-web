@@ -19,6 +19,8 @@
 	import Validation from '$components/text/Validation.svelte';
 	import CaregiverForm from './family-info/CaregiverForm.svelte';
 	import ChildForm from './child/ChildForm.svelte';
+	import Modal from '$components/Modal.svelte';
+	import ExistingForm from './family-info/ExistingForm.svelte';
 
 
 	/**
@@ -95,6 +97,7 @@
 	let linkedFamilyError = $state('');	// default no errors
 	let mainError = $state('');
 	let showTable: boolean = $state(false); // for the existing family table
+	let showModalLink: boolean = $state(false); // for the link existing family modal
 	let childId = url.childId, memberId: string, familyId: string, caregiverId = url.caregiverId;	// for the posts
 	let isNewChild = url.childId == null && url.caregiverId == null;
 	let form = $state({
@@ -752,7 +755,7 @@
 
 			<div class="step-item p-2 bg-white rounded shadow-sm border-l-4 border-[var(--green)]">
 				<i class="bi bi-person-wheelchair mr-2"></i>
-				Children
+				Beneficiaries
 
 				<ul>
 					{#each children as _, idx (idx)}
@@ -772,7 +775,7 @@
 
 				<ul>
 					{#each familyMembers.newCaregivers as _, idx (idx)}
-						<li class="cursor-pointer hover:!underline p-1 rounded {form.idx === idx ? '!text-[var(--green)]' : ''}" onclick={() => form = {idx, type: 'CAREGIVER'}}>
+						<li class="cursor-pointer hover:!underline p-1 rounded {form.idx === idx && form.type === 'CAREGIVER' ? '!text-[var(--green)]' : ''}" onclick={() => form = {idx, type: 'CAREGIVER'}}>
 							{familyMembers.newCaregivers[idx].firstName || `Caregiver ${idx + 1}`}
 						</li>
 					{/each}
@@ -783,21 +786,41 @@
 				</button>
 			</div>
 
+			{#if familyMembers.hasExisting && familyMembers.linkedFamily.infoLinked.length > 0}
+				<div class="step-item p-2 bg-blue-100 rounded shadow-sm border-l-4 border-[var(--pink)] cursor-pointer hover:bg-blue-200 {form.type === 'FAMILY' ? 'bg-blue-200' : ''}" onclick={() => form = {idx: -1, type: 'FAMILY'}}>
+					<i class="bi bi-link-45deg mr-2"></i>
+					Linked Family Members
+					
+					<ul>
+						{#each familyMembers.linkedFamily.infoLinked as member, idx}
+							<li class="text-sm p-1">
+								{member.firstName} {member.lastName}
+								{#if member.contactNo}- {member.contactNo}{/if}
+							</li>
+						{/each}
+					</ul>
+				</div>
+			{/if}
 
 			<br>
 
-			<button class="!text-[1rem] !p-[2px] !px-[12px] w-full" aria-label="add">
+			<button class="!text-[1rem] !p-[2px] !px-[12px] w-full" onclick={showModalLink = true}>
 				<i class="bi bi-link-45deg mr-2"></i> Link existing family
 			</button>
-			<button class="green !text-[0.95rem] !p-[2px] !px-[12px] w-full" aria-label="add">
-				Submit
-			</button>
 
+			{#if loadingSubmission}
+				<LoadingBtn btnClass="green !text-[0.95rem] !p-[2px] !px-[12px] w-full" label="Submit" />
+			{:else}
+				<button class="green !text-[0.95rem] !p-[2px] !px-[12px] w-full" onclick={handleSubmit}>Submit</button>
+				<Validation msg={mainError} />
+			{/if}
 		</nav>
 	</div>
 
 	<div id="form" class="h-full flex-1 p-6 overflow-y-auto">
-		{#if form.idx === -1}
+		{#if form.type === "FAMILY"}
+			<ExistingForm bind:formData={familyMembers} error_msg={linkedFamilyError} members={members} bind:showTable={showTable} isChildView={url.caregiverId == null} />
+		{:else if form.idx === -1}
 			Add a family member on the left
 		{:else if form.type === "CAREGIVER"}
 
@@ -807,6 +830,7 @@
 				index={form.idx}
 				deleteCaregiver={deleteCaregiver}
 				{options}
+
 			/>
 		{:else if form.type === "CHILD"}
 			<ChildForm
@@ -820,14 +844,21 @@
 	</div>
 </div>
 
-<!--<section style="text-align: center;">-->
-<!--	{#if loadingSubmission}-->
-<!--		<LoadingBtn label="Submit" />-->
-<!--	{:else}-->
-<!--		<Validation msg={mainError} />-->
-<!--		<button class="green" onclick={handleSubmit}>Submit</button>-->
-<!--	{/if}-->
-<!--</section>-->
+<!-- Modal to get an existing family -->
+<Modal buttonText="" bind:isOpen={showModalLink}>
+	<div slot="modal">
+		<ExistingForm bind:formData={familyMembers} error_msg={linkedFamilyError} members={members} bind:showTable={showTable} isChildView={url.caregiverId == null} disabled/>
+		<button class="green" onclick={() => {
+			if (familyMembers.linkedFamily.infoLinked.length > 0) {
+				showModalLink = false;
+			} else {
+				linkedFamilyError = "Please search and select a family member first";
+			}
+		}}>Confirm</button>
+	</div>
+</Modal>
+
+
 
 <style>
 	i {
