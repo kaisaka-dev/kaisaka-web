@@ -116,6 +116,11 @@
 		if (url.childId) {
 			await handleChildIdParam(url.childId);
 		}
+		
+		// Open link modal by default when page loads (if no existing family)
+		if (!url.caregiverId && !url.childId && !familyMembers.hasExisting) {
+			showModalLink = true;
+		}
 	})
 
 	async function handleFamilyIdParam(familyId: string) {
@@ -198,6 +203,7 @@
 			brgy: '',
 			occupation: '',
 			relationship: '',
+			admission_date: new Date().toISOString().slice(0, 7),
 			communityGrp: [],
 			income: []
 		};
@@ -442,8 +448,8 @@
 				loadingSubmission = false;
 				return;
 			}
-			console.log("NEW CWD: ", childRegData)
 			console.log("INFO ON FAMILY: ", familyMembers)
+			console.log("CHILDREN DATA: ", children)
 
 			/*
 			note there are 3 views,
@@ -455,78 +461,129 @@
 			 */
 
 
-			// CODE BLOCK #1: SUBMITTING CWD DATA (of previous page)
-			// bypass if: has family id and has child id
-			if (url.caregiverId == null && url.childId == null) {
+			// CODE BLOCK #1: SUBMITTING CWD DATA (from children array)
+			// Process each child in the children array
+			for (const [childIndex, child] of children.entries()) {
 				// insert address
-				const addressData = await safeFetch('POST', '/api/addresses', childRegData.address);
+				const addressData = await safeFetch('POST', '/api/addresses', { address: child.address });
 				console.log(addressData.message);
-				childRegData.member!.address_id = addressData.data.id;
+				const address_id = addressData.data.id;
 
 				// insert barangay
-				const barangayData = await safeFetch('POST', '/api/barangays', childRegData.barangay);
+				const barangayData = await safeFetch('POST', '/api/barangays', { name: child.barangay });
 				console.log('Barangay ', barangayData.message);
-				childRegData.member!.barangay_id = barangayData.data.id;
+				const barangay_id = barangayData.data.id;
 
 				// insert member
-				const memberData = await safeFetch('POST', '/api/members', childRegData.member);
+				const memberData = await safeFetch('POST', '/api/members', {
+					first_name: child.first_name,
+					middle_name: child.middle_name,
+					last_name: child.last_name,
+					birthday: child.birthday,
+					sex: child.sex,
+					admission_date: child.date_admission ? `${child.date_admission}-01T00:00:00Z` : new Date().toISOString(),
+					address_id: address_id,
+					barangay_id: barangay_id
+				});
 				console.log(memberData.message);
-				memberId = memberData.data.id;
+				const currentMemberId = memberData.data.id;
 
 				var pwdId = null;
-
 				// insert PWD ID
-				if (childRegData.pwd_id !== undefined) {
-					const pwdIdData = await safeFetch('POST', '/api/pwd_ids', childRegData.pwd_id);
+				if (child.has?.pwd_id && child.has?.pwd?.id) {
+					const pwdIdData = await safeFetch('POST', '/api/pwd_ids', {
+						pwd_id: child.has.pwd.id,
+						expiry_date: child.has.pwd.expiry_date
+					});
 					console.log(pwdIdData.message);
 					pwdId = pwdIdData.data.id;
 				}
 
 				// insert child info
-				childRegData.child!.member_id = memberId;
-				childRegData.child!.pwd_id = pwdId;
-				const childData = await safeFetch('POST', '/api/children', childRegData.child);
+				const childData = await safeFetch('POST', '/api/children', {
+					has_barangay_cert: child.has?.barangay_cert || false,
+					has_birth_cert: child.has?.birth_cert || false,
+					has_medical_cert: child.has?.medical_cert || false,
+					has_vote: child.has?.vote || false,
+					has_national_id: child.has?.national_id || false,
+					has_philhealth: child.has?.philhealth || false,
+					is_active: true,
+					disability_id: child.disability?.category_id,
+					disability_nature: child.disability?.nature || '',
+					remarks: child.remarks || '',
+					member_id: currentMemberId,
+					pwd_id: pwdId
+				});
 				console.log(childData.message);
-				childId = childData.data.id;
+				const currentChildId = childData.data.id;
 
-				// insert education records from children array
-				for (const child of children) {
-					if (child.education && child.education.length > 0) {
-						for (const educRecord of child.education) {
-							if (educRecord.type && educRecord.type !== "" && educRecord.type !== "Not enrolled") {
-								const eduStatusData = await safeFetch('POST', '/api/education_status', {
-									child_id: childId,
-									education_type: educRecord.type,
-									education_level: educRecord.grade_level,
-									education_status: educRecord.status,
-									year_start: educRecord.year_start,
-									year_end: educRecord.year_end
-								});
-								console.log('Education record added:', eduStatusData.message);
-							}
+				// Set the first child as the main child for family operations
+				if (childIndex === 0) {
+					memberId = currentMemberId;
+					childId = currentChildId;
+				}
+
+				// insert education records
+				if (child.education && child.education.length > 0) {
+					console.log('Child education records:', child.education);
+					for (const educRecord of child.education) {
+						console.log('Processing education record:', educRecord);
+						if (educRecord.type && educRecord.type !== "" && educRecord.type !== "Not enrolled") {
+							const eduStatusData = await safeFetch('POST', '/api/education_status', {
+								child_id: currentChildId,
+								education_type: educRecord.type,
+								education_level: educRecord.grade_level,
+								education_status: educRecord.status,
+								year_start: educRecord.year_start,
+								year_end: educRecord.year_end
+							});
+							console.log('Education record added:', eduStatusData.message);
+						} else {
+							console.log('Skipping education record - type is empty or "Not enrolled"');
+						}
+					}
+				} else {
+					console.log('No education records found for child');
+				}
+
+				// insert participation records
+				if (child.participation && child.participation.length > 0) {
+					for (const partRecord of child.participation) {
+						if (partRecord.social_protection) {
+							const socProtData = await safeFetch('POST', '/api/social_participation', {
+								child_id: currentChildId,
+								participation_type: "Social Protection",
+								year: partRecord.year_start
+							});
+							console.log('Social protection record added:', socProtData.message);
+						}
+						if (partRecord.family_life) {
+							const famLifeData = await safeFetch('POST', '/api/social_participation', {
+								child_id: currentChildId,
+								participation_type: "Family Life",
+								year: partRecord.year_start
+							});
+							console.log('Family life record added:', famLifeData.message);
+						}
+						if (partRecord.community_life) {
+							const comLifeData = await safeFetch('POST', '/api/social_participation', {
+								child_id: currentChildId,
+								participation_type: "Community Life",
+								year: partRecord.year_start
+							});
+							console.log('Community life record added:', comLifeData.message);
 						}
 					}
 				}
 
-				// insert social protection status (for community group)
-				if (childRegData.social_participation_com !== undefined) {
-					childRegData.social_participation_com!.child_id = childId;
-					const socProtStatusDataCom = await safeFetch('POST', '/api/social_participation', childRegData.social_participation_com);
-					console.log(socProtStatusDataCom.message);
-				}
-
-				// insert social participation status (for family life)
-				if (childRegData.social_participation_fam !== undefined) {
-					childRegData.social_participation_fam!.child_id = childId;
-					const socProtStatusDataFam = await safeFetch('POST', '/api/social_participation', childRegData.social_participation_fam);
-					console.log(socProtStatusDataFam.message);
-				}
-
 				// insert employment status
-				if (childRegData.employment_status !== undefined) {
-					childRegData.employment_status!.member_id = memberId;
-					const empStatusData = await safeFetch('POST', '/api/employment_status', childRegData.employment_status);
-					console.log(empStatusData.message);
+				if (child.employment?.able_to_work) {
+					const empStatusData = await safeFetch('POST', '/api/employment_status', {
+						able_to_work: child.employment.able_to_work,
+						employment_type: child.employment.type || null,
+						member_id: currentMemberId
+					});
+					console.log('Employment status added:', empStatusData.message);
 				}
 			}
 
@@ -705,7 +762,7 @@
 				last_name: caregiver.lastName,
 				birthday: caregiver.bday || null,
 				sex: caregiver.sex,
-				admission_date: childRegData?.member?.admission_date ?? new Date(new Date().getFullYear(), new Date().getMonth(), 1).toISOString(), 	// makes it the same as the child
+				admission_date: caregiver.admission_date ? `${caregiver.admission_date}-01T00:00:00Z` : new Date(new Date().getFullYear(), new Date().getMonth(), 1).toISOString(),
 				address_id: address_id,
 				barangay_id: barangay_id
 			});
@@ -886,11 +943,9 @@
 	<div slot="modal">
 		<ExistingForm bind:formData={familyMembers} error_msg={linkedFamilyError} members={members} bind:showTable={showTable} isChildView={url.caregiverId == null}/>
 		<button class="green" onclick={() => {
-			if (familyMembers.linkedFamily.infoLinked.length > 0) {
-				showModalLink = false;
-			} else {
-				linkedFamilyError = "Please search and select a family member first";
-			}
+			// Always allow closing the modal
+			showModalLink = false;
+			linkedFamilyError = "";
 		}}>Confirm</button>
 	</div>
 </Modal>
