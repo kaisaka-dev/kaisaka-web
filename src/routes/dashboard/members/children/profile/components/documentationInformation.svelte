@@ -59,7 +59,7 @@
         Documents and Verification
 </h1>
 <div class = "flex flex-col lg:flex-row border-[var(--border)] border-4 ml-55 mr-10 p-6 max-w-250 mx-auto">
-    <div class = "flex flex-col !font-bold w-full max-w-120 mx-auto z-500"> 
+    <div class = "flex flex-col !font-bold w-full max-w-120 z-500">
        <div>
             <Checkbox label = "PWD ID" bind:checked = {data.hasPWD} disabled = {!editing}/>
        </div>
