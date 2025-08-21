@@ -553,7 +553,7 @@
 							const socProtData = await safeFetch('POST', '/api/social_participation', {
 								child_id: currentChildId,
 								participation_type: "Social Protection",
-								year: partRecord.year_start
+								year: partRecord.year
 							});
 							console.log('Social protection record added:', socProtData.message);
 						}
@@ -561,7 +561,7 @@
 							const famLifeData = await safeFetch('POST', '/api/social_participation', {
 								child_id: currentChildId,
 								participation_type: "Family Life",
-								year: partRecord.year_start
+								year: partRecord.year
 							});
 							console.log('Family life record added:', famLifeData.message);
 						}
@@ -569,7 +569,7 @@
 							const comLifeData = await safeFetch('POST', '/api/social_participation', {
 								child_id: currentChildId,
 								participation_type: "Community Life",
-								year: partRecord.year_start
+								year: partRecord.year
 							});
 							console.log('Community life record added:', comLifeData.message);
 						}
@@ -589,33 +589,58 @@
 
 			// for family
 
-			// CODE BLOCK #2.0: REUSING FAMILY ID FROM LINKED MEMBERS
+			// CODE BLOCK #2.0: HANDLE EXISTING FAMILY SCENARIOS
 			if (familyMembers.hasExisting && familyMembers.linkedFamily != null) {
-				// get the family id of the existing family
-				const familyId = familyMembers.linkedFamily.family_id;
-				console.log('Using existing family ID:', familyId, 'with', familyMembers.linkedFamily.infoLinked.length, 'linked members');
+				if (familyMembers.linkedFamily.type === 'create_new_with_person') {
+					// Create new family and add the person to it (they stay in both families)
+					console.log('Creating new family with selected person');
+					const familyData = await safeFetch('POST', '/api/families', null);
+					const newFamilyId = familyData.data.id;
+					console.log('New family created:', newFamilyId);
 
-				// update relationships in family_members - only if relationship was modified
-				if (familyMembers.hasExisting && familyMembers.linkedFamily?.infoLinked) {
-					for (const linkedMember of familyMembers.linkedFamily.infoLinked) {
-						// Only update if relationship was actually set/modified
-						if (linkedMember.relationship && linkedMember.relationship.trim() !== '') {
-							try {
-								const relationshipData = await safeFetch('PUT', '/api/family_members', {
-									member_id: linkedMember.member_id,
-									family_id: familyId,
-									relationship_type: linkedMember.relationship
-								});
-								console.log('Updated relationship for', linkedMember.firstName, ':', relationshipData.message);
-							} catch (error) {
-								console.error('Failed to update relationship for', linkedMember.firstName, ':', error);
+					// Add the selected person to the new family (keeping them in their original family too)
+					const selectedPerson = familyMembers.linkedFamily.infoLinked[0];
+					try {
+						const addToNewFamilyData = await safeFetch('POST', '/api/family_members', {
+							is_child: selectedPerson.caregiver_id == null,
+							member_id: selectedPerson.member_id,
+							family_id: newFamilyId,
+							relationship_type: selectedPerson.relationship || 'Family Member'
+						});
+						console.log('Person added to new family (keeping original family too):', addToNewFamilyData.message);
+					} catch (error) {
+						console.error('Failed to add person to new family:', error);
+					}
+
+					// Add new registrants to this new family
+					await POST_family(newFamilyId);
+				} else {
+					// Join existing family (original logic)
+					const familyId = familyMembers.linkedFamily.family_id;
+					console.log('Using existing family ID:', familyId, 'with', familyMembers.linkedFamily.infoLinked.length, 'linked members');
+
+					// update relationships in family_members - only if relationship was modified
+					if (familyMembers.hasExisting && familyMembers.linkedFamily?.infoLinked) {
+						for (const linkedMember of familyMembers.linkedFamily.infoLinked) {
+							// Only update if relationship was actually set/modified
+							if (linkedMember.relationship && linkedMember.relationship.trim() !== '') {
+								try {
+									const relationshipData = await safeFetch('PUT', '/api/family_members', {
+										member_id: linkedMember.member_id,
+										family_id: familyId,
+										relationship_type: linkedMember.relationship
+									});
+									console.log('Updated relationship for', linkedMember.firstName, ':', relationshipData.message);
+								} catch (error) {
+									console.error('Failed to update relationship for', linkedMember.firstName, ':', error);
+								}
 							}
 						}
 					}
-				}
 
-				// add the child and caregivers to the newly created family
-				await POST_family(familyId)
+					// add the child and caregivers to the existing family
+					await POST_family(familyId);
+				}
 
 
 			} // CODE BLOCK #2.1: CREATING NEW FAMILY ID
@@ -685,25 +710,29 @@
 			}
 			// Case 2: New registration - add NEW member to family (existing or new family)
 			else if (isNewChild || (memberId && !familyMembers.hasExisting)) {
-				console.log('Adding new member to family');
-				const famMemData = await safeFetch('POST', '/api/family_members', {
-					is_child: isChild,
-					member_id: memberId,
-					family_id: newFamilyId,
-					relationship_type: isChild ? "CWD" : "Caregiver"
-				});
-				console.log('New member added to family:', famMemData.message);
+				console.log('Adding new member to family, memberId:', memberId, 'isChild:', isChild);
+				if (memberId) {
+					const famMemData = await safeFetch('POST', '/api/family_members', {
+						is_child: isChild,
+						member_id: memberId,
+						family_id: newFamilyId,
+						relationship_type: isChild ? "CWD" : "Caregiver"
+					});
+					console.log('New member added to family:', famMemData.message);
+				} else {
+					console.log('Skipping family member addition - no memberId available');
+				}
 				familyId = newFamilyId
 			}
 			// Case 3: New registration with existing family - only add NEW member, don't re-add existing ones
 			else if (memberId && familyMembers.hasExisting) {
-				console.log('Adding new member to existing linked family');
+				console.log('Adding new member to existing linked family, memberId:', memberId);
 				// Check if this member is already in the family (avoid duplicates)
 				const isAlreadyInFamily = familyMembers.linkedFamily?.infoLinked?.some(
 					linked => linked.member_id === memberId
 				);
 				
-				if (!isAlreadyInFamily) {
+				if (!isAlreadyInFamily && memberId) {
 					const famMemData = await safeFetch('POST', '/api/family_members', {
 						is_child: isChild,
 						member_id: memberId,
@@ -712,7 +741,7 @@
 					});
 					console.log('New member added to existing family:', famMemData.message);
 				} else {
-					console.log('Member already in family, skipping duplicate add');
+					console.log('Member already in family or no memberId, skipping duplicate add');
 				}
 				familyId = newFamilyId
 			}

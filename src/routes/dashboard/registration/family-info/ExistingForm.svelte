@@ -73,8 +73,10 @@
 	}
 
 	function selectJustPerson(foundMember: MemberListFamily) {
-		// 2. set the family ID
-		formData.linkedFamily.family_id = foundMember.family_id;
+		// Store the member info but mark as creating new family
+		formData.linkedFamily.type = 'create_new_with_person';
+		// 2. set family ID as empty (will create new family)
+		formData.linkedFamily.family_id = ''; // Will create new family
 
 		// 3. add searched person only
 		formData.linkedFamily.infoLinked = [{
@@ -91,6 +93,8 @@
 	}
 
 	function selectEntireFamily(foundMember: MemberListFamily) {
+		// Mark as joining existing family
+		formData.linkedFamily.type = 'join_existing';
 		// 2. set the family ID
 		formData.linkedFamily.family_id = foundMember.family_id;
 
