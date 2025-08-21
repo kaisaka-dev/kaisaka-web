@@ -7,10 +7,35 @@ export type Json =
   | Json[]
 
 export type Database = {
-  // Allows to automatically instanciate createClient with right options
+  // Allows to automatically instantiate createClient with right options
   // instead of createClient<Database, { PostgrestVersion: 'XX' }>(URL, KEY)
   __InternalSupabase: {
     PostgrestVersion: "12.2.3 (519615d)"
+  }
+  graphql_public: {
+    Tables: {
+      [_ in never]: never
+    }
+    Views: {
+      [_ in never]: never
+    }
+    Functions: {
+      graphql: {
+        Args: {
+          extensions?: Json
+          operationName?: string
+          query?: string
+          variables?: Json
+        }
+        Returns: Json
+      }
+    }
+    Enums: {
+      [_ in never]: never
+    }
+    CompositeTypes: {
+      [_ in never]: never
+    }
   }
   public: {
     Tables: {
@@ -716,6 +741,7 @@ export type Database = {
           barangay_id: number | null
           birthday: string | null
           date_created: string
+          date_of_termination: string | null
           first_name: string
           id: string
           last_approved: string | null
@@ -730,6 +756,7 @@ export type Database = {
           barangay_id?: number | null
           birthday?: string | null
           date_created?: string
+          date_of_termination?: string | null
           first_name: string
           id?: string
           last_approved?: string | null
@@ -744,6 +771,7 @@ export type Database = {
           barangay_id?: number | null
           birthday?: string | null
           date_created?: string
+          date_of_termination?: string | null
           first_name?: string
           id?: string
           last_approved?: string | null
@@ -1242,22 +1270,22 @@ export type Database = {
     }
     Functions: {
       get_in_program_report: {
-        Args: { p_start_date: string; p_end_date: string }
+        Args: { p_end_date: string; p_start_date: string }
         Returns: {
           age_group: string
           disability: string
+          improved_boys: number
+          improved_girls: number
           in_program_boys: number
           in_program_girls: number
           with_intervention_boys: number
           with_intervention_girls: number
-          improved_boys: number
-          improved_girls: number
         }[]
       }
       user_has_permission: {
         Args:
           | { permission_name: string }
-          | { user_uuid?: string; permission_name?: string }
+          | { permission_name?: string; user_uuid?: string }
         Returns: boolean
       }
     }
@@ -1281,7 +1309,10 @@ export type Database = {
       intervention_type: "education" | "social"
       part_type: "caregiver" | "child"
       participant_type_enum: "caregiver" | "child"
-      participation_type_enum: "Family Life" | "Community Life"
+      participation_type_enum:
+        | "Family Life"
+        | "Community Life"
+        | "Social Protection"
       resources:
         | "activity"
         | "addresses"
@@ -1448,6 +1479,9 @@ export type CompositeTypes<
     : never
 
 export const Constants = {
+  graphql_public: {
+    Enums: {},
+  },
   public: {
     Enums: {
       actions: ["create", "retrieve", "update", "delete"],
@@ -1471,7 +1505,11 @@ export const Constants = {
       intervention_type: ["education", "social"],
       part_type: ["caregiver", "child"],
       participant_type_enum: ["caregiver", "child"],
-      participation_type_enum: ["Family Life", "Community Life"],
+      participation_type_enum: [
+        "Family Life",
+        "Community Life",
+        "Social Protection",
+      ],
       resources: [
         "activity",
         "addresses",
