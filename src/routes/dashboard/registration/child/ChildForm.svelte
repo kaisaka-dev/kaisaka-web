@@ -6,6 +6,7 @@
     import Validation from '$components/text/Validation.svelte';
     import InputRange from '$components/input/InputRange.svelte';
     import { dropdownOptions } from '$lib/types/options.js';
+    import { onMount, afterUpdate } from 'svelte';
 
     // Props
     export let formData: any;
@@ -68,8 +69,7 @@
     function addParticipationRecord() {
         const thisYear = new Date().getFullYear();
         const newParticipation = {
-            year_start: thisYear,
-            year_end: thisYear + 1,
+            year: thisYear,
             social_protection: false,
             family_life: false,
             community_life: false
@@ -80,6 +80,43 @@
     function deleteParticipationRecord(index: number) {
         formData.participation = formData.participation.filter((_, i) => i !== index);
     }
+
+    // Function to check if table has horizontal overflow and adjust checkbox layout
+    function checkTableOverflow() {
+        const tableContainer = document.querySelector('.table-container');
+        const participationCheckboxes = document.querySelectorAll('.participation-checkboxes');
+        
+        if (tableContainer) {
+            const hasOverflow = tableContainer.scrollWidth > tableContainer.clientWidth;
+            
+            participationCheckboxes.forEach(checkboxContainer => {
+                if (hasOverflow) {
+                    checkboxContainer.classList.add('overflow-mode');
+                } else {
+                    checkboxContainer.classList.remove('overflow-mode');
+                }
+            });
+        }
+    }
+
+    // Check overflow on mount and after updates
+    onMount(() => {
+        checkTableOverflow();
+        // Set up resize observer to monitor changes
+        if (typeof ResizeObserver !== 'undefined') {
+            const tableContainer = document.querySelector('.table-container');
+            if (tableContainer) {
+                const resizeObserver = new ResizeObserver(() => {
+                    checkTableOverflow();
+                });
+                resizeObserver.observe(tableContainer);
+            }
+        }
+    });
+
+    afterUpdate(() => {
+        checkTableOverflow();
+    });
 </script>
 
 <div class="child-form">
@@ -177,14 +214,14 @@
     <section id="social-participation-status">
         <h1>Social Participation</h1>
 
-        <div class="overflow-x-auto">
-            <table class="w-full border-collapse">
+        <div class="table-container overflow-x-auto">
+            <table class="w-full border-collapse table-auto">
                 <thead class="minor">
                     <tr class="bg-gray-100">
-                        <th class="w-48">Time Period</th>
-                        <th class="">Participated In</th>
+                        <th class="w-48 min-w-[180px]">Year</th>
+                        <th class="min-w-0">Participated In</th>
                         {#if formData.participation.length > 1}
-                            <th class="w-20">Actions</th>
+                            <th class="w-20 min-w-[80px]">Actions</th>
                         {/if}
                     </tr>
                 </thead>
@@ -192,10 +229,11 @@
                     {#each formData.participation as partRecord, partIndex (partIndex)}
                         <tr>
                             <td>
-                                <InputRange bind:valueFrom={partRecord.year_start} bind:valueTo={partRecord.year_end} type="number" {disabled}/>
+                                <input type="number" id="soc-pro" class="input !pr-[15px] !w-[180px]" bind:value={partRecord.year} {disabled}/>
+                                <Validation msg="" />
                             </td>
                             <td>
-                                <div class="space-y-2">
+                                <div class="participation-checkboxes">
                                     <Checkbox label="Social Protection" id="part-social-{partIndex}" bind:checked={partRecord.social_protection} {disabled}/>
                                     <Checkbox label="Family Life" id="part-family-{partIndex}" bind:checked={partRecord.family_life} {disabled}/>
                                     <Checkbox label="Community Life" id="part-community-{partIndex}" bind:checked={partRecord.community_life} {disabled}/>
@@ -269,12 +307,19 @@
     .delete > i:hover {
         color: var(--error-color);
     }
-    .fa-plus {
-        color: var(--green);
-        cursor: pointer;
+    
+    /* Participation checkboxes responsive behavior */
+    .participation-checkboxes {
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        flex-wrap: wrap;
+        transition: all 0.2s ease;
     }
-    .fa-plus:hover {
-        cursor: pointer;
-        transition-duration: 0.2s;
+    
+    /* When table has horizontal overflow, switch to column layout */
+    .participation-checkboxes.overflow-mode {
+        flex-direction: column;
+        align-items: flex-start;
     }
 </style>
