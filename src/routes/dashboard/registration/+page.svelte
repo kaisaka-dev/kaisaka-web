@@ -91,6 +91,7 @@
 			address: '',
 			brgy: '',
 			communityYr: '',
+			admissionDate: '',
 			msg: ''
 		}))
 	);
@@ -218,6 +219,7 @@
 			brgy: '',
 			address: '',
 			communityYr: '',
+			admissionDate: '',
 			msg: ''
 		};
 
@@ -411,6 +413,7 @@
 				address: !caregiver.address.trim() ? 'Required' : '',
 				brgy: !caregiver.brgy ? 'Required' : '',
 				communityYr: '',
+				admissionDate: !caregiver.admission_date ? 'Required' : '',
 				msg: ''
 			};
 
@@ -422,7 +425,173 @@
 			return errors;
 		});
 
+		// validation for children
+		childrenErrors = children.map((child) => {
+			// Check if child has at least one education record with a valid type (including "Not enrolled")
+			const hasValidEducation = child.education && child.education.length > 0 && 
+				child.education.some(edu => edu.type && edu.type.trim() !== "");
+			
+			// Check if any education record needs level/status validation
+			let needsEducLevel = false;
+			let needsEducStatus = false;
+			let needsAcademicYear = false;
+			
+			if (child.education && child.education.length > 0) {
+				for (const edu of child.education) {
+					if (edu.type && edu.type.trim() !== "" && edu.type !== "Not enrolled") {
+						if (!edu.grade_level || !edu.grade_level.trim()) needsEducLevel = true;
+						if (!edu.status || !edu.status.trim()) needsEducStatus = true;
+						if (!edu.year_start || !edu.year_end) needsAcademicYear = true;
+					}
+				}
+			}
+			
+			// PWD validation
+			const needsPwdId = child.has?.pwd_id && (!child.has?.pwd?.id || !child.has.pwd.id.trim());
+			const needsPwdExpiry = child.has?.pwd_id && (!child.has?.pwd?.expiry_date || !child.has.pwd.expiry_date.trim());
+			
+			// Social participation year validation
+			let needsPartYear = false;
+			if (child.participation && child.participation.length > 0) {
+				for (const part of child.participation) {
+					// If any participation type is checked but year is missing
+					if ((part.social_protection || part.family_life || part.community_life) && !part.year) {
+						needsPartYear = true;
+						break;
+					}
+				}
+			}
+			
+			const errors = {
+				overall: "",
+				firstName: !child.first_name.trim() ? 'Required' : '',
+				lastName: !child.last_name.trim() ? 'Required' : '',
+				birthday: !child.birthday ? 'Required' : '',
+				sex: !child.sex ? 'Required' : '',
+				address: !child.address.trim() ? 'Required' : '',
+				barangay: !child.barangay.trim() ? 'Required' : '',
+				disCategory: !child.disability?.category_id ? 'Required' : '',
+				disNature: "",
+				educType: !hasValidEducation ? 'Required' : '',
+				educLvl: needsEducLevel ? 'Required' : '',
+				educStatus: needsEducStatus ? 'Required' : '',
+				pwdId: needsPwdId ? 'Required' : '',
+				pwdExpy: needsPwdExpiry ? 'Required' : '',
+				admissionDate: !child.date_admission ? 'Required' : '',
+				partFamilyYear: needsPartYear ? 'Required' : '',
+				ayStart: needsAcademicYear ? 'Required' : '',
+				ayEnd: needsAcademicYear ? 'Required' : '',
+				partCommunityYear: needsPartYear ? 'Required' : ''
+			};
+
+			// check if any error messages are present to invalidate the form
+			if (Object.values(errors).some(msg => msg)) {
+				isValid = false;
+			}
+
+			return errors;
+		});
+
 		return isValid;
+	}
+
+	// Reactive validation - update errors whenever data changes
+	$effect(() => {
+		// Silently validate without showing error messages until submit
+		validateFormSilently();
+	});
+
+	// Silent validation for sidebar indicators only
+	function validateFormSilently() {
+		// validation for children
+		childrenErrors = children.map((child) => {
+			// Check if child has at least one education record with a valid type (including "Not enrolled")
+			const hasValidEducation = child.education && child.education.length > 0 && 
+				child.education.some(edu => edu.type && edu.type.trim() !== "");
+			
+			// Check if any education record needs level/status validation
+			let needsEducLevel = false;
+			let needsEducStatus = false;
+			let needsAcademicYear = false;
+			
+			if (child.education && child.education.length > 0) {
+				for (const edu of child.education) {
+					if (edu.type && edu.type.trim() !== "" && edu.type !== "Not enrolled") {
+						if (!edu.grade_level || !edu.grade_level.trim()) needsEducLevel = true;
+						if (!edu.status || !edu.status.trim()) needsEducStatus = true;
+						if (!edu.year_start || !edu.year_end) needsAcademicYear = true;
+					}
+				}
+			}
+			
+			// PWD validation
+			const needsPwdId = child.has?.pwd_id && (!child.has?.pwd?.id || !child.has.pwd.id.trim());
+			const needsPwdExpiry = child.has?.pwd_id && (!child.has?.pwd?.expiry_date || !child.has.pwd.expiry_date.trim());
+			
+			// Social participation year validation
+			let needsPartYear = false;
+			if (child.participation && child.participation.length > 0) {
+				for (const part of child.participation) {
+					// If any participation type is checked but year is missing
+					if ((part.social_protection || part.family_life || part.community_life) && !part.year) {
+						needsPartYear = true;
+						break;
+					}
+				}
+			}
+			
+			return {
+				overall: "",
+				firstName: !child.first_name.trim() ? 'Required' : '',
+				lastName: !child.last_name.trim() ? 'Required' : '',
+				birthday: !child.birthday ? 'Required' : '',
+				sex: !child.sex ? 'Required' : '',
+				address: !child.address.trim() ? 'Required' : '',
+				barangay: !child.barangay.trim() ? 'Required' : '',
+				disCategory: !child.disability?.category_id ? 'Required' : '',
+				disNature: "",
+				educType: !hasValidEducation ? 'Required' : '',
+				educLvl: needsEducLevel ? 'Required' : '',
+				educStatus: needsEducStatus ? 'Required' : '',
+				pwdId: needsPwdId ? 'Required' : '',
+				pwdExpy: needsPwdExpiry ? 'Required' : '',
+				admissionDate: !child.date_admission ? 'Required' : '',
+				partFamilyYear: needsPartYear ? 'Required' : '',
+				ayStart: needsAcademicYear ? 'Required' : '',
+				ayEnd: needsAcademicYear ? 'Required' : '',
+				partCommunityYear: needsPartYear ? 'Required' : ''
+			};
+		});
+
+		// validation for caregivers
+		caregiverErrors = familyMembers.newCaregivers.map((caregiver) => {
+			return {
+				firstName: !caregiver.firstName.trim() ? 'Required' : '',
+				lastName: !caregiver.lastName.trim() ? 'Required' : '',
+				sex: !caregiver.sex ? 'Required' : '',
+				bday: '',
+				contactNo: !caregiver.contactNo.trim() ? 'Required' : '',
+				email: '',
+				address: !caregiver.address.trim() ? 'Required' : '',
+				brgy: !caregiver.brgy ? 'Required' : '',
+				communityYr: '',
+				admissionDate: !caregiver.admission_date ? 'Required' : '',
+				msg: ''
+			};
+		});
+	}
+
+	// Helper functions to check if member has errors
+	function childHasErrors(childIndex: number): boolean {
+		if (!childrenErrors[childIndex]) return false;
+		const errors = childrenErrors[childIndex];
+		return Object.values(errors).some(msg => msg && msg.trim() !== '');
+	}
+
+	function caregiverHasErrors(caregiverIndex: number): boolean {
+		if (!caregiverErrors[caregiverIndex]) return false;
+		const errors = caregiverErrors[caregiverIndex];
+		return Object.values(errors).some(msg => msg && msg.trim() !== '');
 	}
 
 	// called by handle submit whenever calling the POST api
@@ -880,7 +1049,7 @@
 
 					<ul>
 						{#each children as _, idx (idx)}
-							<li class="cursor-pointer hover:!underline p-1 rounded {form.idx === idx && form.type === 'CHILD' ? '!text-[var(--green)]' : ''}" onclick={() => form = {idx, type: 'CHILD'}}>
+							<li class="cursor-pointer hover:!underline p-1 rounded {form.idx === idx && form.type === 'CHILD' ? '!text-[var(--green)]' : childHasErrors(idx) ? '!text-[var(--error-color)]' : ''}" onclick={() => form = {idx, type: 'CHILD'}}>
 								{children[idx].first_name || `Child ${idx + 1}`}
 							</li>
 						{/each}
@@ -896,7 +1065,7 @@
 
 					<ul>
 						{#each familyMembers.newCaregivers as _, idx (idx)}
-							<li class="cursor-pointer hover:!underline p-1 rounded {form.idx === idx && form.type === 'CAREGIVER' ? '!text-[var(--green)]' : ''}" onclick={() => form = {idx, type: 'CAREGIVER'}}>
+							<li class="cursor-pointer hover:!underline p-1 rounded {form.idx === idx && form.type === 'CAREGIVER' ? '!text-[var(--green)]' : caregiverHasErrors(idx) ? '!text-[var(--error-color)]' : ''}" onclick={() => form = {idx, type: 'CAREGIVER'}}>
 								{familyMembers.newCaregivers[idx].firstName || `Caregiver ${idx + 1}`}
 							</li>
 						{/each}

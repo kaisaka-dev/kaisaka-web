@@ -230,7 +230,7 @@
                         <tr>
                             <td>
                                 <input type="number" id="soc-pro" class="input !pr-[15px] !w-[180px]" bind:value={partRecord.year} {disabled}/>
-                                <Validation msg="" />
+                                <Validation msg={errors.partFamilyYear} />
                             </td>
                             <td>
                                 <div class="participation-checkboxes">
@@ -282,7 +282,7 @@
     <section id="staff-only">
         <h1 style="margin-bottom: 0.5rem;">Other Information</h1>
         <Validation msg="Let the officer-in-charge verify the portion below" style="color:var(--text-color); margin-bottom: 25px;"/>
-        <InputText type="month" id="admission" label="Admission Date" bind:value={formData.date_admission} msg={errors.admissionDate}  {disabled}/>
+        <InputText type="month" id="admission" label="Admission Date" bind:value={formData.date_admission} msg={errors.admissionDate} required {disabled}/>
     </section>
 </div>
 

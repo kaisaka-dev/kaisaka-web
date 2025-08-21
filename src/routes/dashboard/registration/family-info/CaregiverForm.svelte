@@ -80,7 +80,7 @@
 			<InputText label="Barangay" id={`brgy-${index}`} required bind:value={formData.brgy} msg={errors.brgy} {disabled}/>
 			<InputText label="Occupation" id={`occupation-${index}`} bind:value={formData.occupation} {disabled}/>
 			<InputText label="Family role" id={`relationship-${index}`} bind:value={formData.relationship} {disabled}/>
-			<InputText type="month" label="Admission Date" id={`admission-${index}`} bind:value={formData.admission_date} {disabled}/>
+			<InputText type="month" label="Admission Date" id={`admission-${index}`} bind:value={formData.admission_date} msg={errors.admissionDate} required {disabled}/>
 
 </section>
 

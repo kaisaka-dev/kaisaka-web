@@ -20,6 +20,7 @@ export type NewCaregiver = {
 	brgy: string;
 	occupation: string;
 	relationship: string;
+	admission_date: string;
 	communityGrp: {
 		id: number | null;
 		yrFrom: string;
@@ -67,6 +68,7 @@ export type CaregiverError = {
 	address: string;
 	brgy: string;
 	communityYr: string;
+	admissionDate: string;
 	msg: string;			// for existing caregivers
 }
 
