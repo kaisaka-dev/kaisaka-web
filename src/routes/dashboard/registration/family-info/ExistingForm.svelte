@@ -226,7 +226,7 @@
 
 {:else}
 
-	<div class="!my-[35px]">Clicking yes will allow you to link family members</div>
+	<div class="!my-[35px]">Checking this will allow you to link family members</div>
 
 {/if}
 
