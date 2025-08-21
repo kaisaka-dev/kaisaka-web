@@ -3,18 +3,30 @@
 <script lang="ts">
 	import { goto } from "$app/navigation";
 
-    
-    export let family = [];
+    export let family = []
     export let firstName;
     export let editing = false;
     export let childID = ""
 
-    
-    for(let i in family){
-        family[i]["isDeleted"] = false
+    function familyName(family:object): string {
+        let lastnames: string[] = []
+
+        for(const mem of family){
+            lastnames.push(mem.members.last_name)
+        }
+
+        let familyname = [...new Set(lastnames)]
+        return Array.from(familyname).join(', ')
     }
-    function deleteFamily(index:number){
-        family[index].isDeleted = true
+
+    for(let i in family) {
+        for(let j in family[i].data) {
+            family[i].data[j]['isDeleted'] = false
+        }
+    }
+
+    function deleteFamily(familyIndex: number, memberIndex: number){
+        family[familyIndex].data[memberIndex].isDeleted = true
         family = family
     }
 </script>
@@ -25,42 +37,62 @@
 <div class = "flex flex-row">
     <div class = "mr-64">
         <h1 class = "!text-[var(--green)] font-[JSans] ml-55 mt-5  mb-2">
-        Family
+        Families
         </h1>
     </div>
 </div>
 
-<div class = "flex flex-col md:items-left max-w-170 mx-auto border-[var(--border)] border-4 ml-55 mr-10 p-6">
+<div class = "grid grid-cols-1 lg:grid-cols-2 gap-5 mt-2 border-4 border-[var(--border)] p-4 ml-55 mr-10">
     {#if family.length > 0}
-    {#each family as fammember, index}
-    {#if fammember.isDeleted == false}
-    <div class = "flex flex-col md:flex-row mb-5">
-        {#if fammember?.is_child == false}
-            <div class = "!bg-[var(--pink)] py-4 w-full max-w-45 rounded-full text-center !font-bold !text-[var(--background)] mr-20" > {fammember.relationship_type} </div>
-        {:else if fammember?.is_child == true}
-            <div class = "!bg-[var(--green)] py-4 w-full max-w-45 rounded-full text-center !font-bold !text-[var(--background)] mr-20" > {fammember.relationship_type} </div>
-        {/if}
-            <div class = "flex flex-col md:flex-row">
-                    {#if fammember.is_child == false}
-                    <div class = " mt-4 !font-[JSans] max-w-50 md:w-50 hover:underline hover:cursor-pointer"> <a href = "/dashboard/members/caregivers/profile?id={fammember.linkID}"> {fammember.members.first_name} {fammember.members.last_name} </a></div>
+    {#each family as family,familyIndex}
+        <div class = "flex flex-col w-full max-w-full">
+           <span class = "!bg-[var(--green)] p-2 w-full !text-white">  {familyName(family.data)} </span>
+           <div class = "flex flex-col gap-1 p-2 border-4 border-[var(--border)] w-full">
+            {#each family.data as member,memberIndex}
+                <div class = "flex flex-row">
+                    {#if member.isDeleted == false}
+                    {#if member.is_child == false}
+                    <div class ="!bg-[var(--pink)] !text-[1rem] w-35 !p-1 rounded-full text-center !font-bold !text-white"> {member.relationship_type}</div>
                     {:else}
-                    <div class = " mt-4 !font-[JSans] max-w-50 md:w-50">{fammember.members.first_name} {fammember.members.last_name}</div>
+                    <div class ="!bg-[var(--green)] !text-[1rem] w-35 !p-1 rounded-full text-center !font-bold !text-white"> {member.relationship_type}</div>
                     {/if}
+                    {#if member.is_child}
+                    <div class = "ml-10 w-50 hover:underline hover:cursor-pointer"><a href = "/dashboard/members/children/profile?id={member.linkID}" > {member.members.first_name} {member.members.last_name} </a></div>
+                    {:else}
+                    <div class = "ml-10 w-50 hover:underline hover:cursor-pointer"> <a href = "/dashboard/members/caregivers/profile?id={member.linkID}"> {member.members.first_name} {member.members.last_name} </a></div>
+                    {/if}
+                    {#if editing}
+                        <div class = "z-500 -mt-2"><i class="fa-solid fa-trash ml-2 mt-5" on:click = {()=>deleteFamily(familyIndex,memberIndex)}></i> </div> 
+                    {/if}
+                    {/if}
+                </div>
+            {/each}
             {#if editing}
-            <div class = "z-500"><i class="fa-solid fa-trash ml-2 mt-5" on:click ={()=>deleteFamily(index)}></i> </div> 
+                <div class = "flex flex-row">
+                    <div class = "mt-5 z-500"> <i class = "!text-[var(--green)] hover:underline hover:cursor-pointer" on:click = {() => goto('/dashboard/registration/child')}> + Add New CYWD </i></div>
+                    <div class = "mt-5 ml-10 z-500"> <i class = "!text-[var(--pink)] hover:underline hover:cursor-pointer" on:click = {() => goto(`/dashboard/registration/family-info?cwd=${childID}`)}> + Add/Edit Caregivers </i></div>
+                </div>
             {/if}
             </div>
-    </div>
-        {/if}
-        {/each}
-        {:else}
-            <div> Child is not part of any family </div>
-        {/if}
+        </div>        
+    {/each}
+    {:else}
+        <div class = "flex flex-col">
+            <div>  Child is not part of any families </div>
         {#if editing}
-            <div class = "flex flex-col md:flex-row w-full mx-auto">
-            <div class = "mt-10 z-500"> <i class = "!text-[var(--green)] hover:underline hover:cursor-pointer" on:click = {()=> goto(`/dashboard/registration`)}> + Add New CYWD </i></div>
-            <div class = "mt-10 md:ml-50 z-500"> <i class = "!text-[var(--pink)] hover:underline hover:cursor-pointer" on:click = {()=> goto(`/dashboard/registration/family-info?cwd=${childID}`)}> + Add/Edit Caregivers </i></div>
-            </div>
-        {/if}
+                <div class = "flex flex-row">
+                    <div class = "mt-5 z-500"> <i class = "!text-[var(--green)] hover:underline hover:cursor-pointer" on:click = {()=> goto(`/dashboard/registration`)}> + Add New CYWD </i></div>
+                    <div class = "mt-5 ml-10 z-500"> <i class = "!text-[var(--pink)] hover:underline hover:cursor-pointer" on:click = {() => goto(`/dashboard/registration/family-info?cwd=${childID}`)}> + Add/Edit Caregivers </i></div>
+                </div>
+            {/if}
+        </div>
+     {/if}
 </div>
 <!--END OF FAMILY AND MEMBERSHIP INFORMATION-->
+
+<style>
+    i:hover {
+        cursor: pointer;
+        color: var(--error-color)
+    }
+</style>
