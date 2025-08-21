@@ -944,7 +944,10 @@
 		{#if form.type === "FAMILY"}
 			<ExistingForm bind:formData={familyMembers} error_msg={linkedFamilyError} members={members} bind:showTable={showTable} isChildView={url.caregiverId == null} />
 		{:else if form.idx === -1}
-			Add a family member on the left
+			<div class="h-full flex flex-row items-center justify-center text-center gap-4">
+				Add a family member on the left
+				<img src="/img/go_code.png" alt="go_code.png" class="w-[50px] h-[50px]" />
+			</div>
 		{:else if form.type === "CAREGIVER"}
 
 			<CaregiverForm
