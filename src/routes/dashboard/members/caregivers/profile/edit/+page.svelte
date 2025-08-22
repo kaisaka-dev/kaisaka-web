@@ -10,7 +10,7 @@
     import { goto } from '$app/navigation';
     import LoadingBtn from '$components/styled-buttons/LoadingBtn.svelte';
 
-    import FamilyInformation from '../components/familyInformation.svelte';
+    import FamilyInformation from '$components/shared/FamilyInformation.svelte';
 
 
 
@@ -487,7 +487,7 @@
 	</div>
     </div>
         <!--Container for the families of the caregiver-->
-        <FamilyInformation {editing} bind:family = {data.caregiver.family} caregiverID = {data.caregiver.id}/>
+        <FamilyInformation {editing} bind:family = {data.caregiver.family} caregiverID = {data.caregiver.id} memberType="caregiver"/>
 
         <!--Container for Community Group -->
         <HistoryCommunityGroup id="Community Group" bind:data= {data.caregiver.community_history} bind:error = {errors.community_overall} {editing} />

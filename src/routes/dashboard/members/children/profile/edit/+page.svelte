@@ -9,7 +9,7 @@
     import type { documentationInformation } from '../+page.server.js';
 
     import PersonalInformation from '../components/personalInformation.svelte'
-	import FamilyInformation from '../components/familyInformation.svelte';
+	import FamilyInformation from '$components/shared/FamilyInformation.svelte';
     import EducationInformation from '../components/educationInformation.svelte';
 	import DocumentationInformation from '../components/documentationInformation.svelte';
     import LoadingBtn from '$components/styled-buttons/LoadingBtn.svelte';
@@ -969,7 +969,7 @@ function showStatusHistory(index:number){
 
 
 <!--CONTAINER FOR FAMILY AND MEMBERSHIP INFORMATION-->
-<FamilyInformation family = {data.family} firstName = {data.child?.firstName} editing = {true} childID = {data.child.id}/>
+<FamilyInformation family = {data.family} firstName = {data.child?.firstName} editing = {true} childID = {data.child.id} memberType="child"/>
 <!--END OF FAMILY AND MEMBERSHIP INFORMATION-->
 
 

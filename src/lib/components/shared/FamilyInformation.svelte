@@ -4,9 +4,11 @@
 	import { goto } from "$app/navigation";
 
     export let family = []
-    export let firstName;
+    export let firstName = "";
     export let editing = false;
     export let childID = ""
+    export let caregiverID = ""
+    export let memberType: "child" | "caregiver" = "child"
 
     function familyName(family:object): string {
         let lastnames: string[] = []
@@ -70,7 +72,7 @@
             {#if editing}
                 <div class = "flex flex-row">
                     <div class = "mt-5 z-500"> <i class = "!text-[var(--green)] hover:underline hover:cursor-pointer" on:click = {() => goto('/dashboard/registration/child')}> + Add New CYWD </i></div>
-                    <div class = "mt-5 ml-10 z-500"> <i class = "!text-[var(--pink)] hover:underline hover:cursor-pointer" on:click = {() => goto(`/dashboard/registration/family-info?cwd=${childID}`)}> + Add/Edit Caregivers </i></div>
+                    <div class = "mt-5 ml-10 z-500"> <i class = "!text-[var(--pink)] hover:underline hover:cursor-pointer" on:click = {() => goto(`/dashboard/registration/family-info?${memberType === 'child' ? 'cwd=' + childID : 'caregiver=' + caregiverID}`)}> + Add/Edit Caregivers </i></div>
                 </div>
             {/if}
             </div>
@@ -78,11 +80,11 @@
     {/each}
     {:else}
         <div class = "flex flex-col">
-            <div>  Child is not part of any families </div>
+            <div> {memberType === 'child' ? 'Child' : 'Caregiver'} is not part of any families </div>
         {#if editing}
                 <div class = "flex flex-row">
                     <div class = "mt-5 z-500"> <i class = "!text-[var(--green)] hover:underline hover:cursor-pointer" on:click = {()=> goto(`/dashboard/registration`)}> + Add New CYWD </i></div>
-                    <div class = "mt-5 ml-10 z-500"> <i class = "!text-[var(--pink)] hover:underline hover:cursor-pointer" on:click = {() => goto(`/dashboard/registration/family-info?cwd=${childID}`)}> + Add/Edit Caregivers </i></div>
+                    <div class = "mt-5 ml-10 z-500"> <i class = "!text-[var(--pink)] hover:underline hover:cursor-pointer" on:click = {() => goto(`/dashboard/registration/family-info?${memberType === 'child' ? 'cwd=' + childID : 'caregiver=' + caregiverID}`)}> + Add/Edit Caregivers </i></div>
                 </div>
             {/if}
         </div>
