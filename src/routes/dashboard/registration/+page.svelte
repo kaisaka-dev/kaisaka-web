@@ -581,6 +581,35 @@
 		});
 	}
 
+	// Helper function to log validation errors
+	function logValidationErrors() {
+		console.log("=== VALIDATION FAILED ===");
+		console.log("Main error:", mainError);
+		console.log("Linked family error:", linkedFamilyError);
+		console.log("Children errors:", $state.snapshot(childrenErrors));
+		console.log("Caregiver errors:", $state.snapshot(caregiverErrors));
+		
+		// Log specific child errors
+		$state.snapshot(children).forEach((child, index) => {
+			const errors = $state.snapshot(childrenErrors)[index];
+			const hasErrors = Object.values(errors).some(msg => msg && msg.trim() !== '');
+			if (hasErrors) {
+				console.log(`Child ${index} (${child.first_name || 'Unnamed'}) errors:`, 
+					Object.entries(errors).filter(([key, value]) => value && value.trim() !== ''));
+			}
+		});
+		
+		// Log specific caregiver errors
+		$state.snapshot(familyMembers.newCaregivers).forEach((caregiver, index) => {
+			const errors = $state.snapshot(caregiverErrors)[index];
+			const hasErrors = Object.values(errors).some(msg => msg && msg.trim() !== '');
+			if (hasErrors) {
+				console.log(`Caregiver ${index} (${caregiver.firstName || 'Unnamed'}) errors:`, 
+					Object.entries(errors).filter(([key, value]) => value && value.trim() !== ''));
+			}
+		});
+	}
+
 	// Helper functions to check if member has errors
 	function childHasErrors(childIndex: number): boolean {
 		if (!childrenErrors[childIndex]) return false;
@@ -613,12 +642,13 @@
 		loadingSubmission = true;
 		try {
 			if (!validateForm()) {
+				logValidationErrors();
 				goto('#family-info');    // scrolls to top
 				loadingSubmission = false;
 				return;
 			}
-			console.log("INFO ON FAMILY: ", familyMembers)
-			console.log("CHILDREN DATA: ", children)
+			console.log("INFO ON FAMILY: ", $state.snapshot(familyMembers))
+			console.log("CHILDREN DATA: ", $state.snapshot(children))
 
 			/*
 			note there are 3 views,
@@ -694,15 +724,15 @@
 
 				// insert education records
 				if (child.education && child.education.length > 0) {
-					console.log('Child education records:', child.education);
+					console.log('Child education records:', $state.snapshot(child.education));
 					for (const educRecord of child.education) {
-						console.log('Processing education record:', educRecord);
+						console.log('Processing education record:', $state.snapshot(educRecord));
 						if (educRecord.type && educRecord.type !== "" && educRecord.type !== "Not enrolled") {
 							const eduStatusData = await safeFetch('POST', '/api/education_status', {
 								child_id: currentChildId,
 								education_type: educRecord.type,
-								education_level: educRecord.grade_level,
-								education_status: educRecord.status,
+								grade_level: educRecord.grade_level,
+								student_status_type: educRecord.status,
 								year_start: educRecord.year_start,
 								year_end: educRecord.year_end
 							});
