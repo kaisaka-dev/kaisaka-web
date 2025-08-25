@@ -9,10 +9,12 @@
     import FamilyInformation from './components/familyInformation.svelte'
     import EducationInformation from './components/educationInformation.svelte'
     import DocumentationInformation from './components/documentationInformation.svelte'
+    import InterventionInformation from './components/interventionInformation.svelte'
 
 
     import type { educationInformation, personalInformation } from './+page.server.js'
     import type { documentationInformation } from './+page.server.js'
+    import type { interventionInformation } from './+page.server.js'
 
     
     //below are functions needed for the page
@@ -48,7 +50,19 @@
         voterID: data.child?.voter_id
     }
 
-    console.log(documentationData)
+    let interventionList: interventionInformation[] = []
+
+    for(let i in data.interventioninfo){
+        interventionList.push({
+            names: data.interventioninfo[i].intervention,
+            category: data.interventioninfo[i].service_category.name,
+            creationDate: data.interventioninfo[i].date_created,
+            statuses: data.interventioninfo[i].history,
+            overallStatus: data.interventioninfo[i].status
+        })
+    }
+
+    console.log(interventionList)
 
     let educationData: educationInformation[] = []
     let yearStart: string;
@@ -119,6 +133,13 @@
  <PersonalInformation data = {childData} disabled = {true} discatOptions = {data.discatOptions}/>
 <!-- PERSONAL INFORMATION SECTION END-->
 
+<!--BEGINNING OF DOCUMENTS LISTING-->
+<DocumentationInformation data = {documentationData} editing = {false} socialParticipation = {data.social_participation} showSocialParticipation = {showSocialParticipation} />
+<!--END OF DOCUMENTS LISTING-->
+
+<!--INTERVENTIONS LIST BEGINS HERE-->
+<InterventionInformation data = {interventionList}/>
+<!--END OF INTERVENTIONS-->
 
 <!-- CONTAINER FOR FAMILY AND MEMBERSHIP INFORMATION -->
 <FamilyInformation family = {data.family} firstName = {data.child?.firstName}/>
@@ -129,79 +150,3 @@
 <EducationInformation editing = {false} displayEducHistory = {educationData} schoolYearArray = {data.child?.schoolYearArray} educLevel = {educLevel} educStatus = {educStatus} educType = {educType} 
  bind:yearStart = {yearStart} bind:yearEnd = {yearEnd} bind:selectedIndex = {selectedIndex}/>  
 <!--END OF EDUCATION HISTORY -->
-
-<!--BEGINNING OF DOCUMENTS LISTING-->
-<DocumentationInformation data = {documentationData} editing = {false} socialParticipation = {data.social_participation} showSocialParticipation = {showSocialParticipation} />
-<!--END OF DOCUMENTS LISTING-->
-
-<!--INTERVENTIONS LIST BEGINS HERE-->
-<h1 class = "!text-[var(--green)] font-[JSans] ml-55 mt-5 mb-2">
-        Interventions
-</h1>
-
-<div class = "flex flex-col max-w-255 mx-auto border-4 border-[var(--border)] ml-55 mr-10 p-4" id ="Intervention Info">
-    {#if data.interventioninfo.length > 0}
-    <div class = "flex flex-col w-full mx-auto max-w-250">
-        <div class = "!bg-[var(--green)] p-3 flex flex-row">
-           <div class = "!text-[var(--background)] !font-bold lg:ml-55">Intervention Name </div>
-           <div class = "!text-[var(--background)] !font-bold lg:ml-35">Overall History & Date Created </div>
-        </div>
-
-        <div class = "flex flex-col p-3 ">
-        {#each data.interventioninfo as intervention}
-            <div class = "flex flex-col xl:flex-row">
-                <div>
-                    {#if intervention.service_category.name === "Social"}
-                     <div class = "!bg-[var(--green)] mt-4 p-2 w-45 rounded-full text-center !font-bold !text-[var(--background)]" > SOCIAL </div>
-                    {:else if intervention.service_category.name === "Livelihood"}
-                     <div class = "!bg-[var(--border)] mt-4 p-2 w-45 rounded-full text-center !font-bold !text-[var(--background)]" > LIVELIHOOD </div>
-                    {:else if intervention.service_category.name === "Health"}
-                     <div class = "!bg-[var(--error-color)] mt-4 p-2 w-45 rounded-full text-center !font-bold !text-[var(--background)]" > HEALTH </div>
-                    {:else if intervention.service_category.name === "Education"}
-                     <div class = "!bg-[var(--pink)] mt-4 p-2 w-45 rounded-full text-center !font-bold !text-[var(--background)]" > EDUCATION </div>
-                    {/if}
-                </div>
-
-                <div class = "ml-16 mt-5">
-                   {intervention.intervention}
-                </div>
-                <div class =  "collapse lg:ml-40">
-                    <input type="checkbox" />
-                    <div class = "collapse-title flex flex-row">
-                        <i class="fa fa-sort-desc mt-2.5 mr-2" aria-hidden="true"></i>
-
-                        {#if intervention.status === "Regressed"}
-                        <div class = "!bg-[var(--pink)] p-2 w-45 rounded-full text-center !font-bold !text-[var(--background)]" > Regressed </div> 
-                        {:else if intervention.status === "Neutral"}
-                        <div class = "!bg-[var(--border)] p-2 w-45 rounded-full text-center !font-bold !text-[var(--background)]" > Neutral </div>
-                        {:else} 
-                        <div class = "!bg-[var(--green)] p-2 w-45 rounded-full text-center !font-bold !text-[var(--background)]" > Improved </div>
-                        {/if}
-                        <div class = "ml-10 mt-2"> {intervention.date_created.split('T')[0]}</div>
-                    </div>
-                    <div class = "collapse-content flex flex-col">
-                        {#each intervention.history as status}
-                        <div class= "flex flex-row mb-5 ml-5">
-                            {#if status.status === "Regressed"}
-                            <div class = "!bg-[var(--pink)] p-2 w-45 rounded-full text-center !font-bold !text-[var(--background)]" > Regressed </div> 
-                            {:else if status.status === "Neutral"}
-                            <div class = "!bg-[var(--border)] p-2 w-45 rounded-full text-center !font-bold !text-[var(--background)]" > Neutral </div>
-                            {:else} 
-                            <div class = "!bg-[var(--green)] p-2 w-45 rounded-full text-center !font-bold !text-[var(--background)]" > Improved </div>
-                            {/if}
-                        <div class = "ml-10 mt-2"> {status.date_checked}</div>
-                        </div>
-                        {/each}
-                    </div>
-                </div>
-
-            </div>
-        {/each}
-        </div>
-    </div>
-    {:else}
-        Child does not have any interventions
-    {/if}
-</div>
-
-<!--END OF INTERVENTIONS-->

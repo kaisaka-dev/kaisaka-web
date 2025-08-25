@@ -18,8 +18,8 @@
     --pink: rgb(247, 176, 205);
     /*--background: rgb(59, 46, 40);*/
     --background: ghostwhite;
-    --green: rgb(164,197,54);
-    --border: lightgray;
+    --green: rgba(149, 198, 136, 1);
+    --border: rgba(149, 198, 136, 1);
     --text-color: rgb(59, 46, 40);
     --error-color: rgb(255,100,103);
     --input-color: lightgray;

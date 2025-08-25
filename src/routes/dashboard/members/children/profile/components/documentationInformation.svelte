@@ -6,7 +6,6 @@
     import InputText from "$lib/components/input/InputText.svelte";
 
     import type { documentationInformation } from "../+page.server.js";
-    import Validation from "$lib/components/text/Validation.svelte";
 
     export let data: documentationInformation
     export let socialParticipation = [];
@@ -56,23 +55,15 @@
 <!--BEGINNING OF DOCUMENTS LISTING-->
 <div id ="Documentation Info" class = "mb-15"></div>
 <h1 class = "!text-[var(--green)] font-[JSans] ml-55 mt-5 mb-2">
-        Documents and Verification
+       IDs, Certificates, Other Documents
 </h1>
-<div class = "flex flex-col lg:flex-row border-[var(--border)] border-4 ml-55 mr-10 p-6 max-w-250 mx-auto">
-    <div class = "flex flex-col !font-bold w-full max-w-120 mx-auto z-500"> 
-       <div>
-            <Checkbox label = "PWD ID" bind:checked = {data.hasPWD} disabled = {!editing}/>
-       </div>
-       {#if data.hasPWD} 
-            <InputText type = "text" disabled = {!editing} required = {editing} msg = {errors.pwdID} label = "ID #" bind:value = {data.pwdID} />
-            <InputText type = "date" disabled = {!editing} required = {editing} msg = {errors.pwdExpiry} label = "Expiry Date" bind:value = {data.pwdExpiry}/>
-       {/if}
-
-       <div>
+<div class = "flex flex-col lg:flex-row border-[var(--border)] border-4 ml-55 mr-10 p-5 max-w-175 mx-auto">
+    <div class = "flex flex-col !font-bold w-full max-w-75 mx-auto z-500"> 
+       <!-- <div>
             <Checkbox disabled = {!editing} label = "Social Participation" bind:checked = {showSocialParticipation}/>
              {#if editing }<div class = "ml-7"> <Validation msg = {errors.socialParticipation} /> </div> {/if}
-       </div>
-       {#if showSocialParticipation} 
+       </div> -->
+       <!-- {#if showSocialParticipation} 
           <div class = "flex flex-col md:ml-20 ">
                <div class = "flex flex-col md:flex-row">
                     Participation type
@@ -105,14 +96,28 @@
                    {#if editing} <i class = "!text-[var(--pink)] hover:underline hover: cursor-pointer" on:click = {() => addParticipationRecord()}>+Add Record</i> {/if}
                </div>
           </div>
-       {/if}
-       <div class = "mt-5 z-500">
+       {/if} -->
+       <div class = "z-500">
             <Checkbox label = "PhilHealth" bind:checked = {data.phHealth} disabled = {!editing}/>
        </div>
 
-       <div class = "mt-5 z-500">
+       <div class = "z-500">
             <Checkbox label = "National ID" bind:checked = {data.natID} disabled = {!editing}/>
        </div>
+
+        <div>
+            <Checkbox label = "Voter ID" bind:checked = {data.voterID} disabled = {!editing}/>
+       </div>
+       
+       <div>
+            <Checkbox label = "PWD ID" bind:checked = {data.hasPWD} disabled = {!editing}/>
+       </div>
+       {#if data.hasPWD}
+          <div class = "md:w-250">
+               <InputText type = "text" disabled = {!editing} required = {editing} msg = {errors.pwdID} label = "ID #" bind:value = {data.pwdID} />
+               <InputText type = "date" disabled = {!editing} required = {editing} msg = {errors.pwdExpiry} label = "Expiry Date" bind:value = {data.pwdExpiry}/>
+          </div>
+       {/if}
     </div>
     <div class = "flex flex-col !font-bold md:ml-10 z-500">
         <div>
@@ -123,9 +128,6 @@
        </div>
         <div>
             <Checkbox label = "Barangay Certificate" bind:checked = {data.barangayCert} disabled = {!editing}/>
-       </div>
-        <div>
-            <Checkbox label = "Voter ID" bind:checked = {data.voterID} disabled = {!editing}/>
        </div>
     </div>
 </div>
