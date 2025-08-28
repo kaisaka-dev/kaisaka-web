@@ -257,14 +257,14 @@
 <section id="main">
 	<FilterSearch bind:searchedValue={filter.main} addLink="/activities/add">
 		<div slot="modal">
-			<Select label="Category" options={categories} bind:value={filter.category} margin={false} />
-			<InputText label="Objective" bind:value={filter.objective} margin={false} />
-			<InputText label="Target Activity" bind:value={filter.target_activity} margin={false} />
-			<InputText label="Activity Name" bind:value={filter.activity_name} margin={false} />
-			<InputText type="date" label="Date From" bind:value={filter.date_from} margin={false} />
-			<InputText type="date" label="Date To" bind:value={filter.date_to} margin={false} />
-			<InputText type="number" label="Target Participants" bind:value={filter.target_participants} margin={false} />
-			<InputText type="number" label="Actual Participants" bind:value={filter.actual_participants} margin={false} />
+			<Select label="Category" options={categories} bind:value={filter.category} />
+			<InputText label="Objective" bind:value={filter.objective} />
+			<InputText label="Target Activity" bind:value={filter.target_activity} />
+			<InputText label="Activity Name" bind:value={filter.activity_name} />
+			<InputText type="date" label="Date From" bind:value={filter.date_from} />
+			<InputText type="date" label="Date To" bind:value={filter.date_to} />
+			<InputText type="number" label="Target Participants" bind:value={filter.target_participants} />
+			<InputText type="number" label="Actual Participants" bind:value={filter.actual_participants} />
 
 			<div id="reset" class="flex justify-end">
 				<button onclick={resetFilters}>Reset Filters</button>

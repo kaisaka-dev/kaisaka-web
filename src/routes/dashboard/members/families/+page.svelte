@@ -71,10 +71,10 @@
 
 	<FilterSearch bind:searchedValue={filter.main}>
 		<div slot="modal">
-			<InputText label="Caregiver's name" id="caregiver" bind:value={filter.caregivers} margin={false} />
-			<InputText label="Child's name" id="child" bind:value={filter.children} margin={false} />
+			<InputText label="Caregiver's name" id="caregiver" bind:value={filter.caregivers} />
+			<InputText label="Child's name" id="child" bind:value={filter.children} />
 
-			<InputRange type="number" label="Last paid" id="last-paid" bind:valueFrom={filter.yrLastPaidStart} bind:valueTo={filter.yrLastPaidEnd} margin={false} />
+			<InputRange type="number" label="Last paid" id="last-paid" bind:valueFrom={filter.yrLastPaidStart} bind:valueTo={filter.yrLastPaidEnd} />
 
 			<div id="reset" class="flex justify-end">
 				<button onclick={resetFilters}>Reset Filters</button>

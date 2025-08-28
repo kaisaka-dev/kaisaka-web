@@ -6,7 +6,7 @@
 
     export let data;
     import PersonalInformation from './components/personalInformation.svelte'
-    import FamilyInformation from './components/familyInformation.svelte'
+    import FamilyInformation from '$components/shared/FamilyInformation.svelte'
     import EducationInformation from './components/educationInformation.svelte'
     import DocumentationInformation from './components/documentationInformation.svelte'
     import InterventionInformation from './components/interventionInformation.svelte'
@@ -142,7 +142,7 @@
 <!--END OF INTERVENTIONS-->
 
 <!-- CONTAINER FOR FAMILY AND MEMBERSHIP INFORMATION -->
-<FamilyInformation family = {data.family} firstName = {data.child?.firstName}/>
+<FamilyInformation family = {data.family} firstName = {data.child?.firstName} childID={data.child?.id} memberType="child"/>
 <!--END OF FAMILY AND MEMBERSHIP INFORMATION
 
 

@@ -114,35 +114,42 @@ try{
     }
     const familyInfo = await familyRes.json()
 
-    if (!familyInfo || familyInfo.length === 0 || !familyInfo.data[0]?.family_id) {
+    if (!familyInfo || familyInfo.length === 0 || !familyInfo.data || familyInfo.data.length === 0) {
         entireFamily = []
     } else {
-        const familyID = familyInfo.data[0].family_id
-        const entireFamilyRes = await fetch(`/api/family_members?id=${familyID}&select=*,members(*)&type=familyid`)
+        // Get all families the child belongs to
+        const familyArray = [];
+        const caregiverQuery = await fetch('/api/caregivers')
+        const caregiverTable = await caregiverQuery.json()
         
-        if (!entireFamilyRes.ok) {
-            throw new Error('Failed to fetch family members');
-        }
-
-        else{
-            entireFamily = await entireFamilyRes.json()
-        
-            const caregiverQuery = await fetch('/api/caregivers')
-            const caregiverTable = await caregiverQuery.json()
-
-
-            for(let i in entireFamily.data){
-                if(entireFamily.data[i].is_child == false){
-                    for(let j in caregiverTable.data){
-                        if(entireFamily.data[i].member_id == caregiverTable.data[j].member_id){
-                            entireFamily.data[i]['linkID'] = caregiverTable.data[j].id
-                            console.log(entireFamily.data[i].linkID)
+        // Loop through all family memberships for this child
+        for (const familyMembership of familyInfo.data) {
+            const familyID = familyMembership.family_id;
+            
+            if (familyID) {
+                const entireFamilyRes = await fetch(`/api/family_members?id=${familyID}&select=*,members(*)&type=familyid`)
+                
+                if (entireFamilyRes.ok) {
+                    const familyData = await entireFamilyRes.json();
+                    
+                    // Add caregiver linkID for each family member
+                    for(let i in familyData.data){
+                        if(familyData.data[i].is_child == false){
+                            for(let j in caregiverTable.data){
+                                if(familyData.data[i].member_id == caregiverTable.data[j].member_id){
+                                    familyData.data[i]['linkID'] = caregiverTable.data[j].id
+                                }
+                            }
                         }
                     }
+                    
+                    // Add this family to our array
+                    familyArray.push(familyData);
                 }
             }
-
         }
+        
+        entireFamily = familyArray;
     }
 
 
@@ -173,7 +180,7 @@ try{
     return{
         child: child,
         error: null,
-        family: entireFamily.data,
+        family: entireFamily,
         member: memberRecord,
         interventioninfo: interventioninfo || [],
         discatOptions: options_disCategory,

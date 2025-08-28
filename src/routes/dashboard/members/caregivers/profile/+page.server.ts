@@ -147,13 +147,16 @@ export type Community = {
 	date_joined: string;
 	date_left: string;
 	name: string;
+	isDeleted: boolean;
+	isNew: boolean;
 }
 
 export type Income = {
-	id: number;
 	date_start: string;
 	date_end: string;
 	name: string;
+	isDeleted: boolean;
+	isNew: boolean;
 }
 export type Family = {
 	firstName: string;

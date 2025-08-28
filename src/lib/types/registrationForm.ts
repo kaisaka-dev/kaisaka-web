@@ -20,9 +20,17 @@ export type NewCaregiver = {
 	brgy: string;
 	occupation: string;
 	relationship: string;
-	communityGrp_id: number | null;
-	income: string;
-	communityYr: number;
+	admission_date: string;
+	communityGrp: {
+		id: number | null;
+		yrFrom: string;
+		yrTo: string;
+	}[];
+	income: {
+		type: string;
+		yrFrom: string;
+		yrTo: string;
+	}[];
 };
 
 // object type used to store information about a linked caregiver
@@ -60,6 +68,7 @@ export type CaregiverError = {
 	address: string;
 	brgy: string;
 	communityYr: string;
+	admissionDate: string;
 	msg: string;			// for existing caregivers
 }
 

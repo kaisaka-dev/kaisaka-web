@@ -154,7 +154,7 @@ async function exportChildList() {
     <FilterSearch bind:searchedValue={filter.main}>
         <!-- to be rendered inside the Filter Search component-->
         <div slot="button-list">
-            <button onclick={() => goto("/dashboard/registration/child")}>Register</button>
+            <button onclick={() => goto("/dashboard/registration")}>Register</button>
             {#if loadingExport}
                 <LoadingBtn label="Export" disableCover={false}/>
             {:else}
@@ -162,16 +162,16 @@ async function exportChildList() {
             {/if}
         </div>
         <div slot="modal">
-            <InputText label="First name" id="first-name" bind:value={filter.firstName} margin={false}/>
-            <InputText label="Last name" id="last-name" bind:value={filter.lastName} margin={false}/>
-            <InputRange type="date" label="Birthday" id="bday" bind:valueFrom={filter.birthdayFrom} bind:valueTo={filter.birthdayTo} margin={false}/>
-            <InputRange type="number" label="Age" id="age" bind:valueFrom={filter.ageFrom} bind:valueTo={filter.ageTo} margin={false}/>
-            <Select label="Sex" id="sex" options={options.sex} bind:value={filter.sex} margin={false}/>
-            <Select label="Disability Category" id="dis-category" options={options.disability_category} bind:value={filter.disCategory} margin={false}/>
-            <InputText label="Disability Nature" id="dis-nature" bind:value={filter.disNature} margin={false}/>
-            <Select label="Education Type" id="education-type" options={options.education_type} bind:value={filter.educType} margin={false}/>
-            <Select label="Education Level" id="education" options={options.education_level} bind:value={filter.educationLevel} margin={false}/>
-            <Select label="Active" id="active-status" options={options.active_status} bind:value={filter.active} margin={false}/>
+            <InputText label="First name" id="first-name" bind:value={filter.firstName}/>
+            <InputText label="Last name" id="last-name" bind:value={filter.lastName}/>
+            <InputRange type="date" label="Birthday" id="bday" bind:valueFrom={filter.birthdayFrom} bind:valueTo={filter.birthdayTo}/>
+            <InputRange type="number" label="Age" id="age" bind:valueFrom={filter.ageFrom} bind:valueTo={filter.ageTo}/>
+            <Select label="Sex" id="sex" options={options.sex} bind:value={filter.sex}/>
+            <Select label="Disability Category" id="dis-category" options={options.disability_category} bind:value={filter.disCategory}/>
+            <InputText label="Disability Nature" id="dis-nature" bind:value={filter.disNature}/>
+            <Select label="Education Type" id="education-type" options={options.education_type} bind:value={filter.educType}/>
+            <Select label="Education Level" id="education" options={options.education_level} bind:value={filter.educationLevel}/>
+            <Select label="Active" id="active-status" options={options.active_status} bind:value={filter.active}/>
 
             <div id="reset" class="flex justify-end"><button onclick={resetFilters}>Reset Filters</button></div>
         </div>

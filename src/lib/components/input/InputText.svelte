@@ -11,10 +11,9 @@
 	export let required = false;
 	export let msg = ""; 					// error message passed from parent
 	export let disabled = false;
-	export let margin = true;			// false if no margin, true if the default margin
 </script>
 
-<div class="input-container" class:no-margin={label === '' || !margin}>
+<div class="input-container">
 	{#if label !== ""}
 		<label for={id}>{label} {required ? " *" : ""}</label>
 	{/if}

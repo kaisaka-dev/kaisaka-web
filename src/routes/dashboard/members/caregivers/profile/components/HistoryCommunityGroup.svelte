@@ -4,9 +4,8 @@
 	import type { Community } from '../+page.server.js';
 	
 	import Select from '$components/input/Select.svelte';
-	import Modal from '$components/Modal.svelte';
-	import InputText from '$components/input/InputText.svelte';
 	import Validation from '$lib/components/text/Validation.svelte';
+	import AddCommunityGroupModal from './AddCommunityGroupModal.svelte';
 
 	export let id: string;
 	export let data: Community[];
@@ -42,11 +41,9 @@
 	// adds a community group to the caregiver's history
 	function addComGroup(): void {
 		const newCommunity: Community = {
-			isDeleted: false,
-			isNew: true,
 			name: "",
 			date_joined: new Date().toISOString().split('T')[0], // today
-			date_left: null, // null means active
+			date_left: "", // empty means active
 			isNew: true,
 			isDeleted: false
 		};
@@ -109,24 +106,30 @@
 	<div id = {id} class = "w-240 min-w-240">
 		<h2> Community Group </h2>
 		<Validation msg = {error}/>
+		{#if editing || data.filter(com => !com.isDeleted).length > 0}
 		<table>
 			<thead>
 			<tr>
-				<th>Date</th>
-				<th>Community Group</th>
+				<th class="w-[435px]">Date</th>
+				<th class="w-[435px]">Community Group</th>
 				{#if editing}
-					<th>Delete</th>
+					<th class="w-[100px]">Delete</th>
 				{/if}
 			</tr>
 			</thead>
 			<tbody>
 			{#each data as com, index}
 			{#if com.isDeleted == false && editing}
-				<tr>
+				<tr class="group hover:bg-gray-50">
 					{#if com.isDeleted == false}
 					{#if editing}
 						<td><InputRange type="date" bind:valueFrom={com.date_joined} bind:valueTo={com.date_left} /></td>
-						<td><Select bind:value={com.community_group_id} options={options_community} required /></td>
+						<td class="community-cell !pb-0">
+							<Select bind:value={com.id} options={options_community} required />
+							<button class="add hover-button" on:click={() => modalOpen = true}>
+								Not in choices?
+							</button>
+						</td>
 						<td style="text-align:center;">
 							<i class="fa-solid fa-trash" on:click={() => deleteComGroup(index)}></i>
 						</td>
@@ -134,7 +137,7 @@
 					{:else}
 						<td>{com.date_joined}
 							<i class="fa-solid fa-arrow-right !text-[var(--green)]"></i>
-							{#if com.date_left === null}
+							{#if com.date_left === ""}
 								<span class="!text-[var(--green)]"> Present </span>
 							{:else}
 								{com.date_left}
@@ -146,10 +149,15 @@
 					{/if}
 				</tr>
 			{:else if editing == false}
-				<tr>
+				<tr class="group hover:bg-gray-50">
 					{#if editing}
 						<td><InputRange type="date" bind:valueFrom={com.date_joined} bind:valueTo={com.date_left} /></td>
-						<td><Select bind:value={com.name} options={options_community} required /></td>
+						<td class="community-cell !pb-0">
+							<Select bind:value={com.name} options={options_community} required />
+							<button class="add hover-button" on:click={() => modalOpen = true}>
+								Not in choices?
+							</button>
+						</td>
 						<td style="text-align:center;">
 							<i class="fa-solid fa-trash" on:click={() => deleteComGroup(index)}></i>
 						</td>
@@ -157,7 +165,7 @@
 					{:else}
 						<td>{com.date_joined}
 							<i class="fa-solid fa-arrow-right !text-[var(--green)]"></i>
-							{#if com.date_left === null}
+							{#if com.date_left === ""}
 								<span class="!text-[var(--green)]"> Present </span>
 							{:else}
 								{com.date_left}
@@ -172,37 +180,54 @@
 			{#if editing}
 				<tr>
 					<td><i class="fa-solid fa-plus" on:click={()=>addComGroup()}></i></td>
-					<td>
-						<span class="add" on:click={()=>{modalOpen = true}}><i class="fa-solid fa-plus" ></i> Add new community group</span>
-						<Modal buttonText="" bind:isOpen={modalOpen}>
-							<div slot="modal">
-									<h2>New Community Group</h2>
-									<InputText label="Community Group" bind:value={newComGroup} msg={msg_newComGroup} required />
-									<br>
-									<p>note that this change will reflect across <span class="!text-[var(--green)]"> all caregivers </span></p>
-									<button type="button" on:click={() => modalOpen = false}>Cancel</button>
-									<button class="green" type="button" on:click={handleSubmit}>Submit</button>
-							</div>
-						</Modal>
-					</td>
+					<td></td>
 					<td></td>
 				</tr>
 			{/if}
 			</tbody>
 		</table>
+		{:else}
+			<div style="color: var(--text-color); font-style: italic; border: 3px solid var(--border);
+    padding: 0.8rem;">None</div>
+		{/if}
 
 	</div>
 </div>
 
+<AddCommunityGroupModal 
+	bind:modalOpen 
+	bind:newComGroup 
+	bind:msg_newComGroup 
+	{handleSubmit} 
+/>
+
 <style>
+		i {
+				font-size: inherit;
+		}
     i:hover {
         cursor: pointer;
         color: var(--error-color)
     }
-		.add, .add > *, .fa-plus {
+		.fa-plus {
 				color: var(--green);
 		}
-		.add:hover {
-				text-decoration: underline;
+		button {
+        all: unset;
+        cursor: pointer;
+				color: darkgray;
+				font-size: 0.8rem;
+				opacity: 0;
+				transition: opacity 0.2s ease;
+        margin-top: -12px !important;
+				margin-left: 0.5rem;
+        display: block;
+		}
+		button:hover, button:hover > * {
+        color: var(--green);
+		}
+		
+		.group:hover button {
+				opacity: 1;
 		}
 </style>

@@ -6,11 +6,9 @@
 	export let checked = false;
 	export let disabled = false;
 	export let group;
-
-	export let margin = true;		// false if no margin, true if the default margin
 </script>
 
-<div class="input-container" style="align-items: center; gap:8px; padding-bottom: 0.5rem;" class:no-margin={!margin}>
+<div class="input-container" style="align-items: center; gap:8px; padding-bottom: 0.5rem;">
 	<input type="radio" id={id} name={name} value={value} bind:group={group} checked={checked} {disabled} class="radio" />
 	<label for={id}>{label}</label>
 </div>

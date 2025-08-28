@@ -8,7 +8,7 @@
     import HistoryCommunityGroup from './components/HistoryCommunityGroup.svelte';
     import HistoryIncomeType from './components/HistoryIncomeType.svelte';
     import PersonalInfo from './components/PersonalInfo.svelte';
-    import FamilyInformation from './components/familyInformation.svelte';
+    import FamilyInformation from '$components/shared/FamilyInformation.svelte';
 
     export let data
     let editing = false
@@ -63,7 +63,7 @@
         <PersonalInfo id="Personal Info" {editing} data={data.caregiver} />
 
         <!--Container for the families of the caregiver-->
-        <FamilyInformation family = {data.caregiver.family} {editing}/>
+        <FamilyInformation family = {data.caregiver.family} {editing} caregiverID={data.caregiver.id} memberType="caregiver"/>
 
         <!--Container for Community Group -->
         <HistoryCommunityGroup id="Community Group" data={data.caregiver.community_history} error ={""} editing = {editing} />

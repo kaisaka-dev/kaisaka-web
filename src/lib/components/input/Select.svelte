@@ -7,10 +7,9 @@
 	export let disabled = false;
 	export let msg = ""; 										// Validation message
 	export let value: string | number | null = null; // Declare selected as a reactive variable
-	export let margin = true;								// false if no margin, true if the default margin
 </script>
 
-<div class="input-container" class:no-margin={label === '' || !margin}>
+<div class="input-container">
 	{#if label}
 		<label for={id}>{label} {required ? " *" : ""}</label>
 	{/if}
