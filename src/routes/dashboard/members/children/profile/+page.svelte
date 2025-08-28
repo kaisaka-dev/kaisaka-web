@@ -55,7 +55,7 @@
     for(let i in data.interventioninfo){
         interventionList.push({
             names: data.interventioninfo[i].intervention,
-            category: data.interventioninfo[i].service_category.name,
+            category: data.interventioninfo[i].service_category?.name || "--",
             creationDate: data.interventioninfo[i].date_created,
             statuses: data.interventioninfo[i].history,
             overallStatus: data.interventioninfo[i].status
