@@ -267,3 +267,11 @@ export type educationInformation = {
     isDeleted: boolean
 }
 
+export type interventionInformation = {
+    names: string,
+    category: string,
+    creationDate: string,
+    overallStatus: string,
+    statuses: []
+}
+

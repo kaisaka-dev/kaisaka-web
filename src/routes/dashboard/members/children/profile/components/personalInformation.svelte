@@ -2,7 +2,6 @@
     import Input from '$lib/components/input/InputText.svelte'
     import Select from '$lib/components/input/Select.svelte';
     import TextArea from '$lib/components/input/InputTextarea.svelte'
-    import Check from '$lib/components/input/Checkbox.svelte'
     import type { personalInformation } from '../+page.server.js';
     import { dropdownOptions } from '$lib/types/options.js';
     import { navigating } from '$app/stores';
@@ -50,10 +49,11 @@
 <!-- PERSONAL INFORMATION SECTION BELOW-->
  <div class = {headingmargin} id ="Personal Info">
     <h1 class = "!text-[var(--green)] font-[JSans] ml-33 mt-5 mb-2">
-        Information
+        Basic Information
     </h1>
 </div>
-<div class = "border-[var(--border)] border-4 ml-55 mr-10 !font-bold z-2000 max-w-290 mx-auto flex-wrap" >
+
+<div class = "border-[var(--border)] border-4 ml-55 p-5 mr-10 !font-bold max-w-175 z-2000 flex-wrap" >
     <div class = "flex flex-col xl:flex-row !justify-start p-4">
         <div class = "flex flex-col w-full max-w-280">
                 <Input label = "First Name" disabled = {inputDisabled} required = {!disabled} msg = {errors.firstName} bind:value = {data.firstName} margin = {true}/>
@@ -64,18 +64,18 @@
                 <Select label = "Sex" required = {!disabled} disabled = {inputDisabled} options = {dropdownOptions.sex}  bind:value = {data.sex} margin = {true}/>
                 <Input label = "Address" required = {!disabled} msg = {errors.address} disabled = {inputDisabled} bind:value = {data.address} margin = {true}/>
                 <Input label = "Barangay"  required = {!disabled} msg = {errors.barangay} disabled = {inputDisabled} bind:value = {data.barangay} margin = {true}/>
-                {#if !disabled}
-                <div class = "z-300"> <Check label = "Able to Work" bind:checked = {data.canWork} margin = {true}/> </div>
+                <TextArea disabled = {inputDisabled} value = {data.remarks || "N/A"} label = "Remarks" rows = 5/>      
+                     
+
+                <!-- {#if !disabled}
+                <div class = "z-300"> <Check label = "Able to Work" bind:checked = {data.canWork} margin = {true}/> </div> 
                 {/if}
                 {#if data.canWork}
                     <Select label = "Employment Type" options = {['Self-Employed','Sheltered Workshop','Wage Employed']} disabled = {inputDisabled} bind:value = {data.employmentType} margin = {true}/>
                 {/if}
                 <Select label = "Disability Category" bind:value = {data.disabilityCategoryID} required = {!disabled} options = {discatOptions} msg = {errors.disabilityCat} disabled = {inputDisabled}  margin = {true}/>
                 <Input label = "Disability Nature"  disabled = {inputDisabled} bind:value = {data.disabilityNature} margin = {true}/>
-                <div class = "mt-10"> <Input type = "date" label = "Date of Admission" msg = {errors.admissionDate} required = {!disabled} disabled = {inputDisabled} bind:value = {data.admissionDate} margin = {true}/> </div>
-        </div>
-        <div> 
-            <div class = "w-full"> <TextArea disabled = {inputDisabled} value = {data.remarks || "N/A"} label = "Remarks" rows = 10/> </div>
+                <div class = "mt-10"> <Input type = "date" label = "Date of Admission" msg = {errors.admissionDate} required = {!disabled} disabled = {inputDisabled} bind:value = {data.admissionDate} margin = {true}/> </div> -->
         </div>
     </div>
 </div>

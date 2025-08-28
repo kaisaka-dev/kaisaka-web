@@ -3,6 +3,6 @@
 
 </script>
 
-<button type="submit" class = "btn font-[JSans] !text-[var(--medium-text)] !bg-[#C5C5C5] !p-8 !rounded-md hover:!shadow-xl" onclick = {buttonFunction}>
+<button type="submit" class = "btn green font-[JSans] !p-6" onclick = {buttonFunction}>
   { ButtonText }
 </button>
