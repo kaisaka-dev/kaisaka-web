@@ -6,6 +6,7 @@
     import Validation from '$components/text/Validation.svelte';
     import InputRange from '$components/input/InputRange.svelte';
     import { onMount, afterUpdate } from 'svelte';
+    import MessagePresentDocuments from '$components/shared/registration/MessagePresentDocuments.svelte';
 
     // Props
     export let formData: any;
@@ -291,17 +292,7 @@
         <section id="certificate-verification">
             <h1>Certificate Verification</h1>
 
-            <div>
-                For your registration to be confirmed, <span style="color:var(--green)"> please schedule a visit to KAISAKA </span>, and
-                prepare to present the following documents to show the KAISAKA officer physically during your visit
-                <ul>
-                    <li>Medical Certificate</li>
-                    <li>Birth Certificate</li>
-                    <li>Barangay Certificate</li>
-                </ul>
-
-                For more information on how to schedule a visit, please reach out to us at <span style="color:var(--green); text-decoration: underline"> kaisakainc@gmail.com </span>
-            </div>
+            <MessagePresentDocuments />
         </section>
     {/if}
 </div>

@@ -1,7 +1,7 @@
-import type { PageLoad } from '../../../../.svelte-kit/types/src/routes/$types.js';
+import type { PageServerLoad } from './$types.js';
 import type { MemberListFamily } from '$lib/types/registrationForm.js';
 
-export const load: PageLoad = async({fetch}) => {
+export const load: PageServerLoad = async({fetch}) => {
 
 	// fetch (dropdown) options for community group
 	const response = await fetch('/api/community_group_type');

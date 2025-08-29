@@ -837,10 +837,9 @@
 
 
 			console.log('All data successfully inserted!');
-			alert('All data sucessfully inserted!');
 
 			if (staffView) goto('/dashboard');			// back to dashboard if previous view is dashboard
-			else goto('/'); // back to main page if previous view is main page
+			else goto('/registration/submitted'); // back to success page for non-staff users
 
 		} catch (err) {
 			loadingSubmission = false;
