@@ -10,17 +10,17 @@
 	import { get } from 'svelte/store';
 	import { goto } from '$app/navigation';
 	import { page } from '$app/state';
-	import type { FamilyMembers, CaregiverError, NewCaregiver } from '$lib/types/registrationForm.js';
+	import type { FamilyMembers, CaregiverError, NewCaregiver, NewChild, ChildError } from '$lib/types/registrationForm.js';
 	import { onMount } from 'svelte';
 
 	import type { PageData } from '../../../../.svelte-kit/types/src/routes/$types.js';
 	import { dropdownOptions } from '$lib/types/options.js';
 	import LoadingBtn from '$components/styled-buttons/LoadingBtn.svelte';
 	import Validation from '$components/text/Validation.svelte';
-	import CaregiverForm from './family-info/CaregiverForm.svelte';
-	import ChildForm from './child/ChildForm.svelte';
+	import CaregiverForm from '$components/shared/registration/CaregiverForm.svelte';
+	import ChildForm from '$components/shared/registration/ChildForm.svelte';
 	import Modal from '$components/Modal.svelte';
-	import ExistingForm from './family-info/ExistingForm.svelte';
+	import ExistingForm from '$components/shared/registration/ExistingForm.svelte';
 
 
 	/**
@@ -74,8 +74,8 @@
 	)
 
 	// Children data structure
-	let children = $state([]);
-	let childrenErrors = $state([]);
+	let children: NewChild[] = $state([]);
+	let childrenErrors: ChildError[] = $state([]);
 	const thisYear = new Date().getFullYear();
 
 	// $inspect(familyMembers)
@@ -191,7 +191,7 @@
 	};
 
 	function addNewCaregiver() {
-		const newCaregiver = {
+		const newCaregiver: NewCaregiver = {
 			type: 'new',
 			firstName: '',
 			lastName: '',
@@ -262,7 +262,7 @@
 
 	// Child management functions
 	function addNewChild() {
-		const newChild = {
+		const newChild: NewChild = {
 			first_name: '',
 			middle_name: '',
 			last_name: '',

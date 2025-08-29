@@ -5,7 +5,6 @@
     import Checkbox from '$components/input/Checkbox.svelte';
     import Validation from '$components/text/Validation.svelte';
     import InputRange from '$components/input/InputRange.svelte';
-    import { dropdownOptions } from '$lib/types/options.js';
     import { onMount, afterUpdate } from 'svelte';
 
     // Props

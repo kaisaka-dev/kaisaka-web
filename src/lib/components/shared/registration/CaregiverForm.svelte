@@ -2,8 +2,8 @@
 	import InputText from '$components/input/InputText.svelte';
 	import Select from '$components/input/Select.svelte';
 	import type {  NewCaregiver, CaregiverError } from '$lib/types/registrationForm.js';
-	import HistoryCommunityGroup from '../../members/caregivers/profile/components/HistoryCommunityGroup.svelte';
-	import HistoryIncomeType from '../../members/caregivers/profile/components/HistoryIncomeType.svelte';
+	import HistoryCommunityGroup from '../../../../routes/dashboard/members/caregivers/profile/components/HistoryCommunityGroup.svelte';
+	import HistoryIncomeType from '../../../../routes/dashboard/members/caregivers/profile/components/HistoryIncomeType.svelte';
 
 
 	export let formData: NewCaregiver;
