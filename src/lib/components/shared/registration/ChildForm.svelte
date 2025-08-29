@@ -14,6 +14,7 @@
     export let index: number;
     export let deleteChild: (index: number) => void;
     export let disabled: boolean = false;           // used for fields which are
+    export let staffView: boolean;
 
     // Auto-calculate age based on birthday
     $: if (formData.birthday) {
@@ -270,19 +271,39 @@
         {/if}
     </section>
 
-    <section id="certificate-verification">
-        <h1 style="margin-bottom: 0.5rem;">Certificate Verification</h1>
-        <Validation msg="Let the officer-in-charge verify the portion below" style="color:var(--text-color); margin-bottom: 25px;"/>
-        <Checkbox label="Medical Certificate" id="med-cert" bind:checked={formData.has.medical_cert} {disabled}/>
-        <Checkbox label="Birth Certificate" id="birth-cert" bind:checked={formData.has.birth_cert} {disabled}/>
-        <Checkbox label="Barangay Certificate" id="brgy-cert" bind:checked={formData.has.barangay_cert} {disabled}/>
-    </section>
+    {#if staffView}
+        <section id="certificate-verification">
+            <h1>Certificate Verification</h1>
+            <Validation msg="Let the officer-in-charge verify the portion below" style="color:var(--text-color); margin-bottom: 25px;"/>
+            <Checkbox label="Medical Certificate" id="med-cert" bind:checked={formData.has.medical_cert} {disabled}/>
+            <Checkbox label="Birth Certificate" id="birth-cert" bind:checked={formData.has.birth_cert} {disabled}/>
+            <Checkbox label="Barangay Certificate" id="brgy-cert" bind:checked={formData.has.barangay_cert} {disabled}/>
+        </section>
 
-    <section id="staff-only">
-        <h1 style="margin-bottom: 0.5rem;">Other Information</h1>
-        <Validation msg="Let the officer-in-charge verify the portion below" style="color:var(--text-color); margin-bottom: 25px;"/>
-        <InputText type="month" id="admission" label="Admission Date" bind:value={formData.date_admission} msg={errors.admissionDate} required {disabled}/>
-    </section>
+        <!-- also hide this if not signed in -->
+        <section id="staff-only">
+            <h1>Other Information</h1>
+            <Validation msg="Let the officer-in-charge verify the portion below" style="color:var(--text-color); margin-bottom: 25px;"/>
+            <InputText type="month" label="Admission Date" id="admission" bind:value={formData.date_admission} msg={errors.admissionDate} disabled={disabled || !staffView} />
+
+        </section>
+    {:else}
+        <section id="certificate-verification">
+            <h1>Certificate Verification</h1>
+
+            <div>
+                For your registration to be confirmed, <span style="color:var(--green)"> please schedule a visit to KAISAKA </span>, and
+                prepare to present the following documents to show the KAISAKA officer physically during your visit
+                <ul>
+                    <li>Medical Certificate</li>
+                    <li>Birth Certificate</li>
+                    <li>Barangay Certificate</li>
+                </ul>
+
+                For more information on how to schedule a visit, please reach out to us at <span style="color:var(--green); text-decoration: underline"> kaisakainc@gmail.com </span>
+            </div>
+        </section>
+    {/if}
 </div>
 
 <style>

@@ -12,6 +12,8 @@
 	export let deleteCaregiver: (index: number) => void;
 	export let options;
 	export let disabled: boolean = false;
+	export let staffView: boolean;
+
 
 	// Transform NewCaregiver communityGrp to Community format for HistoryCommunityGroup component
 	let communityData;
@@ -80,8 +82,7 @@
 			<InputText label="Barangay" id={`brgy-${index}`} required bind:value={formData.brgy} msg={errors.brgy} {disabled}/>
 			<InputText label="Occupation" id={`occupation-${index}`} bind:value={formData.occupation} {disabled}/>
 			<InputText label="Family role" id={`relationship-${index}`} bind:value={formData.relationship} {disabled}/>
-			<InputText type="month" label="Admission Date" id={`admission-${index}`} bind:value={formData.admission_date} msg={errors.admissionDate} required {disabled}/>
-
+			<InputText type="month" label="Admission Date" id={`admission-${index}`} bind:value={formData.admission_date} msg={errors.admissionDate} required disabled={disabled || !staffView}/>
 </section>
 
 <section class="ml-[2rem]">
