@@ -1,5 +1,4 @@
 <script lang="ts">
-	import Header from '$components/Header.svelte';
 	import { page } from '$app/state';
 	import type { PageData } from '../../../../.svelte-kit/types/src/routes/$types.js';
 	import RegistrationForm from '$components/shared/registration/RegistrationForm.svelte';
@@ -22,10 +21,6 @@
 	// load the data
 	const { data } = $props<{ data: PageData }>();
 </script>
-
-{#if staffView}
-	<Header />
-{/if}
 
 
 <RegistrationForm {staffView} {data} {url}/>

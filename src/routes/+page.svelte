@@ -6,13 +6,14 @@ import LoginModal from '$components/LoginModal.svelte'
 	import LoginOption from '$components/login/LoginOption.svelte';
   import SignUpinputLabel from "$components/login/SignUpInputLabel.svelte"
 	import type { ActionData } from './+page.js';
+  import { goto } from '$app/navigation';
 
   
 
   //function that closes the modal
   const handleClose = () => showModal = false
   const handleOpen = () => showModal = true
-  const gotoChildRegister = () => location.href = '/registration/child'
+  const gotoChildRegister = () => goto('/registration')
   const handleLogout = async () => {
     const formData = new FormData()
     await fetch('/auth/logout', {
