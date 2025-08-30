@@ -82,12 +82,10 @@
         errors.last_name = last_name.trim() === "" ? "Required" : ""
         errors.contact_no = contact_no.trim() === "" ? "Required" : ""
         
-        if(new Date(birthday) > new Date()) {
+        if(birthday && birthday.trim() !== "" && new Date(birthday) > new Date()) {
             errors.birthday = "Birthday cannot be in the future"
-        }
-
-        else{
-            errors.birthday = birthday == null ||  birthday.trim() === "" ? "Required" : ""
+        } else {
+            errors.birthday = ""
         }
 
         errors.sex = sex == null ? "Required" : ""
@@ -95,7 +93,7 @@
         errors.barangay = barangay.trim() === "" ? "Required" : ""
 
 
-        if(new Date(date_admission) > new Date() || (new Date(date_admission) > new Date(date_termination) && date_termination !== "")){
+        if(new Date(date_admission) > new Date() || (date_termination && date_termination.trim() !== "" && new Date(date_admission) > new Date(date_termination))){
             errors.date_admission = "Invalid Date!"
         }
          
@@ -468,7 +466,7 @@
 		<InputText   required msg = {errors.first_name} label="First Name" id="first-name" bind:value = {first_name} />
         <InputText   label="Middle Name" id="middle-name" bind:value={middle_name} />
 		<InputText   required msg = {errors.last_name} label="Last Name" id="last-name" bind:value = {last_name} />
-		<InputText   required msg = {errors.birthday} type = "date" label="Birthday" id="birthday" bind:value = {birthday} />
+		<InputText   msg = {errors.birthday} type = "date" label="Birthday" id="birthday" bind:value = {birthday} />
 		<InputText   label="Age" id="age" disabled bind:value = {age} />
         <Select      required msg = {errors.sex} label="Sex" id="sex" bind:value = {sex} options = {['Male' , 'Female' , 'Other']}/>
 		<InputText   required msg = {errors.contact_no} label="Contact No." id="contact-no" bind:value = {contact_no} />
