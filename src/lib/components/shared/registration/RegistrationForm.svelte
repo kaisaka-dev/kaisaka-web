@@ -81,6 +81,10 @@
 	let showModalLink: boolean = $state(false); // for the link existing family modal
 	let childId = url.childId, memberId: string, familyId: string, caregiverId = url.caregiverId;	// for the posts
 	let isNewChild = url.childId == null && url.caregiverId == null;
+	
+	// Track which records are existing vs new for proper form disabling
+	let existingChildIndex = -1;  // Index of existing child in children array
+	let existingCaregiverIndex = -1;  // Index of existing caregiver in caregivers array
 	let form = $state({
 		idx: -1,
 		type: ""
@@ -138,14 +142,148 @@
 		console.log('childRecord: ', childRecord)
 		memberId = childRecord.member_id
 
-		// get the member id (need for famly)
+		// get the member information with address and barangay using joins
+		const memberRes = await fetch(`/api/members/${memberId}?select=*, addresses(*), barangays(*)`)
+		const memberRecord = await memberRes.json()
+		console.log('memberRecord with joins: ', memberRecord)
+
+		// get education records (may not exist for all children)
+		let educationRecords = [];
+		try {
+			const educationRes = await fetch(`/api/education_status?id=${childId}`)
+			if (educationRes.ok) {
+				educationRecords = await educationRes.json()
+				console.log('educationRecords: ', educationRecords)
+			}
+		} catch (error) {
+			console.log('No education records found for child:', childId)
+		}
+
+		// get participation records (may not exist for all children)
+		let participationRecords = [];
+		try {
+			const participationRes = await fetch(`/api/social_participation?child_id=${childId}`)
+			if (participationRes.ok) {
+				participationRecords = await participationRes.json()
+			}
+		} catch (error) {
+			console.log('No participation records found for child:', childId)
+		}
+
+		// get employment status (may not exist for all members)
+		let employmentRecord = null;
+		try {
+			const employmentRes = await fetch(`/api/employment_status?id=${memberId}`)
+			if (employmentRes.ok) {
+				employmentRecord = await employmentRes.json()
+			}
+		} catch (error) {
+			console.log('No employment record found for member:', memberId)
+		}
+
+		// Create pre-populated child object
+		const existingChild: NewChild = {
+			first_name: memberRecord.first_name || '',
+			middle_name: memberRecord.middle_name || '',
+			last_name: memberRecord.last_name || '',
+			birthday: memberRecord.birthday ? memberRecord.birthday.split('T')[0] : '',
+			age: '',
+			sex: memberRecord.sex || '',
+			address: memberRecord.addresses?.address || '',
+			barangay: memberRecord.barangays?.name || '',
+			remarks: childRecord.remarks || '',
+			date_admission: memberRecord.admission_date ? memberRecord.admission_date.slice(0, 7) : '',
+			disability: {
+				category_id: childRecord.disability_id || null,
+				nature: childRecord.disability_nature || ''
+			},
+			education: (educationRecords && Array.isArray(educationRecords) && educationRecords.length > 0) 
+				? educationRecords.map((edu: any) => ({
+					type: edu.education_type || '',
+					grade_level: edu.grade_level || '',
+					status: edu.student_status_type || '',
+					year_start: edu.year_start?.toString() || '',
+					year_end: edu.year_end?.toString() || ''
+				})) 
+				: [{ type: '', grade_level: '', status: '', year_start: '', year_end: '' }],
+			has: {
+				birth_cert: childRecord.has_birth_cert || false,
+				medical_cert: childRecord.has_medical_cert || false,
+				barangay_cert: childRecord.has_barangay_cert || false,
+				philhealth: childRecord.has_philhealth || false,
+				pwd_id: childRecord.pwd_id != null,
+				pwd: {
+					expiry_date: childRecord.pwd_id?.expiry_date || '',
+					id: childRecord.pwd_id?.pwd_id || ''
+				},
+				vote: childRecord.has_vote || false,
+				national_id: childRecord.has_national_id || false,
+			},
+			employment: {
+				able_to_work: employmentRecord?.able_to_work || false,
+				type: employmentRecord?.employment_type || ''
+			},
+			part: {
+				family_life: false,
+				fam_year: thisYear,
+				community: false,
+				com_year: thisYear
+			},
+			participation: (participationRecords && Array.isArray(participationRecords) && participationRecords.length > 0) 
+				? participationRecords.reduce((acc: any[], part: any) => {
+					const existingYear = acc.find(p => p.year === part.year);
+					if (existingYear) {
+						if (part.participation_type === 'Social Protection') existingYear.social_protection = true;
+						if (part.participation_type === 'Family Life') existingYear.family_life = true;
+						if (part.participation_type === 'Community Life') existingYear.community_life = true;
+					} else {
+						acc.push({
+							year: part.year,
+							social_protection: part.participation_type === 'Social Protection',
+							family_life: part.participation_type === 'Family Life',
+							community_life: part.participation_type === 'Community Life'
+						});
+					}
+					return acc;
+				}, []) 
+				: [{ year: thisYear, social_protection: false, family_life: false, community_life: false }]
+		};
+
+		// Add to children array and track as existing
+		children = [existingChild];
+		childrenErrors = [{ // Initialize errors array for the existing child
+			overall: "",
+			firstName: "",
+			lastName: "",
+			birthday: "",
+			sex: "",
+			address: "",
+			barangay: "",
+			disCategory: "",
+			disNature: "",
+			educType: "",
+			educLvl: "",
+			educStatus: "",
+			pwdId: "",
+			pwdExpy: "",
+			admissionDate: "",
+			partFamilyYear: "",
+			ayStart: "",
+			ayEnd: "",
+			partCommunityYear: ""
+		}];
+		existingChildIndex = 0;
+		
+		// Set form to show the child
+		form = {idx: 0, type: "CHILD"};
+
+		// get the family id (need for family)
 		const famMemRes = await fetch(`/api/family_members?member_id=${memberId}`)
 		const famMemberRecord = await famMemRes.json()
 		console.log('familyMemberRecord: ', famMemberRecord)
 		familyId = famMemberRecord.data[0].family_id
 
 		await handleFamilyIdParam(familyId)
-
 	}
 
 	async function handleCaregiverIdParam(caregiverId: string) {
@@ -155,14 +293,94 @@
 		console.log('caregiverRecord: ', caregiverRecord)
 		memberId = caregiverRecord.member_id
 
-		// get the member id (need for famly)
+		// get the member information with address and barangay using joins
+		const memberRes = await fetch(`/api/members/${memberId}?select=*, addresses(*), barangays(*)`)
+		const memberRecord = await memberRes.json()
+		console.log('memberRecord with joins: ', memberRecord)
+
+		// get community groups (may not exist for all caregivers)
+		let communityRecords = [];
+		try {
+			const communityRes = await fetch(`/api/caregiver_groups?caregiver_id=${caregiverId}`)
+			if (communityRes.ok) {
+				communityRecords = await communityRes.json()
+			}
+		} catch (error) {
+			console.log('No community group records found for caregiver:', caregiverId)
+		}
+
+		// get income types (may not exist for all caregivers)
+		let incomeRecords = [];
+		try {
+			const incomeRes = await fetch(`/api/income_type?caregiver_id=${caregiverId}`)
+			if (incomeRes.ok) {
+				incomeRecords = await incomeRes.json()
+			}
+		} catch (error) {
+			console.log('No income records found for caregiver:', caregiverId)
+		}
+
+		// Create pre-populated caregiver object
+		const existingCaregiver: NewCaregiver = {
+			type: 'new',
+			firstName: memberRecord.first_name || '',
+			lastName: memberRecord.last_name || '',
+			bday: memberRecord.birthday ? memberRecord.birthday.split('T')[0] : '',
+			sex: memberRecord.sex || '',
+			contactNo: caregiverRecord.contact_number || '',
+			fbLink: caregiverRecord.facebook_link || '',
+			email: caregiverRecord.email || '',
+			address: memberRecord.addresses?.address || '',
+			brgy: memberRecord.barangays?.name || '',
+			occupation: caregiverRecord.occupation || '',
+			relationship: '', // This will be filled from family relationship
+			admission_date: memberRecord.admission_date ? memberRecord.admission_date.slice(0, 7) : '',
+			communityGrp: (communityRecords && Array.isArray(communityRecords) && communityRecords.length > 0) 
+				? communityRecords.map((comm: any) => ({
+					id: comm.community_group_id,
+					yrFrom: comm.date_joined || '',
+					yrTo: comm.date_left || ''
+				})) : [],
+			income: (incomeRecords && Array.isArray(incomeRecords) && incomeRecords.length > 0)
+				? incomeRecords.map((inc: any) => ({
+					type: inc.income_category,
+					yrFrom: inc.date_start || '',
+					yrTo: inc.date_end || ''
+				})) : []
+		};
+
+		// Add to caregivers array and track as existing
+		familyMembers.newCaregivers = [existingCaregiver];
+		caregiverErrors = [{ // Initialize errors array for the existing caregiver
+			firstName: '',
+			lastName: '',
+			sex: '',
+			bday: '',
+			contactNo: '',
+			email: '',
+			address: '',
+			brgy: '',
+			communityYr: '',
+			admissionDate: '',
+			msg: ''
+		}];
+		existingCaregiverIndex = 0;
+		
+		// Set form to show the caregiver
+		form = {idx: 0, type: "CAREGIVER"};
+
+		// get the family id (need for family)
 		const famMemRes = await fetch(`/api/family_members?member_id=${memberId}`)
 		const famMemberRecord = await famMemRes.json()
 		console.log('familyMemberRecord: ', famMemberRecord)
 		familyId = famMemberRecord.data[0].family_id
 
-		await handleFamilyIdParam(familyId)
+		// Get the relationship from family_members table
+		if (famMemberRecord.data?.[0]?.relationship_type) {
+			familyMembers.newCaregivers[0].relationship = famMemberRecord.data[0].relationship_type;
+		}
 
+		await handleFamilyIdParam(familyId)
 	}
 
 	// cleans the contact number, used for validation and posting the data
@@ -643,58 +861,72 @@
 			// CODE BLOCK #1: SUBMITTING CWD DATA (from children array)
 			// Process each child in the children array
 			for (const [childIndex, child] of children.entries()) {
-				// insert address
-				const addressData = await safeFetch('POST', '/api/addresses', { address: child.address });
-				console.log(addressData.message);
-				const address_id = addressData.data.id;
+				let currentMemberId: string;
+				let currentChildId: string;
+				
+				// Check if this is an existing child (pre-populated from URL)
+				const isExistingChild = childIndex === existingChildIndex;
+				
+				if (isExistingChild) {
+					// For existing child, just use the existing IDs - skip processing
+					currentMemberId = memberId;
+					currentChildId = childId!;
+					console.log('Skipping existing child processing - using existing IDs');
+				} else {
+					// For new child, create new records
+					// insert address
+					const addressData = await safeFetch('POST', '/api/addresses', { address: child.address });
+					console.log(addressData.message);
+					const address_id = addressData.data.id;
 
-				// insert barangay
-				const barangayData = await safeFetch('POST', '/api/barangays', { name: child.barangay });
-				console.log('Barangay ', barangayData.message);
-				const barangay_id = barangayData.data.id;
+					// insert barangay
+					const barangayData = await safeFetch('POST', '/api/barangays', { name: child.barangay });
+					console.log('Barangay ', barangayData.message);
+					const barangay_id = barangayData.data.id;
 
-				// insert member
-				const memberData = await safeFetch('POST', '/api/members', {
-					first_name: child.first_name,
-					middle_name: child.middle_name,
-					last_name: child.last_name,
-					birthday: child.birthday,
-					sex: child.sex,
-					admission_date: child.date_admission ? `${child.date_admission}-01T00:00:00Z` : new Date().toISOString(),
-					address_id: address_id,
-					barangay_id: barangay_id
-				});
-				console.log(memberData.message);
-				const currentMemberId = memberData.data.id;
-
-				var pwdId = null;
-				// insert PWD ID
-				if (child.has?.pwd_id && child.has?.pwd?.id) {
-					const pwdIdData = await safeFetch('POST', '/api/pwd_ids', {
-						pwd_id: child.has.pwd.id,
-						expiry_date: child.has.pwd.expiry_date
+					// insert member
+					const memberData = await safeFetch('POST', '/api/members', {
+						first_name: child.first_name,
+						middle_name: child.middle_name,
+						last_name: child.last_name,
+						birthday: child.birthday,
+						sex: child.sex,
+						admission_date: child.date_admission ? `${child.date_admission}-01T00:00:00Z` : new Date().toISOString(),
+						address_id: address_id,
+						barangay_id: barangay_id
 					});
-					console.log(pwdIdData.message);
-					pwdId = pwdIdData.data.id;
-				}
+					console.log(memberData.message);
+					currentMemberId = memberData.data.id;
+					
+					var pwdId = null;
+					// insert PWD ID
+					if (child.has?.pwd_id && child.has?.pwd?.id) {
+						const pwdIdData = await safeFetch('POST', '/api/pwd_ids', {
+							pwd_id: child.has.pwd.id,
+							expiry_date: child.has.pwd.expiry_date
+						});
+						console.log(pwdIdData.message);
+						pwdId = pwdIdData.data.id;
+					}
 
-				// insert child info
-				const childData = await safeFetch('POST', '/api/children', {
-					has_barangay_cert: child.has?.barangay_cert || false,
-					has_birth_cert: child.has?.birth_cert || false,
-					has_medical_cert: child.has?.medical_cert || false,
-					has_vote: child.has?.vote || false,
-					has_national_id: child.has?.national_id || false,
-					has_philhealth: child.has?.philhealth || false,
-					is_active: true,
-					disability_id: child.disability?.category_id,
-					disability_nature: child.disability?.nature || '',
-					remarks: child.remarks || '',
-					member_id: currentMemberId,
-					pwd_id: pwdId
-				});
-				console.log(childData.message);
-				const currentChildId = childData.data.id;
+					// insert child info
+					const childData = await safeFetch('POST', '/api/children', {
+						has_barangay_cert: child.has?.barangay_cert || false,
+						has_birth_cert: child.has?.birth_cert || false,
+						has_medical_cert: child.has?.medical_cert || false,
+						has_vote: child.has?.vote || false,
+						has_national_id: child.has?.national_id || false,
+						has_philhealth: child.has?.philhealth || false,
+						is_active: true,
+						disability_id: child.disability?.category_id,
+						disability_nature: child.disability?.nature || '',
+						remarks: child.remarks || '',
+						member_id: currentMemberId,
+						pwd_id: pwdId
+					});
+					console.log(childData.message);
+					currentChildId = childData.data.id;
+				}
 
 				// Set the first child as the main child for family operations
 				if (childIndex === 0) {
@@ -927,17 +1159,24 @@
 
 			// CODE BLOCK #4: ADD ALL NEW CAREGIVERS TO THE EXISTING FAMILY
 			for (const [i, newCaregiver] of familyMembers.newCaregivers.entries()) {
-				// add all the caregivers to the db (POST to member, and POST to caregivers)
-				const caregiverMember = await POST_caregiver(newCaregiver);
+				const isExistingCaregiver = i === existingCaregiverIndex;
+				
+				if (isExistingCaregiver) {
+					// For existing caregiver, skip processing - they're already in the database
+					console.log('Skipping existing caregiver processing - already in database');
+				} else {
+					// add all the NEW caregivers to the db (POST to member, and POST to caregivers)
+					const caregiverMember = await POST_caregiver(newCaregiver);
 
-				// add the caregivers to the existing family
-				const famMemData = await safeFetch('POST', '/api/family_members', {
-					is_child: false,
-					member_id: caregiverMember.member_id,
-					family_id: newFamilyId,
-					relationship_type: newCaregiver.relationship.trim() !== "" ? newCaregiver.relationship : "Caregiver"
-				});
-				console.log(newCaregiver.firstName, ' added to family: ', famMemData.message)
+					// add the caregivers to the existing family
+					const famMemData = await safeFetch('POST', '/api/family_members', {
+						is_child: false,
+						member_id: caregiverMember.member_id,
+						family_id: newFamilyId,
+						relationship_type: newCaregiver.relationship.trim() !== "" ? newCaregiver.relationship : "Caregiver"
+					});
+					console.log(newCaregiver.firstName, ' added to family: ', famMemData.message)
+				}
 			}
 		}
 
@@ -1103,6 +1342,7 @@
 				deleteCaregiver={deleteCaregiver}
 				{options}
 				{staffView}
+				disabled={form.idx === existingCaregiverIndex}
 			/>
 
 		{:else if form.type === "CHILD"}
@@ -1113,6 +1353,7 @@
 				deleteChild={deleteChild}
 				{options}
 				{staffView}
+				disabled={form.idx === existingChildIndex}
 			/>
 		{/if}
 	</div>

@@ -125,9 +125,11 @@
     <section id="child-info">
         <h1 class="flex justify-between items-center">
             Beneficiary / CYWD Information
-            <button class="green" onclick={() => deleteChild(index)}>
-                <i class="fa-solid fa-trash"></i>
-            </button>
+            {#if !disabled}
+                <button class="green" onclick={() => deleteChild(index)}>
+                    <i class="fa-solid fa-trash"></i>
+                </button>
+            {/if}
         </h1>
 
         <InputText label="First name" id="first-name" bind:value={formData.first_name} required msg={errors.firstName} {disabled}/>
@@ -295,6 +297,8 @@
             <MessagePresentDocuments />
         </section>
     {/if}
+
+
 </div>
 
 <style>
