@@ -11,6 +11,10 @@
 	export let members: MemberListFamily[];
 	export let showTable: false;
 	export let disabled: false;
+	export let isChildView: boolean = true;
+	export let memberName: string = "";
+	export let memberId: string = "";
+	export let onFamilyRemoval: (() => void) | undefined = undefined;
 
 	let showMultipleResults = false;
 	let foundMembers: { family_id: string, label: string, member: MemberListFamily }[] = [];
@@ -131,6 +135,27 @@
 
 	$: onFamilySelect(selectedFamilyId)
 
+	function removeFromFamily() {
+		// Clear all linked family data when removing the current member
+		if (formData.hasExisting) {
+			formData.hasExisting = false;
+			formData.linkedFamily = {
+				type: 'linked',
+				family_id: "",
+				firstName: "",
+				lastName: "",
+				contactNo: "",
+				infoLinked: []
+			};
+			showTable = false;
+			
+			// Notify parent component that a family removal occurred
+			if (onFamilyRemoval) {
+				onFamilyRemoval();
+			}
+		}
+	}
+
 </script>
 
 
@@ -220,6 +245,16 @@
 				</tbody>
 			</table>
 		</div>
+		
+		<!-- Remove from family button - only show if member is already in this family -->
+		{#if memberName && memberId && formData.hasExisting && formData.linkedFamily.infoLinked.some(member => member.member_id === memberId)}
+			<div class="mt-4 text-center">
+				<button class="red" onclick={() => removeFromFamily()}>
+					<i class="bi bi-person-x"></i>
+					Remove {memberName} from this family
+				</button>
+			</div>
+		{/if}
 	{/if}
 
 

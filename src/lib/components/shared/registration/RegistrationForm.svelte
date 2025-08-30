@@ -19,7 +19,7 @@
 	const { data, staffView, url } = $props<{
 		data: any;
 		staffView: boolean;
-		url: { caregiverId: string | null, childId: string | null };
+		url: { caregiverId: string | null, childId: string | null, familyId: string | null };
 	}>();
 	const pageHeight = staffView? "height: calc(100vh - 90px);" : "height: 100vh";	// makes way for the header
 
@@ -85,6 +85,7 @@
 	// Track which records are existing vs new for proper form disabling
 	let existingChildIndex = -1;  // Index of existing child in children array
 	let existingCaregiverIndex = -1;  // Index of existing caregiver in caregivers array
+	let wasRemovedFromFamily = false;  // Track if member was removed from an existing family
 	let form = $state({
 		idx: -1,
 		type: ""
@@ -96,10 +97,10 @@
 	onMount(async () => {
 		console.log('URL params:', url);
 		if (url.caregiverId) {
-			await handleCaregiverIdParam(url.caregiverId);		// pre-populate family information
+			await handleCaregiverIdParam(url.caregiverId, url.familyId);		// pre-populate family information
 		}
 		if (url.childId) {
-			await handleChildIdParam(url.childId);
+			await handleChildIdParam(url.childId, url.familyId);
 		}
 
 		// Open link modal by default when page loads (if no existing family)
@@ -135,7 +136,7 @@
 		}
 	}
 
-	async function handleChildIdParam(childId: string) {
+	async function handleChildIdParam(childId: string, familyId?: string | null) {
 		// call the api to get the information
 		const childRecRes = await fetch(`/api/children/${childId}`)
 		const childRecord = await childRecRes.json()
@@ -205,7 +206,7 @@
 					year_start: edu.year_start?.toString() || '',
 					year_end: edu.year_end?.toString() || ''
 				})) 
-				: [{ type: '', grade_level: '', status: '', year_start: '', year_end: '' }],
+				: [{ type: 'Not enrolled', grade_level: '', status: '', year_start: '', year_end: '' }],
 			has: {
 				birth_cert: childRecord.has_birth_cert || false,
 				medical_cert: childRecord.has_medical_cert || false,
@@ -274,19 +275,31 @@
 		}];
 		existingChildIndex = 0;
 		
-		// Set form to show the child
-		form = {idx: 0, type: "CHILD"};
+		// Set form to show linked family members by default
+		form = {idx: -1, type: "FAMILY"};
 
 		// get the family id (need for family)
-		const famMemRes = await fetch(`/api/family_members?member_id=${memberId}`)
-		const famMemberRecord = await famMemRes.json()
-		console.log('familyMemberRecord: ', famMemberRecord)
-		familyId = famMemberRecord.data[0].family_id
-
-		await handleFamilyIdParam(familyId)
+		if (familyId) {
+			// Use the specific family ID provided in URL
+			console.log('Using specific family ID from URL:', familyId)
+			await handleFamilyIdParam(familyId)
+		} else {
+			// Fallback to first family if no specific family ID provided
+			const famMemRes = await fetch(`/api/family_members?member_id=${memberId}`)
+			const famMemberRecord = await famMemRes.json()
+			console.log('familyMemberRecord: ', famMemberRecord)
+			
+			if (famMemberRecord.data && famMemberRecord.data.length > 0) {
+				familyId = famMemberRecord.data[0].family_id
+				console.log('Using first family ID as fallback:', familyId)
+				await handleFamilyIdParam(familyId)
+			} else {
+				console.log('No family memberships found for child')
+			}
+		}
 	}
 
-	async function handleCaregiverIdParam(caregiverId: string) {
+	async function handleCaregiverIdParam(caregiverId: string, familyId?: string | null) {
 		// call the api to get the information
 		const caregiverRecRes = await fetch(`/api/caregivers/${caregiverId}`)
 		const caregiverRecord = await caregiverRecRes.json()
@@ -366,21 +379,42 @@
 		}];
 		existingCaregiverIndex = 0;
 		
-		// Set form to show the caregiver
-		form = {idx: 0, type: "CAREGIVER"};
+		// Set form to show linked family members by default
+		form = {idx: -1, type: "FAMILY"};
 
 		// get the family id (need for family)
-		const famMemRes = await fetch(`/api/family_members?member_id=${memberId}`)
-		const famMemberRecord = await famMemRes.json()
-		console.log('familyMemberRecord: ', famMemberRecord)
-		familyId = famMemberRecord.data[0].family_id
-
-		// Get the relationship from family_members table
-		if (famMemberRecord.data?.[0]?.relationship_type) {
-			familyMembers.newCaregivers[0].relationship = famMemberRecord.data[0].relationship_type;
+		if (familyId) {
+			// Use the specific family ID provided in URL
+			console.log('Using specific family ID from URL:', familyId)
+			
+			// Get the relationship for this specific family
+			const famMemRes = await fetch(`/api/family_members?member_id=${memberId}&family_id=${familyId}`)
+			const famMemberRecord = await famMemRes.json()
+			if (famMemberRecord.data?.[0]?.relationship_type) {
+				familyMembers.newCaregivers[0].relationship = famMemberRecord.data[0].relationship_type;
+			}
+			
+			await handleFamilyIdParam(familyId)
+		} else {
+			// Fallback to first family if no specific family ID provided
+			const famMemRes = await fetch(`/api/family_members?member_id=${memberId}`)
+			const famMemberRecord = await famMemRes.json()
+			console.log('familyMemberRecord: ', famMemberRecord)
+			
+			if (famMemberRecord.data && famMemberRecord.data.length > 0) {
+				familyId = famMemberRecord.data[0].family_id
+				console.log('Using first family ID as fallback:', familyId)
+				
+				// Get the relationship from family_members table
+				if (famMemberRecord.data[0].relationship_type) {
+					familyMembers.newCaregivers[0].relationship = famMemberRecord.data[0].relationship_type;
+				}
+				
+				await handleFamilyIdParam(familyId)
+			} else {
+				console.log('No family memberships found for caregiver')
+			}
 		}
-
-		await handleFamilyIdParam(familyId)
 	}
 
 	// cleans the contact number, used for validation and posting the data
@@ -1118,7 +1152,42 @@
 				console.log('Member updated to family:', famMemData.message);
 				familyId = newFamilyId
 			}
-			// Case 2: New registration - add NEW member to family (existing or new family)
+			// Case 2: Member was removed from existing family - move them to individual family
+			else if (wasRemovedFromFamily && familyId && memberId) {
+				console.log('Member was removed from family - moving to individual family');
+				try {
+					// Delete from old family
+					const deleteRes = await fetch('/api/family_members', {
+						method: 'DELETE',
+						body: JSON.stringify({
+							family_id: familyId, // old family ID
+							member_id: memberId
+						}),
+						headers: { 'Content-Type': 'application/json' }
+					});
+
+					if (deleteRes.ok) {
+						const deleteResult = await deleteRes.json();
+						console.log('Member removed from old family:', deleteResult);
+					} else {
+						console.warn('Failed to remove member from old family');
+					}
+
+					// Create new individual family and add member to it
+					const isChild = childId != null;
+					const famMemData = await safeFetch('POST', '/api/family_members', {
+						is_child: isChild,
+						member_id: memberId,
+						family_id: newFamilyId,
+						relationship_type: isChild ? "CWD" : "Caregiver"
+					});
+					console.log('Member moved to new individual family:', famMemData.message);
+					familyId = newFamilyId;
+				} catch (error) {
+					console.error('Error moving member to individual family:', error);
+				}
+			}
+			// Case 3: New registration - add NEW member to family (existing or new family)
 			else if (isNewChild || (memberId && !familyMembers.hasExisting)) {
 				console.log('Adding new member to family, memberId:', memberId, 'isChild:', isChild);
 				if (memberId) {
@@ -1134,7 +1203,7 @@
 				}
 				familyId = newFamilyId
 			}
-			// Case 3: New registration with existing family - only add NEW member, don't re-add existing ones
+			// Case 4: New registration with existing family - only add NEW member, don't re-add existing ones
 			else if (memberId && familyMembers.hasExisting) {
 				console.log('Adding new member to existing linked family, memberId:', memberId);
 				// Check if this member is already in the family (avoid duplicates)
@@ -1157,7 +1226,7 @@
 			}
 
 
-			// CODE BLOCK #4: ADD ALL NEW CAREGIVERS TO THE EXISTING FAMILY
+			// CODE BLOCK #5: ADD ALL NEW CAREGIVERS TO THE EXISTING FAMILY
 			for (const [i, newCaregiver] of familyMembers.newCaregivers.entries()) {
 				const isExistingCaregiver = i === existingCaregiverIndex;
 				
@@ -1180,7 +1249,7 @@
 			}
 		}
 
-		// CODE BLOCK #5: INSERT NEW CAREGIVER
+		// CODE BLOCK #6: INSERT NEW CAREGIVER
 		async function POST_caregiver(caregiver: NewCaregiver) {
 			console.log("... inserting: ", $state.snapshot(caregiver))
 			// insert address
@@ -1327,7 +1396,7 @@
 
 	<div id="form" class="h-full flex-1 p-6 overflow-y-auto">
 		{#if form.type === "FAMILY"}
-			<ExistingForm bind:formData={familyMembers} error_msg={linkedFamilyError} members={members} bind:showTable={showTable} isChildView={url.caregiverId == null} />
+			<ExistingForm bind:formData={familyMembers} error_msg={linkedFamilyError} members={members} bind:showTable={showTable} isChildView={url.caregiverId == null} memberName={url.childId ? (children[0]?.first_name || '') + ' ' + (children[0]?.last_name || '') : (familyMembers.newCaregivers[0]?.firstName || '') + ' ' + (familyMembers.newCaregivers[0]?.lastName || '')} memberId={memberId || ''} onFamilyRemoval={() => wasRemovedFromFamily = true} />
 		{:else if form.idx === -1}
 			<div class="h-full flex flex-row items-center justify-center text-center gap-4">
 				Add a family member on the left
@@ -1362,7 +1431,7 @@
 <!-- Modal to get an existing family -->
 <Modal buttonText="" bind:isOpen={showModalLink}>
 	<div slot="modal">
-		<ExistingForm bind:formData={familyMembers} error_msg={linkedFamilyError} members={members} bind:showTable={showTable} isChildView={url.caregiverId == null}/>
+		<ExistingForm bind:formData={familyMembers} error_msg={linkedFamilyError} members={members} bind:showTable={showTable} isChildView={url.caregiverId == null} memberName={url.childId ? (children[0]?.first_name || '') + ' ' + (children[0]?.last_name || '') : (familyMembers.newCaregivers[0]?.firstName || '') + ' ' + (familyMembers.newCaregivers[0]?.lastName || '')} memberId={memberId || ''} onFamilyRemoval={() => wasRemovedFromFamily = true} />
 		<button class="green" onclick={() => {
 			// Always allow closing the modal
 			showModalLink = false;

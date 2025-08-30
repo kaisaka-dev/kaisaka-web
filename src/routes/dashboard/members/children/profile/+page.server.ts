@@ -121,6 +121,8 @@ try{
         const familyArray = [];
         const caregiverQuery = await fetch('/api/caregivers')
         const caregiverTable = await caregiverQuery.json()
+        const childQuery = await fetch('/api/children')
+        const childTable = await childQuery.json()
         
         // Loop through all family memberships for this child
         for (const familyMembership of familyInfo.data) {
@@ -132,18 +134,27 @@ try{
                 if (entireFamilyRes.ok) {
                     const familyData = await entireFamilyRes.json();
                     
-                    // Add caregiver linkID for each family member
+                    // Add linkID for each family member
                     for(let i in familyData.data){
                         if(familyData.data[i].is_child == false){
+                            // Add caregiver linkID
                             for(let j in caregiverTable.data){
                                 if(familyData.data[i].member_id == caregiverTable.data[j].member_id){
                                     familyData.data[i]['linkID'] = caregiverTable.data[j].id
                                 }
                             }
+                        } else {
+                            // Add children linkID
+                            for(let j in childTable.data){
+                                if(familyData.data[i].member_id == childTable.data[j].member_id){
+                                    familyData.data[i]['linkID'] = childTable.data[j].id
+                                }
+                            }
                         }
                     }
                     
-                    // Add this family to our array
+                    // Add family ID to the family data and push to array
+                    familyData.familyId = familyID;
                     familyArray.push(familyData);
                 }
             }

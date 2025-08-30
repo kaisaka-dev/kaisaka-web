@@ -71,7 +71,7 @@
             {/each}
             {#if editing}
               <div class = "mt-5"> <i class = "fa-solid fa-pen !text-[var(--pink)] hover:underline hover:cursor-pointer"
-                                      on:click = {() => goto(`/dashboard/registration?${memberType === 'child' ? 'cwd=' + childID : 'caregiver=' + caregiverID}`)}>
+                                      on:click = {() => goto(`/dashboard/registration?${memberType === 'child' ? 'cwd=' + childID : 'caregiver=' + caregiverID}&familyId=${family.familyId}`)}>
               <span class="font-[JSans] !text-[inherit]">&nbsp Edit Family</span>
               </i></div>
             {/if}

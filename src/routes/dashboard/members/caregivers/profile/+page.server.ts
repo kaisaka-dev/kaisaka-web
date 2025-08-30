@@ -40,24 +40,55 @@ export async function load( {url, fetch} ) {
 
         const entireFamily = await entireFamilyRes.json()
 
+        // Add family ID to the family data
+        entireFamily.familyId = familyInfo.data[i].family_id;
         familyArray.push(entireFamily)
+    }
 
+    // Process children linking after all families are loaded
+    if (familyArray.length > 0) {
         const childQuery = await fetch('/api/children')
-        const childTable = await childQuery.json()
+        if (childQuery.ok) {
+            const childTable = await childQuery.json()
 
-
-        for(let i in familyArray){
-            for(let j in familyArray[i].data){
-                if(familyArray[i].data[j].is_child == true){
-                    for(let k in childTable.data){
-                        if(familyArray[i].data[j].member_id == childTable.data[k].member_id){
-                            familyArray[i].data[j]['linkID'] = childTable.data[k].id
+            for(let i in familyArray){
+                if(familyArray[i] && familyArray[i].data) {
+                    for(let j in familyArray[i].data){
+                        if(familyArray[i].data[j].is_child == true){
+                            if(childTable.data) {
+                                for(let k in childTable.data){
+                                    if(familyArray[i].data[j].member_id == childTable.data[k].member_id){
+                                        familyArray[i].data[j]['linkID'] = childTable.data[k].id
+                                    }
+                                }
+                            }
                         }
                     }
                 }
             }
         }
 
+        // Also process caregiver linking
+        const caregiverQuery = await fetch('/api/caregivers')
+        if (caregiverQuery.ok) {
+            const caregiverTable = await caregiverQuery.json()
+
+            for(let i in familyArray){
+                if(familyArray[i] && familyArray[i].data) {
+                    for(let j in familyArray[i].data){
+                        if(familyArray[i].data[j].is_child == false){
+                            if(caregiverTable.data) {
+                                for(let k in caregiverTable.data){
+                                    if(familyArray[i].data[j].member_id == caregiverTable.data[k].member_id){
+                                        familyArray[i].data[j]['linkID'] = caregiverTable.data[k].id
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
     }
 
     const communityres = await fetch(`/api/caregiver_groups?caregiver_id=${caregiverInfo.id}`)

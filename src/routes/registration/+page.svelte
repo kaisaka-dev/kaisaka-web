@@ -15,7 +15,8 @@
 	// get the url parameters
 	const url = {
 		caregiverId: page.url.searchParams.get('caregiver'),
-		childId: page.url.searchParams.get('cwd')
+		childId: page.url.searchParams.get('cwd'),
+		familyId: page.url.searchParams.get('familyId')
 	}
 
 	// load the data

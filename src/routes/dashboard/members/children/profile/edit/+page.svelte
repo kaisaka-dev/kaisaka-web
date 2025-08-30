@@ -969,7 +969,7 @@ function showStatusHistory(index:number){
 
 
 <!--CONTAINER FOR FAMILY AND MEMBERSHIP INFORMATION-->
-<FamilyInformation family = {data.family} firstName = {data.child?.firstName} editing = {true} childID = {data.child.id} memberType="child"/>
+<FamilyInformation family = {data.family.data && data.family.data.length > 0 ? [data.family] : []} firstName = {data.child?.firstName} editing = {true} childID = {data.child.id} memberType="child"/>
 <!--END OF FAMILY AND MEMBERSHIP INFORMATION-->
 
 
