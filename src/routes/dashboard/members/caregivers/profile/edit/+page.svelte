@@ -11,6 +11,7 @@
     import LoadingBtn from '$components/styled-buttons/LoadingBtn.svelte';
 
     import FamilyInformation from '$components/shared/FamilyInformation.svelte';
+    import PersonalInfo from '../components/PersonalInfo.svelte';
 
 
 
@@ -20,20 +21,6 @@
     let editing = true
     let loadingSave = false;
 
-    let first_name: string = data.caregiver.first_name;
-    let middle_name: string = data.caregiver.middle_name;
-    let last_name: string = data.caregiver.last_name;
-    let birthday: string = data.caregiver?.birthday;
-    let age = ""
-    let sex: string = data.caregiver?.sex;
-    let contact_no: string = data.caregiver?.contact_no;
-    let fb_link: string = data.caregiver?.fb_link;
-    let email: string = data.caregiver?.email;
-    let address: string = data.caregiver?.address;
-    let barangay: string = data.caregiver?.barangay;
-    let occupation: string = data.caregiver?.occupation ?? "";
-    let date_admission: string = data.caregiver?.date_admission;
-    let date_termination: string = data.caregiver?.date_termination;
 
     let errors = {
         first_name: "",
@@ -50,24 +37,6 @@
     }
 
     
-    $: if (birthday) {
-        const birthDate = new Date(birthday);
-        const today = new Date();
-        let calculatedAge = today.getFullYear() - birthDate.getFullYear();
-
-        const hasHadBirthdayThisYear =
-        today.getMonth() > birthDate.getMonth() ||
-        (today.getMonth() === birthDate.getMonth() && today.getDate() >= birthDate.getDate());
-
-        if (!hasHadBirthdayThisYear) {
-        calculatedAge -= 1;
-        }
-
-        age = calculatedAge.toString();
-    } else {
-        age = "";
-    }
-    
     
 
 //below are essential functions for the page to work
@@ -78,27 +47,27 @@
         errors.income_overall = ""
         errors.date_termination = ""
 
-        errors.first_name = first_name.trim() === "" ? "Required" : ""
-        errors.last_name = last_name.trim() === "" ? "Required" : ""
-        errors.contact_no = contact_no.trim() === "" ? "Required" : ""
+        errors.first_name = data.caregiver.first_name.trim() === "" ? "Required" : ""
+        errors.last_name = data.caregiver.last_name.trim() === "" ? "Required" : ""
+        errors.contact_no = data.caregiver.contact_no.trim() === "" ? "Required" : ""
         
-        if(birthday && birthday.trim() !== "" && new Date(birthday) > new Date()) {
+        if(data.caregiver.birthday && data.caregiver.birthday.trim() !== "" && new Date(data.caregiver.birthday) > new Date()) {
             errors.birthday = "Birthday cannot be in the future"
         } else {
             errors.birthday = ""
         }
 
-        errors.sex = sex == null ? "Required" : ""
-        errors.address = address.trim() === "" ? "Required" : ""
-        errors.barangay = barangay.trim() === "" ? "Required" : ""
+        errors.sex = data.caregiver.sex == null ? "Required" : ""
+        errors.address = data.caregiver.address.trim() === "" ? "Required" : ""
+        errors.barangay = data.caregiver.barangay.trim() === "" ? "Required" : ""
 
 
-        if(new Date(date_admission) > new Date() || (date_termination && date_termination.trim() !== "" && new Date(date_admission) > new Date(date_termination))){
+        if(new Date(data.caregiver.date_admission) > new Date() || (data.caregiver.date_termination && data.caregiver.date_termination.trim() !== "" && new Date(data.caregiver.date_admission) > new Date(data.caregiver.date_termination))){
             errors.date_admission = "Invalid Date!"
         }
          
         else {
-            errors.date_admission = date_admission == null || date_admission.trim() === ""  ? "Required" : ""
+            errors.date_admission = data.caregiver.date_admission == null || data.caregiver.date_admission.trim() === ""  ? "Required" : ""
          }
 
 
@@ -176,17 +145,17 @@
             loadingSave = true;
             //PERSONAL INFO UPDATES BEGIN HERE
 
-            if(date_termination == null || date_termination == "") {
+            if(data.caregiver.date_termination == null || data.caregiver.date_termination == "") {
                 const memberUpdate = await fetch('/api/members' , {
                 method: "PUT",
                 body: JSON.stringify({
                     id:data.memberRecord.id,
-                    first_name: first_name,
-                    middle_name: middle_name,
-                    last_name: last_name,
-                    birthday: birthday,
-                    sex: sex,
-                    admission_date: date_admission,
+                    first_name: data.caregiver.first_name,
+                    middle_name: data.caregiver.middle_name,
+                    last_name: data.caregiver.last_name,
+                    birthday: data.caregiver.birthday,
+                    sex: data.caregiver.sex,
+                    admission_date: data.caregiver.date_admission,
                     date_of_termination: null
                 }),
                 headers:{
@@ -200,13 +169,13 @@
                 method: "PUT",
                 body: JSON.stringify({
                     id:data.memberRecord.id,
-                    first_name: first_name,
-                    middle_name: middle_name,
-                    last_name: last_name,
-                    birthday: birthday,
-                    sex: sex,
-                    admission_date: date_admission,
-                    date_of_termination: date_termination
+                    first_name: data.caregiver.first_name,
+                    middle_name: data.caregiver.middle_name,
+                    last_name: data.caregiver.last_name,
+                    birthday: data.caregiver.birthday,
+                    sex: data.caregiver.sex,
+                    admission_date: data.caregiver.date_admission,
+                    date_of_termination: data.caregiver.date_termination
                 }),
                 headers:{
                         'Content-Type': 'application/json'
@@ -219,10 +188,10 @@
                 method: "PUT",
                 body: JSON.stringify({
                     id: data.caregiver.id,
-                    contact_number: contact_no,
-                    facebook_link: fb_link,
-                    email: email,
-                    occupation: occupation
+                    contact_number: data.caregiver.contact_no,
+                    facebook_link: data.caregiver.fb_link,
+                    email: data.caregiver.email,
+                    occupation: data.caregiver.occupation
                 }),
                 headers:{
                         'Content-Type': 'application/json'
@@ -232,7 +201,7 @@
                 method: "PUT" ,
                 body: JSON.stringify({
                     id: data.memberRecord.address_id,
-                    address: address
+                    address: data.caregiver.address
                 }),
                 headers:{
                         'Content-Type': 'application/json'
@@ -243,7 +212,7 @@
                 method: "PUT" ,
                 body: JSON.stringify({
                     id: data.memberRecord.barangay_id,
-                    name: barangay
+                    name: data.caregiver.barangay
                 }),
                 headers:{
                         'Content-Type': 'application/json'
@@ -452,7 +421,7 @@
                 {/if}
             </div>
             <div>
-            <button class="w-40 -ml-5 mt-5" on:click={() => goto(`/dashboard/members/caregivers/profile?id=${data.caregiver.id}`)} >Back</button>
+            <button class="w-40 -ml-5 mt-5" on:click={() => goto(`/dashboard/members/caregivers/profile?id=${data.caregiver.id}`)} >Cancel Changes</button>
             </div>
         </div>
         <div class = "!bg-[var(--green)] w-[4px] h-[450px] rounded-full ml-5"></div>
@@ -460,32 +429,9 @@
     <!--Container for profile information-->
     <div>
         <!--Container for the personal information portion of the profile-->
-        <div id="Personal Information" class = "w-240 min-w-240">
-	    <h2> Information	</h2>
-	    <div class = "border-[var(--border)] border-4 py-4">
-		<InputText   required msg = {errors.first_name} label="First Name" id="first-name" bind:value = {first_name} />
-        <InputText   label="Middle Name" id="middle-name" bind:value={middle_name} />
-		<InputText   required msg = {errors.last_name} label="Last Name" id="last-name" bind:value = {last_name} />
-		<InputText   msg = {errors.birthday} type = "date" label="Birthday" id="birthday" bind:value = {birthday} />
-		<InputText   label="Age" id="age" disabled bind:value = {age} />
-        <Select      required msg = {errors.sex} label="Sex" id="sex" bind:value = {sex} options = {['Male' , 'Female' , 'Other']}/>
-		<InputText   required msg = {errors.contact_no} label="Contact No." id="contact-no" bind:value = {contact_no} />
-		<InputText   label="Facebook Link" id="fb-link" bind:value = {fb_link}/>
-		<InputText   label="Email" id="email" bind:value = {email}/>
-		<InputText   required msg = {errors.address} label="Address" id="address" bind:value={address} />
-		<InputText   required msg = {errors.barangay} label="Barangay" id="barangay" bind:value = {barangay} />
-		<InputText   label="Occupation" id="occupation" bind:value = {occupation} />
-
-		<br>
-		<InputText required msg = {errors.date_admission} label="Date of Admission" type="date" id="admission" bind:value = {date_admission} />
-		{#if data.caregiver.date_termination || editing}
-			<InputText msg ={errors.date_termination}  label="Date of Termination" type="date" id="termination"
-								 bind:value={date_termination} />
-		{/if}
-	</div>
-    </div>
+        <PersonalInfo id="Personal Information" data={data.caregiver} {editing} {errors} />
         <!--Container for the families of the caregiver-->
-        <FamilyInformation {editing} bind:family = {data.caregiver.family} caregiverID = {data.caregiver.id} memberType="caregiver"/>
+        <FamilyInformation id="Family Info" {editing} bind:family = {data.caregiver.family} caregiverID = {data.caregiver.id} memberType="caregiver"/>
 
         <!--Container for Community Group -->
         <HistoryCommunityGroup id="Community Group" bind:data= {data.caregiver.community_history} bind:error = {errors.community_overall} {editing} />
