@@ -39,6 +39,8 @@ export async function load( {url, fetch} ) {
 
         const entireFamily = await entireFamilyRes.json()
 
+        // Add family ID to the family data
+        entireFamily.familyId = familyInfo.data[i].family_id;
         familyArray.push(entireFamily)
     }
 
