@@ -88,7 +88,7 @@ type MemberRecord = {
     barangay_id: number;
     employment_status?: {
         able_to_work?: boolean;
-        employmentType?: string;
+        employment_type?: string;
     };
     admission_date?: string;
 };
@@ -261,18 +261,16 @@ try{
     eq:{member_id: childRecord.member_id}
     }) as familyquery;
 
-
     if(!familyInfo) {
-           entireFamily = {
-        } 
-    }
-    
-    else {
+        entireFamily = [];
+    } else {
         //finds the family id of the record with the given member_id in the family table
-        entireFamily = await familyDB.findWithJoin('*, members(*)', {
-        eq: {family_id: familyInfo.family_id }
-        })  
+        const familyResult = await familyDB.findWithJoin('*, members(*)', {
+            eq: {family_id: familyInfo.family_id }
+        });
         
+        // Ensure entireFamily is always an array
+        entireFamily = Array.isArray(familyResult) ? familyResult : [];
     }
 
 
@@ -310,7 +308,7 @@ try{
     return{
         child: child,
         error: null,
-        family: entireFamily,
+        family: { data: entireFamily },
         member: memberRecord,
         interventioninfo: interventioninfo || '',
         discatOptions: options_disCategory,
