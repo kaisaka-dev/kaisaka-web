@@ -64,16 +64,16 @@
                     <div class = "ml-10 w-50 hover:underline hover:cursor-pointer"> <a href = "/dashboard/members/caregivers/profile?id={member.linkID}"> {member.members.first_name} {member.members.last_name} </a></div>
                     {/if}
                     {#if editing}
-                        <div class = "z-500 -mt-2"><i class="fa-solid fa-trash ml-2 mt-5" on:click = {()=>deleteFamily(familyIndex,memberIndex)}></i> </div> 
+                        <div class = "z-500"><i class="fa-solid fa-trash ml-2" on:click = {()=>deleteFamily(familyIndex,memberIndex)}></i> </div>
                     {/if}
                     {/if}
                 </div>
             {/each}
             {#if editing}
-                <div class = "flex flex-row">
-                    <div class = "mt-5 z-500"> <i class = "!text-[var(--green)] hover:underline hover:cursor-pointer" on:click = {() => goto('/dashboard/registration/child')}> + Add New CYWD </i></div>
-                    <div class = "mt-5 ml-10 z-500"> <i class = "!text-[var(--pink)] hover:underline hover:cursor-pointer" on:click = {() => goto(`/dashboard/registration/family-info?${memberType === 'child' ? 'cwd=' + childID : 'caregiver=' + caregiverID}`)}> + Add/Edit Caregivers </i></div>
-                </div>
+              <div class = "mt-5"> <i class = "fa-solid fa-pen !text-[var(--pink)] hover:underline hover:cursor-pointer"
+                                      on:click = {() => goto(`/dashboard/registration?${memberType === 'child' ? 'cwd=' + childID : 'caregiver=' + caregiverID}`)}>
+              <span class="font-[JSans] !text-[inherit]">&nbsp Edit Family</span>
+              </i></div>
             {/if}
             </div>
         </div>        
@@ -81,12 +81,12 @@
     {:else}
         <div class = "flex flex-col">
             <div> {memberType === 'child' ? 'Child' : 'Caregiver'} is not part of any families </div>
-        {#if editing}
-                <div class = "flex flex-row">
-                    <div class = "mt-5 z-500"> <i class = "!text-[var(--green)] hover:underline hover:cursor-pointer" on:click = {()=> goto(`/dashboard/registration`)}> + Add New CYWD </i></div>
-                    <div class = "mt-5 ml-10 z-500"> <i class = "!text-[var(--pink)] hover:underline hover:cursor-pointer" on:click = {() => goto(`/dashboard/registration/family-info?${memberType === 'child' ? 'cwd=' + childID : 'caregiver=' + caregiverID}`)}> + Add/Edit Caregivers </i></div>
-                </div>
-            {/if}
+          {#if editing}
+            <div class = "mt-5"> <i class = "fa-solid fa-pen !text-[var(--pink)] hover:underline hover:cursor-pointer"
+                                    on:click = {() => goto(`/dashboard/registration?${memberType === 'child' ? 'cwd=' + childID : 'caregiver=' + caregiverID}`)}>
+              <span class="font-[JSans] !text-[inherit]">&nbsp Edit Family</span>
+            </i></div>
+          {/if}
         </div>
      {/if}
 </div>
