@@ -129,24 +129,26 @@
     <div class = "!bg-[var(--green)] w-[4px] l-[100px] rounded-full ml-5"></div>
 </div>
 
-<!-- PERSONAL INFORMATION SECTION BELOW-->
- <PersonalInformation data = {childData} disabled = {true} discatOptions = {data.discatOptions}/>
-<!-- PERSONAL INFORMATION SECTION END-->
+<div class="ml-55 -mt-70">
+    <!-- PERSONAL INFORMATION SECTION BELOW-->
+     <PersonalInformation id="Personal Info" data = {childData} disabled = {true} discatOptions = {data.discatOptions}/>
+    <!-- PERSONAL INFORMATION SECTION END-->
 
-<!--BEGINNING OF DOCUMENTS LISTING-->
-<DocumentationInformation data = {documentationData} editing = {false} socialParticipation = {data.social_participation} showSocialParticipation = {showSocialParticipation} />
-<!--END OF DOCUMENTS LISTING-->
+    <!--BEGINNING OF DOCUMENTS LISTING-->
+    <DocumentationInformation id="Documentation Info" data = {documentationData} editing = {false} socialParticipation = {data.social_participation} showSocialParticipation = {showSocialParticipation} />
+    <!--END OF DOCUMENTS LISTING-->
 
-<!--INTERVENTIONS LIST BEGINS HERE-->
-<InterventionInformation data = {interventionList}/>
-<!--END OF INTERVENTIONS-->
+    <!--INTERVENTIONS LIST BEGINS HERE-->
+    <InterventionInformation data = {interventionList}/>
+    <!--END OF INTERVENTIONS-->
 
-<!-- CONTAINER FOR FAMILY AND MEMBERSHIP INFORMATION -->
-<FamilyInformation family = {data.family} firstName = {data.child?.firstName} childID={data.child?.id} memberType="child"/>
-<!--END OF FAMILY AND MEMBERSHIP INFORMATION
+    <!-- CONTAINER FOR FAMILY AND MEMBERSHIP INFORMATION -->
+    <FamilyInformation id="Family Info" family={data.family} firstName={data.child?.firstName} childID={data.child?.id} memberType="child"/>
+    <!--END OF FAMILY AND MEMBERSHIP INFORMATION
 
 
-<--CONTAINER FOR EDUCATION HISTORY-->
-<EducationInformation editing = {false} displayEducHistory = {educationData} schoolYearArray = {data.child?.schoolYearArray} educLevel = {educLevel} educStatus = {educStatus} educType = {educType} 
- bind:yearStart = {yearStart} bind:yearEnd = {yearEnd} bind:selectedIndex = {selectedIndex}/>  
-<!--END OF EDUCATION HISTORY -->
+    <--CONTAINER FOR EDUCATION HISTORY-->
+    <EducationInformation id="Education Info" editing = {false} displayEducHistory = {educationData} schoolYearArray = {data.child?.schoolYearArray} educLevel = {educLevel} educStatus = {educStatus} educType = {educType}
+     bind:yearStart = {yearStart} bind:yearEnd = {yearEnd} bind:selectedIndex = {selectedIndex}/>
+    <!--END OF EDUCATION HISTORY -->
+</div>

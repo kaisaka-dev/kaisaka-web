@@ -4,6 +4,7 @@
         import type { interventionInformation } from "../+page.server.js";
 
         export let data: interventionInformation[];
+        export let id: string;      // css id
 
         let educIntervention:interventionInformation = {
             names: "",
@@ -87,11 +88,11 @@
         }
 </script>
 
-<h1 class = "!text-[var(--green)] font-[JSans] ml-55 mt-5 mb-2">
+<h2 {id} class="mt-10" >
         Interventions
-</h1>
+</h2>
 
-<div class = "flex flex-col max-w-255 mx-auto border-4 border-[var(--border)] ml-55 mr-10 p-4" id ="Intervention Info">
+<div class = "flex flex-col max-w-255 border-3 border-[var(--border)]  mr-10 p-4">
     {#if data.length > 0}
     <div class = "flex flex-col w-full mx-auto max-w-250">
         <div class = "flex flex-col md:flex-row md:ml-5 z-100">

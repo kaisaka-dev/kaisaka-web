@@ -923,7 +923,7 @@ function showStatusHistory(index:number){
 
 <section>
     <h1>
-     {data.child?.firstName ?? "First Name Missing!"} {data.child?.lastName ?? "Last Name Missing!"}'s Profile 
+     {data.child?.firstName ?? "First Name Missing!"} {data.child?.lastName ?? "Last Name Missing!"}'s Profile
     </h1>
 </section>
 {#if loadingSave}
@@ -954,102 +954,103 @@ function showStatusHistory(index:number){
                 Save Changes </button>
           {/if}
         </div>
-        
+
         <div>
-            <button class="w-40 -ml-5 mt-5" on:click={() => goto(`/dashboard/members/children/profile?id=${data.child.id}`)} >Back</button>
+            <button class="w-40 -ml-5 mt-5" on:click={() => goto(`/dashboard/members/children/profile?id=${data.child.id}`)} >Cancel Changes</button>
         </div>
-    </div> 
+    </div>
     <div class = "!bg-[var(--green)] w-[4px] l-[100px] rounded-full ml-5 -z-5000"></div>
 </div>
 
+<div class="ml-55 -mt-90">
+  <!-- PERSONAL INFORMATION SECTION BELOW-->
+   <PersonalInformation id ="Personal Info" disabled = {false} bind:data = {newchildData} bind:errors = {errors} discatOptions = {data.discatOptions} />
+  <!-- PERSONAL INFORMATION SECTION END-->
 
-<!-- PERSONAL INFORMATION SECTION BELOW-->
- <PersonalInformation disabled = {false} bind:data = {newchildData} bind:errors = {errors} discatOptions = {data.discatOptions} />
-<!-- PERSONAL INFORMATION SECTION END-->
+  <!--BEGINNING OF DOCUMENTS LISTING-->
+  <DocumentationInformation id="Documentation Info" bind:data = {documentationData} bind:socialParticipation = {data.social_participation} editing = {true} bind:errors = {errors} bind:showSocialParticipation = {showSocialParticipation}/>
+  <!--END OF DOCUMENTS LISTING-->
 
-
-<!--CONTAINER FOR FAMILY AND MEMBERSHIP INFORMATION-->
-<FamilyInformation family = {data.family.data && data.family.data.length > 0 ? [data.family] : []} firstName = {data.child?.firstName} editing = {true} childID = {data.child.id} memberType="child"/>
-<!--END OF FAMILY AND MEMBERSHIP INFORMATION-->
-
-
-<!--CONTAINER FOR EDUCATION HISTORY-->
-<EducationInformation bind:displayEducHistory = {displayEducHistory} bind:schoolYearArray = {displaySchoolYear} bind:educLevel = {educLevel} bind:educStatus = {educStatus} bind:educType = {educType} 
- bind:yearStart = {yearStart} bind:yearEnd = {yearEnd} bind:errors = {errors} bind:selectedIndex = {selectedIndex} bind:educHistory = {educHistory}/>
-<!--END OF EDUCATION HISTORY -->
-
-<!--BEGINNING OF DOCUMENTS LISTING-->
-<DocumentationInformation bind:data = {documentationData} bind:socialParticipation = {data.social_participation} editing = {true} bind:errors = {errors} bind:showSocialParticipation = {showSocialParticipation}/>
-<!--END OF DOCUMENTS LISTING-->
-
-<!--INTERVENTIONS LIST BEGINS HERE-->
-<h1 class = "!text-[var(--green)] font-[JSans] ml-55 mt-5 mb-2">
-        Interventions
-</h1>
-
-<div class = "flex flex-col  max-w-250 mx-auto border-4 border-[var(--border)] ml-55 mr-10 p-4" id ="Intervention Info">
-    <div class = "flex flex-col">
-        <div class = "!bg-[var(--green)] p-3 flex flex-col md:flex-row">
-           <div class = "!text-[var(--background)] !font-bold mt-2">Service Category </div>
-           <div class = "!text-[var(--background)] !font-bold md:ml-30 mt-2">Intervention(s) </div>
-           <div class = "!text-[var(--background)] !font-bold md:ml-25 mt-2">Overall Status & Date Created </div>
-        </div>
-        {#each childInterventions as interventionvar,index}
-            <div class = "flex flex-col md:flex-row mt-5 ">
-                <div class = "mt-4.5 -mr-15 max-w-20 md:max-w-50">
-                    <Input type = "text" disabled bind:value = {interventionvar.servicecat}/>
-                </div>
-                <div class = "mb-10 mt-4 md:ml-35">
-                    <div class = "flex flex-row">
-                        <div class ="md:max-w-50">
-                            <Input type = "text" bind:value = {interventionvar.name} required msg = {errors.interventionnameErrors[index]}/>
-                            
-                        </div>
-                        <div class = "md:max-w-30 md:ml-10 flex flex-col md:flex-row mx-auto">
-                            <div class = "mr-2 z-3000"> <i class="fa fa-sort-desc" aria-hidden="true" on:click= {()=>showStatusHistory(index)}></i> </div>
-                           <div class = "md:max-w-30 flex flex-col">
-                                <div><Select  required msg = {errors.interventionstatusErrors[index]} bind:value = {interventionvar.status} options = {["Regressed" , "Improved", "Neutral"]} /> </div>
-                                {#if showStatusInfo[index]}
-                                 <div class = "flex flex-col -ml-6">
-                                    <div class = "md:w-50 md:mt-5 md:ml-25"> Status History</div>
-                                    {#each interventionvar.history as status, statusindex}
-                                    {#if status.isDeleted == false}
-                                    <div class= "flex flex-row w-100">
-                                        <div class = " z-500 w-30  md:ml-5">
-                                            <Select bind:value = {status.status} options = {["Regressed" , "Improved" , "Neutral"]} />
-                                        </div> 
-                                        <div class ="w-15 ml-5">  
-                                        <Input type = "Date" bind:value = {status.date}/>
-                                        </div>
-                                        <div class = "-mt-2.5 md:ml-25 z-600">
-                                            <button class = "!bg-[var(--background)] !text-red-500 hover:!text-red-400 hover:!shadow-[var(--background)]"
-                                            on:click = {()=>deleteStatus(statusindex, index)}>
-                                                X
-                                            </button>
-                                        </div>
-                                    </div>
-                                    {/if}
-                                    {/each}
-                                </div>
-                                <button on:click = {() => addStatus(index)} class = "green w-50 ml-10 z-500 mt-5"> Add Status</button>
-                                {/if}
-                            </div>
-                            <div class = "md:max-w-15 md:ml-5"><Input type = "date" bind:value = {interventionvar.dateCreated} required msg = {errors.interventiondateErrors[index]} /></div>
-                           <div class = "-mt-2 z-500 md:ml-25">
-                            <button class = "!bg-[var(--background)] !text-red-500 hover:!text-red-400 hover:!shadow-[var(--background)]"
-                                    on:click = {()=>deleteIntervention(index)}>
-                                        X
-                            </button>
-                            </div>
-                        </div>
-                    </div>
-                </div>    
-            </div>
-        {/each}
-    </div>
+  <!--CONTAINER FOR FAMILY AND MEMBERSHIP INFORMATION-->
+  <FamilyInformation id="Family Info" family={data.family.data && data.family.data.length > 0 ? [data.family] : []} firstName={data.child?.firstName} editing = {true} childID = {data.child.id} memberType="child"/>
+  <!--END OF FAMILY AND MEMBERSHIP INFORMATION-->
 
 
-    
+  <!--CONTAINER FOR EDUCATION HISTORY-->
+  <EducationInformation id="Education Info" bind:displayEducHistory = {displayEducHistory} bind:schoolYearArray = {displaySchoolYear} bind:educLevel = {educLevel} bind:educStatus = {educStatus} bind:educType = {educType}
+   bind:yearStart = {yearStart} bind:yearEnd = {yearEnd} bind:errors = {errors} bind:selectedIndex = {selectedIndex} bind:educHistory = {educHistory}/>
+  <!--END OF EDUCATION HISTORY -->
+
+
+  <!--INTERVENTIONS LIST BEGINS HERE-->
+  <h2 class="mt-5 mb-2">
+          Interventions
+  </h2>
+
+  <div id ="Intervention Info" class = "flex flex-col  max-w-250  border-4 border-[var(--border)]  mr-10 p-4" >
+      <div class = "flex flex-col">
+          <div class = "!bg-[var(--green)] p-3 flex flex-col md:flex-row">
+             <div class = "!text-[var(--background)] !font-bold mt-2">Service Category </div>
+             <div class = "!text-[var(--background)] !font-bold md:ml-30 mt-2">Intervention(s) </div>
+             <div class = "!text-[var(--background)] !font-bold md:ml-25 mt-2">Overall Status & Date Created </div>
+          </div>
+          {#each childInterventions as interventionvar,index}
+              <div class = "flex flex-col md:flex-row mt-5 ">
+                  <div class = "mt-4.5 -mr-15 max-w-20 md:max-w-50">
+                      <Input type = "text" disabled bind:value = {interventionvar.servicecat}/>
+                  </div>
+                  <div class = "mb-10 mt-4 md:ml-35">
+                      <div class = "flex flex-row">
+                          <div class ="md:max-w-50">
+                              <Input type = "text" bind:value = {interventionvar.name} required msg = {errors.interventionnameErrors[index]}/>
+
+                          </div>
+                          <div class = "md:max-w-30 md:ml-10 flex flex-col md:flex-row mx-auto">
+                              <div class = "mr-2 z-3000"> <i class="fa fa-sort-desc" aria-hidden="true" on:click= {()=>showStatusHistory(index)}></i> </div>
+                             <div class = "md:max-w-30 flex flex-col">
+                                  <div><Select  required msg = {errors.interventionstatusErrors[index]} bind:value = {interventionvar.status} options = {["Regressed" , "Improved", "Neutral"]} /> </div>
+                                  {#if showStatusInfo[index]}
+                                   <div class = "flex flex-col -ml-6">
+                                      <div class = "md:w-50 md:mt-5 md:ml-25"> Status History</div>
+                                      {#each interventionvar.history as status, statusindex}
+                                      {#if status.isDeleted == false}
+                                      <div class= "flex flex-row w-100">
+                                          <div class = " z-500 w-30  md:ml-5">
+                                              <Select bind:value = {status.status} options = {["Regressed" , "Improved" , "Neutral"]} />
+                                          </div>
+                                          <div class ="w-15 ml-5">
+                                          <Input type = "Date" bind:value = {status.date}/>
+                                          </div>
+                                          <div class = "-mt-2.5 md:ml-25 z-600">
+                                              <button class = "!bg-[var(--background)] !text-red-500 hover:!text-red-400 hover:!shadow-[var(--background)]"
+                                              on:click = {()=>deleteStatus(statusindex, index)}>
+                                                  X
+                                              </button>
+                                          </div>
+                                      </div>
+                                      {/if}
+                                      {/each}
+                                  </div>
+                                  <button on:click = {() => addStatus(index)} class = "green w-50 ml-10 z-500 mt-5"> Add Status</button>
+                                  {/if}
+                              </div>
+                              <div class = "md:max-w-15 md:ml-5"><Input type = "date" bind:value = {interventionvar.dateCreated} required msg = {errors.interventiondateErrors[index]} /></div>
+                             <div class = "-mt-2 z-500 md:ml-25">
+                              <button class = "!bg-[var(--background)] !text-red-500 hover:!text-red-400 hover:!shadow-[var(--background)]"
+                                      on:click = {()=>deleteIntervention(index)}>
+                                          X
+                              </button>
+                              </div>
+                          </div>
+                      </div>
+                  </div>
+              </div>
+          {/each}
+      </div>
+
+
+
+  </div>
 </div>
 
 

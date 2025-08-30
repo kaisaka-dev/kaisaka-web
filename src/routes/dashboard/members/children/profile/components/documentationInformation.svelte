@@ -8,6 +8,7 @@
     import type { documentationInformation } from "../+page.server.js";
 
     export let data: documentationInformation
+    export let id: string;
     export let socialParticipation = [];
     export let editing: boolean = true
     export let errors = {}
@@ -53,12 +54,11 @@
 
 
 <!--BEGINNING OF DOCUMENTS LISTING-->
-<div id ="Documentation Info" class = "mb-15"></div>
-<h1 class = "!text-[var(--green)] font-[JSans] ml-55 mt-5 mb-2">
+<h1 {id} class = "!text-[var(--green)] font-[JSans] mt-5 mb-2">
        IDs, Certificates, Other Documents
 </h1>
 
-<div class = "flex flex-col lg:flex-row border-[var(--border)] border-4 ml-55 mr-10 p-5 max-w-175 mx-auto">
+<div class = "flex flex-col lg:flex-row border-[var(--border)] border-3 mr-10 p-5 max-w-175">
     <div class = "flex flex-col !font-bold w-full max-w-75 mx-auto z-500"> 
        <!-- <div>
             <Checkbox disabled = {!editing} label = "Social Participation" bind:checked = {showSocialParticipation}/>

@@ -4,6 +4,7 @@
     import { dropdownOptions } from '$lib/types/options.js'
 	import type { educationInformation } from "../+page.server.js";
 
+    export let id: string; // css id
     export let selectedIndex = 0
 
     export let educHistory = []
@@ -81,12 +82,12 @@
 
 </script>
 
-<div id ="Education Info" class = "mt-10 mb-5" >
-        <h1 class = "!text-[var(--green)] font-[JSans] ml-55">
+<div {id} class = "mt-10 mb-5" >
+        <h2>
         Education History
-        </h1>
+        </h2>
 </div>
-    <div class = "flex flex-col md:items-left max-w-170 border-[var(--border)] border-4 ml-55 mr-10 p-6 -mt-5">
+    <div class = "flex flex-col md:items-left max-w-170 border-[var(--border)] border-3 mr-10 p-6 -mt-5">
         {#if displayEducHistory.length > 0}
         <div class = "flex flex-wrap md:flex-row max-w-150"> <div> Please select a school year </div> <select class = "ml-5 w-50 z-100" value = {schoolYearArray[0]} on:change={(e)=>updateField(e.target.selectedIndex)}>
             {#each schoolYearArray as year}

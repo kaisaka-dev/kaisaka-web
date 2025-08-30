@@ -63,7 +63,7 @@
         <PersonalInfo id="Personal Info" {editing} data={data.caregiver} />
 
         <!--Container for the families of the caregiver-->
-        <FamilyInformation family = {data.caregiver.family} {editing} caregiverID={data.caregiver.id} memberType="caregiver"/>
+        <FamilyInformation id="Family Info" family={data.caregiver.family} {editing} caregiverID={data.caregiver.id} memberType="caregiver"/>
 
         <!--Container for Community Group -->
         <HistoryCommunityGroup id="Community Group" data={data.caregiver.community_history} error ={""} editing = {editing} />

@@ -23,7 +23,6 @@
 
 
     let age = ""
-    let headingmargin =  disabled == true? "ml-22 -mt-70": "ml-22 -mt-85"
 
     $: if (data.birthday) {
         const birthDate = new Date(data.birthday);
@@ -47,13 +46,9 @@
 </script>
 
 <!-- PERSONAL INFORMATION SECTION BELOW-->
- <div class = {headingmargin} id ="Personal Info">
-    <h1 class = "!text-[var(--green)] font-[JSans] ml-33 mt-5 mb-2">
-        Basic Information
-    </h1>
-</div>
+<h2 >Basic Information</h2>
 
-<div class = "border-[var(--border)] border-4 ml-55 p-5 mr-10 !font-bold max-w-175 z-2000 flex-wrap" >
+<div class = "border-[var(--border)] border-3 p-5 mr-10 !font-bold max-w-175 z-2000 flex-wrap" >
     <div class = "flex flex-col xl:flex-row !justify-start p-4">
         <div class = "flex flex-col w-full max-w-280">
                 <Input label = "First Name" disabled = {inputDisabled} required = {!disabled} msg = {errors.firstName} bind:value = {data.firstName} margin = {true}/>
