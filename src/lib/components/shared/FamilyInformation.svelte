@@ -36,28 +36,31 @@
 
 
 <!-- CONTAINER FOR FAMILY AND MEMBERSHIP INFORMATION -->
-<div {id} class = "mt-10 w-240 min-w-240">
+<div {id} class = "mt-10 w-full max-w-175">
 
-  <h2>Families</h2>
+  <h2>Family Information</h2>
 
-  <div class = "grid grid-cols-1 lg:grid-cols-2 gap-5 mt-2 border-3 border-[var(--border)] p-4 mr-10">
+  <div class = "flex flex-col mt-2 border-3 border-[var(--border)] p-4 mr-10">
       {#if family.length > 0}
+      <div class = "flex flex-col lg:flex-row mb-5">
+            <div class = "!bg-[var(--caregiver-indicator)] py-2 px-13 !text-white lg:w-50">
+                Caregiver
+            </div>
+            <div class = "!bg-[var(--green)] py-2 px-18 !text-white lg:w-50 lg:ml-10">
+                CYWD
+            </div>
+      </div>
       {#each family as family,familyIndex}
-          <div class = "flex flex-col w-full max-w-full">
-             <span class = "!bg-[var(--green)] p-2 w-full !text-white">  {familyName(family.data)} </span>
-             <div class = "flex flex-col gap-1 p-2 border-4 border-[var(--border)] w-full">
+          <div class = "flex flex-col w-full">
+             <span class = "w-full !text-[var(--pink)]">  {familyName(family.data)} </span>
+             <div class = "flex flex-col gap-1 p-5 border-4 border-[var(--pink)] w-full">
               {#each family.data as member,memberIndex}
                   <div class = "flex flex-row">
                       {#if member.isDeleted == false}
                       {#if member.is_child == false}
-                      <div class ="!bg-[var(--pink)] !text-[1rem] w-35 !p-1 rounded-full text-center !font-bold !text-white"> {member.relationship_type}</div>
+                      <div class ="!bg-[var(--caregiver-indicator)] !text-[1rem] w-full max-w-150 !p-2 text-center !font-bold !text-white flex flex-col lg:flex-row gap-30"> <div class = "!bg-[var(--background)] p-1 w-full max-w-75"> <a href = "/dashboard/members/caregivers/profile?id={member.linkID}"> {member.members.first_name} {member.members.last_name} </a> </div> <div class = "mt-1"> {member.relationship_type} </div> </div>
                       {:else}
-                      <div class ="!bg-[var(--green)] !text-[1rem] w-35 !p-1 rounded-full text-center !font-bold !text-white"> {member.relationship_type}</div>
-                      {/if}
-                      {#if member.is_child}
-                      <div class = "ml-10 w-50 hover:underline hover:cursor-pointer"><a href = "/dashboard/members/children/profile?id={member.linkID}" > {member.members.first_name} {member.members.last_name} </a></div>
-                      {:else}
-                      <div class = "ml-10 w-50 hover:underline hover:cursor-pointer"> <a href = "/dashboard/members/caregivers/profile?id={member.linkID}"> {member.members.first_name} {member.members.last_name} </a></div>
+                      <div class ="!bg-[var(--green)] !text-[1rem] w-full max-w-150 !p-2 text-center !font-bold !text-white flex flex-col lg:flex-row gap-30"> <div class = "!bg-[var(--background)] p-1 w-full max-w-75"> <a href = "/dashboard/members/children/profile?id={member.linkID}" > {member.members.first_name} {member.members.last_name} </a> </div> <div class = "mt-1"> {member.relationship_type} </div> </div>
                       {/if}
                       {#if editing}
                           <div class = "z-500"><i class="fa-solid fa-trash ml-2" on:click = {()=>deleteFamily(familyIndex,memberIndex)}></i> </div>

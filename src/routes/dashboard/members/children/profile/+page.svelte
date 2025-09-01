@@ -4,6 +4,7 @@
     import Header from '$components/Header.svelte'
     import { goto } from '$app/navigation'
 
+
     export let data;
     import PersonalInformation from './components/personalInformation.svelte'
     import FamilyInformation from '$components/shared/FamilyInformation.svelte'
@@ -16,6 +17,8 @@
     import type { documentationInformation } from './+page.server.js'
     import type { interventionInformation } from './+page.server.js'
 
+    import Select from '$lib/components/input/Select.svelte';
+    import InputTextarea from '$lib/components/input/InputTextarea.svelte'
     
     //below are functions needed for the page
     let selectedIndex = 0
@@ -144,10 +147,18 @@
 
     <!-- CONTAINER FOR FAMILY AND MEMBERSHIP INFORMATION -->
     <FamilyInformation id="Family Info" family={data.family} firstName={data.child?.firstName} childID={data.child?.id} memberType="child"/>
-    <!--END OF FAMILY AND MEMBERSHIP INFORMATION
+    <!--END OF FAMILY AND MEMBERSHIP INFORMATION -->
 
+    <div class = "mt-10">
+        <h2> Health Information </h2>
+        <div class = "border-3 border-[var(--border)] w-full max-w-165 p-6">
+            <Select label = "Disability Category" bind:value = {data.child.disabilityCategoryID} options = {data.discatOptions} disabled margin = {true}/>
+            <InputTextarea label = "Disability Nature"  disabled bind:value = {data.child.disabilityNature} margin = {true}/>
+        </div>
+    </div>
+    
 
-    <--CONTAINER FOR EDUCATION HISTORY-->
+    <!--CONTAINER FOR EDUCATION HISTORY-->
     <EducationInformation id="Education Info" editing = {false} displayEducHistory = {educationData} schoolYearArray = {data.child?.schoolYearArray} educLevel = {educLevel} educStatus = {educStatus} educType = {educType}
      bind:yearStart = {yearStart} bind:yearEnd = {yearEnd} bind:selectedIndex = {selectedIndex}/>
     <!--END OF EDUCATION HISTORY -->

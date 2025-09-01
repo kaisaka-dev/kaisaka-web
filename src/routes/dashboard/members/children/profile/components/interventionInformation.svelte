@@ -95,7 +95,7 @@
 <div class = "flex flex-col max-w-255 border-3 border-[var(--border)]  mr-10 p-4">
     {#if data.length > 0}
     <div class = "flex flex-col w-full mx-auto max-w-250">
-        <div class = "flex flex-col md:flex-row md:ml-5 z-100">
+        <div class = "flex flex-col lg:flex-row md:ml-5 z-100">
            <button class = "!text-[var(--green)] !font-bold !border-3 px-11 py-2 !border-[var(--border)] !bg-[var(--background)] xl:w-50  ml-5 hover:!bg-[var(--green)] hover:!text-[var(--background)] focus:!bg-[var(--green)] focus:!text-[var(--background)]" on:click = {()=>showhealthIntervention()}>Health </button>
            <button class = "!text-[var(--green)] !font-bold !border-3 px-11 py-2 !border-[var(--border)] !bg-[var(--background)] xl:w-50  ml-5 hover:!bg-[var(--green)] hover:!text-[var(--background)] focus:!bg-[var(--green)] focus:!text-[var(--background)]"on:click = {()=>showsocialIntervention()}>Social </button>
            <button class = "!text-[var(--green)] !font-bold !border-3 px-11 py-2 !border-[var(--border)] !bg-[var(--background)] xl:w-50  ml-5 hover:!bg-[var(--green)] hover:!text-[var(--background)] focus:!bg-[var(--green)] focus:!text-[var(--background)]"on:click = {()=>showlivelihoodIntervention()}>Livelihood </button>

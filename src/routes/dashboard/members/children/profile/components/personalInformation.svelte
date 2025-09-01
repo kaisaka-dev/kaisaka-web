@@ -50,7 +50,7 @@
 
 <div class = "border-[var(--border)] border-3 p-5 mr-10 !font-bold max-w-175 z-2000 flex-wrap" >
     <div class = "flex flex-col xl:flex-row !justify-start p-4">
-        <div class = "flex flex-col w-full max-w-280">
+        <div class = "flex flex-col w-full">
                 <Input label = "First Name" disabled = {inputDisabled} required = {!disabled} msg = {errors.firstName} bind:value = {data.firstName} margin = {true}/>
                 <Input label = "Middle Name" disabled = {inputDisabled} required = {false} bind:value = {data.middleName} margin = {true}/>
                 <Input label = "Last Name" disabled = {inputDisabled} required = {!disabled} msg = {errors.lastName} bind:value = {data.lastName} margin = {true}/>
@@ -67,11 +67,8 @@
                 {/if}
                 {#if data.canWork}
                     <Select label = "Employment Type" options = {['Self-Employed','Sheltered Workshop','Wage Employed']} disabled = {inputDisabled} bind:value = {data.employmentType} margin = {true}/>
-                {/if}
-                <Select label = "Disability Category" bind:value = {data.disabilityCategoryID} required = {!disabled} options = {discatOptions} msg = {errors.disabilityCat} disabled = {inputDisabled}  margin = {true}/>
-                <Input label = "Disability Nature"  disabled = {inputDisabled} bind:value = {data.disabilityNature} margin = {true}/>
-                <div class = "mt-10"> <Input type = "date" label = "Date of Admission" msg = {errors.admissionDate} required = {!disabled} disabled = {inputDisabled} bind:value = {data.admissionDate} margin = {true}/> </div> -->
+                {/if} -->
         </div>
     </div>
 </div>
-<!-- PERSONAL INFORMATION SECTION END-->
+<!--PERSONAL INFORMATION SECTION END-->

@@ -23,6 +23,7 @@
     --text-color: rgb(59, 46, 40);
     --error-color: rgb(255,100,103);
     --input-color: lightgray;
+    --caregiver-indicator:rgba(166,166,166,100);
 
     --small-text: 1rem;
     --medium-text: 1.25rem;
