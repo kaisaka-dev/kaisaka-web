@@ -14,6 +14,8 @@
     export let errors = ""
     export let discatOptions: string[] = []
 
+    import Checkbox from '$lib/components/input/Checkbox.svelte';
+
 
     let inputDisabled: boolean;
 
@@ -60,7 +62,7 @@
                 <Input label = "Address" required = {!disabled} msg = {errors.address} disabled = {inputDisabled} bind:value = {data.address} margin = {true}/>
                 <Input label = "Barangay"  required = {!disabled} msg = {errors.barangay} disabled = {inputDisabled} bind:value = {data.barangay} margin = {true}/>
                 {#if !disabled}
-                <div class = "z-300"> <Check label = "Able to Work" bind:checked = {data.canWork} margin = {true}/> </div> 
+                <div class = "z-300"> <Checkbox label = "Able to Work" bind:checked = {data.canWork} margin = {true}/> </div> 
                 {/if}
                 {#if data.canWork}
                     <Select label = "Employment Type" options = {['Self-Employed','Sheltered Workshop','Wage Employed']} disabled = {inputDisabled} bind:value = {data.employmentType} margin = {true}/>
