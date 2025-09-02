@@ -149,6 +149,7 @@
     <FamilyInformation id="Family Info" family={data.family} firstName={data.child?.firstName} childID={data.child?.id} memberType="child"/>
     <!--END OF FAMILY AND MEMBERSHIP INFORMATION -->
 
+    <!-- CONTAINER FOR HEALTH INFORMATION -->
     <div class = "mt-10">
         <h2> Health Information </h2>
         <div class = "border-3 border-[var(--border)] w-full max-w-165 p-6">
@@ -156,6 +157,7 @@
             <InputTextarea label = "Disability Nature"  disabled bind:value = {data.child.disabilityNature} margin = {true}/>
         </div>
     </div>
+    <!--END OF HEALTH INFORMATION-->
     
 
     <!--CONTAINER FOR EDUCATION HISTORY-->

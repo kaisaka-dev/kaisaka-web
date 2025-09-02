@@ -59,15 +59,13 @@
                 <Select label = "Sex" required = {!disabled} disabled = {inputDisabled} options = {dropdownOptions.sex}  bind:value = {data.sex} margin = {true}/>
                 <Input label = "Address" required = {!disabled} msg = {errors.address} disabled = {inputDisabled} bind:value = {data.address} margin = {true}/>
                 <Input label = "Barangay"  required = {!disabled} msg = {errors.barangay} disabled = {inputDisabled} bind:value = {data.barangay} margin = {true}/>
-                <TextArea disabled = {inputDisabled} value = {data.remarks || "N/A"} label = "Remarks" rows = 5/>      
-                     
-
-                <!-- {#if !disabled}
+                {#if !disabled}
                 <div class = "z-300"> <Check label = "Able to Work" bind:checked = {data.canWork} margin = {true}/> </div> 
                 {/if}
                 {#if data.canWork}
                     <Select label = "Employment Type" options = {['Self-Employed','Sheltered Workshop','Wage Employed']} disabled = {inputDisabled} bind:value = {data.employmentType} margin = {true}/>
-                {/if} -->
+                {/if}
+                <TextArea disabled = {inputDisabled} value = {data.remarks || "N/A"} label = "Remarks" rows = 5/>      
         </div>
     </div>
 </div>

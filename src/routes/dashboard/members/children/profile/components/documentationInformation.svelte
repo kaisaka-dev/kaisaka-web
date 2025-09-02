@@ -4,6 +4,7 @@
 <script lang="ts">
     import Checkbox from "$lib/components/input/Checkbox.svelte";
     import InputText from "$lib/components/input/InputText.svelte";
+    import Validation from "$lib/components/text/Validation.svelte";
 
     import type { documentationInformation } from "../+page.server.js";
 
@@ -60,18 +61,20 @@
 
 <div class = "flex flex-col lg:flex-row border-[var(--border)] border-3 mr-10 p-5 max-w-175">
     <div class = "flex flex-col !font-bold w-full max-w-75 mx-auto z-500"> 
-       <!-- <div>
+       <div>
             <Checkbox disabled = {!editing} label = "Social Participation" bind:checked = {showSocialParticipation}/>
              {#if editing }<div class = "ml-7"> <Validation msg = {errors.socialParticipation} /> </div> {/if}
-       </div> -->
-       <!-- {#if showSocialParticipation} 
-          <div class = "flex flex-col md:ml-20 ">
+       </div>
+       {#if showSocialParticipation} 
+          <div class = "flex flex-col">
                <div class = "flex flex-col md:flex-row">
-                    Participation type
-                     <div> <select class = "ml-5 w-full md:w-50" on:change = {(e)=>selectedIndex = e.target.selectedIndex}>
+                    <div> Participation type </div>
+                     <div> 
+                         <select class = "ml-5 w-full md:w-50" on:change = {(e)=>selectedIndex = e.target.selectedIndex}>
                          <option> Community Life </option>
                          <option> Family Life</option>
-                     </select> </div>
+                         </select> 
+                    </div>
                </div>
                <div class = "grid grid-cols-1 gap-5 mt-5">
                     <div> Years of Access: </div>
@@ -97,7 +100,7 @@
                    {#if editing} <i class = "!text-[var(--pink)] hover:underline hover: cursor-pointer" on:click = {() => addParticipationRecord()}>+Add Record</i> {/if}
                </div>
           </div>
-       {/if} -->
+       {/if}
        <div class = "z-500">
             <Checkbox label = "PhilHealth" bind:checked = {data.phHealth} disabled = {!editing}/>
        </div>

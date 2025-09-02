@@ -89,17 +89,21 @@
 </div>
     <div class = "flex flex-col md:items-left max-w-170 border-[var(--border)] border-3 mr-10 p-6 -mt-5">
         {#if displayEducHistory.length > 0}
-        <div class = "flex flex-wrap md:flex-row max-w-150"> <div> Please select a school year </div> <select class = "ml-5 w-50 z-100" value = {schoolYearArray[0]} on:change={(e)=>updateField(e.target.selectedIndex)}>
-            {#each schoolYearArray as year}
-            <option> {year}</option>
-            {/each}
-        </select>
+        
+        {#each displayEducHistory as educRecord}
+        
+        <div class = "flex flex-col mb-10">
+            <div class = "mt-3 flex lg:flex-row flex-col"> 
+                <div class = "lg:mr-30"> School Year:  </div>
+                <div class = "w-full max-w-32 lg:mr-5"> <InputText disabled = {!editing} required = {editing} msg = {errors.yearstart} type = "number" label="" bind:value = {educRecord.yearStart}/> </div>
+                <div class = "lg:mr-5"> to </div>
+                <div class = "w-full max-w-32"> <InputText disabled = {!editing}  required = {editing} label="" msg = {errors.yearend} bind:value = {educRecord.yearEnd}/> </div>
+            </div >
+            <div class = "mt-3"> <Select disabled = {!editing} required = {editing} msg = {errors.educationtype} label="Education Type:" bind:value = {educRecord.Educationtype} options = {dropdownOptions.education_type} /></div>
+            <div class = "mt-3"> <Select disabled = {!editing} required = {editing} msg = {errors.educationlvl} label="Education Level:" bind:value = {educRecord.Educationlevel} options = {dropdownOptions.education_level}/></div>
+            <div class = "mt-3"> <Select disabled = {!editing} required = {editing} msg = {errors.educstatus} label="Education Status:" bind:value = {educRecord.Educationstatus} options = {dropdownOptions.education_status  }/> </div>
         </div>
-        <div class = "mt-3"> <Select disabled = {!editing} required = {editing} msg = {errors.educationtype} label="Education Type:" bind:value = {educType} options = {dropdownOptions.education_type} /></div>
-        <div class = "mt-3"> <Select disabled = {!editing} required = {editing} msg = {errors.educationlvl} label="Education Level:" bind:value = {educLevel} options = {dropdownOptions.education_level}/></div>
-        <div class = "mt-3"> <Select disabled = {!editing} required = {editing} msg = {errors.educstatus} label="Education Status:" bind:value = {educStatus} options = {dropdownOptions.education_status  }/> </div>
-        <div class = "mt-3"> <InputText disabled = {!editing} required = {editing} msg = {errors.yearstart} type = "number" label="School Year Start:" bind:value = {yearStart}/> </div>
-        <div class = "mt-3"> <InputText disabled = {!editing}  required = {editing} label="School Year End:" msg = {errors.yearend} bind:value = {yearEnd}/> </div>
+        {/each}
         {:else}
         This child has no education history
         {/if}
