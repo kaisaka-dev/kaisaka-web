@@ -110,26 +110,32 @@
 <div class = "flex flex-wrap ml-10 m-4 sticky top-20">
     <div class = "flex flex-col !font-[JSans]">
         <div class = "hover:!text-[var(--green)]">
-            <a class = "hover:!text-[var(--green)]" href = "#top">Information </a>
+            <a class = "hover:!text-[var(--green)]" href = "#top">Basic Info </a>
         </div>
+
+        <div class = "hover:!text-[var(--green)]">
+            <a class = "hover:!text-[var(--green)]" href = "#Documentation Info">IDs, Certs, Docs </a>
+        </div>
+
+        <div>
+            <a class = "hover:!text-[var(--green)]" href = "#Intervention Info">Interventions </a>
+        </div>
+
         <div class = "hover:!text-[var(--green)]">
             <a class = "hover:!text-[var(--green)]" href = "#Family Info">Family </a>
         </div>
         <div class = "hover:!text-[var(--green)]">
-            <a class = "hover:!text-[var(--green)]" href = "#Education Info">Education </a>
+            <a class = "hover:!text-[var(--green)]" href = "#healthInfo">Health </a>
         </div>
+
         <div class = "hover:!text-[var(--green)]">
-            <a class = "hover:!text-[var(--green)]" href = "#Documentation Info">Documents </a>
-        </div>
-        
-        <div>
-            <a class = "hover:!text-[var(--green)]" href = "#Intervention Info">Interventions </a>
+            <a class = "hover:!text-[var(--green)]" href = "#Education Info">Education </a>
         </div>
         <div>
             <button class="w-40 -ml-5 mt-10" on:click={() => goto(`/dashboard/members/children/profile/edit?id=${data.child.id}`)}>Edit Profile</button>
         </div>
     </div> 
-    <div class = "!bg-[var(--green)] w-[4px] l-[100px] rounded-full ml-5"></div>
+    <div class = "!bg-[var(--green)] w-[4px] l-[100px] rounded-full ml-2"></div>
 </div>
 
 <div class="ml-55 -mt-70">
@@ -142,7 +148,7 @@
     <!--END OF DOCUMENTS LISTING-->
 
     <!--INTERVENTIONS LIST BEGINS HERE-->
-    <InterventionInformation data = {interventionList}/>
+    <InterventionInformation id = "Intervention Info" data = {interventionList}/>
     <!--END OF INTERVENTIONS-->
 
     <!-- CONTAINER FOR FAMILY AND MEMBERSHIP INFORMATION -->
@@ -150,7 +156,7 @@
     <!--END OF FAMILY AND MEMBERSHIP INFORMATION -->
 
     <!-- CONTAINER FOR HEALTH INFORMATION -->
-    <div class = "mt-10">
+    <div class = "mt-10" id ="healthInfo">
         <h2> Health Information </h2>
         <div class = "border-3 border-[var(--border)] w-full max-w-165 p-6">
             <Select label = "Disability Category" bind:value = {data.child.disabilityCategoryID} options = {data.discatOptions} disabled margin = {true}/>

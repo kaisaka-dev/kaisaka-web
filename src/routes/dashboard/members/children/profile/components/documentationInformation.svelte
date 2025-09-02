@@ -55,9 +55,10 @@
 
 
 <!--BEGINNING OF DOCUMENTS LISTING-->
-<h1 {id} class = "!text-[var(--green)] font-[JSans] mt-5 mb-2">
+<div {id} class = "mt-5"></div>
+<h2 class = "!text-[var(--green)] font-[JSans] mt-10 mb-2">
        IDs, Certificates, Other Documents
-</h1>
+</h2>
 
 <div class = "flex flex-col lg:flex-row border-[var(--border)] border-3 mr-10 p-5 max-w-175">
     <div class = "flex flex-col !font-bold w-full max-w-75 mx-auto z-500"> 
