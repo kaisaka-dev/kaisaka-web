@@ -249,11 +249,7 @@
         disabilityCat:"",
         disabilityNat: "",
         admissionDate: "",
-        educationtype: "",
-        educationlvl: "",
-        educstatus: "",
-        yearstart: "",
-        yearend: "",
+        education:"",
         pwdID: "",
         pwdExpiry: "",
         socialParticipation: "",
@@ -272,13 +268,7 @@
         //resets values that can be hidden
         errors.pwdID = ""
         errors.pwdExpiry = ""
-        errors.educationtype = ""
-        errors.educationlvl = ""
-        errors.educstatus = ""
-        errors.socialParticipation = ""
-        errors.yearstart = ""
-        errors.yearend = ""
-
+        errors.education = ""
 
         errors.firstName = newchildData.firstName.trim() === "" ? "Required" : ""
         errors.lastName = newchildData.lastName.trim() === "" ? "Required" : ""
@@ -310,13 +300,13 @@
 
 
         if(displayEducHistory.length > 0) {
-            console.log(yearEnd)
-            errors.educationtype = educType.trim() === "" ? "Required" : ""
-            errors.educationlvl = educLevel.trim() === "" ? "Required" : ""
-            errors.educstatus = educStatus == null || educStatus === "" ? "Required" : ""
-            errors.yearstart = yearStart == null || yearStart < 0 || yearStart > parseInt(yearEnd) ? "Invalid Date" : ""
-            errors.yearend = parseInt(yearEnd) < 0 || isNaN(parseInt(yearEnd)) || yearEnd == "" ||  yearEnd == null ? "Invalid Date" : ""
-
+            for(let i in displayEducHistory) {
+                if(displayEducHistory[i].Educationlevel === "" || displayEducHistory[i].Educationstatus === "" || displayEducHistory[i].Educationtype === ""
+                    || displayEducHistory[i].yearEnd == null || displayEducHistory[i].yearStart == null) {
+                        errors.education = "Missing Information!"
+                    }
+            }
+ 
         }
 
         if(documentationData.hasPWD == true) {
@@ -634,11 +624,12 @@
 
             if(displayEducHistory.length > 0) {
             //Update and Post for the selected record
-            if(displayEducHistory[selectedIndex].isNew == false) {
+            for(let i in displayEducHistory){
+                if(displayEducHistory[i].isNew == false) {
                 const updateEducRecord = await fetch('/api/education_status', {
                 method: "PUT",
                 body:JSON.stringify({
-                    id: data.child?.educationHistory[selectedIndex]?.id,
+                    id: data.child?.educationHistory[i]?.id,
                     education_type: educType,
                     student_status_type: educStatus,
                     grade_level: educLevel,
@@ -651,21 +642,22 @@
                 })
             }
 
-            else if(displayEducHistory[selectedIndex].isNew == true) {
+            else if(displayEducHistory[i].isNew == true) {
                 const createEducRecord = await fetch('/api/education_status' , {
                     method: "POST",
                     body: JSON.stringify({
                         child_id: data.child?.id,
-                        year_start: yearStart,
-                        year_end: yearEnd,
-                        education_type: educType,
-                        grade_level: educLevel,
-                        student_status_type: educStatus 
+                        year_start: displayEducHistory[i].yearStart,
+                        year_end: displayEducHistory[i].yearEnd,
+                        education_type: displayEducHistory[i].Educationtype,
+                        grade_level: displayEducHistory[i].Educationlevel,
+                        student_status_type:displayEducHistory[i].Educationstatus 
                     }),
                      headers:{
                          'Content-Type': 'application/json'
                      } 
                 })
+            }
             }
             }
 

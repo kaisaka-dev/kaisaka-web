@@ -1,8 +1,12 @@
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+
+
 <script lang="ts">
     import Select from "$lib/components/input/Select.svelte";
     import InputText from "$lib/components/input/InputText.svelte";
     import { dropdownOptions } from '$lib/types/options.js'
 	import type { educationInformation } from "../+page.server.js";
+    import Validation from "$lib/components/text/Validation.svelte";
 
     export let id: string; // css id
     export let selectedIndex = 0
@@ -86,31 +90,43 @@
         <h2>
         Education History
         </h2>
+        {#if editing}
+        <Validation msg = {errors.education}/>
+        {/if}
 </div>
     <div class = "flex flex-col md:items-left max-w-170 border-[var(--border)] border-3 mr-10 p-6 -mt-5">
         {#if displayEducHistory.length > 0}
         
-        {#each displayEducHistory as educRecord}
+        {#each displayEducHistory as educRecord,index}
         
         <div class = "flex flex-col mb-10">
             <div class = "mt-3 flex lg:flex-row flex-col"> 
-                <div class = "lg:mr-30"> School Year:  </div>
-                <div class = "w-full max-w-32 lg:mr-5"> <InputText disabled = {!editing} required = {editing} msg = {errors.yearstart} type = "number" label="" bind:value = {educRecord.yearStart}/> </div>
+                <div class = "lg:mr-27"> School Year:*  </div>
+                <div class = "w-full max-w-32 lg:mr-5"> <InputText disabled = {!editing} required = {editing}  type = "number" label="" bind:value = {educRecord.yearStart}/> </div>
                 <div class = "lg:mr-5"> to </div>
-                <div class = "w-full max-w-32"> <InputText disabled = {!editing}  required = {editing} label="" msg = {errors.yearend} bind:value = {educRecord.yearEnd}/> </div>
+                <div class = "w-full max-w-32"> <InputText disabled = {!editing}  required = {editing} label=""  bind:value = {educRecord.yearEnd}/> </div>
+                {#if editing}
+                   <div class = "z-200 -mt-0.5"> <i class = "fa-solid fa-trash ml-2" on:click = {()=>deleteEducRecord(index)}></i> </div>
+                {/if}
             </div >
-            <div class = "mt-3"> <Select disabled = {!editing} required = {editing} msg = {errors.educationtype} label="Education Type:" bind:value = {educRecord.Educationtype} options = {dropdownOptions.education_type} /></div>
-            <div class = "mt-3"> <Select disabled = {!editing} required = {editing} msg = {errors.educationlvl} label="Education Level:" bind:value = {educRecord.Educationlevel} options = {dropdownOptions.education_level}/></div>
-            <div class = "mt-3"> <Select disabled = {!editing} required = {editing} msg = {errors.educstatus} label="Education Status:" bind:value = {educRecord.Educationstatus} options = {dropdownOptions.education_status  }/> </div>
+            <div class = "mt-3"> <Select disabled = {!editing} required = {editing} label="Education Type:" bind:value = {educRecord.Educationtype} options = {dropdownOptions.education_type} /></div>
+            <div class = "mt-3"> <Select disabled = {!editing} required = {editing}  label="Education Level:" bind:value = {educRecord.Educationlevel} options = {dropdownOptions.education_level}/></div>
+            <div class = "mt-3"> <Select disabled = {!editing} required = {editing}  label="Education Status:" bind:value = {educRecord.Educationstatus} options = {dropdownOptions.education_status  }/> </div>
         </div>
         {/each}
         {:else}
         This child has no education history
         {/if}
         {#if editing}
-        <div class = "flex flex-col md:flex-row">
-            <div class = "max-w-150 mt-10 z-500"> <i class = "!text-[var(--green)] hover:underline" on:click = {()=>addEducRecord()}> + Add Education Record </i></div>
-            {#if displayEducHistory.length > 0} <div class = "max-w-150 md:ml-20 mt-10 z-500"> <i class = "!text-[var(--error-color)] hover:underline" on:click = {()=>deleteEducRecord(selectedIndex)}> - Delete This Record </i> </div> {/if}
+        <div class = "flex flex-col md:flex-row"> 
+            <div class = "mt-10 z-500 w-full p-3 rounded-xl !bg-[var(--pink)] !text-center"> <i class = "!text-[var(--background)] hover:underline" on:click = {()=>addEducRecord()}> + Add Education Record </i></div>
         </div>
         {/if}
     </div>
+
+    <style>
+    i:hover {
+        cursor: pointer;
+        color: var(--error-color)
+    }
+    </style>
