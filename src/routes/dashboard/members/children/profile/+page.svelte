@@ -55,17 +55,115 @@
 
     let interventionList: interventionInformation[] = []
 
-    for(let i in data.interventioninfo){
-        interventionList.push({
-            names: data.interventioninfo[i].intervention,
-            category: data.interventioninfo[i].service_category?.name || "--",
-            creationDate: data.interventioninfo[i].date_created,
-            statuses: data.interventioninfo[i].history,
-            overallStatus: data.interventioninfo[i].status
-        })
+    let healthIntervention : interventionInformation = {
+        names: "",
+        category: "Health",
+        creationDate: "",
+        overallStatus: "",
+        statuses: [],
+
+        isNew: true,
+        isDeleted: false
     }
 
-    console.log(interventionList)
+    let educationIntervention: interventionInformation  = {
+        names: "",
+        category: "Education",
+        creationDate: "",
+        overallStatus: "",
+        statuses: [],
+
+        isNew: true,
+        isDeleted: false
+    }
+
+    let socialIntervention: interventionInformation  = {
+        names: "",
+        category: "Social",
+        creationDate: "",
+        overallStatus: "",
+        statuses: [],
+
+        isNew: true,
+        isDeleted: false
+    }
+
+    let livelihoodIntervention: interventionInformation  = {
+        names: "",
+        category: "Livelihood",
+        creationDate: "",
+        overallStatus: "",
+        statuses: [],
+
+        isNew: true,
+        isDeleted: false
+    }
+
+    
+    
+    for(let i = 0; i < data.interventioninfo?.length; i++){
+        if(data.interventioninfo[i].service_category.name === "Health"){
+           healthIntervention.creationDate = data.interventioninfo[i].date_created.split('T')[0]
+           healthIntervention.names = data.interventioninfo[i].intervention
+           healthIntervention.id = data.interventioninfo[i].id
+           healthIntervention.overallStatus = data.interventioninfo[i].status
+           healthIntervention.isNew = false
+
+          healthIntervention.statuses = data.interventioninfo[i].history
+          for(let j in healthIntervention.statuses){
+            healthIntervention.statuses[j].isNew = false;
+            healthIntervention.statuses[j].isDeleted = false
+          }
+
+        }
+
+        else if(data.interventioninfo[i].service_category.name === "Education"){
+           educationIntervention.creationDate = data.interventioninfo[i].date_created.split("T")[0]
+           educationIntervention.names = data.interventioninfo[i].intervention
+           educationIntervention.id = data.interventioninfo[i].id
+           educationIntervention.overallStatus = data.interventioninfo[i].status
+           educationIntervention.isNew = false
+
+           educationIntervention.statuses = data.interventioninfo[i].history
+           for(let j in educationIntervention.statuses){
+            educationIntervention.statuses[j].isNew = false;
+            educationIntervention.statuses[j].isDeleted = false
+          }
+        }
+
+        else if(data.interventioninfo[i].service_category.name === "Livelihood"){
+           livelihoodIntervention.creationDate = data.interventioninfo[i].date_created.split("T")[0]
+           livelihoodIntervention.names = data.interventioninfo[i].intervention
+           livelihoodIntervention.id = data.interventioninfo[i].id
+           livelihoodIntervention.overallStatustatus = data.interventioninfo[i].status
+           livelihoodIntervention.isNew = false
+
+           livelihoodIntervention.statuses = data.interventioninfo[i].history
+           for(let j in livelihoodIntervention.statuses){
+            livelihoodIntervention.statuses[j].isNew = false;
+            livelihoodIntervention.statuses[j].isDeleted = false
+          }
+
+        }
+
+        else if(data.interventioninfo[i].service_category.name === "Social"){
+           socialIntervention.creationDate = data.interventioninfo[i].date_created.split("T")[0]
+           socialIntervention.names = data.interventioninfo[i].intervention
+           socialIntervention.id = data.interventioninfo[i].id
+           socialIntervention.overallStatus = data.interventioninfo[i].status
+           socialIntervention.isNew = false
+
+           socialIntervention.statuses = data.interventioninfo[i].history
+           for(let j in socialIntervention.statuses){
+            socialIntervention.statuses[j].isNew = false;
+            socialIntervention.statuses[j].isDeleted = false
+          }
+        }
+    }
+
+    interventionList.push(healthIntervention, educationIntervention, socialIntervention, livelihoodIntervention)
+
+
 
     let educationData: educationInformation[] = []
     let yearStart: string;
@@ -148,11 +246,11 @@
     <!--END OF DOCUMENTS LISTING-->
 
     <!--INTERVENTIONS LIST BEGINS HERE-->
-    <InterventionInformation id = "Intervention Info" data = {interventionList}/>
+    <InterventionInformation id = "Intervention Info" data = {interventionList} editing = {false}/>
     <!--END OF INTERVENTIONS-->
 
     <!-- CONTAINER FOR FAMILY AND MEMBERSHIP INFORMATION -->
-    <FamilyInformation id="Family Info" family={data.family} firstName={data.child?.firstName} childID={data.child?.id} memberType="child"/>
+    <FamilyInformation id="Family Info" family={data.family} editing = {false} firstName={data.child?.firstName} childID={data.child?.id} memberType="child"/>
     <!--END OF FAMILY AND MEMBERSHIP INFORMATION -->
 
     <!-- CONTAINER FOR HEALTH INFORMATION -->

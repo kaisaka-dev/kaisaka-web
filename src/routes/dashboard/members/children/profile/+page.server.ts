@@ -279,10 +279,13 @@ export type educationInformation = {
 }
 
 export type interventionInformation = {
+    id: string,
     names: string,
     category: string,
     creationDate: string,
     overallStatus: string,
-    statuses: []
+    statuses: [],
+    isNew: boolean,
+    isDeleted: boolean
 }
 
