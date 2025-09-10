@@ -4,7 +4,7 @@
 	 * when editing this page, just copy the file and move it to its counterpart in the other folder
 	 */
 	import Header from '$components/Header.svelte';
-	import CaregiverForm from './CaregiverForm.svelte';
+	import CaregiverForm from '$components/shared/registration/CaregiverForm.svelte';;
 	import { childFormData } from '$lib/stores/childForm.js';
 	import { get } from 'svelte/store';
 	import { goto } from '$app/navigation';
@@ -14,7 +14,7 @@
 
 	import type { PageData } from '../../../../../.svelte-kit/types/src/routes/$types.js';
 	import { dropdownOptions } from '$lib/types/options.js';
-	import ExistingForm from './ExistingForm.svelte';
+	import ExistingForm from '$components/shared/registration/ExistingForm.svelte';
 	import LoadingBtn from '$components/styled-buttons/LoadingBtn.svelte';
 
 
