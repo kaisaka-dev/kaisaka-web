@@ -2,65 +2,75 @@
 
 ![Static Badge](https://img.shields.io/badge/AY2425--T3-CSSWENG-red)
 
-## Organization Overview
+Kaisaka Web is a social welfare management platform for organizations supporting children with disabilities and their families. It provides tools for registration, record management, activity tracking, reporting, and analytics, built with SvelteKit, Supabase, and PostgreSQL.
+
+---
 
 ## Features
 
-- XLSX Processor
-  - Report Generation
-  - Child List
-- Child Profiler
-- Caregiver Profiler
+- **Authentication**: Secure login and registration for staff and caregivers.
+- **Children Management**: Register, view, and manage child records, including certificates and disability info.
+- **Caregivers Management**: Register and manage caregiver profiles, occupations, and income.
+- **Family Management**: Link children and caregivers, view family structures, and manage relationships.
+- **Membership Payments**: Track membership payments and annual renewals.
+- **Interventions & History**: Plan, record, and review interventions for children and families.
+- **Attendance Tracking**: Log attendance for events and activities.
+- **Service Objectives & Activities**: Organize, categorize, and track program objectives and activities.
+- **Reporting**: Generate, view, and export annual/quarterly reports with auto-generated statistics.
+- **Dashboard**: Visual summaries of key metrics, including intervention coverage and activity progress.
+- **Logging**: Audit trails and error tracking for reliability.
+- **Testing**: Integrated unit and UI tests for quality assurance.
 
-## Tech Stack
+---
 
-These are the major libraries used for our work.
+## Architecture
 
-- Frontend Framework
-  - SvelteKit - Full-stack web framework with Svelte 5
-  - TypeScript - Type-safe JavaScript development
-- Styling & UI
-  - Tailwind CSS - Utility-first CSS framework with plugins for forms and typography
-- Backend & Database
-  - Supabase - Backend-as-a-Service with authentication, database, and real-time features
-  - Supabase Auth Helpers - Authentication integration for SvelteKit
-- Document Processing
-  - ExcelJS - Excel file reading/writing and manipulation
-  - File-saver - Client-side file downloading
-- Development & Testing
-  - Vite - Build tool and development server
-  - Vitest - Unit testing framework with coverage
-  - Playwright - End-to-end testing
-  - Testing Library - Component testing utilities
-  - Storybook - Component development and documentation
-- Code Quality
-  - ESLint - Code linting with TypeScript support
-  - Prettier - Code formatting
-  - Svelte Check - Svelte-specific type checking
-- Logging & Validation
-  - Winston - Logging library with daily rotation
-  - Zod - Runtime type validation and parsing
-- Deployment
-  - Vercel Adapter - Optimized for Vercel deployment
+- **Client Layer**: SvelteKit frontend with DaisyUI for responsive, accessible UI.
+- **API Layer**: SvelteKit API routes for business logic, validation, and data exchange.
+- **Domain Layer**: Models and repositories encapsulate business logic and data access.
+- **Infrastructure Layer**: Supabase/PostgreSQL for data storage, Supabase Auth for authentication, Logger for audit and error tracking, Report Generator for exports.
+- **Deployment Layer**: Hosted on Vercel for fast, scalable delivery.
 
-## Installation & Setup
+See [docs/media/Kaisaka Technical Map.png](docs/media/Kaisaka%20Technical%20Map.png) for a visual overview.
 
-`node`
+---
 
-`npm i`
+## Getting Started
 
-`npm run dev`
-
-## Environment Variables
-
-Example Env:
-
-```.env
-
+1. **Clone the repository**
+```bash
+git clone https://github.com/your-org/kaisaka-web.git
+cd kaisaka-web
+```
+2. Install dependencies
+```bash
+npm install
 ```
 
-## API Documentation
+3. Configure environment
 
-Check `/docs/` for developer documentation.
+Copy .env.example to .env and fill in Supabase and other secrets.
 
-## Deployment
+4. Run locally
+```bash
+npm run dev
+```
+5. Run tests
+```bash
+npm run test
+```
+
+## Documentation
+
+- Home
+- API Routes
+- Database Models
+- Testing
+- Reports
+- Contributing
+
+## Contributing
+
+See CONTRIBUTING.md for coding standards, design patterns, and workflow.
+
+
